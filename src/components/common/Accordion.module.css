@@ -1,0 +1,108 @@
+.item {
+  border-top: 1px solid var(--hairline-light);
+}
+
+.itemDark {
+  border-top-color: rgba(239, 230, 218, 0.2);
+}
+
+.head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  width: 100%;
+  padding: 26px 0;
+  border: none;
+  background: none;
+  cursor: pointer;
+  text-align: left;
+  font-family: var(--font-display);
+  font-weight: 300;
+  font-size: clamp(20px, 2.4vw, 25px);
+  color: var(--color-ink);
+  transition: color 0.3s ease;
+}
+
+.headOpen {
+  color: var(--color-ink-deep);
+}
+
+.headDark {
+  padding: 24px 0;
+  font-size: clamp(21px, 2.4vw, 27px);
+  color: var(--color-cream-text-soft);
+}
+
+.headDarkOpen {
+  color: #fbf6ec;
+}
+
+.headLabel {
+  display: flex;
+  align-items: baseline;
+  gap: 16px;
+  min-width: 0;
+}
+
+.count {
+  flex: none;
+  font-family: var(--font-body);
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  color: var(--color-gold-light);
+}
+
+/* Height is measured from real content rather than a fixed max-height, so long
+   answers never clip. */
+.body {
+  overflow: hidden;
+  max-height: 0;
+  opacity: 0;
+  transition:
+    max-height var(--duration-accordion) var(--ease-glide),
+    opacity 0.34s ease,
+    margin var(--duration-accordion) ease;
+}
+
+.bodyOpen {
+  opacity: 1;
+  margin-bottom: 26px;
+}
+
+.answer {
+  margin: 0;
+  background: var(--gradient-answer);
+  border: 1px solid rgba(168, 135, 90, 0.22);
+  border-radius: var(--radius-md);
+  padding: clamp(22px, 2.6vw, 30px) clamp(20px, 2.4vw, 30px);
+  font-size: 16.5px;
+  line-height: 1.85;
+  color: var(--color-ink-body);
+}
+
+.bullets {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 6px 0 30px;
+  font-size: var(--text-body-sm);
+  line-height: 1.7;
+  color: rgba(239, 230, 218, 0.78);
+  max-width: 78ch;
+}
+
+.bullet {
+  display: flex;
+  gap: 14px;
+}
+
+.bullet::before {
+  content: '';
+  flex: none;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--color-gold-light);
+  margin-top: 9px;
+}

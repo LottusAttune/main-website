@@ -1,0 +1,675 @@
+@import './tokens.css';
+
+/* ============================================================
+   Base
+   ============================================================ */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--color-cream);
+  color: var(--color-ink);
+  font-family: var(--font-body);
+  font-weight: 300;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+a {
+  color: var(--color-gold-deep);
+  text-decoration: none;
+  transition: color 0.25s ease;
+}
+
+a:hover {
+  color: var(--color-ink);
+}
+
+img {
+  max-width: 100%;
+}
+
+button {
+  font-family: inherit;
+  font-weight: inherit;
+}
+
+input,
+select,
+textarea {
+  font-family: var(--font-body);
+  font-weight: 300;
+}
+
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: none;
+  border-color: var(--color-gold);
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-gold);
+  outline-offset: 3px;
+}
+
+p {
+  text-wrap: pretty;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ============================================================
+   Layout primitives
+   ============================================================ */
+
+.section {
+  padding: var(--space-section) var(--space-gutter);
+}
+
+.section--short {
+  padding: var(--space-section-short) var(--space-gutter);
+}
+
+.section--tall {
+  padding: var(--space-section-tall) var(--space-gutter);
+}
+
+.section--beige {
+  background: var(--gradient-beige);
+}
+
+.section--dark {
+  position: relative;
+  overflow: hidden;
+  background: var(--gradient-deep);
+  color: var(--color-cream-text-soft);
+}
+
+.shell {
+  max-width: var(--width-content);
+  margin: 0 auto;
+}
+
+.shell--prose {
+  max-width: var(--width-prose);
+  margin: 0 auto;
+}
+
+.shell--narrow {
+  max-width: var(--width-prose-narrow);
+  margin: 0 auto;
+}
+
+/* Barely-visible photo behind a dark section. Carries data-bg so the scroll
+   reveal skips it — the reveal writes opacity:1 and would blow out the wash. */
+.photo-wash {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center 35%;
+  opacity: 0.05;
+  mix-blend-mode: screen;
+  -webkit-mask-image: radial-gradient(
+    110% 90% at 70% 40%,
+    #000 0%,
+    rgba(0, 0, 0, 0.3) 60%,
+    transparent 88%
+  );
+  mask-image: radial-gradient(
+    110% 90% at 70% 40%,
+    #000 0%,
+    rgba(0, 0, 0, 0.3) 60%,
+    transparent 88%
+  );
+  pointer-events: none;
+}
+
+.photo-wash--light {
+  opacity: 0.045;
+  mix-blend-mode: multiply;
+  background-position: center;
+  -webkit-mask-image: radial-gradient(
+    120% 90% at 50% 40%,
+    #000 0%,
+    rgba(0, 0, 0, 0.35) 55%,
+    transparent 85%
+  );
+  mask-image: radial-gradient(
+    120% 90% at 50% 40%,
+    #000 0%,
+    rgba(0, 0, 0, 0.35) 55%,
+    transparent 85%
+  );
+}
+
+/* ============================================================
+   Type
+   ============================================================ */
+
+.eyebrow {
+  font-size: var(--text-eyebrow);
+  letter-spacing: var(--tracking-eyebrow);
+  text-transform: uppercase;
+  color: var(--color-gold);
+}
+
+.eyebrow--dark {
+  color: var(--color-gold-light);
+  font-size: 11px;
+  letter-spacing: 0.4em;
+}
+
+.display {
+  font-family: var(--font-display);
+  font-weight: 300;
+  margin: 0;
+}
+
+.h1 {
+  font-size: var(--text-page-h1);
+  line-height: 1.1;
+}
+
+.h2 {
+  font-size: var(--text-h2);
+  line-height: 1.14;
+}
+
+.h3 {
+  font-size: var(--text-h3);
+  line-height: 1.2;
+}
+
+.lede {
+  margin: 0;
+  font-size: var(--text-body-lg);
+  line-height: 1.8;
+  color: var(--color-ink-body);
+}
+
+.body {
+  margin: 0;
+  font-size: var(--text-body);
+  line-height: 1.85;
+  color: var(--color-ink-body);
+}
+
+.body--dark {
+  color: rgba(239, 230, 218, 0.8);
+}
+
+/* ============================================================
+   Buttons — every CTA on the site is one of these five
+   ============================================================ */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px 40px;
+  min-height: 52px;
+  border: 1px solid transparent;
+  border-radius: var(--radius-pill);
+  font-family: var(--font-body);
+  font-weight: 300;
+  font-size: var(--text-button);
+  letter-spacing: var(--tracking-button);
+  text-transform: uppercase;
+  white-space: nowrap;
+  cursor: pointer;
+  transition:
+    transform var(--duration-button) var(--ease-out),
+    box-shadow var(--duration-button) ease,
+    background var(--duration-button) ease,
+    border-color var(--duration-button) ease,
+    color var(--duration-button) ease;
+}
+
+/* Dark pill on a light background. */
+.btn--dark {
+  background: var(--gradient-button-dark);
+  color: var(--color-cream-text);
+  box-shadow: var(--shadow-pill-dark);
+}
+
+.btn--dark:hover {
+  transform: translateY(-2px);
+  color: var(--color-cream-text);
+  box-shadow: var(--shadow-pill-hover);
+}
+
+/* Cream pill on a dark background. */
+.btn--cream {
+  background: var(--gradient-button-cream);
+  color: var(--color-ink-deep);
+  box-shadow: 0 22px 44px -26px rgba(0, 0, 0, 0.85);
+}
+
+.btn--cream:hover {
+  transform: translateY(-2px);
+  color: var(--color-ink-deep);
+  background: var(--gradient-button-cream-hover);
+  box-shadow: var(--shadow-pill-cream-hover);
+}
+
+/* Outlined pill on a light background. */
+.btn--outline {
+  border-color: var(--gold-rim);
+  color: var(--color-ink);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7);
+}
+
+.btn--outline:hover {
+  transform: translateY(-2px);
+  border-color: var(--color-gold-deep);
+  color: var(--color-ink);
+  background: rgba(198, 169, 122, 0.14);
+  box-shadow: var(--shadow-gold-halo);
+}
+
+/* Outlined pill on a dark background. */
+.btn--outline-dark {
+  border-color: rgba(239, 230, 218, 0.4);
+  color: var(--color-cream-text);
+}
+
+.btn--outline-dark:hover {
+  transform: translateY(-2px);
+  border-color: var(--color-gold-light);
+  color: var(--color-cream-text);
+  background: rgba(198, 169, 122, 0.14);
+  box-shadow: 0 0 26px -10px rgba(198, 169, 122, 0.5);
+}
+
+.btn--wide {
+  width: 100%;
+}
+
+.btn--sm {
+  padding: 13px 30px;
+  min-height: 46px;
+  font-size: 11px;
+  letter-spacing: 0.22em;
+}
+
+.btn--lg {
+  padding: 19px 48px;
+  min-height: 58px;
+  letter-spacing: 0.26em;
+}
+
+.btn-row {
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.btn-row--center {
+  justify-content: center;
+}
+
+/* ============================================================
+   Cards
+   ============================================================ */
+
+.card {
+  background: var(--gradient-card);
+  border: 1px solid var(--hairline-light-soft);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-card);
+  transition:
+    transform var(--duration-card) var(--ease-out),
+    box-shadow var(--duration-card) ease,
+    border-color var(--duration-card) ease;
+}
+
+.card--lift:hover {
+  transform: translateY(-6px);
+  border-color: var(--gold-rim-strong);
+  box-shadow: var(--shadow-card-hover);
+}
+
+.card--dark {
+  background: rgba(246, 239, 229, 0.06);
+  border: 1px solid rgba(239, 230, 218, 0.18);
+  box-shadow: var(--shadow-card-dark);
+}
+
+.card--dark.card--lift:hover {
+  border-color: rgba(198, 169, 122, 0.55);
+  box-shadow: var(--shadow-card-dark-hover);
+}
+
+.card__body {
+  padding: var(--space-card-y) var(--space-card-x);
+}
+
+/* ============================================================
+   Grids
+   ============================================================ */
+
+.grid {
+  display: grid;
+  gap: 20px;
+}
+
+.grid--tiles {
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 16px;
+}
+
+.grid--cards {
+  grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
+}
+
+.grid--photos {
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 18px;
+}
+
+.grid--split {
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: var(--space-split);
+  align-items: start;
+}
+
+.sticky-col {
+  position: sticky;
+  top: 120px;
+}
+
+/* ============================================================
+   Numbered "included" rows
+   ============================================================ */
+
+.numbered-row {
+  display: flex;
+  align-items: baseline;
+  gap: clamp(18px, 2.4vw, 34px);
+  padding: 26px 0;
+  border-top: 1px solid rgba(59, 46, 36, 0.16);
+}
+
+.numbered-row__n {
+  flex: none;
+  width: 26px;
+  font-family: var(--font-display);
+  font-size: 16px;
+  color: var(--color-gold);
+}
+
+.numbered-row__text {
+  min-width: 0;
+  font-size: var(--text-body);
+  line-height: 1.75;
+  color: var(--color-ink-strong);
+  text-wrap: pretty;
+}
+
+.rule-end {
+  border-top: 1px solid rgba(59, 46, 36, 0.16);
+}
+
+/* ============================================================
+   Tag pills
+   ============================================================ */
+
+.tag {
+  display: inline-block;
+  padding: 7px 16px;
+  border-radius: var(--radius-pill);
+  font-size: var(--text-eyebrow);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.tag--one {
+  background: rgba(198, 169, 122, 0.22);
+  color: var(--color-gold-deep);
+}
+
+.tag--group {
+  background: rgba(122, 150, 110, 0.2);
+  color: var(--status-success);
+}
+
+.tag--corp {
+  background: rgba(59, 46, 36, 0.9);
+  color: var(--color-cream-text);
+}
+
+/* ============================================================
+   Accordion sign: + rotates into −
+   ============================================================ */
+
+.sign {
+  flex: none;
+  width: 16px;
+  height: 16px;
+  background-image: linear-gradient(var(--color-gold), var(--color-gold)),
+    linear-gradient(var(--color-gold), var(--color-gold));
+  background-size: 16px 1px, 1px 16px;
+  background-position: center center, center center;
+  background-repeat: no-repeat;
+  transition: background-size var(--duration-card) var(--ease-glide);
+}
+
+.sign--open {
+  background-size: 16px 1px, 0 0;
+}
+
+.sign--gold-light {
+  background-image: linear-gradient(var(--color-gold-light), var(--color-gold-light)),
+    linear-gradient(var(--color-gold-light), var(--color-gold-light));
+}
+
+/* ============================================================
+   Forms
+   ============================================================ */
+
+/* 16px minimum so iOS does not zoom the viewport on focus. */
+.field {
+  padding: 16px 18px;
+  min-height: 52px;
+  border: 1px solid var(--hairline-light-strong);
+  border-radius: var(--radius-input);
+  background: var(--color-cream-raised);
+  font-size: 16px;
+  color: var(--color-ink);
+  transition: border-color 0.25s ease;
+}
+
+.field--dark {
+  border-color: rgba(239, 230, 218, 0.28);
+  background: transparent;
+  color: var(--color-cream-text);
+}
+
+.field--dark::placeholder {
+  color: rgba(239, 230, 218, 0.45);
+}
+
+.select {
+  cursor: pointer;
+  padding: 17px 20px;
+  border: 1px solid var(--hairline-light-strong);
+  border-radius: var(--radius-input);
+  background: var(--color-cream-raised);
+  font-size: 16px;
+  color: var(--color-ink);
+  width: 100%;
+}
+
+/* Choice card used by the configurators and the booking steps. */
+.choice {
+  display: block;
+  width: 100%;
+  text-align: left;
+  padding: 24px 26px;
+  border: 1px solid var(--hairline-light-strong);
+  border-radius: 22px;
+  background: var(--color-cream-raised);
+  color: var(--color-ink);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.choice:hover {
+  border-color: var(--gold-rim);
+}
+
+.choice[aria-pressed='true'],
+.choice--on {
+  border-color: var(--color-ink);
+  background: rgba(198, 169, 122, 0.18);
+}
+
+.choice__title {
+  display: block;
+  font-family: var(--font-display);
+  font-size: 24px;
+  margin-bottom: 8px;
+}
+
+.choice__note {
+  display: block;
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--color-muted);
+}
+
+/* Add-on toggle row. */
+.toggle-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  width: 100%;
+  text-align: left;
+  padding: 20px 22px;
+  border: 1px solid rgba(59, 46, 36, 0.18);
+  border-radius: var(--radius-md);
+  background: var(--color-cream-raised);
+  color: var(--color-ink);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.toggle-row[aria-pressed='true'] {
+  border-color: var(--color-ink);
+  background: rgba(198, 169, 122, 0.18);
+}
+
+.toggle-row__dot {
+  flex: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 1px solid rgba(59, 46, 36, 0.3);
+  transition: all 0.2s ease;
+}
+
+.toggle-row[aria-pressed='true'] .toggle-row__dot {
+  border-color: var(--color-ink);
+  background: var(--color-ink);
+}
+
+.toggle-row__price {
+  font-family: var(--font-display);
+  font-size: 22px;
+  white-space: nowrap;
+}
+
+/* ============================================================
+   Summary aside shared by Book, Gift and the configurator
+   ============================================================ */
+
+.summary-line {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 16px 0;
+  border-top: 1px solid var(--hairline-light);
+  font-size: var(--text-body-sm);
+}
+
+.summary-line__label {
+  color: var(--color-muted);
+}
+
+.summary-line__value {
+  text-align: right;
+}
+
+.summary-line--dark {
+  border-top-color: rgba(239, 230, 218, 0.18);
+}
+
+.summary-line--dark .summary-line__label {
+  color: rgba(239, 230, 218, 0.68);
+}
+
+/* ============================================================
+   Scroll reveal — applied by useScrollReveal
+   ============================================================ */
+
+/* Content is visible by default. The hook hides only what it is about to
+   observe, so a JS failure or a throttled IntersectionObserver leaves the page
+   readable rather than blank. */
+[data-reveal] {
+  transition:
+    opacity var(--duration-reveal) var(--ease-out),
+    transform var(--duration-reveal) var(--ease-out);
+}
+
+[data-reveal='hidden'] {
+  opacity: 0;
+  transform: translateY(22px);
+}
+
+[data-reveal='shown'] {
+  opacity: 1;
+  transform: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  [data-reveal] {
+    opacity: 1;
+    transform: none;
+  }
+}

@@ -1,0 +1,126 @@
+{
+  "comfort-items": {
+    "width": 1446,
+    "height": 1024
+  },
+  "crystal-bowls": {
+    "width": 1600,
+    "height": 2844
+  },
+  "drum": {
+    "width": 1600,
+    "height": 2614
+  },
+  "educational-video": {
+    "width": 1600,
+    "height": 900
+  },
+  "for-individuals": {
+    "width": 1600,
+    "height": 2844
+  },
+  "for-teams": {
+    "width": 941,
+    "height": 1490
+  },
+  "handpan-closeup": {
+    "width": 1600,
+    "height": 900
+  },
+  "handpan-forest": {
+    "width": 305,
+    "height": 542
+  },
+  "handpan-tv": {
+    "width": 720,
+    "height": 1280
+  },
+  "icon-neuroscience": {
+    "width": 600,
+    "height": 400
+  },
+  "icon-practice": {
+    "width": 600,
+    "height": 400
+  },
+  "icon-reintegration": {
+    "width": 600,
+    "height": 400
+  },
+  "icon-senses": {
+    "width": 600,
+    "height": 400
+  },
+  "icon-sound": {
+    "width": 600,
+    "height": 400
+  },
+  "intention-card": {
+    "width": 1280,
+    "height": 720
+  },
+  "intention-cards-alt": {
+    "width": 1280,
+    "height": 720
+  },
+  "logo-circle": {
+    "width": 600,
+    "height": 600
+  },
+  "logo-lockup": {
+    "width": 600,
+    "height": 404
+  },
+  "logo-wordmark": {
+    "width": 230,
+    "height": 135
+  },
+  "lounge-private": {
+    "width": 1574,
+    "height": 999
+  },
+  "neuroscience-screen": {
+    "width": 1600,
+    "height": 900
+  },
+  "rainstick": {
+    "width": 1600,
+    "height": 2621
+  },
+  "refreshments": {
+    "width": 1600,
+    "height": 900
+  },
+  "review-serge": {
+    "width": 1600,
+    "height": 942
+  },
+  "signature-cards": {
+    "width": 1600,
+    "height": 900
+  },
+  "silvana-handpan": {
+    "width": 2160,
+    "height": 3840
+  },
+  "silvana-hero": {
+    "width": 962,
+    "height": 1635
+  },
+  "somatic-main": {
+    "width": 2400,
+    "height": 1350
+  },
+  "somatic-practice": {
+    "width": 1600,
+    "height": 2844
+  },
+  "venue-bar": {
+    "width": 1213,
+    "height": 730
+  },
+  "venue-signature": {
+    "width": 1900,
+    "height": 1266
+  }
+}

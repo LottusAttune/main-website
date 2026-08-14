@@ -1,0 +1,519 @@
+/* The landing page is mobile-first: tighter gutters, taller tap targets, and
+   no site nav — only a logo bar and a single BOOK action. */
+
+.page {
+  --space-gutter: clamp(18px, 5vw, 56px);
+}
+
+.bar {
+  position: sticky;
+  top: 0;
+  z-index: 60;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 12px var(--space-gutter);
+  background: rgba(251, 247, 241, 0.94);
+  backdrop-filter: blur(18px);
+  border-bottom: 1px solid rgba(198, 169, 122, 0.28);
+}
+
+.barBrand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+
+.barMark {
+  flex: none;
+  border-radius: 50%;
+  object-fit: cover;
+  mix-blend-mode: multiply;
+}
+
+.barWord {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: clamp(16px, 2vw, 21px);
+  letter-spacing: 0.16em;
+  color: var(--color-ink-deepest);
+  white-space: nowrap;
+}
+
+.barCta {
+  padding: 12px 24px;
+  min-height: 46px;
+  font-size: 11px;
+  letter-spacing: 0.2em;
+}
+
+/* ---------- Hero ---------- */
+
+.hero {
+  position: relative;
+  min-height: min(86vh, 820px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: clamp(64px, 9vw, 120px) var(--space-gutter);
+  overflow: hidden;
+}
+
+.heroBleed {
+  position: absolute;
+  inset: 0;
+}
+
+.heroBleed img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.heroScrim {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    180deg,
+    rgba(62, 46, 32, 0.56) 0%,
+    rgba(74, 56, 38, 0.44) 42%,
+    rgba(46, 34, 22, 0.76) 100%
+  );
+  pointer-events: none;
+}
+
+.heroCopy {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.heroEyebrow {
+  font-size: 11px;
+  letter-spacing: 0.4em;
+  text-transform: uppercase;
+  color: rgba(246, 239, 229, 0.94);
+  margin-bottom: 26px;
+  text-shadow: 0 2px 14px rgba(0, 0, 0, 0.6);
+}
+
+.heroTitle {
+  font-family: var(--font-display);
+  font-weight: 300;
+  font-size: clamp(40px, 6.4vw, 92px);
+  line-height: 1.02;
+  letter-spacing: -0.015em;
+  max-width: 16ch;
+  margin: 0 0 26px;
+  color: #fdfaf4;
+  text-shadow:
+    0 2px 24px rgba(0, 0, 0, 0.55),
+    0 18px 60px rgba(0, 0, 0, 0.45);
+  text-wrap: pretty;
+}
+
+.heroSub {
+  max-width: 620px;
+  margin: 0 0 40px;
+  font-size: clamp(16.5px, 2vw, 19px);
+  line-height: 1.8;
+  color: rgba(250, 244, 235, 0.95);
+  text-shadow: 0 2px 16px rgba(0, 0, 0, 0.6);
+}
+
+.heroActions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  justify-content: center;
+  width: 100%;
+  max-width: 560px;
+}
+
+/* Mobile-first CTAs: full-width-ish and 58px tall. */
+.heroBtn {
+  flex: 1 1 240px;
+  min-height: 58px;
+}
+
+.heroAssurance {
+  margin-top: 26px;
+  font-size: 12.5px;
+  letter-spacing: 0.12em;
+  color: rgba(246, 239, 229, 0.78);
+  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.6);
+}
+
+/* ---------- Proof strip ---------- */
+
+.proof {
+  background: var(--gradient-trust);
+  border-bottom: 1px solid rgba(168, 135, 90, 0.28);
+  padding: 16px var(--space-gutter);
+}
+
+.proofGrid {
+  max-width: 1100px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 1px;
+  background: rgba(168, 135, 90, 0.24);
+}
+
+.proofCell {
+  background: var(--gradient-trust);
+  padding: 12px 14px;
+  text-align: center;
+}
+
+.proofFigure {
+  font-family: var(--font-display);
+  font-size: clamp(19px, 2vw, 24px);
+  line-height: 1;
+  margin-bottom: 6px;
+}
+
+.proofLabel {
+  font-size: 9px;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--color-gold);
+}
+
+/* ---------- Sections ---------- */
+
+.section {
+  padding: clamp(52px, 7vw, 96px) var(--space-gutter);
+}
+
+.head {
+  text-align: center;
+  margin-bottom: 44px;
+}
+
+.heading {
+  margin: 0 auto;
+  max-width: 22ch;
+  font-size: clamp(28px, 3.6vw, 50px);
+  line-height: 1.14;
+}
+
+.painGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 16px;
+  max-width: var(--width-content);
+  margin: 0 auto;
+}
+
+.painCard {
+  padding: 28px 26px;
+  font-size: 16.5px;
+  line-height: 1.7;
+  color: var(--color-ink-strong);
+}
+
+/* ---------- Guide ---------- */
+
+.guide {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: clamp(28px, 5vw, 64px);
+  align-items: center;
+  max-width: var(--width-content);
+  margin: 0 auto;
+}
+
+.guidePortrait {
+  position: relative;
+  height: clamp(300px, 42vw, 480px);
+  border-radius: 28px;
+  overflow: hidden;
+}
+
+.guidePortrait img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.guideQuote {
+  margin: 0 0 28px;
+  font-family: var(--font-display);
+  font-weight: 300;
+  font-size: clamp(24px, 3vw, 40px);
+  line-height: 1.3;
+  color: var(--color-cream-text);
+}
+
+/* ---------- Plan ---------- */
+
+.planGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 16px;
+  max-width: var(--width-content);
+  margin: 0 auto;
+}
+
+.planCard {
+  padding: 32px 28px;
+}
+
+.planN {
+  font-family: var(--font-display);
+  font-size: 19px;
+  color: var(--color-gold);
+  margin-bottom: 12px;
+}
+
+.planTitle {
+  font-family: var(--font-display);
+  font-size: 25px;
+  margin: 0 0 12px;
+}
+
+.planBody {
+  margin: 0;
+  font-size: 15.5px;
+  line-height: 1.75;
+  color: var(--color-ink-body);
+}
+
+/* ---------- Components ---------- */
+
+.componentRow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 14px clamp(18px, 3vw, 34px);
+  padding: 24px 0;
+  border-top: 1px solid rgba(59, 46, 36, 0.16);
+  max-width: var(--width-content);
+  margin: 0 auto;
+}
+
+.componentIcon {
+  display: block;
+  flex: none;
+  width: 68px;
+  height: 68px;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+  mix-blend-mode: multiply;
+}
+
+.componentTitle {
+  font-family: var(--font-display);
+  font-weight: 300;
+  font-size: clamp(22px, 2.6vw, 27px);
+  margin: 0;
+  flex: 1 1 220px;
+  min-width: 0;
+}
+
+.componentBody {
+  margin: 0;
+  font-size: 16px;
+  line-height: 1.8;
+  color: var(--color-ink-body);
+  flex: 2 1 320px;
+  min-width: 0;
+}
+
+/* ---------- Included ---------- */
+
+.includedList {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 0 clamp(24px, 4vw, 56px);
+  max-width: var(--width-content);
+  margin: 0 auto;
+}
+
+/* ---------- Reviews ---------- */
+
+.reviewGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 18px;
+  max-width: var(--width-content);
+  margin: 0 auto;
+}
+
+.reviewCard {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  padding: 32px 28px 28px;
+}
+
+.reviewQuote {
+  font-family: var(--font-display);
+  font-size: 40px;
+  line-height: 0.6;
+  color: #d8c7b2;
+  margin-bottom: 22px;
+}
+
+.reviewText {
+  margin: 0 0 22px;
+  flex: 1;
+  font-size: 16px;
+  line-height: 1.8;
+  color: var(--color-ink-body);
+}
+
+.reviewCaption {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding-top: 20px;
+  border-top: 1px solid rgba(59, 46, 36, 0.12);
+}
+
+.avatar {
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  overflow: hidden;
+  background: linear-gradient(160deg, #f3e7d2, #e2cfb0);
+  box-shadow: 0 0 0 1px rgba(168, 135, 90, 0.45);
+  font-family: var(--font-display);
+  font-size: 20px;
+  color: var(--color-gold-deep);
+}
+
+.avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 25%;
+}
+
+.reviewName {
+  display: block;
+  font-size: 11.5px;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--color-gold);
+  margin-bottom: 4px;
+}
+
+.reviewMeta {
+  display: block;
+  font-size: 12.5px;
+  color: var(--color-faint);
+}
+
+/* ---------- Offers ---------- */
+
+.offerGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 18px;
+  max-width: var(--width-content);
+  margin: 0 auto;
+}
+
+.offerCard {
+  display: flex;
+  flex-direction: column;
+  padding: 34px 30px 30px;
+}
+
+.offerTitle {
+  font-family: var(--font-display);
+  font-weight: 300;
+  font-size: 29px;
+  margin: 16px 0 12px;
+}
+
+.offerBody {
+  margin: 0 0 24px;
+  font-size: 15.5px;
+  line-height: 1.75;
+  color: var(--color-ink-body);
+  flex: 1;
+}
+
+.offerPrice {
+  font-family: var(--font-display);
+  font-size: 34px;
+}
+
+.offerUnit {
+  font-size: 16px;
+  color: var(--color-muted);
+}
+
+.offerNote {
+  font-size: 13.5px;
+  color: var(--color-muted);
+  margin: 6px 0 22px;
+}
+
+.offerBtn {
+  width: 100%;
+  min-height: 54px;
+}
+
+/* ---------- Closer ---------- */
+
+.closer {
+  text-align: center;
+}
+
+.closerActions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  justify-content: center;
+  max-width: 560px;
+  margin: 0 auto;
+}
+
+.closerBtn {
+  flex: 1 1 240px;
+  min-height: 58px;
+}
+
+.footer {
+  background: var(--gradient-footer);
+  color: rgba(239, 230, 218, 0.6);
+  text-align: center;
+  padding: 40px var(--space-gutter) 48px;
+}
+
+.social {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-bottom: 24px;
+}
+
+.socialPill {
+  padding: 11px 22px;
+  min-height: 44px;
+  border-color: rgba(239, 230, 218, 0.26);
+  color: rgba(239, 230, 218, 0.8);
+  font-size: 11px;
+  letter-spacing: 0.2em;
+}
+
+.copyright {
+  font-size: 12.5px;
+  letter-spacing: 0.08em;
+}

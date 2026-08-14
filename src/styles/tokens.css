@@ -1,0 +1,147 @@
+/**
+ * Lotus Attune design tokens.
+ *
+ * Every value here is lifted verbatim from the approved design handoff. Nothing
+ * in the app should hardcode a hex, a gradient, or a duration — reach for a
+ * token so the palette stays changeable from one place.
+ */
+
+:root {
+  /* ---------- Surfaces ---------- */
+  --color-cream: #fbf7f1;
+  --color-cream-raised: #fffdfa;
+
+  --gradient-beige: linear-gradient(170deg, #f7f0e5 0%, #efe3d2 100%);
+  --gradient-card: linear-gradient(170deg, #fffdfa 0%, #f5ede1 100%);
+  --gradient-deep: linear-gradient(165deg, #3c2f24 0%, #241b14 100%);
+  --gradient-footer: linear-gradient(168deg, #3e3126 0%, #2a2018 45%, #1c150e 100%);
+  --gradient-trust: linear-gradient(180deg, #fffcf7 0%, #f8f1e7 100%);
+  --gradient-answer: linear-gradient(170deg, #fffdf9 0%, #faf4ea 100%);
+
+  --gradient-button-dark: linear-gradient(135deg, #4a3a2c 0%, #241b14 100%);
+  --gradient-button-dark-deep: linear-gradient(165deg, #3c2f24 0%, #241b14 100%);
+  --gradient-button-cream: linear-gradient(135deg, #fffbf3 0%, #efe3d0 100%);
+  --gradient-button-cream-hover: linear-gradient(135deg, #ffffff 0%, #f3e7d3 100%);
+
+  /* ---------- Ink ---------- */
+  --color-ink: #3b2e24;
+  --color-ink-deep: #241b14;
+  --color-ink-deepest: #181109;
+  --color-ink-body: #5c4c40;
+  --color-ink-strong: #463829;
+  --color-muted: #7a6a5c;
+  --color-faint: #9a8877;
+  --color-disabled: #cdbfaf;
+
+  /* ---------- Gold ---------- */
+  --color-gold: #a8875a;
+  --color-gold-light: #c6a97a;
+  --color-gold-deep: #8a6a45;
+  --color-gold-warm: #dcc194;
+  --color-panel-sand: #b49f84;
+
+  /* ---------- Text on dark ---------- */
+  --color-cream-text: #f6efe5;
+  --color-cream-text-soft: #efe6da;
+  --color-cream-text-bright: #f8f2e8;
+
+  /* ---------- Hairlines ---------- */
+  --hairline-light: rgba(59, 46, 36, 0.14);
+  --hairline-light-soft: rgba(59, 46, 36, 0.1);
+  --hairline-light-strong: rgba(59, 46, 36, 0.2);
+  --hairline-dark: rgba(239, 230, 218, 0.14);
+  --hairline-dark-strong: rgba(239, 230, 218, 0.22);
+  --gold-rim: rgba(168, 135, 90, 0.55);
+  --gold-rim-strong: rgba(198, 169, 122, 0.6);
+
+  /* ---------- Status (studio dashboard) ---------- */
+  --status-success: #4a6340;
+  --status-success-bg: rgba(122, 150, 110, 0.18);
+  --status-pending: #8a6a45;
+  --status-pending-bg: rgba(198, 169, 122, 0.26);
+  --status-alert: #96543a;
+  --status-alert-bg: rgba(190, 120, 90, 0.2);
+  --status-neutral: #7a6a5c;
+  --status-neutral-bg: rgba(59, 46, 36, 0.1);
+
+  /* ---------- Typography ---------- */
+  --font-display: var(--font-cormorant), 'Cormorant Garamond', serif;
+  --font-body: var(--font-jost), 'Jost', sans-serif;
+
+  --text-hero: clamp(46px, 7.4vw, 120px);
+  --text-page-h1: clamp(38px, 4.8vw, 76px);
+  --text-h2: clamp(28px, 3.8vw, 56px);
+  --text-h2-sub: clamp(30px, 3.6vw, 52px);
+  --text-h3: clamp(24px, 3vw, 30px);
+  --text-quote: clamp(26px, 3.2vw, 44px);
+  --text-body-lg: 18px;
+  --text-body: 17px;
+  --text-body-sm: 15.5px;
+  --text-eyebrow: 10.5px;
+  --text-button: 11.5px;
+  --text-micro: 9.5px;
+
+  --tracking-eyebrow: 0.44em;
+  --tracking-button: 0.24em;
+  --tracking-micro: 0.34em;
+
+  /* ---------- Spacing ---------- */
+  --space-section: clamp(60px, 8vw, 120px);
+  --space-section-tall: clamp(64px, 8vw, 130px);
+  --space-section-short: clamp(56px, 8vw, 110px);
+  --space-gutter: clamp(20px, 5vw, 56px);
+  --space-split: clamp(36px, 5vw, 72px);
+  --space-card-y: clamp(28px, 3.5vw, 44px);
+  --space-card-x: clamp(24px, 3vw, 40px);
+
+  --width-content: 1400px;
+  --width-prose: 1180px;
+  --width-prose-narrow: 900px;
+
+  /* ---------- Radius ---------- */
+  --radius-pill: 999px;
+  --radius-lg: 30px;
+  --radius-card: 26px;
+  --radius-md: 20px;
+  --radius-input: 16px;
+  --radius-thumb: 14px;
+  --radius-video: clamp(18px, 3vw, 34px);
+
+  /* ---------- Shadow ---------- */
+  --shadow-card:
+    inset 0 1px 0 rgba(255, 255, 255, 0.8),
+    0 2px 4px -2px rgba(59, 46, 36, 0.06),
+    0 34px 60px -46px rgba(59, 46, 36, 0.55);
+  --shadow-card-hover:
+    inset 0 1px 0 rgba(255, 255, 255, 0.9),
+    0 0 0 1px rgba(198, 169, 122, 0.35),
+    0 30px 60px -34px rgba(59, 46, 36, 0.6),
+    0 0 46px -12px rgba(198, 169, 122, 0.45);
+  --shadow-card-dark:
+    inset 0 1px 0 rgba(246, 239, 229, 0.14),
+    0 40px 80px -50px rgba(0, 0, 0, 0.85);
+  --shadow-card-dark-hover:
+    inset 0 1px 0 rgba(246, 239, 229, 0.2),
+    0 0 0 1px rgba(198, 169, 122, 0.3),
+    0 42px 80px -44px rgba(0, 0, 0, 0.9),
+    0 0 56px -14px rgba(198, 169, 122, 0.35);
+  --shadow-pill-dark:
+    inset 0 1px 0 rgba(246, 239, 229, 0.16),
+    0 20px 36px -24px rgba(46, 36, 28, 0.85);
+  --shadow-pill-hover:
+    0 22px 42px -22px rgba(46, 36, 28, 0.95),
+    0 0 30px -10px rgba(198, 169, 122, 0.5);
+  --shadow-pill-cream-hover:
+    0 22px 44px -22px rgba(0, 0, 0, 0.75),
+    0 0 34px -10px rgba(198, 169, 122, 0.55);
+  --shadow-gold-halo: 0 0 26px -12px rgba(168, 135, 90, 0.6);
+
+  /* ---------- Motion ---------- */
+  --ease-out: cubic-bezier(0.22, 0.61, 0.36, 1);
+  --ease-glide: cubic-bezier(0.33, 0.9, 0.28, 1);
+  --duration-button: 280ms;
+  --duration-card: 350ms;
+  --duration-accordion: 380ms;
+  --duration-carousel: 750ms;
+  --duration-reveal: 900ms;
+}

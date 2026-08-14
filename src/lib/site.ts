@@ -1,0 +1,82 @@
+/** Business facts that appear across the site and in structured data. */
+
+export const SITE = {
+  name: 'Lotus Attune',
+  tagline: 'Immersive Soma Sound',
+  motto: 'Reset. Align. Thrive',
+  email: 'info@LotusAttune.com',
+  phone: '416-871-5610',
+  phoneHref: 'tel:4168715610',
+  area: 'Toronto & the GTA',
+  description:
+    'An immersive wellness experience designed to support relaxation, nervous system regulation and deep inner connection. Two-hour sessions in downtown Toronto for 1 to 24 people.',
+  url: process.env.NEXT_PUBLIC_SITE_URL ?? 'https://lotusattune.com',
+} as const;
+
+/** Social handles are placeholders until the client confirms the real ones. */
+export const SOCIAL = [
+  { label: 'Instagram', href: 'https://www.instagram.com/lotusattune' },
+  { label: 'LinkedIn', href: 'https://www.linkedin.com/company/lotusattune' },
+  { label: 'YouTube', href: 'https://www.youtube.com/@lotusattune' },
+] as const;
+
+export const NAV_LINKS = [
+  { label: 'Home', href: '/' },
+  { label: 'The Experience', href: '/experience' },
+  { label: 'Founder', href: '/founder' },
+  { label: 'Offerings', href: '/offerings' },
+] as const;
+
+/**
+ * Default pricing. These are overridden at request time by whatever Silvana has
+ * published from the studio dashboard — see `lib/pricing.ts`.
+ */
+export const DEFAULT_PRICING = {
+  privateSession: 340,
+  privatePackage: 1200,
+  perParticipant: 280,
+  teamAddon: 500,
+  refreshments: 20,
+  deposit: 500,
+} as const;
+
+export const DEFAULT_SLOTS = {
+  morning: true,
+  midday: true,
+  evening: true,
+} as const;
+
+/** Calendar days between today and the earliest bookable date. */
+export const DEFAULT_LEAD_TIME = 5;
+
+/** Groups above this size are split across two sessions. */
+export const TWO_SESSION_THRESHOLD = 12;
+
+/** At or below this headcount the session runs in the Private Wellness Lounge. */
+export const LOUNGE_MAX = 6;
+
+export const MIN_PARTICIPANTS = 2;
+export const MAX_PARTICIPANTS = 24;
+
+export const TIME_SLOTS = [
+  { key: 'morning', label: '7 – 9 am', note: 'Morning reset' },
+  { key: 'midday', label: '12 – 2 pm', note: 'Midday pause' },
+  { key: 'evening', label: '6 – 8 pm', note: 'Evening unwind' },
+] as const;
+
+export type SlotKey = (typeof TIME_SLOTS)[number]['key'];
+
+export const VENUE_NOTE = {
+  lounge:
+    'Private Wellness Lounge — an intimate space with exclusive access to both the Arrival Lounge and the Experience Room. Venue rental included.',
+  signature:
+    'Premium Signature Venue — an ample, high-end space with three private gender-inclusive washrooms and kitchen. Venue rental included.',
+} as const;
+
+export function venueNoteFor(participants: number): string {
+  return participants <= LOUNGE_MAX ? VENUE_NOTE.lounge : VENUE_NOTE.signature;
+}
+
+export function money(amount: number): string {
+  return `$${amount.toLocaleString('en-CA')}`;
+}

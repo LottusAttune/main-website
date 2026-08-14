@@ -1,0 +1,62 @@
+.wrap {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-gutter);
+  background: var(--gradient-deep);
+}
+
+.card {
+  width: 100%;
+  max-width: 400px;
+  padding: clamp(32px, 5vw, 48px);
+  background: rgba(246, 239, 229, 0.06);
+  border: 1px solid rgba(239, 230, 218, 0.18);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card-dark);
+  text-align: center;
+}
+
+.eyebrow {
+  font-size: var(--text-micro);
+  letter-spacing: 0.4em;
+  text-transform: uppercase;
+  color: var(--color-gold-light);
+  margin-bottom: 18px;
+}
+
+.title {
+  font-family: var(--font-display);
+  font-weight: 300;
+  font-size: 42px;
+  letter-spacing: 0.08em;
+  margin: 0 0 32px;
+  color: var(--color-cream-text);
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.error {
+  margin: 4px 0 0;
+  font-size: 14px;
+  color: #e8a78c;
+}
+
+.note {
+  margin: 0;
+  font-size: 14.5px;
+  line-height: 1.75;
+  color: rgba(239, 230, 218, 0.7);
+  text-align: left;
+}
+
+.note code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 13px;
+  color: var(--color-gold-light);
+}

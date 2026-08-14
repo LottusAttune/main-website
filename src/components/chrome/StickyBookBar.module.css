@@ -1,0 +1,32 @@
+.bar {
+  position: sticky;
+  bottom: 0;
+  z-index: 55;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(12px, 2vw, 26px);
+  flex-wrap: wrap;
+  /* Extra bottom padding clears the home indicator on notched phones. */
+  padding: 14px clamp(16px, 4vw, 40px) calc(14px + env(safe-area-inset-bottom));
+  background: linear-gradient(
+    180deg,
+    rgba(36, 27, 20, 0.82) 0%,
+    rgba(28, 21, 15, 0.96) 100%
+  );
+  backdrop-filter: blur(18px);
+  border-top: 1px solid rgba(198, 169, 122, 0.4);
+}
+
+.label {
+  font-size: 12.5px;
+  letter-spacing: 0.16em;
+  color: rgba(239, 230, 218, 0.72);
+}
+
+.cta {
+  padding: 16px 36px;
+  min-height: 48px;
+  font-size: 11px;
+  letter-spacing: 0.22em;
+}

@@ -59,17 +59,26 @@ export function requireDatabase(): void {
 
 const url = connectionString();
 
-const client = url
-  ? postgres(url, {
-      // The transaction pooler does not support prepared statements.
-      prepare: false,
-      // Serverless functions are short-lived; one connection each is plenty and
-      // keeps the pool from being held open by idle invocations.
-      max: 1,
-      idle_timeout: 20,
-      connect_timeout: 10,
-    })
-  : null;
+/**
+ * A connection held open across invocations does not survive a serverless
+ * freeze: Vercel suspends the container between requests, the pooler drops
+ * the idle socket during that suspension, and the app has no way to notice
+ * before it tries to reuse the now-dead connection — which hangs, since nothing
+ * short-circuits a write to a socket the peer already closed. Confirmed live:
+ * a shared connection produced intermittent multi-second hangs, while six
+ * consecutive one-off connections all succeeded in under a second. So every
+ * call opens its own connection and closes it when done, trading a small
+ * per-call connect cost for never resting on a connection that might be dead.
+ */
+function createClient() {
+  if (!url) return null;
+  return postgres(url, {
+    // The transaction pooler does not support prepared statements.
+    prepare: false,
+    max: 1,
+    connect_timeout: 10,
+  });
+}
 
 type Row = Record<string, unknown>;
 
@@ -101,18 +110,27 @@ export async function sql(
   strings: TemplateStringsArray,
   ...values: unknown[]
 ): Promise<{ rows: Row[] }> {
+  const client = createClient();
   if (!client) throw new DatabaseNotConfiguredError();
-  const query = (
-    client as unknown as (
-      s: TemplateStringsArray,
-      ...v: unknown[]
-    ) => Promise<Row[]>
-  )(strings, ...values);
 
-  const timeout = new Promise<never>((_, reject) => {
-    setTimeout(() => reject(new DatabaseTimeoutError()), QUERY_TIMEOUT_MS);
-  });
+  try {
+    const query = (
+      client as unknown as (
+        s: TemplateStringsArray,
+        ...v: unknown[]
+      ) => Promise<Row[]>
+    )(strings, ...values);
 
-  const result = await Promise.race([query, timeout]);
-  return { rows: Array.from(result) };
+    const timeout = new Promise<never>((_, reject) => {
+      setTimeout(() => reject(new DatabaseTimeoutError()), QUERY_TIMEOUT_MS);
+    });
+
+    const result = await Promise.race([query, timeout]);
+    return { rows: Array.from(result) };
+  } finally {
+    // Closing a connection that is already wedged can itself hang (observed
+    // live), so this never blocks the response on a clean shutdown — force
+    // it after 1s and swallow the outcome either way.
+    void client.end({ timeout: 1 }).catch(() => {});
+  }
 }

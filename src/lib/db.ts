@@ -5,16 +5,32 @@ import postgres from 'postgres';
 /**
  * Postgres connection (Supabase).
  *
- * Supabase exposes a pooled connection string. Use the **Transaction pooler**
- * (port 6543) for a serverless deployment: each request gets a connection from
- * the pool rather than opening its own, which is what stops a busy moment from
- * exhausting the database's connection limit.
+ * Prefer a pooled connection string: serverless functions open many short
+ * connections, and the pooler is what stops a busy moment from exhausting the
+ * database's connection limit.
  *
- * The environment variable may be called either name depending on how the
- * integration was set up, so both are accepted.
+ * The Supabase–Vercel connector writes several variables and which ones appear
+ * varies by version, so every name it might use is accepted. Pooled URLs are
+ * tried first; the direct connection is a last resort rather than a silent
+ * default, because it is the one that runs out of connections under load.
  */
+const POOLED_VARS = [
+  'POSTGRES_URL',
+  'POSTGRES_PRISMA_URL',
+  'DATABASE_URL',
+] as const;
+
+const DIRECT_VARS = [
+  'POSTGRES_URL_NON_POOLING',
+  'DATABASE_URL_UNPOOLED',
+] as const;
+
 function connectionString(): string | undefined {
-  return process.env.POSTGRES_URL || process.env.DATABASE_URL || undefined;
+  for (const name of [...POOLED_VARS, ...DIRECT_VARS]) {
+    const value = process.env[name];
+    if (value) return value;
+  }
+  return undefined;
 }
 
 /**

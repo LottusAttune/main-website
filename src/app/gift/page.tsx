@@ -12,6 +12,9 @@ export const metadata: Metadata = {
     'Give a two-hour immersive Lotus Attune experience — for one person or a whole gathering, in downtown Toronto.',
 };
 
+/** Pricing reads from the database; never let that block the build. */
+export const dynamic = 'force-dynamic';
+
 export default async function GiftPage() {
   const { pricing } = await getSettings();
 

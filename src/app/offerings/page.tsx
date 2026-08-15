@@ -18,6 +18,9 @@ export const metadata: Metadata = {
     'Private sessions at $340, group and corporate wellness at $280 per participant. Two-hour sessions for 1 to 24 people in downtown Toronto.',
 };
 
+/** Pricing reads from the database; never let that block the build. */
+export const dynamic = 'force-dynamic';
+
 export default async function OfferingsPage() {
   const { pricing } = await getSettings();
   const packageSaving =

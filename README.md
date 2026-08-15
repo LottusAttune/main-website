@@ -150,6 +150,13 @@ browser; a *Copy all notes* fallback lives inside the notes panel.
 The token is checked server-side and the endpoint fails closed: no
 `REVIEW_TOKEN` set means no writes are accepted at all.
 
+### Spreadsheet export
+
+Every table in the studio has an **Export to Excel** button — leads, bookings,
+gift cards, clients and feedback. `lib/csv.ts` writes a UTF-8 BOM so accented
+names survive, and prefixes any cell starting with `=`, `+`, `-` or `@` with a
+quote so a value can never be executed as a formula.
+
 ### Images
 
 The client's original photography lives in `source-assets/` (89MB, several are

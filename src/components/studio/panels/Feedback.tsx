@@ -4,7 +4,18 @@ import { useState } from 'react';
 
 import type { FeedbackNote } from '@/lib/pipeline';
 import { useStudioAction } from '../useStudioAction';
+import { ExportButton } from '../ExportButton';
 import styles from '../studio.module.css';
+
+const COLUMNS = [
+  { header: 'Page', value: (n: FeedbackNote) => n.path },
+  { header: 'Section', value: (n: FeedbackNote) => n.section },
+  { header: 'On screen', value: (n: FeedbackNote) => n.context },
+  { header: 'Note', value: (n: FeedbackNote) => n.note },
+  { header: 'Element', value: (n: FeedbackNote) => n.selector },
+  { header: 'Status', value: (n: FeedbackNote) => n.status },
+  { header: 'Received', value: (n: FeedbackNote) => n.createdAt.slice(0, 10) },
+];
 
 /**
  * The client's review notes, grouped by page.
@@ -68,6 +79,7 @@ export function Feedback({ notes }: { notes: FeedbackNote[] }) {
             >
               {showDone ? 'Hide done' : 'Show done'}
             </button>
+            <ExportButton filename="lotus-feedback" rows={visible} columns={COLUMNS} />
             {copied ? <span className={styles.savedNote}>{copied}</span> : null}
           </div>
 

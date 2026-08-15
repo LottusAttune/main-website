@@ -3,6 +3,7 @@
 import { money } from '@/lib/site';
 import type { GiftCard } from '@/lib/pipeline';
 import { useStudioAction } from '../useStudioAction';
+import { ExportButton } from '../ExportButton';
 import styles from '../studio.module.css';
 
 const STATUS_PILL: Record<string, string> = {
@@ -45,6 +46,22 @@ export function GiftCards({ cards }: { cards: GiftCard[] }) {
           <div className={styles.statLabel}>Redeemed to date</div>
           <div className={styles.statValue}>{money(redeemed)}</div>
         </div>
+      </div>
+
+      <div className={styles.publishRow} style={{ marginTop: 0, borderTop: 'none' }}>
+        <ExportButton
+          filename="lotus-gift-cards"
+          rows={cards}
+          columns={[
+            { header: 'Code', value: (c: GiftCard) => reference(c.id) },
+            { header: 'Recipient', value: (c: GiftCard) => c.recipientName },
+            { header: 'Purchased by', value: (c: GiftCard) => c.buyerEmail },
+            { header: 'Format', value: (c: GiftCard) => c.format },
+            { header: 'Value', value: (c: GiftCard) => c.total },
+            { header: 'Status', value: (c: GiftCard) => c.status },
+            { header: 'Issued', value: (c: GiftCard) => c.createdAt.slice(0, 10) },
+          ]}
+        />
       </div>
 
       {cards.length === 0 ? (

@@ -2,7 +2,16 @@
 
 import { money } from '@/lib/site';
 import type { Client } from '@/lib/pipeline';
+import { ExportButton } from '../ExportButton';
 import styles from '../studio.module.css';
+
+const COLUMNS = [
+  { header: 'Client', value: (c: Client) => c.name },
+  { header: 'Email', value: (c: Client) => c.email },
+  { header: 'Sessions', value: (c: Client) => c.sessions },
+  { header: 'Lifetime value', value: (c: Client) => c.lifetimeValue },
+  { header: 'Last session', value: (c: Client) => c.lastSession ?? '' },
+];
 
 export function Clients({ clients }: { clients: Client[] }) {
   if (clients.length === 0) {
@@ -14,7 +23,11 @@ export function Clients({ clients }: { clients: Client[] }) {
   }
 
   return (
-    <div className={styles.tableWrap}>
+    <>
+      <div className={styles.publishRow} style={{ marginTop: 0, borderTop: 'none' }}>
+        <ExportButton filename="lotus-clients" rows={clients} columns={COLUMNS} />
+      </div>
+      <div className={styles.tableWrap}>
       <table className={styles.table}>
         <thead>
           <tr>
@@ -38,7 +51,8 @@ export function Clients({ clients }: { clients: Client[] }) {
             </tr>
           ))}
         </tbody>
-      </table>
-    </div>
+        </table>
+      </div>
+    </>
   );
 }

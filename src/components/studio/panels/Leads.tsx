@@ -5,7 +5,23 @@ import { useState } from 'react';
 import { money } from '@/lib/site';
 import { STAGES, type Lead, type StageKey } from '@/lib/pipeline';
 import { useStudioAction } from '../useStudioAction';
+import { ExportButton } from '../ExportButton';
 import styles from '../studio.module.css';
+
+const LABELS = Object.fromEntries(STAGES.map((s) => [s.key, s.label]));
+
+const COLUMNS = [
+  { header: 'Received', value: (l: Lead) => l.createdAt.slice(0, 10) },
+  { header: 'Name', value: (l: Lead) => l.name },
+  { header: 'Email', value: (l: Lead) => l.email },
+  { header: 'Phone', value: (l: Lead) => l.phone ?? '' },
+  { header: 'Type', value: (l: Lead) => l.type },
+  { header: 'Participants', value: (l: Lead) => l.participants },
+  { header: 'Session date', value: (l: Lead) => l.sessionDate ?? '' },
+  { header: 'Session time', value: (l: Lead) => l.sessionTime ?? '' },
+  { header: 'Value', value: (l: Lead) => l.total },
+  { header: 'Stage', value: (l: Lead) => LABELS[l.status] ?? l.status },
+];
 
 export function Leads({ leads }: { leads: Lead[] }) {
   const { run, error } = useStudioAction();
@@ -23,6 +39,10 @@ export function Leads({ leads }: { leads: Lead[] }) {
   return (
     <>
       {error ? <div className={styles.notice}>{error}</div> : null}
+
+      <div className={styles.publishRow} style={{ marginTop: 0, borderTop: 'none' }}>
+        <ExportButton filename="lotus-leads" rows={leads} columns={COLUMNS} />
+      </div>
 
       <div className={styles.pipelineTotal}>
         <strong>{money(pipelineValue)}</strong> in pipeline across{' '}

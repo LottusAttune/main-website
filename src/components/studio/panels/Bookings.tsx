@@ -2,7 +2,21 @@
 
 import { money } from '@/lib/site';
 import type { BookingRow } from '@/lib/pipeline';
+import { ExportButton } from '../ExportButton';
 import styles from '../studio.module.css';
+
+const COLUMNS = [
+  { header: 'Date', value: (b: BookingRow) => b.sessionDate ?? '' },
+  { header: 'Time', value: (b: BookingRow) => b.sessionTime ?? '' },
+  { header: 'Client', value: (b: BookingRow) => b.name },
+  { header: 'Email', value: (b: BookingRow) => b.email },
+  { header: 'Phone', value: (b: BookingRow) => b.phone ?? '' },
+  { header: 'Type', value: (b: BookingRow) => b.type },
+  { header: 'Participants', value: (b: BookingRow) => b.participants },
+  { header: 'Venue', value: (b: BookingRow) => b.venue },
+  { header: 'Value', value: (b: BookingRow) => b.total },
+  { header: 'Status', value: (b: BookingRow) => b.status },
+];
 
 function statusPill(status: string): string {
   if (status === 'complete') return styles.pillSuccess;
@@ -20,7 +34,11 @@ export function Bookings({ bookings }: { bookings: BookingRow[] }) {
   }
 
   return (
-    <div className={styles.tableWrap}>
+    <>
+      <div className={styles.publishRow} style={{ marginTop: 0, borderTop: 'none' }}>
+        <ExportButton filename="lotus-bookings" rows={bookings} columns={COLUMNS} />
+      </div>
+      <div className={styles.tableWrap}>
       <table className={styles.table}>
         <thead>
           <tr>
@@ -56,7 +74,8 @@ export function Bookings({ bookings }: { bookings: BookingRow[] }) {
             </tr>
           ))}
         </tbody>
-      </table>
-    </div>
+        </table>
+      </div>
+    </>
   );
 }

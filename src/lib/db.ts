@@ -74,6 +74,22 @@ const client = url
 type Row = Record<string, unknown>;
 
 /**
+ * `connect_timeout` only bounds opening a fresh socket to the pooler — it does
+ * not bound Supavisor queuing a request while its backend pool is saturated,
+ * which is a silent hang rather than a connection error. Every query gets its
+ * own ceiling so a starved pool degrades callers (falling back to defaults)
+ * instead of hanging the request.
+ */
+const QUERY_TIMEOUT_MS = 8000;
+
+export class DatabaseTimeoutError extends Error {
+  constructor() {
+    super(`Database query did not respond within ${QUERY_TIMEOUT_MS}ms.`);
+    this.name = 'DatabaseTimeoutError';
+  }
+}
+
+/**
  * Tagged-template query returning `{ rows }`.
  *
  * postgres.js returns an array directly; wrapping it preserves the shape every
@@ -86,11 +102,17 @@ export async function sql(
   ...values: unknown[]
 ): Promise<{ rows: Row[] }> {
   if (!client) throw new DatabaseNotConfiguredError();
-  const result = await (
+  const query = (
     client as unknown as (
       s: TemplateStringsArray,
       ...v: unknown[]
     ) => Promise<Row[]>
   )(strings, ...values);
+
+  const timeout = new Promise<never>((_, reject) => {
+    setTimeout(() => reject(new DatabaseTimeoutError()), QUERY_TIMEOUT_MS);
+  });
+
+  const result = await Promise.race([query, timeout]);
   return { rows: Array.from(result) };
 }

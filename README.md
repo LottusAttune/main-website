@@ -34,8 +34,14 @@ rather than silently dropped. Everything below is what turns it live.
 
 ### 1. Add a Postgres store
 
-In the Vercel dashboard: **Storage → Create Database → Postgres**, and connect
-it to this project. That sets `POSTGRES_URL` automatically.
+Vercel no longer offers a first-party Postgres. In the dashboard go to
+**Storage → Create Database → Neon** and connect it to this project — Neon is
+what Vercel Postgres became, and `@vercel/postgres` speaks its protocol.
+
+The integration writes the connection string as `DATABASE_URL`, and on some
+versions `POSTGRES_URL` as well. `lib/db.ts` accepts either.
+
+Do not pick Supabase from that list: the client ruled it out.
 
 Then apply the schema. Either paste `db/schema.sql` into the store's Query tab,
 or run it locally:
@@ -55,7 +61,7 @@ The schema is idempotent — re-running it is safe.
 | `STUDIO_PASSWORD` | Gates `/studio`. |
 | `SESSION_SECRET` | Signs the studio session cookie. `openssl rand -base64 32` |
 | `REVIEW_TOKEN` | Enables client review mode. Any hard-to-guess string. |
-| `POSTGRES_URL` | Set for you when the store is linked. |
+| `DATABASE_URL` / `POSTGRES_URL` | Set for you when the Neon store is connected. |
 
 See `.env.example`. Without `STUDIO_PASSWORD` and `SESSION_SECRET` the studio
 refuses all access rather than opening it — it fails closed.

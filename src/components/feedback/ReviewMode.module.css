@@ -1,0 +1,277 @@
+/* Review mode chrome sits above everything on the page. */
+
+.frame {
+  position: fixed;
+  inset: 0;
+  z-index: 9000;
+  pointer-events: none;
+  border: 3px solid rgba(168, 135, 90, 0.85);
+}
+
+/* While picking, the whole page becomes a target. */
+.picking {
+  pointer-events: auto;
+  cursor: crosshair;
+  background: rgba(59, 46, 36, 0.04);
+}
+
+.highlight {
+  position: fixed;
+  z-index: 9001;
+  pointer-events: none;
+  border: 2px solid var(--color-gold);
+  border-radius: 6px;
+  background: rgba(198, 169, 122, 0.18);
+  transition:
+    top 0.08s linear,
+    left 0.08s linear,
+    width 0.08s linear,
+    height 0.08s linear;
+}
+
+/* ---------- Toolbar ---------- */
+
+.bar {
+  position: fixed;
+  left: 50%;
+  bottom: 20px;
+  transform: translateX(-50%);
+  z-index: 9100;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px 10px 18px;
+  max-width: calc(100vw - 24px);
+  border-radius: var(--radius-pill);
+  background: linear-gradient(180deg, #40332a 0%, #241b14 100%);
+  border: 1px solid rgba(198, 169, 122, 0.5);
+  box-shadow: 0 24px 60px -20px rgba(0, 0, 0, 0.7);
+  color: var(--color-cream-text);
+  font-family: var(--font-body);
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.barLabel {
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--color-gold-light);
+  white-space: nowrap;
+}
+
+.count {
+  padding: 3px 10px;
+  border-radius: var(--radius-pill);
+  background: rgba(246, 239, 229, 0.16);
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+.barBtn {
+  padding: 10px 18px;
+  min-height: 40px;
+  border-radius: var(--radius-pill);
+  border: 1px solid rgba(239, 230, 218, 0.35);
+  background: transparent;
+  color: var(--color-cream-text);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.22s ease;
+}
+
+.barBtn:hover:not(:disabled) {
+  border-color: var(--color-gold-light);
+  background: rgba(198, 169, 122, 0.18);
+}
+
+.barBtn:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+
+.barBtnPrimary {
+  border-color: transparent;
+  background: linear-gradient(135deg, #fffbf3 0%, #efe3d0 100%);
+  color: var(--color-ink-deep);
+}
+
+.barBtnPrimary:hover:not(:disabled) {
+  background: #fff;
+  border-color: transparent;
+}
+
+.barBtnOn {
+  border-color: var(--color-gold-light);
+  background: rgba(198, 169, 122, 0.28);
+}
+
+.status {
+  font-size: 12px;
+  color: rgba(239, 230, 218, 0.75);
+  white-space: nowrap;
+}
+
+/* ---------- Pins ---------- */
+
+.pin {
+  position: absolute;
+  z-index: 9050;
+  width: 28px;
+  height: 28px;
+  margin: -14px 0 0 -14px;
+  border-radius: 50% 50% 50% 2px;
+  transform: rotate(-45deg);
+  border: 2px solid #fffdf8;
+  background: linear-gradient(135deg, #c6a97a, #8a6a45);
+  box-shadow: 0 6px 16px -4px rgba(0, 0, 0, 0.55);
+  cursor: pointer;
+  padding: 0;
+}
+
+.pinNumber {
+  display: block;
+  transform: rotate(45deg);
+  font-family: var(--font-body);
+  font-size: 12px;
+  font-weight: 600;
+  color: #fffdf8;
+  line-height: 24px;
+}
+
+.pinSent {
+  background: linear-gradient(135deg, #7a966e, #4a6340);
+}
+
+/* ---------- Composer ---------- */
+
+.composerWrap {
+  position: fixed;
+  inset: 0;
+  z-index: 9200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background: rgba(30, 23, 17, 0.55);
+  backdrop-filter: blur(3px);
+}
+
+.composer {
+  width: 100%;
+  max-width: 460px;
+  padding: 26px 26px 22px;
+  border-radius: 24px;
+  background: var(--gradient-card);
+  border: 1px solid rgba(168, 135, 90, 0.5);
+  box-shadow: 0 40px 90px -30px rgba(0, 0, 0, 0.6);
+}
+
+.composerTitle {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: 22px;
+  margin: 0 0 6px;
+  color: var(--color-ink);
+}
+
+.composerContext {
+  margin: 0 0 16px;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--color-muted);
+  word-break: break-word;
+}
+
+.composerInput {
+  width: 100%;
+  min-height: 110px;
+  padding: 14px 16px;
+  border: 1px solid var(--hairline-light-strong);
+  border-radius: var(--radius-input);
+  background: var(--color-cream-raised);
+  font-size: 16px;
+  line-height: 1.6;
+  color: var(--color-ink);
+  resize: vertical;
+}
+
+.composerHint {
+  margin: 10px 0 0;
+  font-size: 12px;
+  color: var(--color-faint);
+}
+
+.composerActions {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+  margin-top: 16px;
+}
+
+/* ---------- Note list ---------- */
+
+.list {
+  position: fixed;
+  right: 16px;
+  bottom: 84px;
+  z-index: 9150;
+  width: min(360px, calc(100vw - 32px));
+  max-height: min(60vh, 520px);
+  overflow-y: auto;
+  padding: 18px;
+  border-radius: 22px;
+  background: var(--gradient-card);
+  border: 1px solid rgba(168, 135, 90, 0.5);
+  box-shadow: 0 30px 70px -24px rgba(0, 0, 0, 0.5);
+}
+
+.listTitle {
+  font-size: 10.5px;
+  font-weight: 500;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--color-gold-text);
+  margin-bottom: 14px;
+}
+
+.listItem {
+  padding: 12px 0;
+  border-top: 1px solid var(--hairline-light-soft);
+  font-size: 14px;
+  line-height: 1.55;
+  color: var(--color-ink-strong);
+}
+
+.listItem:first-of-type {
+  border-top: none;
+}
+
+.listMeta {
+  display: block;
+  margin-top: 4px;
+  font-size: 11.5px;
+  color: var(--color-faint);
+}
+
+.listRemove {
+  border: none;
+  background: none;
+  padding: 0;
+  margin-top: 6px;
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--status-alert);
+  cursor: pointer;
+}
+
+.empty {
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--color-muted);
+}

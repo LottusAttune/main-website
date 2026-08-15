@@ -54,6 +54,7 @@ The schema is idempotent — re-running it is safe.
 | `NEXT_PUBLIC_SITE_URL` | Production origin. Open Graph images and the sitemap need an absolute URL. |
 | `STUDIO_PASSWORD` | Gates `/studio`. |
 | `SESSION_SECRET` | Signs the studio session cookie. `openssl rand -base64 32` |
+| `REVIEW_TOKEN` | Enables client review mode. Any hard-to-guess string. |
 | `POSTGRES_URL` | Set for you when the store is linked. |
 
 See `.env.example`. Without `STUDIO_PASSWORD` and `SESSION_SECRET` the studio
@@ -77,6 +78,7 @@ Push to `main`. Vercel builds and deploys.
 | `/gift` | Gift certificate calculator |
 | `/lp` | Ad landing page. `noindex`, not in the nav. |
 | `/studio` | Owner dashboard. Password-gated, `noindex`. |
+| `/?review=<token>` | Client review mode — see below. Any page accepts it. |
 
 `/lp` takes an `aud` query parameter — `?aud=individuals`, `?aud=corporate` —
 which swaps the hero copy and reorders the offer cards, so separate ad sets can
@@ -109,6 +111,29 @@ Every mutation goes through a single route, `POST /api/studio`, so
 authentication is enforced in exactly one place. Unauthenticated requests get
 401 regardless of payload. The session cookie is HMAC-signed, `httpOnly` and
 `SameSite=Lax`.
+
+### Client review mode
+
+Open any page as `/?review=<REVIEW_TOKEN>` and the site turns into something the
+client can annotate directly: press **Add a note**, click anything on the page,
+type what should change. A numbered pin stays where she put it.
+
+Each note records the page, a CSS path to the element she clicked and the text
+that was on screen there — so a note is traceable to a component rather than to
+a coordinate on a screenshot. Pins are re-anchored to their element on every
+load, so they stay correct at any window width.
+
+Notes are written to `localStorage` the instant they are typed and only then
+sent to the server. If the database is not connected, the network drops, or she
+closes the tab, nothing is lost: **Copy** always produces the full markdown
+brief. That brief is the artefact — paste it straight into Claude to make the
+changes.
+
+They arrive in **Studio → Client feedback**, grouped by page, with a *Copy as
+brief* button that does the same thing.
+
+The token is checked server-side and the endpoint fails closed: no
+`REVIEW_TOKEN` set means no writes are accepted at all.
 
 ### Images
 

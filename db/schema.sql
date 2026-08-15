@@ -118,3 +118,27 @@ CREATE TABLE IF NOT EXISTS contact_messages (
   handled    BOOLEAN NOT NULL DEFAULT FALSE,
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
+
+-- ---------------------------------------------------------------------------
+-- Client review notes, left by pinning a spot on the live site in review mode.
+-- ---------------------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS feedback_notes (
+  id          UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  -- Where on the site.
+  path        TEXT NOT NULL,
+  -- CSS path to the element that was clicked, so the note can be traced back
+  -- to a specific component rather than a coordinate on a screenshot.
+  selector    TEXT NOT NULL,
+  -- Text inside that element, which is usually the fastest way to find it.
+  context     TEXT,
+  -- Position within the element, 0-100, so the pin can be redrawn at any width.
+  x_percent   NUMERIC(5,2) NOT NULL,
+  y_percent   NUMERIC(5,2) NOT NULL,
+  viewport_w  INTEGER,
+  note        TEXT NOT NULL,
+  author      TEXT,
+  status      TEXT NOT NULL DEFAULT 'open',
+  created_at  TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS feedback_status_idx ON feedback_notes (status, created_at DESC);

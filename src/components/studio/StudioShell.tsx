@@ -10,6 +10,7 @@ import { SITE } from '@/lib/site';
 import type { StudioData } from '@/lib/pipeline';
 import { Bookings } from './panels/Bookings';
 import { Clients } from './panels/Clients';
+import { Feedback } from './panels/Feedback';
 import { GiftCards } from './panels/GiftCards';
 import { Leads } from './panels/Leads';
 import { Overview } from './panels/Overview';
@@ -24,7 +25,8 @@ type ViewKey =
   | 'pricing'
   | 'gifts'
   | 'reviews'
-  | 'clients';
+  | 'clients'
+  | 'feedback';
 
 type Props = {
   data: StudioData;
@@ -48,6 +50,11 @@ export function StudioShell({ data, settings, databaseReady }: Props) {
     { key: 'gifts', label: 'Gift cards', count: data.giftCards.length },
     { key: 'reviews', label: 'Reviews', count: data.reviews.length },
     { key: 'clients', label: 'Clients', count: data.clients.length },
+    {
+      key: 'feedback',
+      label: 'Client feedback',
+      count: data.feedback.filter((n) => n.status === 'open').length,
+    },
   ];
 
   const HEADINGS: Record<ViewKey, { title: string; context: string }> = {
@@ -70,6 +77,10 @@ export function StudioShell({ data, settings, databaseReady }: Props) {
       context: `${data.reviews.filter((r) => r.isPublished).length} showing`,
     },
     clients: { title: 'Clients', context: `${data.clients.length} total` },
+    feedback: {
+      title: 'Client feedback',
+      context: `${data.feedback.filter((n) => n.status === 'open').length} open`,
+    },
   };
 
   return (
@@ -149,6 +160,7 @@ export function StudioShell({ data, settings, databaseReady }: Props) {
         {view === 'gifts' ? <GiftCards cards={data.giftCards} /> : null}
         {view === 'reviews' ? <Reviews reviews={data.reviews} /> : null}
         {view === 'clients' ? <Clients clients={data.clients} /> : null}
+        {view === 'feedback' ? <Feedback notes={data.feedback} /> : null}
       </main>
     </div>
   );

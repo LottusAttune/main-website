@@ -1,6 +1,8 @@
 import type { Metadata, Viewport } from 'next';
 import { Cormorant_Garamond, Jost } from 'next/font/google';
+import { Suspense } from 'react';
 
+import { ReviewMode } from '@/components/feedback/ReviewMode';
 import { SITE } from '@/lib/site';
 import '@/styles/global.css';
 
@@ -49,7 +51,13 @@ export default function RootLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en" className={`${cormorant.variable} ${jost.variable}`}>
-      <body>{children}</body>
+      <body>
+        {children}
+        {/* Inert unless the page was opened with a valid ?review= link. */}
+        <Suspense fallback={null}>
+          <ReviewMode />
+        </Suspense>
+      </body>
     </html>
   );
 }

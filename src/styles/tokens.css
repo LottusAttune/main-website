@@ -29,12 +29,17 @@
   --color-ink-deepest: #181109;
   --color-ink-body: #5c4c40;
   --color-ink-strong: #463829;
-  --color-muted: #7a6a5c;
-  --color-faint: #9a8877;
-  --color-disabled: #cdbfaf;
+  --color-muted: #6f5f52;
+  --color-faint: #756352;
+  --color-disabled: #a89684;
 
-  /* ---------- Gold ---------- */
+  /* ---------- Gold ----------
+     Two golds on purpose. `--color-gold` is decorative — rules, borders,
+     glows — where contrast does not apply. `--color-gold-text` is the only
+     one allowed to carry words: the eyebrow labels run at 10.5px, and the
+     decorative gold measured 3.1:1 on cream, well under the 4.5:1 needed. */
   --color-gold: #a8875a;
+  --color-gold-text: #7c5b3b;
   --color-gold-light: #c6a97a;
   --color-gold-deep: #8a6a45;
   --color-gold-warm: #dcc194;

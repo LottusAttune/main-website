@@ -6,7 +6,10 @@
   align-items: center;
   justify-content: center;
   text-align: center;
-  padding: clamp(72px, 10vw, 140px) var(--space-gutter);
+  /* Padding is deliberately modest: on a tall desktop the full copy block is
+     already close to the viewport height, and generous padding pushed the
+     motto below the fold. */
+  padding: clamp(56px, 6vw, 88px) var(--space-gutter);
   overflow: hidden;
 }
 
@@ -61,7 +64,7 @@
   height: clamp(76px, 9vw, 104px);
   border-radius: 50%;
   object-fit: cover;
-  margin-bottom: 34px;
+  margin-bottom: 26px;
   box-shadow: 0 24px 60px -30px rgba(0, 0, 0, 0.9);
 }
 
@@ -70,18 +73,18 @@
   letter-spacing: 0.56em;
   text-transform: uppercase;
   color: rgba(246, 239, 229, 0.94);
-  margin-bottom: 28px;
+  margin-bottom: 22px;
   text-shadow: 0 2px 14px rgba(0, 0, 0, 0.6);
 }
 
 .headline {
   font-family: var(--font-display);
   font-weight: 300;
-  font-size: var(--text-hero);
-  line-height: 0.98;
+  font-size: clamp(44px, 6.4vw, 104px);
+  line-height: 1;
   letter-spacing: -0.02em;
   max-width: 15ch;
-  margin: 0 0 30px;
+  margin: 0 0 24px;
   color: #fdfaf4;
   text-shadow:
     0 2px 24px rgba(0, 0, 0, 0.55),
@@ -92,7 +95,7 @@
 .rule {
   width: 72px;
   height: 1px;
-  margin-bottom: 30px;
+  margin-bottom: 24px;
   background: linear-gradient(
     90deg,
     rgba(198, 169, 122, 0) 0%,
@@ -103,7 +106,7 @@
 
 .positioning {
   max-width: 620px;
-  margin: 0 0 46px;
+  margin: 0 0 36px;
   font-size: clamp(17px, 2vw, 19.5px);
   line-height: 1.8;
   color: rgba(250, 244, 235, 0.95);
@@ -139,8 +142,9 @@
 }
 
 .motto {
-  margin-top: 58px;
+  margin-top: 40px;
   font-family: var(--font-display);
+  font-weight: 400;
   font-size: clamp(19px, 2.4vw, 26px);
   letter-spacing: 0.42em;
   color: var(--color-gold-warm);

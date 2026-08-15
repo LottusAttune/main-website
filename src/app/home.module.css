@@ -23,6 +23,7 @@
 
 .trustFigure {
   font-family: var(--font-display);
+  font-weight: 400;
   font-size: clamp(19px, 2vw, 24px);
   line-height: 1;
   color: var(--color-ink);
@@ -33,7 +34,7 @@
   font-size: 9px;
   letter-spacing: 0.24em;
   text-transform: uppercase;
-  color: var(--color-gold);
+  color: var(--color-gold-text);
 }
 
 /* ---------- Problem ---------- */
@@ -66,17 +67,18 @@
   align-items: center;
 }
 
+/* Her portrait is never cropped — it keeps its natural proportion so her head
+   and hands stay in frame at every width. */
 .guidePortrait {
   position: relative;
-  height: clamp(340px, 46vw, 540px);
   border-radius: 28px;
   overflow: hidden;
 }
 
 .guidePortrait img {
   width: 100%;
-  height: 100%;
-  object-fit: cover;
+  height: auto;
+  display: block;
 }
 
 .guideQuote {
@@ -147,12 +149,14 @@
 
 .planNumber {
   font-family: var(--font-display);
+  font-weight: 400;
   font-size: 19px;
-  color: var(--color-gold);
+  color: var(--color-gold-text);
 }
 
 .planTitle {
   font-family: var(--font-display);
+  font-weight: 400;
   font-size: 24px;
   line-height: 1.25;
 }
@@ -180,13 +184,15 @@
 
 .pathPhoto {
   position: relative;
-  height: clamp(190px, 22vw, 240px);
+  aspect-ratio: 4 / 5;
 }
 
 .pathPhoto img {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  /* Faces in these photos sit above centre; a short wide band cut them off. */
+  object-position: center 35%;
 }
 
 .pathBody {
@@ -208,7 +214,7 @@
   font-size: 11px;
   letter-spacing: 0.26em;
   text-transform: uppercase;
-  color: var(--color-gold);
+  color: var(--color-gold-text);
 }
 
 .pathTitle {
@@ -375,6 +381,7 @@
 
 .faqCardTitle {
   font-family: var(--font-display);
+  font-weight: 400;
   font-size: 24px;
   margin-bottom: 12px;
 }

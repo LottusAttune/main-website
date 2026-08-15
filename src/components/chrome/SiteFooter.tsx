@@ -26,10 +26,10 @@ export function SiteFooter() {
           <div className={styles.eyebrow}>{SITE.tagline}</div>
           <div className={styles.motto}>{SITE.motto}</div>
           <div className="btn-row btn-row--center">
-            <Link href="/book" className="btn btn--cream">
+            <Link href="/book" className="btn btn--dark">
               Book a session
             </Link>
-            <Link href="/gift" className="btn btn--outline-dark">
+            <Link href="/gift" className="btn btn--outline">
               Gift a session
             </Link>
           </div>
@@ -49,7 +49,7 @@ export function SiteFooter() {
                 <a
                   key={s.label}
                   href={s.href}
-                  className={`btn btn--outline-dark ${styles.socialPill}`}
+                  className={`btn btn--outline ${styles.socialPill}`}
                   rel="noopener noreferrer"
                   target="_blank"
                 >

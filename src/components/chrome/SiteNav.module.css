@@ -68,7 +68,7 @@
   font-size: var(--text-micro);
   letter-spacing: 0.36em;
   text-transform: uppercase;
-  color: var(--color-gold);
+  color: var(--color-gold-text);
   white-space: nowrap;
 }
 
@@ -99,7 +99,7 @@
 
 .linkActive {
   color: var(--color-ink);
-  border-bottom-color: var(--color-gold);
+  border-bottom-color: var(--color-gold-text);
 }
 
 .actions {

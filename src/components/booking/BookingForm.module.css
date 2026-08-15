@@ -24,8 +24,9 @@
 
 .stepNumber {
   font-family: var(--font-display);
+  font-weight: 400;
   font-size: 20px;
-  color: var(--color-gold);
+  color: var(--color-gold-text);
 }
 
 .stepTitle {
@@ -135,6 +136,7 @@
 .timeLabel {
   display: block;
   font-family: var(--font-display);
+  font-weight: 400;
   font-size: 23px;
   margin-bottom: 6px;
 }
@@ -191,7 +193,7 @@
   font-size: 11px;
   letter-spacing: 0.32em;
   text-transform: uppercase;
-  color: var(--color-gold);
+  color: var(--color-gold-text);
   margin-bottom: 26px;
 }
 
@@ -204,7 +206,7 @@
   font-size: 11px;
   letter-spacing: 0.24em;
   text-transform: uppercase;
-  color: var(--color-gold);
+  color: var(--color-gold-text);
   margin-bottom: 12px;
 }
 

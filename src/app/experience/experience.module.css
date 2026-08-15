@@ -15,8 +15,9 @@
 
 .subtitle {
   font-family: var(--font-display);
+  font-weight: 400;
   font-size: clamp(20px, 2.4vw, 26px);
-  color: var(--color-gold);
+  color: var(--color-gold-text);
   margin-bottom: 46px;
 }
 
@@ -59,8 +60,9 @@
   flex: none;
   width: 32px;
   font-family: var(--font-display);
+  font-weight: 400;
   font-size: 19px;
-  color: var(--color-gold);
+  color: var(--color-gold-text);
 }
 
 .componentTitle {
@@ -88,9 +90,10 @@
   margin-top: clamp(40px, 5vw, 70px);
 }
 
+/* 16:9 matches the wide session photo exactly, so it is never cropped. */
 .featureImage {
   position: relative;
-  height: clamp(280px, 32vw, 420px);
+  aspect-ratio: 16 / 9;
   border-radius: var(--radius-card);
   overflow: hidden;
 }
@@ -99,6 +102,7 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
+  object-position: center 40%;
 }
 
 /* ---------- Benefits ---------- */
@@ -149,13 +153,15 @@
 
 .benefitPhoto {
   position: relative;
-  height: clamp(170px, 20vw, 220px);
+  aspect-ratio: 4 / 5;
 }
 
 .benefitPhoto img {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  /* Faces sit above centre in the people photos. */
+  object-position: center 35%;
 }
 
 .benefitCaption {

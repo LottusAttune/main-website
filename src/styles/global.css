@@ -20,7 +20,9 @@ body {
   background: var(--color-cream);
   color: var(--color-ink);
   font-family: var(--font-body);
-  font-weight: 300;
+  /* Jost 300 is elegant but too thin to read comfortably at body sizes on a
+     warm cream ground. 400 keeps the character and gains the legibility. */
+  font-weight: 400;
   overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
 }
@@ -48,7 +50,7 @@ input,
 select,
 textarea {
   font-family: var(--font-body);
-  font-weight: 300;
+  font-weight: 400;
 }
 
 input:focus-visible,
@@ -169,9 +171,10 @@ p {
 
 .eyebrow {
   font-size: var(--text-eyebrow);
+  font-weight: 500;
   letter-spacing: var(--tracking-eyebrow);
   text-transform: uppercase;
-  color: var(--color-gold);
+  color: var(--color-gold-text);
 }
 
 .eyebrow--dark {
@@ -215,8 +218,9 @@ p {
   color: var(--color-ink-body);
 }
 
-.body--dark {
-  color: rgba(239, 230, 218, 0.8);
+.body--dark,
+.lede--dark {
+  color: rgba(243, 236, 226, 0.86);
 }
 
 /* ============================================================
@@ -232,7 +236,7 @@ p {
   border: 1px solid transparent;
   border-radius: var(--radius-pill);
   font-family: var(--font-body);
-  font-weight: 300;
+  font-weight: 500;
   font-size: var(--text-button);
   letter-spacing: var(--tracking-button);
   text-transform: uppercase;
@@ -415,6 +419,7 @@ p {
   flex: none;
   width: 26px;
   font-family: var(--font-display);
+  font-weight: 400;
   font-size: 16px;
   color: var(--color-gold);
 }
@@ -549,6 +554,7 @@ p {
 .choice__title {
   display: block;
   font-family: var(--font-display);
+  font-weight: 400;
   font-size: 24px;
   margin-bottom: 8px;
 }
@@ -598,6 +604,7 @@ p {
 
 .toggle-row__price {
   font-family: var(--font-display);
+  font-weight: 400;
   font-size: 22px;
   white-space: nowrap;
 }

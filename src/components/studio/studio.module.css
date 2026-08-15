@@ -52,7 +52,7 @@
   font-size: 8.5px;
   letter-spacing: 0.3em;
   text-transform: uppercase;
-  color: var(--color-gold);
+  color: var(--color-gold-text);
   margin-top: 4px;
 }
 
@@ -149,7 +149,7 @@
   font-size: var(--text-micro);
   letter-spacing: 0.4em;
   text-transform: uppercase;
-  color: var(--color-gold);
+  color: var(--color-gold-text);
   margin-bottom: 12px;
 }
 
@@ -216,7 +216,7 @@
   font-size: 10px;
   letter-spacing: 0.24em;
   text-transform: uppercase;
-  color: var(--color-gold);
+  color: var(--color-gold-text);
   margin-bottom: 12px;
 }
 
@@ -311,7 +311,7 @@
   font-size: 10px;
   letter-spacing: 0.22em;
   text-transform: uppercase;
-  color: var(--color-gold);
+  color: var(--color-gold-text);
   white-space: nowrap;
 }
 
@@ -328,6 +328,7 @@
 
 .numeric {
   font-family: var(--font-display);
+  font-weight: 400;
   font-size: 17px;
 }
 
@@ -383,7 +384,7 @@
 }
 
 .columnOver {
-  border-color: var(--color-gold);
+  border-color: var(--color-gold-text);
   background: rgba(198, 169, 122, 0.18);
 }
 
@@ -401,11 +402,12 @@
   font-size: 10.5px;
   letter-spacing: 0.2em;
   text-transform: uppercase;
-  color: var(--color-gold);
+  color: var(--color-gold-text);
 }
 
 .columnMeta {
   font-family: var(--font-display);
+  font-weight: 400;
   font-size: 15px;
   color: var(--color-muted);
   white-space: nowrap;
@@ -476,6 +478,7 @@
 .leadValue {
   flex: none;
   font-family: var(--font-display);
+  font-weight: 400;
   font-size: 16px;
 }
 
@@ -676,6 +679,7 @@
 
 .blockMonth {
   font-family: var(--font-display);
+  font-weight: 400;
   font-size: 19px;
 }
 
@@ -777,7 +781,7 @@
   font-size: 12px;
   letter-spacing: 0.24em;
   text-transform: uppercase;
-  color: var(--color-gold);
+  color: var(--color-gold-text);
 }
 
 .reviewBody {

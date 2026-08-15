@@ -80,7 +80,7 @@
 }
 
 .thumbActive {
-  outline-color: var(--color-gold);
+  outline-color: var(--color-gold-text);
   outline-offset: 2px;
   opacity: 1;
 }

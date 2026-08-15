@@ -18,7 +18,7 @@
   font-size: 11px;
   letter-spacing: 0.3em;
   text-transform: uppercase;
-  color: var(--color-gold);
+  color: var(--color-gold-text);
   margin-bottom: 20px;
 }
 
@@ -42,6 +42,7 @@
 
 .participantsCount {
   font-family: var(--font-display);
+  font-weight: 400;
   font-size: 30px;
 }
 

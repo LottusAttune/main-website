@@ -174,6 +174,7 @@
 
 .proofFigure {
   font-family: var(--font-display);
+  font-weight: 400;
   font-size: clamp(19px, 2vw, 24px);
   line-height: 1;
   margin-bottom: 6px;
@@ -183,7 +184,7 @@
   font-size: 9px;
   letter-spacing: 0.24em;
   text-transform: uppercase;
-  color: var(--color-gold);
+  color: var(--color-gold-text);
 }
 
 /* ---------- Sections ---------- */
@@ -232,15 +233,14 @@
 
 .guidePortrait {
   position: relative;
-  height: clamp(300px, 42vw, 480px);
   border-radius: 28px;
   overflow: hidden;
 }
 
 .guidePortrait img {
   width: 100%;
-  height: 100%;
-  object-fit: cover;
+  height: auto;
+  display: block;
 }
 
 .guideQuote {
@@ -268,13 +268,15 @@
 
 .planN {
   font-family: var(--font-display);
+  font-weight: 400;
   font-size: 19px;
-  color: var(--color-gold);
+  color: var(--color-gold-text);
   margin-bottom: 12px;
 }
 
 .planTitle {
   font-family: var(--font-display);
+  font-weight: 400;
   font-size: 25px;
   margin: 0 0 12px;
 }
@@ -391,6 +393,7 @@
   background: linear-gradient(160deg, #f3e7d2, #e2cfb0);
   box-shadow: 0 0 0 1px rgba(168, 135, 90, 0.45);
   font-family: var(--font-display);
+  font-weight: 400;
   font-size: 20px;
   color: var(--color-gold-deep);
 }
@@ -407,7 +410,7 @@
   font-size: 11.5px;
   letter-spacing: 0.28em;
   text-transform: uppercase;
-  color: var(--color-gold);
+  color: var(--color-gold-text);
   margin-bottom: 4px;
 }
 

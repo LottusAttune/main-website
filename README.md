@@ -123,14 +123,23 @@ that was on screen there — so a note is traceable to a component rather than t
 a coordinate on a screenshot. Pins are re-anchored to their element on every
 load, so they stay correct at any window width.
 
-Notes are written to `localStorage` the instant they are typed and only then
-sent to the server. If the database is not connected, the network drops, or she
-closes the tab, nothing is lost: **Copy** always produces the full markdown
-brief. That brief is the artefact — paste it straight into Claude to make the
-changes.
+There is **no Send button**. A note is written to `localStorage` the instant it
+is typed and syncs to the server on its own, retrying on the next note and on
+every page load. The client never manages delivery and never sees a failure —
+if the server is unreachable the note simply goes up later.
 
-They arrive in **Studio → Client feedback**, grouped by page, with a *Copy as
-brief* button that does the same thing.
+Each note also records the section it sits in (`Choose your path`, `Before you
+arrive`), taken from the section's `aria-label`, its labelled heading, or the
+nearest heading above. That is what turns `div > a.btn` into a place a person
+can find.
+
+Notes arrive in **Studio → Client feedback**, grouped by page, with *Copy as
+brief* — one markdown document of every note with its page, section, on-screen
+text and element. That brief is the artefact: paste it straight into Claude and
+work through the whole round at once.
+
+**This path requires the Postgres store.** Without it the notes stay in her
+browser; a *Copy all notes* fallback lives inside the notes panel.
 
 The token is checked server-side and the endpoint fails closed: no
 `REVIEW_TOKEN` set means no writes are accepted at all.

@@ -4,11 +4,13 @@
  */
 
 export type ReviewNote = {
-  /** Client-side id, so a note can be edited or removed before it is sent. */
+  /** Client-side id, so a note can be de-duplicated when it syncs. */
   localId: string;
   path: string;
   selector: string;
   context: string;
+  /** Human name for the section the note sits in, e.g. "Choose your path". */
+  section: string;
   xPercent: number;
   yPercent: number;
   viewportW: number;
@@ -90,6 +92,34 @@ export function contextFor(el: Element): string {
   return text.slice(0, 120);
 }
 
+/**
+ * The nearest named region — the section's aria-label, its labelled heading, or
+ * the closest heading above it. This is what turns "div > a.btn" into
+ * "the Choose your path section", which is how a person describes a page.
+ */
+export function sectionFor(el: Element): string {
+  const section = el.closest('section, header, footer, aside, main');
+  if (!section) return '';
+
+  const label = section.getAttribute('aria-label');
+  if (label) return label;
+
+  const labelledBy = section.getAttribute('aria-labelledby');
+  if (labelledBy) {
+    const heading = document.getElementById(labelledBy);
+    if (heading?.textContent) {
+      return heading.textContent.replace(/\s+/g, ' ').trim().slice(0, 80);
+    }
+  }
+
+  const heading = section.querySelector('h1, h2, h3');
+  if (heading?.textContent) {
+    return heading.textContent.replace(/\s+/g, ' ').trim().slice(0, 80);
+  }
+
+  return section.tagName.toLowerCase();
+}
+
 /** Markdown export — this is what gets pasted back into the build. */
 export function notesToMarkdown(notes: ReviewNote[]): string {
   if (notes.length === 0) return 'No feedback yet.';
@@ -106,8 +136,9 @@ export function notesToMarkdown(notes: ReviewNote[]): string {
     lines.push(`## ${path}`, '');
     list.forEach((n, i) => {
       lines.push(`${i + 1}. ${n.note}`);
-      lines.push(`   - element: \`${n.selector}\``);
+      if (n.section) lines.push(`   - section: ${n.section}`);
       if (n.context) lines.push(`   - on screen: "${n.context}"`);
+      lines.push(`   - element: \`${n.selector}\``);
       lines.push('');
     });
   }

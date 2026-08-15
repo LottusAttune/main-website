@@ -131,6 +131,9 @@ CREATE TABLE IF NOT EXISTS feedback_notes (
   selector    TEXT NOT NULL,
   -- Text inside that element, which is usually the fastest way to find it.
   context     TEXT,
+  -- The named section it sits in, e.g. "Choose your path" — how a person
+  -- describes where something is on the page.
+  section     TEXT,
   -- Position within the element, 0-100, so the pin can be redrawn at any width.
   x_percent   NUMERIC(5,2) NOT NULL,
   y_percent   NUMERIC(5,2) NOT NULL,

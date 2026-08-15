@@ -18,6 +18,7 @@ const noteSchema = z.object({
   path: z.string().max(200),
   selector: z.string().max(500),
   context: z.string().max(300).optional().default(''),
+  section: z.string().max(160).optional().default(''),
   xPercent: z.coerce.number().min(-50).max(150),
   yPercent: z.coerce.number().min(-50).max(150),
   viewportW: z.coerce.number().int().min(0).max(10000).optional(),
@@ -78,9 +79,9 @@ export async function POST(request: Request) {
     for (const note of parsed.data.notes) {
       await sql`
         INSERT INTO feedback_notes
-          (path, selector, context, x_percent, y_percent, viewport_w, note, author)
+          (path, selector, context, section, x_percent, y_percent, viewport_w, note, author)
         VALUES (
-          ${note.path}, ${note.selector}, ${note.context ?? ''},
+          ${note.path}, ${note.selector}, ${note.context ?? ''}, ${note.section ?? ''},
           ${note.xPercent}, ${note.yPercent}, ${note.viewportW ?? null},
           ${note.note}, ${parsed.data.author ?? 'Client'}
         )

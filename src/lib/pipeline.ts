@@ -64,6 +64,7 @@ export type FeedbackNote = {
   path: string;
   selector: string;
   context: string;
+  section: string;
   note: string;
   status: string;
   createdAt: string;

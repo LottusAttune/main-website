@@ -125,6 +125,7 @@ export async function getStudioData(): Promise<StudioData> {
       path: String(row.path),
       selector: String(row.selector),
       context: row.context ? String(row.context) : '',
+      section: row.section ? String(row.section) : '',
       note: String(row.note),
       status: String(row.status),
       createdAt: new Date(String(row.created_at)).toISOString(),

@@ -32,8 +32,9 @@ export function Feedback({ notes }: { notes: FeedbackNote[] }) {
       lines.push(`## ${path}`, '');
       list.forEach((n, i) => {
         lines.push(`${i + 1}. ${n.note}`);
-        lines.push(`   - element: \`${n.selector}\``);
+        if (n.section) lines.push(`   - section: ${n.section}`);
         if (n.context) lines.push(`   - on screen: "${n.context}"`);
+        lines.push(`   - element: \`${n.selector}\``);
         lines.push('');
       });
     }
@@ -94,6 +95,11 @@ export function Feedback({ notes }: { notes: FeedbackNote[] }) {
                       </span>
                     </div>
                     <p className={styles.reviewBody}>{note.note}</p>
+                    {note.section ? (
+                      <p className={styles.priceNote} style={{ marginBottom: 4 }}>
+                        Section: {note.section}
+                      </p>
+                    ) : null}
                     {note.context ? (
                       <p className={styles.priceNote} style={{ marginBottom: 8 }}>
                         On screen: “{note.context}”

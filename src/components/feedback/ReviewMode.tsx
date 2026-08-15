@@ -10,6 +10,7 @@ import {
   contextFor,
   cssPathFor,
   notesToMarkdown,
+  sectionFor,
   type ReviewNote,
 } from '@/lib/review-mode';
 import styles from './ReviewMode.module.css';
@@ -17,6 +18,7 @@ import styles from './ReviewMode.module.css';
 type Pending = {
   selector: string;
   context: string;
+  section: string;
   xPercent: number;
   yPercent: number;
   pageX: number;
@@ -132,6 +134,7 @@ export function ReviewMode() {
       setPending({
         selector: cssPathFor(target),
         context: contextFor(target),
+        section: sectionFor(target),
         xPercent: rect.width
           ? Math.round(((e.clientX - rect.left) / rect.width) * 1000) / 10
           : 50,
@@ -201,6 +204,7 @@ export function ReviewMode() {
       path: pathname,
       selector: pending.selector,
       context: pending.context,
+      section: pending.section,
       xPercent: pending.xPercent,
       yPercent: pending.yPercent,
       viewportW: window.innerWidth,
@@ -211,53 +215,63 @@ export function ReviewMode() {
     persist([...notes, note]);
     setPending(null);
     setDraft('');
-    setStatus('Saved. Keep going, then press Send when you are done.');
+    setStatus('Note saved.');
   };
 
-  const send = async () => {
-    const unsent = notes.filter((n) => !n.sent);
-    if (unsent.length === 0) {
-      setStatus('Everything has been sent already.');
-      return;
-    }
-    setStatus('Sending…');
-    try {
-      const response = await fetch('/api/feedback', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ token, notes: unsent }),
-      });
-      if (!response.ok) {
-        const body = (await response.json().catch(() => null)) as {
-          error?: string;
-        } | null;
-        throw new Error(body?.error ?? 'Could not send.');
+  /**
+   * Notes sync themselves.
+   *
+   * There is no Send button: the client leaves a note and moves on. Anything
+   * that has not reached the server is retried on the next note and on every
+   * page load, quietly, with no state for her to manage or misread. Failures
+   * are invisible to her — the note is already safe in localStorage and will
+   * go up on a later attempt.
+   */
+  const syncing = useRef(false);
+
+  const flush = useCallback(
+    async (current: ReviewNote[], activeToken: string) => {
+      if (syncing.current || !activeToken) return;
+      const unsent = current.filter((n) => !n.sent);
+      if (unsent.length === 0) return;
+
+      syncing.current = true;
+      try {
+        const response = await fetch('/api/feedback', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ token: activeToken, notes: unsent }),
+        });
+        if (!response.ok) return;
+        const sentIds = new Set(unsent.map((n) => n.localId));
+        persist(
+          current.map((n) => (sentIds.has(n.localId) ? { ...n, sent: true } : n))
+        );
+      } catch {
+        // Offline or unreachable. The next note or the next page load retries.
+      } finally {
+        syncing.current = false;
       }
-      const sentIds = new Set(unsent.map((n) => n.localId));
-      persist(
-        notes.map((n) => (sentIds.has(n.localId) ? { ...n, sent: true } : n))
-      );
-      setStatus(`Sent ${unsent.length} note${unsent.length === 1 ? '' : 's'}. Thank you.`);
-    } catch (error) {
-      setStatus(
-        `${error instanceof Error ? error.message : 'Could not send.'} Your notes are safe — press Copy and paste them to Nevin.`
-      );
-    }
-  };
+    },
+    [persist]
+  );
+
+  useEffect(() => {
+    if (!active || !token) return;
+    void flush(notes, token);
+  }, [active, token, notes, flush]);
 
   const copy = async () => {
-    const markdown = notesToMarkdown(notes);
     try {
-      await navigator.clipboard.writeText(markdown);
+      await navigator.clipboard.writeText(notesToMarkdown(notes));
       setStatus('Copied. Paste it into an email or WhatsApp.');
     } catch {
-      setStatus('Could not copy automatically — select the list and copy it.');
+      setStatus('Open “My notes” below and copy the list from there.');
     }
   };
 
   if (!active) return null;
 
-  const unsentCount = notes.filter((n) => !n.sent).length;
   const onThisPage = notes.filter((n) => n.path === pathname);
 
   return (
@@ -344,6 +358,16 @@ export function ReviewMode() {
           <div className={styles.listTitle}>
             Your notes ({notes.length})
           </div>
+          {notes.length > 0 ? (
+            <button
+              type="button"
+              className={styles.listRemove}
+              style={{ color: 'var(--color-gold-text)', marginBottom: 10 }}
+              onClick={copy}
+            >
+              Copy all notes
+            </button>
+          ) : null}
           {notes.length === 0 ? (
             <p className={styles.empty}>
               Nothing yet. Press “Add a note”, then click anything on the page.
@@ -388,22 +412,6 @@ export function ReviewMode() {
           onClick={() => setShowList((v) => !v)}
         >
           {showList ? 'Hide list' : 'My notes'}
-        </button>
-        <button
-          type="button"
-          className={styles.barBtn}
-          disabled={notes.length === 0}
-          onClick={copy}
-        >
-          Copy
-        </button>
-        <button
-          type="button"
-          className={`${styles.barBtn} ${styles.barBtnPrimary}`}
-          disabled={unsentCount === 0}
-          onClick={send}
-        >
-          Send{unsentCount > 0 ? ` (${unsentCount})` : ''}
         </button>
         {status ? <span className={styles.status}>{status}</span> : null}
       </div>

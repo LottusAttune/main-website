@@ -1,13 +1,15 @@
 /**
- * Applies db/schema.sql to the linked Postgres store.
+ * Applies db/schema.sql to the connected Supabase database.
  *
- * Local:  vercel env pull .env.local   then   npm run db:migrate
+ * Usually unnecessary — pasting the file into Supabase's SQL Editor does the
+ * same thing. This exists so the migration can be re-run from a terminal.
+ *
+ *   POSTGRES_URL="postgres://…" npm run db:migrate
+ *
  * The schema is idempotent, so re-running it is safe.
  */
 import { readFile } from 'node:fs/promises';
-import { createRequire } from 'node:module';
-
-const require = createRequire(import.meta.url);
+import postgres from 'postgres';
 
 async function main() {
   // Load .env.local without adding a dependency.
@@ -21,30 +23,28 @@ async function main() {
     // No .env.local — fall back to whatever is already in the environment.
   }
 
-  if (!process.env.POSTGRES_URL) {
+  const url = process.env.POSTGRES_URL || process.env.DATABASE_URL;
+  if (!url) {
     console.error(
-      'POSTGRES_URL is not set.\n' +
-        'Link a Postgres store in the Vercel dashboard, then run:\n' +
-        '  vercel env pull .env.local'
+      'No connection string found.\n' +
+        'Set POSTGRES_URL to the Supabase connection string (Project Settings →\n' +
+        'Database → Connection string → Transaction pooler), or paste\n' +
+        'db/schema.sql into the Supabase SQL Editor instead.'
     );
     process.exitCode = 1;
     return;
   }
 
-  const { sql } = require('@vercel/postgres');
-  const schema = await readFile('db/schema.sql', 'utf8');
+  const sql = postgres(url, { prepare: false, max: 1 });
 
-  // Split on statement boundaries, ignoring comment-only chunks.
-  const statements = schema
-    .split(/;\s*$/m)
-    .map((s) => s.trim())
-    .filter((s) => s.length > 0 && !s.split('\n').every((l) => l.trim().startsWith('--')));
-
-  for (const statement of statements) {
-    await sql.query(statement);
+  try {
+    const schema = await readFile('db/schema.sql', 'utf8');
+    // The whole file runs as one script, so statements stay in order.
+    await sql.unsafe(schema);
+    console.log('Applied db/schema.sql');
+  } finally {
+    await sql.end();
   }
-
-  console.log(`Applied ${statements.length} statements from db/schema.sql`);
 }
 
 main().catch((error) => {

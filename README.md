@@ -3,7 +3,7 @@
 Marketing site, ad landing page and studio dashboard for Lotus Attune — a
 two-hour guided sound-and-somatic experience in downtown Toronto.
 
-Next.js 15 (App Router) · TypeScript · Vercel Postgres · deployed on Vercel.
+Next.js 15 (App Router) · TypeScript · Supabase Postgres · deployed on Vercel.
 
 ---
 
@@ -32,16 +32,19 @@ rather than silently dropped. Everything below is what turns it live.
 
 ## Going live
 
-### 1. Add a Postgres store
+### 1. Create the Supabase database
 
-Vercel no longer offers a first-party Postgres. In the dashboard go to
-**Storage → Create Database → Neon** and connect it to this project — Neon is
-what Vercel Postgres became, and `@vercel/postgres` speaks its protocol.
+Create a project at [supabase.com](https://supabase.com), then open the **SQL
+Editor** and run `db/schema.sql`. It is idempotent — re-running it is safe.
 
-The integration writes the connection string as `DATABASE_URL`, and on some
-versions `POSTGRES_URL` as well. `lib/db.ts` accepts either.
+Take the connection string from **Project Settings → Database → Connection
+string → Transaction pooler** (port 6543) and set it as `POSTGRES_URL` in the
+Vercel project. The transaction pooler matters: serverless functions open a lot
+of short connections, and the pooler is what stops them exhausting the database
+connection limit.
 
-Do not pick Supabase from that list: the client ruled it out.
+The driver is [postgres.js](https://github.com/porsager/postgres) with
+`prepare: false`, which the transaction pooler requires.
 
 Then apply the schema. Either paste `db/schema.sql` into the store's Query tab,
 or run it locally:
@@ -61,7 +64,7 @@ The schema is idempotent — re-running it is safe.
 | `STUDIO_PASSWORD` | Gates `/studio`. |
 | `SESSION_SECRET` | Signs the studio session cookie. `openssl rand -base64 32` |
 | `REVIEW_TOKEN` | Enables client review mode. Any hard-to-guess string. |
-| `DATABASE_URL` / `POSTGRES_URL` | Set for you when the Neon store is connected. |
+| `POSTGRES_URL` | Supabase transaction-pooler connection string. |
 
 See `.env.example`. Without `STUDIO_PASSWORD` and `SESSION_SECRET` the studio
 refuses all access rather than opening it — it fails closed.

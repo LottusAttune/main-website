@@ -47,9 +47,9 @@ const FALLBACK: SiteSettings = {
   ],
 };
 
-function toIsoDay(value: string | Date): string {
-  if (typeof value === 'string') return value.slice(0, 10);
-  return value.toISOString().slice(0, 10);
+function toIsoDay(value: unknown): string {
+  if (value instanceof Date) return value.toISOString().slice(0, 10);
+  return String(value).slice(0, 10);
 }
 
 /**

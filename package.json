@@ -12,8 +12,8 @@
     "db:migrate": "node scripts/migrate.mjs"
   },
   "dependencies": {
-    "@vercel/postgres": "^0.10.0",
     "next": "^15.5.4",
+    "postgres": "^3.4.9",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
     "server-only": "^0.0.1",

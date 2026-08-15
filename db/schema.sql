@@ -1,7 +1,7 @@
--- Lotus Attune — Vercel Postgres schema.
+-- Lotus Attune — Postgres schema (Supabase).
 --
--- Apply with:  npm run db:migrate
--- (or paste into the Query tab of the Postgres store in the Vercel dashboard)
+-- Paste this whole file into the Supabase SQL Editor and run it once.
+-- (or, from a terminal: npm run db:migrate)
 --
 -- Everything the studio dashboard writes and the public site reads lives here.
 -- The prototype kept this in localStorage, which cannot work: a booking made on

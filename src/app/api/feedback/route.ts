@@ -79,9 +79,9 @@ export async function POST(request: Request) {
     for (const note of parsed.data.notes) {
       await sql`
         INSERT INTO feedback_notes
-          (path, selector, context, section, x_percent, y_percent, viewport_w, note, author)
+          (client_id, path, selector, context, section, x_percent, y_percent, viewport_w, note, author)
         VALUES (
-          ${note.path}, ${note.selector}, ${note.context ?? ''}, ${note.section ?? ''},
+          ${note.localId}, ${note.path}, ${note.selector}, ${note.context ?? ''}, ${note.section ?? ''},
           ${note.xPercent}, ${note.yPercent}, ${note.viewportW ?? null},
           ${note.note}, ${parsed.data.author ?? 'Client'}
         )
@@ -91,5 +91,59 @@ export async function POST(request: Request) {
   } catch (error) {
     console.error('[feedback] insert failed:', error);
     return NextResponse.json({ error: 'We could not save your notes.' }, { status: 500 });
+  }
+}
+
+/**
+ * Returns previously saved notes so review mode can rebuild its pins in a
+ * fresh browser, tab or device — without this, notes only ever existed in
+ * whichever browser wrote them, even though they were safely in the database
+ * the whole time.
+ */
+export async function GET(request: Request) {
+  const expected = process.env.REVIEW_TOKEN;
+  if (!expected) {
+    return NextResponse.json(
+      { error: 'Review mode is not enabled on this deployment.' },
+      { status: 503 }
+    );
+  }
+
+  const token = new URL(request.url).searchParams.get('token') ?? '';
+  if (!safeEqual(token, expected)) {
+    return NextResponse.json({ error: 'This review link is not valid.' }, { status: 401 });
+  }
+
+  if (!isDatabaseConfigured()) {
+    return NextResponse.json({ notes: [] });
+  }
+
+  try {
+    const { rows } = await sql`
+      SELECT id, client_id, path, selector, context, section,
+             x_percent, y_percent, viewport_w, note, status, created_at
+      FROM feedback_notes
+      WHERE status = 'open'
+      ORDER BY created_at ASC
+    `;
+
+    const notes = rows.map((row) => ({
+      localId: (row.client_id as string | null) ?? `server-${row.id}`,
+      path: row.path,
+      selector: row.selector,
+      context: row.context ?? '',
+      section: row.section ?? '',
+      xPercent: Number(row.x_percent),
+      yPercent: Number(row.y_percent),
+      viewportW: row.viewport_w ?? undefined,
+      note: row.note,
+      createdAt: new Date(row.created_at as string).toISOString(),
+      sent: true,
+    }));
+
+    return NextResponse.json({ notes });
+  } catch (error) {
+    console.error('[feedback] fetch failed:', error);
+    return NextResponse.json({ error: 'We could not load saved notes.' }, { status: 500 });
   }
 }

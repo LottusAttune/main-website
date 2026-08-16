@@ -124,6 +124,9 @@ CREATE TABLE IF NOT EXISTS contact_messages (
 -- ---------------------------------------------------------------------------
 CREATE TABLE IF NOT EXISTS feedback_notes (
   id          UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  -- The browser-generated id the note was created with, so a client re-fetching
+  -- its own notes (a new tab, a new device) can tell which rows it already has.
+  client_id   TEXT,
   -- Where on the site.
   path        TEXT NOT NULL,
   -- CSS path to the element that was clicked, so the note can be traced back
@@ -143,5 +146,8 @@ CREATE TABLE IF NOT EXISTS feedback_notes (
   status      TEXT NOT NULL DEFAULT 'open',
   created_at  TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
+
+-- Idempotent for installs that created this table before client_id existed.
+ALTER TABLE feedback_notes ADD COLUMN IF NOT EXISTS client_id TEXT;
 
 CREATE INDEX IF NOT EXISTS feedback_status_idx ON feedback_notes (status, created_at DESC);

@@ -239,6 +239,19 @@
   margin-bottom: 14px;
 }
 
+.listSection {
+  margin: 16px 0 4px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-ink-strong);
+}
+
+.listSection:first-of-type {
+  margin-top: 0;
+}
+
 .listItem {
   padding: 12px 0;
   border-top: 1px solid var(--hairline-light-soft);
@@ -256,6 +269,25 @@
   margin-top: 4px;
   font-size: 11.5px;
   color: var(--color-faint);
+}
+
+.savedTag,
+.pendingTag {
+  display: inline-block;
+  margin-top: 6px;
+  margin-right: 10px;
+  font-size: 10.5px;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.savedTag {
+  color: var(--status-success);
+}
+
+.pendingTag {
+  color: var(--status-pending);
 }
 
 .listRemove {

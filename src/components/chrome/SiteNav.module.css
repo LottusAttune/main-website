@@ -11,6 +11,11 @@
   backdrop-filter: blur(18px);
 }
 
+.wrapPlain {
+  background: var(--color-cream-raised);
+  backdrop-filter: none;
+}
+
 .pill {
   display: flex;
   align-items: center;
@@ -30,7 +35,10 @@
 }
 
 .pillNoOutline {
+  background: none;
   border-color: transparent;
+  border-radius: 0;
+  box-shadow: none;
 }
 
 .brand {

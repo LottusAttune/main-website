@@ -35,7 +35,7 @@ export function SiteNav({ basePath = '' }: Props) {
   const logo = asset('logo-circle');
 
   return (
-    <header className={styles.wrap}>
+    <header className={`${styles.wrap} ${basePath ? styles.wrapPlain : ''}`}>
       <div className={`${styles.pill} ${basePath ? styles.pillNoOutline : ''}`}>
         <Link
           href={basePath || '/'}

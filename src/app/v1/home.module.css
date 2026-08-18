@@ -30,11 +30,12 @@
   margin-bottom: 6px;
 }
 
-/* Cormorant's numeral 1 carries a full top-and-base serif that reads as a
-   capital I at this size, so figures containing a digit borrow the sans
-   body font instead. Non-numeric figures (e.g. "Toronto") keep the serif. */
+/* Cormorant's upright numeral 1 has a full top-and-base serif that reads as
+   a capital I at this size; the italic 1 has the usual angled flag instead,
+   so figures with a digit borrow that style. Non-numeric figures (e.g.
+   "Toronto") stay upright. */
 .trustFigureNumeric {
-  font-family: var(--font-body);
+  font-style: italic;
 }
 
 .trustLabel {

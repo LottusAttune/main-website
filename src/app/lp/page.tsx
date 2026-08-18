@@ -93,7 +93,7 @@ export default async function LandingPage({
               alt=""
               fill
               priority
-              sizes="100vw"
+              sizes="(max-width: 1100px) 200vw, 120vw"
               quality={90}
             />
           </div>

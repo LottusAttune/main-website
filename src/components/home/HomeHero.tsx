@@ -63,7 +63,7 @@ export function HomeHero() {
           alt=""
           fill
           priority
-          sizes="100vw"
+          sizes="(max-width: 1100px) 220vw, 130vw"
           quality={90}
         />
       </div>

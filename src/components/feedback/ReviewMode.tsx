@@ -89,6 +89,30 @@ export function ReviewMode() {
     setToken(value);
     setActive(true);
     setNotes(loadNotes());
+
+    // A fresh tab, browser or device has no local history, but the notes are
+    // already safe in the database — pull them in so pins reappear anywhere.
+    fetch(`/api/feedback?token=${encodeURIComponent(value)}`)
+      .then((res) => (res.ok ? (res.json() as Promise<{ notes?: ReviewNote[] }>) : null))
+      .then((data) => {
+        if (!data?.notes?.length) return;
+        setNotes((current) => {
+          const byId = new Map(current.map((n) => [n.localId, n] as const));
+          for (const serverNote of data.notes!) {
+            byId.set(serverNote.localId, { ...byId.get(serverNote.localId), ...serverNote });
+          }
+          const merged = Array.from(byId.values());
+          try {
+            localStorage.setItem(REVIEW_STORAGE_KEY, JSON.stringify(merged));
+          } catch {
+            // Private browsing with storage disabled — merged state still works this session.
+          }
+          return merged;
+        });
+      })
+      .catch(() => {
+        // Offline or unreachable — whatever was already local still works.
+      });
   }, [searchParams]);
 
   const persist = useCallback((next: ReviewNote[]) => {
@@ -361,6 +385,19 @@ export function ReviewMode() {
 
   const onThisPage = notes.filter((n) => n.path === pathname);
 
+  // Grouped by section rather than page — most of a note's context comes from
+  // where in the page it sits, and one site has far more sections than pages.
+  const grouped: [string, ReviewNote[]][] = [];
+  const groupIndex = new Map<string, number>();
+  for (const note of notes) {
+    const key = note.section || 'General';
+    if (!groupIndex.has(key)) {
+      groupIndex.set(key, grouped.length);
+      grouped.push([key, []]);
+    }
+    grouped[groupIndex.get(key)!][1].push(note);
+  }
+
   return (
     <>
       <div data-review-ui className={`${styles.frame} ${picking ? styles.picking : ''}`} />
@@ -443,7 +480,7 @@ export function ReviewMode() {
       {showList ? (
         <div data-review-ui className={styles.list}>
           <div className={styles.listTitle}>
-            Your notes ({notes.length})
+            Notes ({notes.length})
           </div>
           {notes.length > 0 ? (
             <button
@@ -460,63 +497,71 @@ export function ReviewMode() {
               Nothing yet. Press “Add a note”, then click anything on the page.
             </p>
           ) : (
-            notes.map((note, i) => (
-              <div key={note.localId} className={styles.listItem}>
-                {editing === note.localId ? (
-                  <>
-                    <textarea
-                      className={styles.editInput}
-                      value={editDraft}
-                      autoFocus
-                      onChange={(e) => setEditDraft(e.target.value)}
-                      onKeyDown={(e) => {
-                        if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) commitEdit();
-                        if (e.key === 'Escape') setEditing(null);
-                      }}
-                    />
-                    <div className={styles.listActions}>
-                      <button
-                        type="button"
-                        className={styles.listAction}
-                        disabled={!editDraft.trim()}
-                        onClick={commitEdit}
-                      >
-                        Save
-                      </button>
-                      <button
-                        type="button"
-                        className={styles.listAction}
-                        onClick={() => setEditing(null)}
-                      >
-                        Cancel
-                      </button>
-                    </div>
-                  </>
-                ) : (
-                  <>
-                    {i + 1}. {note.note}
-                    <span className={styles.listMeta}>
-                      {note.section || note.path}
-                      {note.context ? ` · “${note.context.slice(0, 44)}”` : ''}
-                    </span>
-                    <div className={styles.listActions}>
-                      <button
-                        type="button"
-                        className={styles.listAction}
-                        onClick={() => startEdit(note)}
-                      >
-                        Edit
-                      </button>
-                      <button
-                        type="button"
-                        className={styles.listRemove}
-                        onClick={() => void removeNote(note)}
-                      >
-                        Remove
-                      </button>
-                    </div>
-                  </>
-                )}
+            grouped.map(([section, group]) => (
+              <div key={section}>
+                <div className={styles.listSection}>{section}</div>
+                {group.map((note, i) => (
+                  <div key={note.localId} className={styles.listItem}>
+                    {editing === note.localId ? (
+                      <>
+                        <textarea
+                          className={styles.editInput}
+                          value={editDraft}
+                          autoFocus
+                          onChange={(e) => setEditDraft(e.target.value)}
+                          onKeyDown={(e) => {
+                            if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) commitEdit();
+                            if (e.key === 'Escape') setEditing(null);
+                          }}
+                        />
+                        <div className={styles.listActions}>
+                          <button
+                            type="button"
+                            className={styles.listAction}
+                            disabled={!editDraft.trim()}
+                            onClick={commitEdit}
+                          >
+                            Save
+                          </button>
+                          <button
+                            type="button"
+                            className={styles.listAction}
+                            onClick={() => setEditing(null)}
+                          >
+                            Cancel
+                          </button>
+                        </div>
+                      </>
+                    ) : (
+                      <>
+                        {i + 1}. {note.note}
+                        <span className={styles.listMeta}>
+                          {note.path}
+                          {note.context ? ` · “${note.context.slice(0, 44)}”` : ''}
+                        </span>
+                        <span className={note.sent ? styles.savedTag : styles.pendingTag}>
+                          {note.sent ? 'Saved' : 'Saving…'}
+                        </span>
+                        <div className={styles.listActions}>
+                          <button
+                            type="button"
+                            className={styles.listAction}
+                            onClick={() => startEdit(note)}
+                          >
+                            Edit
+                          </button>
+                          <button
+                            type="button"
+                            className={styles.listRemove}
+                            onClick={() => void removeNote(note)}
+                          >
+                            Remove
+                          </button>
+                        </div>
+                      </>
+                    )}
+                  </div>
+                ))}
               </div>
             ))
           )}

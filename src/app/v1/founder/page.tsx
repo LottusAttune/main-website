@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import Image from 'next/image';
 
 import { Accordion } from '@/components/common/Accordion';
+import accordionStyles from '@/components/common/Accordion.module.css';
 import { Reveal } from '@/components/common/Reveal';
 import { SiteFooter } from '@/components/chrome/SiteFooter';
 import { SiteNav } from '@/components/chrome/SiteNav';
@@ -76,16 +77,14 @@ export default function FounderPage() {
             >
               Education &amp; Professional Credentials
             </div>
-            <p className={styles.groupNote}>Select a section to expand.</p>
             <div className={styles.group}>
-              <Accordion
-                items={CREDENTIALS.map((c) => ({
-                  title: c.title,
-                  items: c.items,
-                }))}
-                tone="dark"
-                showCounts
-              />
+              <div className={accordionStyles.bullets}>
+                {CREDENTIALS[0].items.map((entry) => (
+                  <div key={entry} className={accordionStyles.bullet}>
+                    <span>{entry}</span>
+                  </div>
+                ))}
+              </div>
             </div>
 
             <div className={`eyebrow eyebrow--dark ${styles.groupTitle}`}>

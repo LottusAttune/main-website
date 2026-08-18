@@ -14,7 +14,7 @@ export const HERO = {
 } as const;
 
 export const TRUST = [
-  { figure: '15+', label: 'Years in HR' },
+  { figure: '10+', label: 'Years in wellness and restorative practices' },
   { figure: '2 hrs', label: 'Fully guided' },
   { figure: '1–24', label: 'Participants' },
   { figure: 'Toronto', label: 'Premium venue' },

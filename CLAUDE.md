@@ -100,6 +100,7 @@ src/app/                  pages (App Router)
   offerings/              Offerings
   book/  gift/            booking and gift request forms
   lp/                     ad landing page (noindex)
+  v1/                     earlier design, kept as a reference (noindex)
   studio/                 owner dashboard (password-gated)
   api/                    route handlers
 
@@ -115,6 +116,10 @@ public/assets/            optimised WebP (generated — do not hand-edit)
 
 **Copy changes almost always mean editing `src/data/silvana.ts`,** not the page
 files. The pages read from it.
+
+`/v1` is a frozen copy of an earlier design, kept only so the two can be
+compared. Do not spend effort on it, and do not let changes to the live pages
+drag it along — if it ever gets in the way, delete it.
 
 ---
 

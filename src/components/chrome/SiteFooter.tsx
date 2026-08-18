@@ -10,7 +10,12 @@ const SPECS = [
   { label: 'Booking notice', value: '5 days' },
 ];
 
-export function SiteFooter() {
+type Props = {
+  /** Prefix for the Explore links, so the /v1 backup stays inside itself. */
+  basePath?: string;
+};
+
+export function SiteFooter({ basePath = '' }: Props) {
   return (
     <footer className={styles.footer}>
       <div className={styles.glow} />
@@ -63,7 +68,10 @@ export function SiteFooter() {
             <div className={styles.cellTitle}>Explore</div>
             <div className={styles.stack}>
               {NAV_LINKS.map((link) => (
-                <Link key={link.href} href={link.href}>
+                <Link
+                  key={link.href}
+                  href={link.href === '/' ? basePath || '/' : `${basePath}${link.href}`}
+                >
                   {link.label}
                 </Link>
               ))}

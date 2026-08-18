@@ -9,7 +9,13 @@ import { asset } from '@/lib/images';
 import { NAV_LINKS, SITE } from '@/lib/site';
 import styles from './SiteNav.module.css';
 
-export function SiteNav() {
+type Props = {
+  /** Prefix for the nav links. The /v1 backup passes "/v1" so it stays inside
+   *  itself rather than sending the reader to the live site. */
+  basePath?: string;
+};
+
+export function SiteNav({ basePath = '' }: Props) {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
 
@@ -31,7 +37,11 @@ export function SiteNav() {
   return (
     <header className={styles.wrap}>
       <div className={styles.pill}>
-        <Link href="/" className={styles.brand} aria-label={`${SITE.name} home`}>
+        <Link
+          href={basePath || '/'}
+          className={styles.brand}
+          aria-label={`${SITE.name} home`}
+        >
           <Image
             src={logo.src}
             alt=""
@@ -48,11 +58,12 @@ export function SiteNav() {
 
         <nav className={styles.links} aria-label="Main navigation">
           {NAV_LINKS.map((link) => {
-            const active = pathname === link.href;
+            const href = link.href === '/' ? basePath || '/' : `${basePath}${link.href}`;
+            const active = pathname === href;
             return (
               <Link
                 key={link.href}
-                href={link.href}
+                href={href}
                 aria-current={active ? 'page' : undefined}
                 className={`${styles.link} ${active ? styles.linkActive : ''}`}
               >
@@ -89,7 +100,11 @@ export function SiteNav() {
         <div id="nav-panel" className={styles.panel}>
           <div className={styles.panelList}>
             {NAV_LINKS.map((link) => (
-              <Link key={link.href} href={link.href} className={styles.panelLink}>
+              <Link
+                key={link.href}
+                href={link.href === '/' ? basePath || '/' : `${basePath}${link.href}`}
+                className={styles.panelLink}
+              >
                 {link.label}
               </Link>
             ))}

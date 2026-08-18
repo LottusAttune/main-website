@@ -1,0 +1,229 @@
+.intro {
+  padding: var(--space-section-short) var(--space-gutter) clamp(40px, 5vw, 72px);
+  max-width: var(--width-content);
+  margin: 0 auto;
+}
+
+.introEyebrow {
+  margin-bottom: 30px;
+}
+
+.title {
+  margin: 0 0 18px;
+  max-width: 1000px;
+}
+
+.subtitle {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: clamp(20px, 2.4vw, 26px);
+  color: var(--color-gold-text);
+  margin-bottom: 46px;
+}
+
+.introGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+  gap: clamp(28px, 4vw, 52px);
+  max-width: var(--width-prose);
+}
+
+.block {
+  padding: 0 var(--space-gutter) clamp(56px, 7vw, 100px);
+  max-width: var(--width-content);
+  margin: 0 auto;
+}
+
+/* ---------- Five components ---------- */
+
+.componentRow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 16px clamp(20px, 3vw, 40px);
+  padding: clamp(26px, 3vw, 38px) 0;
+  border-top: 1px solid rgba(59, 46, 36, 0.16);
+}
+
+.componentIcon {
+  display: block;
+  flex: none;
+  width: 92px;
+  height: 92px;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+  mix-blend-mode: multiply;
+}
+
+.componentNumber {
+  flex: none;
+  width: 32px;
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: 19px;
+  color: var(--color-gold-text);
+}
+
+.componentTitle {
+  font-family: var(--font-display);
+  font-weight: 300;
+  font-size: var(--text-h3);
+  margin: 0;
+  flex: 1 1 240px;
+  min-width: 0;
+}
+
+.componentBody {
+  margin: 0;
+  font-size: 16.5px;
+  line-height: 1.85;
+  color: var(--color-ink-body);
+  flex: 2 1 340px;
+  min-width: 0;
+}
+
+.featurePair {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 20px;
+  margin-top: clamp(40px, 5vw, 70px);
+}
+
+/* 16:9 matches the wide session photo exactly, so it is never cropped. */
+.featureImage {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  border-radius: var(--radius-card);
+  overflow: hidden;
+}
+
+.featureImage img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 40%;
+}
+
+/* ---------- Benefits ---------- */
+
+.sectionHead {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 32px;
+  flex-wrap: wrap;
+  padding-bottom: 26px;
+  border-bottom: 1px solid rgba(59, 46, 36, 0.18);
+  margin-bottom: 34px;
+}
+
+.sectionHeadDark {
+  border-bottom-color: var(--hairline-dark-strong);
+}
+
+.sectionHeadTitle {
+  margin: 0;
+  font-size: clamp(30px, 3.8vw, 54px);
+  line-height: 1.1;
+}
+
+.sectionHeadNote {
+  margin: 0;
+  max-width: 460px;
+  font-size: 16.5px;
+  line-height: 1.8;
+  color: var(--color-ink-body);
+}
+
+.sectionHeadNoteDark {
+  color: rgba(239, 230, 218, 0.76);
+}
+
+.benefitTag {
+  margin-bottom: 18px;
+}
+
+.benefitCard {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.benefitPhoto {
+  position: relative;
+  aspect-ratio: 4 / 5;
+}
+
+.benefitPhoto img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  /* Faces sit above centre in the people photos. */
+  object-position: center 35%;
+}
+
+.benefitCaption {
+  padding: 26px 24px 30px;
+  font-size: 16px;
+  line-height: 1.75;
+  color: var(--color-ink-strong);
+  text-wrap: pretty;
+}
+
+.benefitCaptionDark {
+  color: rgba(239, 230, 218, 0.88);
+}
+
+/* ---------- Gallery block ---------- */
+
+.galleryBlock {
+  padding: var(--space-section-short) var(--space-gutter) clamp(36px, 4vw, 60px);
+  max-width: var(--width-content);
+  margin: 0 auto;
+}
+
+.galleryHead {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 32px;
+  flex-wrap: wrap;
+  margin-bottom: 34px;
+}
+
+.galleryHeading {
+  margin: 0;
+  font-size: clamp(30px, 3.8vw, 54px);
+  line-height: 1.14;
+  max-width: 20ch;
+}
+
+/* ---------- Closer ---------- */
+
+.closer {
+  text-align: center;
+}
+
+.closerInner {
+  max-width: 840px;
+  margin: 0 auto;
+}
+
+.closerHeading {
+  font-family: var(--font-display);
+  font-weight: 300;
+  font-size: clamp(30px, 4vw, 58px);
+  line-height: 1.14;
+  margin: 0 0 22px;
+  color: var(--color-cream-text);
+}
+
+.closerBody {
+  margin: 0 auto 36px;
+  max-width: 560px;
+  font-size: var(--text-body);
+  line-height: 1.8;
+  color: rgba(239, 230, 218, 0.76);
+}

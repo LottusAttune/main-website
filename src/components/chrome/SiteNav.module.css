@@ -29,6 +29,10 @@
   box-shadow: 0 20px 46px -34px rgba(59, 46, 36, 0.7);
 }
 
+.pillNoOutline {
+  border-color: transparent;
+}
+
 .brand {
   display: flex;
   align-items: center;

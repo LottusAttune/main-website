@@ -405,3 +405,23 @@
   font-size: 11px;
   letter-spacing: 0.22em;
 }
+
+/* ---------- Mobile guards ----------
+   This version predates the responsive pass done on the live design. The hero
+   image is scaled 1.14 for the parallax, which leaked a few pixels past the
+   viewport on a phone, and several inline links sat under the 44px tap
+   minimum. */
+@media (max-width: 760px) {
+  .trustGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .pathActions a,
+  .faqCardActions a {
+    min-height: 48px;
+  }
+
+  .callRisk {
+    font-size: 12px;
+  }
+}

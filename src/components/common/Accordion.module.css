@@ -84,10 +84,10 @@
 .bullets {
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  padding: 6px 0 30px;
+  gap: 8px;
+  padding: 6px 0 22px;
   font-size: var(--text-body-sm);
-  line-height: 1.7;
+  line-height: 1.4;
   color: rgba(239, 230, 218, 0.78);
   max-width: 78ch;
 }

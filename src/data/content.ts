@@ -10,7 +10,7 @@ export const HERO = {
   eyebrow: 'Immersive Soma Sound',
   headline: 'The Lotus Attune Experience',
   positioning:
-    'An immersive wellness experience designed to support relaxation, nervous system regulation and deep inner connection',
+    'An immersive wellness experience in Toronto designed to support relaxation, nervous system regulation and deep inner connection',
 } as const;
 
 export const TRUST = [

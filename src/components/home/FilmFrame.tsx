@@ -45,7 +45,6 @@ function embedUrl(id: string): string {
 export function FilmFrame() {
   const [portrait, setPortrait] = useState(false);
   const [soundOn, setSoundOn] = useState(false);
-  const [playerReady, setPlayerReady] = useState(false);
   const frameRef = useRef<HTMLIFrameElement>(null);
   const playerRef = useRef<VimeoPlayer | null>(null);
 
@@ -59,9 +58,6 @@ export function FilmFrame() {
   }, []);
 
   const attachPlayer = () => {
-    // Vimeo's own script loaded, so Vimeo is reachable from this network —
-    // show the player.
-    setPlayerReady(true);
     if (playerRef.current || !frameRef.current || !window.Vimeo) return;
     playerRef.current = new window.Vimeo.Player(frameRef.current);
   };
@@ -104,16 +100,14 @@ export function FilmFrame() {
         src="https://player.vimeo.com/api/player.js"
         strategy="afterInteractive"
         onLoad={attachPlayer}
-        // Vimeo unreachable — blocked at country level in some places. Leave
-        // the still in place rather than showing a broken embed.
-        onError={() => setPlayerReady(false)}
       />
       <div
         className={`${styles.frame} ${portrait ? styles.framePortrait : ''}`}
       >
+        {/* Backdrop only, so the frame is never empty while the film loads. */}
         <Image
           src={poster.src}
-          alt="A Lotus Attune session in progress"
+          alt=""
           fill
           sizes="(max-width: 900px) 100vw, 1180px"
           quality={90}
@@ -121,7 +115,6 @@ export function FilmFrame() {
           priority
         />
         <iframe
-          className={playerReady ? styles.playerReady : styles.playerHidden}
           ref={frameRef}
           key={portrait ? 'portrait' : 'landscape'}
           src={embedUrl(videoId)}
@@ -130,7 +123,6 @@ export function FilmFrame() {
           referrerPolicy="strict-origin-when-cross-origin"
           allowFullScreen
         />
-        {playerReady ? (
         <button
           type="button"
           className={`${styles.sound} ${soundOn ? styles.soundOn : ''}`}
@@ -139,7 +131,6 @@ export function FilmFrame() {
         >
           {soundOn ? 'Sound on' : 'Tap for sound'}
         </button>
-        ) : null}
       </div>
     </>
   );

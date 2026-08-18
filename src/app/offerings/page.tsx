@@ -1,233 +1,122 @@
 import type { Metadata } from 'next';
+import Image from 'next/image';
 import Link from 'next/link';
 
-import { Reveal } from '@/components/common/Reveal';
-import { SiteFooter } from '@/components/chrome/SiteFooter';
-import { SiteNav } from '@/components/chrome/SiteNav';
-import { StickyBookBar } from '@/components/chrome/StickyBookBar';
-import { SessionConfigurator } from '@/components/offerings/SessionConfigurator';
-import { CORPORATE_ADDON_COPY } from '@/data/content';
-import { assetUrl } from '@/lib/images';
-import { getSettings } from '@/lib/settings';
-import { money } from '@/lib/site';
-import styles from './offerings.module.css';
+import { SilvanaFooter, SilvanaNav } from '@/components/silvana/Chrome';
+import { SILVANA_OFFERINGS } from '@/data/silvana';
+import { asset } from '@/lib/images';
+import styles from '@/components/silvana/silvana.module.css';
 
 export const metadata: Metadata = {
   title: 'Offerings',
-  description:
-    'Private sessions at $340, group and corporate wellness at $280 per participant. Two-hour sessions for 1 to 24 people in downtown Toronto.',
+  description: SILVANA_OFFERINGS.intro,
 };
 
-/** Pricing reads from the database; never let that block the build. */
-export const dynamic = 'force-dynamic';
+function Actions() {
+  return (
+    <div className={styles.offerActions}>
+      <Link href="/included" className={`${styles.btn} ${styles.btnGhost}`}>
+        What&apos;s Included
+      </Link>
+      <div style={{ display: 'flex', gap: 12 }}>
+        <Link href="/book" className={styles.btn}>
+          BOOK
+        </Link>
+        <Link href="/gift" className={styles.btn}>
+          GIFT
+        </Link>
+      </div>
+    </div>
+  );
+}
 
-export default async function OfferingsPage() {
-  const { pricing } = await getSettings();
-  const packageSaving =
-    pricing.privateSession * 4 - pricing.privatePackage;
+export default function OfferingsPage() {
+  const logo = asset('logo-lockup');
+  const { group, private: solo } = SILVANA_OFFERINGS;
 
   return (
-    <>
-      <SiteNav />
-      <Reveal />
+    <div className={styles.page}>
+      <SilvanaNav />
 
-      <main>
-        <section className={styles.intro} aria-labelledby="offerings-heading">
-          <div className="eyebrow" style={{ marginBottom: 34 }}>
-            Offerings
+      <main className={styles.section}>
+        <div className={styles.shell}>
+          <div className={styles.offerHead}>
+            <div className={styles.offerLogo}>
+              <Image
+                src={logo.src}
+                alt="Lotus Attune"
+                width={logo.width}
+                height={logo.height}
+              />
+            </div>
+            <div>
+              <h1 className={styles.offerTitle}>{SILVANA_OFFERINGS.heading}</h1>
+              <p className={styles.offerIntro}>{SILVANA_OFFERINGS.intro}</p>
+            </div>
           </div>
-          <h1
-            id="offerings-heading"
-            className="display h1"
-            style={{ marginBottom: 30 }}
-          >
-            Offerings
-          </h1>
-          <p className="lede" style={{ maxWidth: 900 }}>
-            For individuals, private gatherings, organizations and teams, all
-            sessions are offered in a two-hour format
-          </p>
-        </section>
 
-        {/* ---------- Group bookings & corporate ---------- */}
-        <section className={styles.block} aria-labelledby="group-heading">
-          <div className={styles.offer} data-reveal="">
+          {/* Group bookings & corporate wellness */}
+          <div className={styles.offerCard}>
             <div className={styles.offerAside}>
-              <div className={styles.offerTags}>
-                <span
-                  className="tag"
-                  style={{
-                    background: 'rgba(122,150,110,0.28)',
-                    color: '#3B4E33',
-                  }}
-                >
-                  Private Group
-                </span>
-                <span
-                  className="tag"
-                  style={{
-                    background: 'rgba(46,36,28,0.88)',
-                    color: 'var(--color-cream-text)',
-                  }}
-                >
-                  Corporate
-                </span>
+              <div className={styles.offerAsideTitle}>
+                {group.panelTitle.map((line) => (
+                  <span key={line} style={{ display: 'block' }}>
+                    {line}
+                  </span>
+                ))}
               </div>
-              <h2 id="group-heading" className={styles.offerTitle}>
-                Group Bookings
-                <br />&amp;<br />
-                Corporate Wellness
-              </h2>
-              <div className={styles.offerCapacity}>2–24 Participants</div>
+              <div className={styles.offerAsideNote}>{group.panelNote}</div>
             </div>
 
             <div className={styles.offerMain}>
-              <div style={{ minWidth: 0 }}>
-                <h3 className={styles.offerHeading}>
-                  For Friends, Families, Couples, and Groups
-                </h3>
-                <p className={styles.offerText}>
-                  Ideal for gatherings, birthdays, celebrations, and other
-                  special occasions
+              <div>
+                {group.blocks.map((block) => (
+                  <div key={block.title}>
+                    <h2 className={styles.offerBlockTitle}>{block.title}</h2>
+                    <p className={styles.offerBlockBody}>{block.body}</p>
+                  </div>
+                ))}
+                <p className={styles.offerAddon}>
+                  <strong>{group.addonLabel}</strong> {group.addonBody}
                 </p>
-
-                <h3 className={styles.offerHeading}>
-                  For Organizations and Corporate Teams
-                </h3>
-                <p className={styles.offerLead}>
-                  Optional Corporate Add-on: customized mindful team-building
-                  activity
-                </p>
-                <p className={styles.offerDetail}>{CORPORATE_ADDON_COPY}</p>
-
-                <div className={styles.offerPrice}>
-                  {money(pricing.perParticipant)}{' '}
-                  <span className={styles.offerPriceUnit}>per participant</span>
-                </div>
+                <p className={styles.offerPrice}>{group.price}</p>
               </div>
-
-              <div className={styles.offerActions}>
-                <Link
-                  href="/experience"
-                  className={`btn btn--outline ${styles.offerIncluded}`}
-                >
-                  What&apos;s Included
-                </Link>
-                <div className={styles.offerPair}>
-                  <Link
-                    href="/book"
-                    className={`btn btn--dark ${styles.offerPairBtn}`}
-                  >
-                    Book
-                  </Link>
-                  <Link
-                    href="/gift"
-                    className={`btn btn--dark ${styles.offerPairBtn}`}
-                  >
-                    Gift
-                  </Link>
-                </div>
-              </div>
+              <Actions />
             </div>
           </div>
-        </section>
 
-        {/* ---------- Private sessions ---------- */}
-        <section className={styles.blockLast} aria-labelledby="private-heading">
-          <div className={styles.offer} data-reveal="">
+          {/* Private sessions */}
+          <div className={styles.offerCard}>
             <div className={styles.offerAside}>
-              <div className={styles.offerTags}>
-                <span
-                  className="tag"
-                  style={{
-                    background: 'rgba(198,169,122,0.4)',
-                    color: '#6E5330',
-                  }}
-                >
-                  1 : 1
-                </span>
+              <div className={styles.offerAsideTitle}>
+                {solo.panelTitle.map((line) => (
+                  <span key={line} style={{ display: 'block' }}>
+                    {line}
+                  </span>
+                ))}
               </div>
-              <h2
-                id="private-heading"
-                className={`${styles.offerTitle} ${styles.offerTitleTight}`}
-              >
-                Private Sessions
-              </h2>
             </div>
 
             <div className={styles.offerMain}>
-              <div style={{ minWidth: 0 }}>
-                <h3 className={styles.offerHeading}>One-on-One</h3>
-                <p className={styles.offerText}>
-                  Customizable based on individual preferences
-                </p>
-                <div className={styles.offerPrice}>
-                  {money(pricing.privateSession)}{' '}
-                  <span className={styles.offerPriceUnit}>per session</span>
-                </div>
-                <div className={styles.offerPackage}>
-                  Package of four sessions: {money(pricing.privatePackage)} – save{' '}
-                  {money(packageSaving)}
-                </div>
+              <div>
+                <h2 className={styles.offerBlockTitle} style={{ fontWeight: 400, fontSize: 19 }}>
+                  {solo.title}
+                </h2>
+                {solo.lines.map((line) => (
+                  <p key={line} className={styles.offerBlockBody} style={{ marginBottom: 4 }}>
+                    {line}
+                  </p>
+                ))}
+                <p className={styles.offerPrice}>{solo.price}</p>
+                <p className={styles.offerPackage}>{solo.packageLine}</p>
               </div>
-
-              <div className={styles.offerActions}>
-                <Link
-                  href="/experience"
-                  className={`btn btn--outline ${styles.offerIncluded}`}
-                >
-                  What&apos;s Included
-                </Link>
-                <div className={styles.offerPair}>
-                  <Link
-                    href="/book"
-                    className={`btn btn--dark ${styles.offerPairBtn}`}
-                  >
-                    Book
-                  </Link>
-                  <Link
-                    href="/gift"
-                    className={`btn btn--dark ${styles.offerPairBtn}`}
-                  >
-                    Gift
-                  </Link>
-                </div>
-              </div>
+              <Actions />
             </div>
           </div>
-        </section>
-
-        {/* ---------- Build your session ---------- */}
-        <section className={styles.configurator} aria-labelledby="build-heading">
-          <div
-            data-bg="1"
-            className="photo-wash photo-wash--light"
-            style={{ backgroundImage: assetUrl('venue-signature') }}
-          />
-          <div className="shell" style={{ position: 'relative' }}>
-            <div className={styles.configuratorHead}>
-              <div className="eyebrow" style={{ marginBottom: 22 }}>
-                Build Your Session
-              </div>
-              <h2
-                id="build-heading"
-                className={`display ${styles.configuratorHeading}`}
-              >
-                Choose your exact experience
-              </h2>
-              <p className="body" style={{ maxWidth: 700 }}>
-                Select a format and the details below. Your estimate updates as
-                you choose.
-              </p>
-            </div>
-
-            <SessionConfigurator pricing={pricing} />
-          </div>
-        </section>
+        </div>
       </main>
 
-      <StickyBookBar />
-      <SiteFooter />
-    </>
+      <SilvanaFooter />
+    </div>
   );
 }

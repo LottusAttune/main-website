@@ -36,7 +36,7 @@ export function SiteNav({ basePath = '' }: Props) {
 
   return (
     <header className={styles.wrap}>
-      <div className={styles.pill}>
+      <div className={`${styles.pill} ${basePath ? styles.pillNoOutline : ''}`}>
         <Link
           href={basePath || '/'}
           className={styles.brand}

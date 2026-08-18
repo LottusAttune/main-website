@@ -119,39 +119,3 @@ CREATE TABLE IF NOT EXISTS contact_messages (
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
--- ---------------------------------------------------------------------------
--- Client review notes, left by pinning a spot on the live site in review mode.
--- ---------------------------------------------------------------------------
-CREATE TABLE IF NOT EXISTS feedback_notes (
-  id          UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  -- The browser-generated id the note was created with, so a client re-fetching
-  -- its own notes (a new tab, a new device) can tell which rows it already has.
-  client_id   TEXT,
-  -- Where on the site.
-  path        TEXT NOT NULL,
-  -- CSS path to the element that was clicked, so the note can be traced back
-  -- to a specific component rather than a coordinate on a screenshot.
-  selector    TEXT NOT NULL,
-  -- Text inside that element, which is usually the fastest way to find it.
-  context     TEXT,
-  -- The named section it sits in, e.g. "Choose your path" — how a person
-  -- describes where something is on the page.
-  section     TEXT,
-  -- Position within the element, 0-100, so the pin can be redrawn at any width.
-  x_percent   NUMERIC(5,2) NOT NULL,
-  y_percent   NUMERIC(5,2) NOT NULL,
-  viewport_w  INTEGER,
-  note        TEXT NOT NULL,
-  author      TEXT,
-  status      TEXT NOT NULL DEFAULT 'open',
-  created_at  TIMESTAMPTZ NOT NULL DEFAULT NOW()
-);
-
--- Idempotent for installs that created this table before client_id existed.
-ALTER TABLE feedback_notes ADD COLUMN IF NOT EXISTS client_id TEXT;
-
-CREATE INDEX IF NOT EXISTS feedback_status_idx ON feedback_notes (status, created_at DESC);
-
--- client_id must be unique for an edit to update its row rather than insert a
--- second copy, and for a delete to find it.
-CREATE UNIQUE INDEX IF NOT EXISTS feedback_client_id_idx ON feedback_notes (client_id);

@@ -681,13 +681,3 @@ p {
   }
 }
 
-/* ============================================================
-   Review mode
-   ============================================================ */
-
-/* Several layers are pointer-events:none by design (the hero copy sits above a
-   parallax image). While the client is picking a spot they must all be
-   hittable, or those elements could never receive a note. */
-html[data-review-picking] *:not([data-review-ui]) {
-  pointer-events: auto !important;
-}

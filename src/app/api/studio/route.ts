@@ -57,11 +57,6 @@ const action = z.discriminatedUnion('action', [
     isPublished: z.boolean(),
   }),
   z.object({ action: z.literal('removeReview'), id: z.string().uuid() }),
-  z.object({
-    action: z.literal('setFeedbackStatus'),
-    id: z.string().uuid(),
-    status: z.enum(['open', 'done']),
-  }),
 ]);
 
 export async function POST(request: Request) {
@@ -152,10 +147,6 @@ export async function POST(request: Request) {
       case 'removeReview':
         await sql`DELETE FROM reviews WHERE id = ${input.id}`;
         revalidatePath('/');
-        break;
-
-      case 'setFeedbackStatus':
-        await sql`UPDATE feedback_notes SET status = ${input.status} WHERE id = ${input.id}`;
         break;
     }
 

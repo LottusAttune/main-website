@@ -59,22 +59,10 @@ export type Client = {
   lastSession: string | null;
 };
 
-export type FeedbackNote = {
-  id: string;
-  path: string;
-  selector: string;
-  context: string;
-  section: string;
-  note: string;
-  status: string;
-  createdAt: string;
-};
-
 export type StudioData = {
   leads: Lead[];
   bookings: BookingRow[];
   giftCards: GiftCard[];
   reviews: ReviewRow[];
   clients: Client[];
-  feedback: FeedbackNote[];
 };

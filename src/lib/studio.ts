@@ -5,7 +5,6 @@ import {
   STAGE_KEYS,
   type BookingRow,
   type Client,
-  type FeedbackNote,
   type Lead,
   type StageKey,
   type StudioData,
@@ -17,7 +16,6 @@ const EMPTY: StudioData = {
   giftCards: [],
   reviews: [],
   clients: [],
-  feedback: [],
 };
 
 function typeFor(participants: number): string {
@@ -45,11 +43,10 @@ function toIso(value: unknown): string | null {
 export async function getStudioData(): Promise<StudioData> {
   if (!isDatabaseConfigured()) return EMPTY;
 
-  const [bookingRows, giftRows, reviewRows, feedbackRows] = await Promise.all([
+  const [bookingRows, giftRows, reviewRows] = await Promise.all([
     sql`SELECT * FROM bookings ORDER BY created_at DESC LIMIT 500`,
     sql`SELECT * FROM gift_requests ORDER BY created_at DESC LIMIT 200`,
     sql`SELECT * FROM reviews ORDER BY sort_order, created_at LIMIT 200`,
-    sql`SELECT * FROM feedback_notes ORDER BY created_at DESC LIMIT 500`,
   ]);
 
   const leads: Lead[] = bookingRows.rows.map((row) => ({
@@ -120,15 +117,5 @@ export async function getStudioData(): Promise<StudioData> {
     clients: [...byEmail.values()].sort(
       (a, b) => b.lifetimeValue - a.lifetimeValue
     ),
-    feedback: feedbackRows.rows.map((row): FeedbackNote => ({
-      id: String(row.id),
-      path: String(row.path),
-      selector: String(row.selector),
-      context: row.context ? String(row.context) : '',
-      section: row.section ? String(row.section) : '',
-      note: String(row.note),
-      status: String(row.status),
-      createdAt: new Date(String(row.created_at)).toISOString(),
-    })),
   };
 }

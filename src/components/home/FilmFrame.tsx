@@ -1,9 +1,11 @@
 'use client';
 
+import Image from 'next/image';
 import Script from 'next/script';
 import { useEffect, useRef, useState } from 'react';
 
-import { FILM } from '@/data/content';
+import { FILM, FILM_POSTER } from '@/data/content';
+import { asset } from '@/lib/images';
 import styles from './FilmFrame.module.css';
 
 /** Minimal shape of the bits of the Vimeo Player SDK we use. */
@@ -88,6 +90,26 @@ export function FilmFrame() {
     }
   };
 
+  const videoId = portrait ? FILM.portrait : FILM.landscape;
+
+  // No film configured — show one of her photographs rather than embedding a
+  // dead id, which renders a browser "broken file" icon to every visitor.
+  if (!videoId) {
+    const poster = asset(FILM_POSTER);
+    return (
+      <div className={`${styles.frame} ${portrait ? styles.framePortrait : ''}`}>
+        <Image
+          src={poster.src}
+          alt="A Lotus Attune session in progress"
+          fill
+          sizes="(max-width: 900px) 100vw, 1180px"
+          quality={90}
+          style={{ objectFit: 'cover' }}
+        />
+      </div>
+    );
+  }
+
   return (
     <>
       <Script
@@ -101,7 +123,7 @@ export function FilmFrame() {
         <iframe
           ref={frameRef}
           key={portrait ? 'portrait' : 'landscape'}
-          src={embedUrl(portrait ? FILM.portrait : FILM.landscape)}
+          src={embedUrl(videoId)}
           title="The Lotus Attune Experience"
           allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media; web-share"
           referrerPolicy="strict-origin-when-cross-origin"

@@ -147,7 +147,9 @@ means it silently doesn't work.
 
 1. **Your social links** — the footer icons don't point anywhere real yet. Send
    the actual Instagram, Facebook, LinkedIn and WhatsApp links.
-2. **The main video** — you marked the current one "change for final".
+2. **The main video** — the old Vimeo links no longer work (deleted, private,
+   or restricted), so the home page currently shows one of your photographs in
+   the video's place. Send the new video and it goes straight back in.
 3. **Gift certificates** — your notes said up to 21 people, your other material
    says 2–24. The site currently uses 24.
 4. **The venue address** — deliberately left off. Say if you'd like it shown.

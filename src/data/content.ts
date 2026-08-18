@@ -363,8 +363,20 @@ export const VENUE_COPY = [
 export const CORPORATE_ADDON_COPY =
   'Includes a 30-minute extension featuring a facilitated activity focused on recognition, values alignment, mindful communication, and team connection —customized to your team’s objectives. Additional $500 per event.';
 
-/** Vimeo IDs. The client labelled the landscape film "change for final". */
+/**
+ * Vimeo IDs.
+ *
+ * Both original ids return 400 from Vimeo — the films are deleted, private, or
+ * restricted to another domain — and an embed of a dead id renders a browser
+ * "broken file" icon to every visitor. Left empty until the final film exists;
+ * the frame shows a still from her own photography meanwhile.
+ *
+ * To switch the video back on, put the id here. Nothing else needs changing.
+ */
 export const FILM = {
-  landscape: '1218205534',
-  portrait: '1218205483',
+  landscape: '',
+  portrait: '',
 } as const;
+
+/** Shown in the film frame while no video is configured. */
+export const FILM_POSTER = 'somatic-main';

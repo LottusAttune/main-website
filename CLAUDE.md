@@ -186,8 +186,10 @@ shape.
 Ask Silvana about these rather than guessing:
 
 1. **Social handles** — footer links are placeholders (`/lotusattune`).
-2. **The main film** — she marked the current landscape video "change for
-   final". IDs are in `src/data/content.ts` under `FILM`.
+2. **The main film** — both original Vimeo ids return 400 (deleted, private,
+   or domain-restricted), so `FILM` in `src/data/content.ts` is empty and the
+   frame shows a still from her photography. Put the new id in `FILM` and the
+   video comes back; nothing else needs changing.
 3. **Gift certificate maximum** — her notes said "up to 21", the rest of her
    material says 2–24. The site uses 24.
 4. **Venue street address** — deliberately left out of the structured data until

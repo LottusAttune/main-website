@@ -138,25 +138,32 @@ drag it along — if it ever gets in the way, delete it.
 
 ## How this reaches the live site
 
-Work on the **`silvana`** branch, not `main`.
+Work on `main`. This is the owner's own site and she works on it directly —
+every push deploys straight to the live website.
+
+That makes two habits non-negotiable:
+
+**Build before you push.** `npm run build` must pass. A failing build means the
+live site keeps serving the previous version, which is a silent failure from
+her point of view.
+
+**Commit in small, described steps.** One change per commit, with a message
+that says what changed. That is what makes a mistake a thirty-second revert
+instead of an afternoon.
+
+If a change is large or risky, say so and offer to put it on a branch first
+rather than assuming.
+
+### Undoing something
 
 ```bash
-git checkout silvana
-# ... make the change, npm run build ...
-git add -A
-git commit -m "describe what changed"
+git log --oneline -10        # find the change
+git revert <commit>          # undo it, keeping the history
 git push
 ```
 
-Pushing `silvana` gives a **preview URL** — a full working copy of the site to
-look at, which nobody else sees. Nothing on the live site changes.
-
-When the change is right, it gets merged into `main`, and that is what deploys
-to the live site.
-
-Committing straight to `main` publishes instantly with no review step. Don't.
-
----
+`git revert` is the right tool here, not `reset` — it undoes the change without
+rewriting history someone else may already have.
 
 ## Environment
 

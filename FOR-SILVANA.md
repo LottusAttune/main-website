@@ -65,45 +65,45 @@ Good examples:
 
 > The heading on What is Included is too big on my phone.
 
-Two things worth saying at the start of any session, because they save time:
+One thing worth saying at the start of any session, because it saves time:
 
 > Read CLAUDE.md first.
 
 That file holds the rules for your site — it tells Claude not to reword your
-copy, never to use AI-generated images, and how to handle photographs properly.
-
-> Work on the silvana branch.
-
-This is important. See below.
+copy, never to use AI-generated images, and how to handle photographs
+properly.
 
 ---
 
-## Seeing a change before it goes live
+## Changes go live straight away
 
-Your site has two versions:
+This is your site, so there's no approval step. When Claude makes a change and
+saves it, the website updates within a minute or two.
 
-- **`main`** — the live website that everyone sees
-- **`silvana`** — your working copy
+That means two useful habits:
 
-When Claude works on the **silvana** branch, it produces a **preview link**: a
-complete, working copy of the site with your change in it, that only you can
-see. The live site is untouched.
+**Ask to see it first.** Claude can show you what a page will look like before
+saving. Just say:
 
-Look at the preview. If it's right, tell Claude:
+> Show me how that looks before you save it.
 
-> This looks good, publish it.
+**Change one thing at a time.** Small separate changes are much easier to undo
+than one big batch.
 
-If it isn't:
+### Undoing something
 
-> Not quite — make the heading smaller and try again.
+If you don't like a change, say so plainly:
 
-You can go back and forth as many times as you like. Nothing reaches the live
-site until you say so.
+> Undo that last change.
 
-**If you ever aren't sure whether something is live, ask:** "Is this on the live
-site or just the preview?"
+> Put the Founder page back how it was yesterday.
 
----
+Every version of your site is saved permanently. Nothing is ever really lost,
+and anything can be put back — including things from weeks ago.
+
+If you're ever unsure whether something saved, ask:
+
+> Is that on the live site now?
 
 ## A few things to leave alone
 
@@ -164,4 +164,8 @@ there purely if you ever want to look back.
 3. If a change made it worse, you can always say: **"Undo that."**
 
 Nothing you do here can permanently break the site. Every version is saved, and
-anything can be put back.
+anything can be put back — just tell Claude what you want undone.
+
+If something is badly wrong and you want it back the way it was quickly:
+
+> Something's broken. Put the site back to how it was before today's changes.

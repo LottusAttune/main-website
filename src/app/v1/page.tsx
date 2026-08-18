@@ -49,7 +49,11 @@ export default function HomePage() {
           <div className={styles.trustGrid}>
             {TRUST.map((item) => (
               <div key={item.label} className={styles.trustCell}>
-                <div className={styles.trustFigure}>{item.figure}</div>
+                <div
+                  className={`${styles.trustFigure} ${/\d/.test(item.figure) ? styles.trustFigureNumeric : ''}`}
+                >
+                  {item.figure}
+                </div>
                 <div className={styles.trustLabel}>{item.label}</div>
               </div>
             ))}

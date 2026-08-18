@@ -12,6 +12,7 @@ import styles from './FilmFrame.module.css';
 type VimeoPlayer = {
   setMuted: (muted: boolean) => Promise<boolean>;
   setVolume: (volume: number) => Promise<number>;
+  on?: (event: string, handler: () => void) => void;
 };
 
 declare global {
@@ -44,6 +45,7 @@ function embedUrl(id: string): string {
 export function FilmFrame() {
   const [portrait, setPortrait] = useState(false);
   const [soundOn, setSoundOn] = useState(false);
+  const [playerReady, setPlayerReady] = useState(false);
   const frameRef = useRef<HTMLIFrameElement>(null);
   const playerRef = useRef<VimeoPlayer | null>(null);
 
@@ -58,7 +60,13 @@ export function FilmFrame() {
 
   const attachPlayer = () => {
     if (playerRef.current || !frameRef.current || !window.Vimeo) return;
-    playerRef.current = new window.Vimeo.Player(frameRef.current);
+    const player = new window.Vimeo.Player(frameRef.current);
+    playerRef.current = player;
+    // Only reveal the iframe once Vimeo confirms it is actually playing. If the
+    // network cannot reach Vimeo the event never fires and the still stays,
+    // rather than the browser drawing a broken-file icon over the page.
+    player.on?.('play', () => setPlayerReady(true));
+    player.on?.('loaded', () => setPlayerReady(true));
   };
 
   const toggleSound = () => {
@@ -91,24 +99,7 @@ export function FilmFrame() {
   };
 
   const videoId = portrait ? FILM.portrait : FILM.landscape;
-
-  // No film configured — show one of her photographs rather than embedding a
-  // dead id, which renders a browser "broken file" icon to every visitor.
-  if (!videoId) {
-    const poster = asset(FILM_POSTER);
-    return (
-      <div className={`${styles.frame} ${portrait ? styles.framePortrait : ''}`}>
-        <Image
-          src={poster.src}
-          alt="A Lotus Attune session in progress"
-          fill
-          sizes="(max-width: 900px) 100vw, 1180px"
-          quality={90}
-          style={{ objectFit: 'cover' }}
-        />
-      </div>
-    );
-  }
+  const poster = asset(FILM_POSTER);
 
   return (
     <>
@@ -120,7 +111,17 @@ export function FilmFrame() {
       <div
         className={`${styles.frame} ${portrait ? styles.framePortrait : ''}`}
       >
+        <Image
+          src={poster.src}
+          alt="A Lotus Attune session in progress"
+          fill
+          sizes="(max-width: 900px) 100vw, 1180px"
+          quality={90}
+          style={{ objectFit: 'cover' }}
+          priority
+        />
         <iframe
+          className={playerReady ? styles.playerReady : styles.playerHidden}
           ref={frameRef}
           key={portrait ? 'portrait' : 'landscape'}
           src={embedUrl(videoId)}
@@ -129,6 +130,7 @@ export function FilmFrame() {
           referrerPolicy="strict-origin-when-cross-origin"
           allowFullScreen
         />
+        {playerReady ? (
         <button
           type="button"
           className={`${styles.sound} ${soundOn ? styles.soundOn : ''}`}
@@ -137,6 +139,7 @@ export function FilmFrame() {
         >
           {soundOn ? 'Sound on' : 'Tap for sound'}
         </button>
+        ) : null}
       </div>
     </>
   );

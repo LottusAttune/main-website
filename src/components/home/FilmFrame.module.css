@@ -58,3 +58,15 @@
 .soundOn {
   border-color: rgba(198, 169, 122, 0.85);
 }
+
+/* The player sits over the still and is only revealed once Vimeo reports it is
+   running. A network that cannot reach Vimeo therefore shows the photograph,
+   not the browser's broken-file icon. */
+.playerHidden {
+  opacity: 0;
+}
+
+.playerReady {
+  opacity: 1;
+  transition: opacity 0.5s ease;
+}

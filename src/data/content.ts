@@ -364,19 +364,19 @@ export const CORPORATE_ADDON_COPY =
   'Includes a 30-minute extension featuring a facilitated activity focused on recognition, values alignment, mindful communication, and team connection —customized to your team’s objectives. Additional $500 per event.';
 
 /**
- * Vimeo IDs.
+ * Vimeo IDs. The client labelled the landscape film "change for final".
  *
- * Both original ids return 400 from Vimeo — the films are deleted, private, or
- * restricted to another domain — and an embed of a dead id renders a browser
- * "broken file" icon to every visitor. Left empty until the final film exists;
- * the frame shows a still from her own photography meanwhile.
- *
- * To switch the video back on, put the id here. Nothing else needs changing.
+ * These are embedded behind a poster: the still shows first and the player
+ * only replaces it once Vimeo confirms it is ready. Vimeo's Singapore edge was
+ * observed returning 400 for every request — its own homepage and login page
+ * included — so a whole region can be unable to reach Vimeo while the videos
+ * themselves are perfectly healthy. Without the poster those visitors get the
+ * browser's broken-file icon.
  */
 export const FILM = {
-  landscape: '',
-  portrait: '',
+  landscape: '1218205534',
+  portrait: '1218205483',
 } as const;
 
-/** Shown in the film frame while no video is configured. */
+/** Shown until the player reports ready, and left in place if it never does. */
 export const FILM_POSTER = 'somatic-main';

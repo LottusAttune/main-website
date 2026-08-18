@@ -16,12 +16,12 @@
  */
 
 export const SILVANA_NAV = [
-  { label: 'Home', href: '/silvana' },
-  { label: 'Benefits', href: '/silvana/benefits' },
-  { label: 'The Experience', href: '/silvana/experience' },
-  { label: 'What is Included', href: '/silvana/included' },
-  { label: 'Founder', href: '/silvana/founder' },
-  { label: 'Offerings', href: '/silvana/offerings' },
+  { label: 'Home', href: '/' },
+  { label: 'Benefits', href: '/benefits' },
+  { label: 'The Experience', href: '/experience' },
+  { label: 'What is Included', href: '/included' },
+  { label: 'Founder', href: '/founder' },
+  { label: 'Offerings', href: '/offerings' },
 ] as const;
 
 export const SILVANA_HOME = {

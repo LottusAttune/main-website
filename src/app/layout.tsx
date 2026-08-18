@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from 'next';
-import { Cormorant_Garamond, Jost } from 'next/font/google';
+import { Cormorant_Garamond, EB_Garamond, Jost } from 'next/font/google';
 
 import { SITE } from '@/lib/site';
 import '@/styles/global.css';
@@ -7,9 +7,19 @@ import '@/styles/global.css';
 const cormorant = Cormorant_Garamond({
   subsets: ['latin'],
   weight: ['300', '400'],
-  style: ['normal', 'italic'],
   display: 'swap',
   variable: '--font-cormorant',
+});
+
+// Used only for the /v1 trust-bar figures: EB Garamond is the classic
+// revival Cormorant Garamond was stylized from, so it keeps the same
+// feeling, but its numeral 1 is a plain stroke with a flag rather than a
+// full serif that reads as a capital I at small sizes.
+const ebGaramond = EB_Garamond({
+  subsets: ['latin'],
+  weight: ['400'],
+  display: 'swap',
+  variable: '--font-eb-garamond',
 });
 
 const jost = Jost({
@@ -49,7 +59,7 @@ export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en" className={`${cormorant.variable} ${jost.variable}`}>
+    <html lang="en" className={`${cormorant.variable} ${jost.variable} ${ebGaramond.variable}`}>
       <body>{children}</body>
     </html>
   );

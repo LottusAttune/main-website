@@ -77,19 +77,70 @@ export async function POST(request: Request) {
 
   try {
     for (const note of parsed.data.notes) {
+      // Upsert on local_id: re-sending a note edits it rather than duplicating
+      // it, which also makes a retried request safe.
       await sql`
         INSERT INTO feedback_notes
-          (path, selector, context, section, x_percent, y_percent, viewport_w, note, author)
+          (local_id, path, selector, context, section, x_percent, y_percent, viewport_w, note, author)
         VALUES (
-          ${note.path}, ${note.selector}, ${note.context ?? ''}, ${note.section ?? ''},
+          ${note.localId}, ${note.path}, ${note.selector}, ${note.context ?? ''}, ${note.section ?? ''},
           ${note.xPercent}, ${note.yPercent}, ${note.viewportW ?? null},
           ${note.note}, ${parsed.data.author ?? 'Client'}
         )
+        ON CONFLICT (local_id) DO UPDATE SET
+          note     = EXCLUDED.note,
+          selector = EXCLUDED.selector,
+          context  = EXCLUDED.context,
+          section  = EXCLUDED.section
       `;
     }
     return NextResponse.json({ saved: parsed.data.notes.length }, { status: 201 });
   } catch (error) {
     console.error('[feedback] insert failed:', error);
     return NextResponse.json({ error: 'We could not save your notes.' }, { status: 500 });
+  }
+}
+
+const deleteSchema = z.object({
+  token: z.string().max(200),
+  localId: z.string().max(64),
+});
+
+/**
+ * Removes a note the client deleted.
+ *
+ * Deleting only in her browser was the wrong behaviour: she would remove a
+ * note, and it would still be sitting in the studio waiting to be actioned.
+ */
+export async function DELETE(request: Request) {
+  const expected = process.env.REVIEW_TOKEN;
+  if (!expected) {
+    return NextResponse.json({ error: 'Review mode is not enabled.' }, { status: 503 });
+  }
+
+  let payload: unknown;
+  try {
+    payload = await request.json();
+  } catch {
+    return NextResponse.json({ error: 'Invalid request body.' }, { status: 400 });
+  }
+
+  const parsed = deleteSchema.safeParse(payload);
+  if (!parsed.success) {
+    return NextResponse.json({ error: 'Invalid request.' }, { status: 400 });
+  }
+  if (!safeEqual(parsed.data.token, expected)) {
+    return NextResponse.json({ error: 'This review link is not valid.' }, { status: 401 });
+  }
+  if (!isDatabaseConfigured()) {
+    return NextResponse.json({ error: 'Database not connected.' }, { status: 503 });
+  }
+
+  try {
+    await sql`DELETE FROM feedback_notes WHERE local_id = ${parsed.data.localId}`;
+    return NextResponse.json({ ok: true });
+  } catch (error) {
+    console.error('[feedback] delete failed:', error);
+    return NextResponse.json({ error: 'Could not remove the note.' }, { status: 500 });
   }
 }

@@ -16,7 +16,8 @@ export type ReviewNote = {
   viewportW: number;
   note: string;
   createdAt: string;
-  /** False until the server has confirmed it stored the note. */
+  /** False until the server has confirmed it stored the note. An edit clears
+   *  it again, so the change re-syncs. */
   sent: boolean;
 };
 
@@ -33,7 +34,7 @@ export const REVIEW_PARAM = 'review';
  * :nth-of-type. Hashed CSS-module class names are skipped — they change on
  * every build and would make a note untraceable a week later.
  */
-export function cssPathFor(el: Element, maxDepth = 6): string {
+export function cssPathFor(el: Element, maxDepth = 12): string {
   const parts: string[] = [];
   let node: Element | null = el;
   let depth = 0;
@@ -71,7 +72,11 @@ export function cssPathFor(el: Element, maxDepth = 6): string {
     depth += 1;
   }
 
-  return parts.join(' > ') || 'body';
+  // Root the path at <body> unless it starts from an id. A partial path like
+  // "div > p" matches the first such element anywhere on the page, which is how
+  // a pin ends up attached to something the client never clicked.
+  if (parts.length === 0) return 'body';
+  return parts[0].startsWith('#') ? parts.join(' > ') : `body > ${parts.join(' > ')}`;
 }
 
 /** A short snippet of what the element says, for human recognition. */

@@ -124,6 +124,10 @@ CREATE TABLE IF NOT EXISTS contact_messages (
 -- ---------------------------------------------------------------------------
 CREATE TABLE IF NOT EXISTS feedback_notes (
   id          UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  -- The id the browser gave the note. Lets an edit update the same row and a
+  -- delete remove it, and makes re-sending a note idempotent rather than
+  -- creating a duplicate.
+  local_id    TEXT UNIQUE,
   -- Where on the site.
   path        TEXT NOT NULL,
   -- CSS path to the element that was clicked, so the note can be traced back
@@ -145,3 +149,7 @@ CREATE TABLE IF NOT EXISTS feedback_notes (
 );
 
 CREATE INDEX IF NOT EXISTS feedback_status_idx ON feedback_notes (status, created_at DESC);
+
+-- Upgrades a feedback_notes table created before edit/delete existed.
+ALTER TABLE feedback_notes ADD COLUMN IF NOT EXISTS local_id TEXT;
+CREATE UNIQUE INDEX IF NOT EXISTS feedback_local_id_idx ON feedback_notes (local_id);

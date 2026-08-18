@@ -72,6 +72,8 @@ export function ReviewMode() {
   const [draft, setDraft] = useState('');
   const [status, setStatus] = useState('');
   const [showList, setShowList] = useState(false);
+  const [editing, setEditing] = useState<string | null>(null);
+  const [editDraft, setEditDraft] = useState('');
   const [hover, setHover] = useState<DOMRect | null>(null);
   const [pins, setPins] = useState<Record<string, { top: number; left: number }>>({});
   const inputRef = useRef<HTMLTextAreaElement>(null);
@@ -163,11 +165,24 @@ export function ReviewMode() {
     if (pending) inputRef.current?.focus();
   }, [pending]);
 
+  /**
+   * Pins follow their element.
+   *
+   * The first version measured once and recalculated only on resize, so any
+   * movement the page made on its own — the hero parallax, the reviews
+   * carousel, an accordion opening — left the pin behind while its element
+   * moved away. Now each pin is measured against its element every frame that
+   * something could have shifted, and hidden while its element is off screen.
+   */
   useEffect(() => {
     if (!active) return;
 
-    const place = () => {
+    let frame: number | null = null;
+
+    const measure = () => {
+      frame = null;
       const next: Record<string, { top: number; left: number }> = {};
+
       for (const note of notes) {
         if (note.path !== pathname) continue;
         let el: Element | null = null;
@@ -177,23 +192,50 @@ export function ReviewMode() {
           el = null;
         }
         if (!el) continue;
+
         const rect = el.getBoundingClientRect();
-        next[note.localId] = {
-          top: rect.top + window.scrollY + (rect.height * note.yPercent) / 100,
-          left: rect.left + window.scrollX + (rect.width * note.xPercent) / 100,
-        };
+        // Nothing to point at while the element is collapsed or scrolled away.
+        if (rect.width === 0 && rect.height === 0) continue;
+        const top = rect.top + (rect.height * note.yPercent) / 100;
+        const left = rect.left + (rect.width * note.xPercent) / 100;
+        if (top < -40 || top > window.innerHeight + 40) continue;
+
+        next[note.localId] = { top, left };
       }
+
       setPins(next);
     };
 
-    place();
-    // Images and fonts settle after first paint, so re-measure once things move.
-    const observer = new ResizeObserver(place);
+    const schedule = () => {
+      // requestAnimationFrame is paused while the document is hidden, so fall
+      // back to measuring inline — otherwise a pin left in a background tab
+      // would still be sitting at a stale position when the tab is reopened.
+      if (document.visibilityState !== 'visible') {
+        measure();
+        return;
+      }
+      if (frame !== null) return;
+      frame = requestAnimationFrame(measure);
+    };
+
+    schedule();
+    window.addEventListener('scroll', schedule, { passive: true });
+    window.addEventListener('resize', schedule);
+    const observer = new ResizeObserver(schedule);
     observer.observe(document.body);
-    window.addEventListener('resize', place);
+    // Catches movement the page makes on its own — the carousel advancing, an
+    // accordion opening, an image finishing loading. Calls measure directly
+    // rather than through requestAnimationFrame, which is paused while the
+    // document is hidden and would otherwise leave pins unplaced in a
+    // background tab.
+    const ticker = window.setInterval(measure, 500);
+
     return () => {
+      window.removeEventListener('scroll', schedule);
+      window.removeEventListener('resize', schedule);
       observer.disconnect();
-      window.removeEventListener('resize', place);
+      window.clearInterval(ticker);
+      if (frame !== null) cancelAnimationFrame(frame);
     };
   }, [active, notes, pathname]);
 
@@ -261,6 +303,51 @@ export function ReviewMode() {
     void flush(notes, token);
   }, [active, token, notes, flush]);
 
+  const startEdit = (note: ReviewNote) => {
+    setEditing(note.localId);
+    setEditDraft(note.note);
+    setShowList(true);
+  };
+
+  /** Editing marks the note unsent, so the change syncs over the old one. */
+  const commitEdit = () => {
+    if (!editing || !editDraft.trim()) return;
+    persist(
+      notes.map((n) =>
+        n.localId === editing
+          ? { ...n, note: editDraft.trim(), sent: false }
+          : n
+      )
+    );
+    setEditing(null);
+    setEditDraft('');
+    setStatus('Note updated.');
+  };
+
+  /**
+   * Removes a note here and on the server.
+   *
+   * Deleting locally alone was wrong: the note would vanish from her screen
+   * but still be sitting in the studio waiting to be actioned.
+   */
+  const removeNote = async (note: ReviewNote) => {
+    persist(notes.filter((n) => n.localId !== note.localId));
+    if (editing === note.localId) setEditing(null);
+    setStatus('Note removed.');
+
+    if (!note.sent || !token) return;
+    try {
+      await fetch('/api/feedback', {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ token, localId: note.localId }),
+      });
+    } catch {
+      // It is gone from her side either way; the studio shows a stale note at
+      // worst, which is recoverable. Never surface this to her.
+    }
+  };
+
   const copy = async () => {
     try {
       await navigator.clipboard.writeText(notesToMarkdown(notes));
@@ -303,7 +390,7 @@ export function ReviewMode() {
             className={`${styles.pin} ${note.sent ? styles.pinSent : ''}`}
             style={{ top: at.top, left: at.left }}
             title={note.note}
-            onClick={() => setShowList(true)}
+            onClick={() => startEdit(note)}
           >
             <span className={styles.pinNumber}>{i + 1}</span>
           </button>
@@ -375,21 +462,61 @@ export function ReviewMode() {
           ) : (
             notes.map((note, i) => (
               <div key={note.localId} className={styles.listItem}>
-                {i + 1}. {note.note}
-                <span className={styles.listMeta}>
-                  {note.path}
-                  {note.context ? ` · “${note.context.slice(0, 48)}”` : ''}
-                  {note.sent ? ' · sent' : ''}
-                </span>
-                <button
-                  type="button"
-                  className={styles.listRemove}
-                  onClick={() =>
-                    persist(notes.filter((n) => n.localId !== note.localId))
-                  }
-                >
-                  Remove
-                </button>
+                {editing === note.localId ? (
+                  <>
+                    <textarea
+                      className={styles.editInput}
+                      value={editDraft}
+                      autoFocus
+                      onChange={(e) => setEditDraft(e.target.value)}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) commitEdit();
+                        if (e.key === 'Escape') setEditing(null);
+                      }}
+                    />
+                    <div className={styles.listActions}>
+                      <button
+                        type="button"
+                        className={styles.listAction}
+                        disabled={!editDraft.trim()}
+                        onClick={commitEdit}
+                      >
+                        Save
+                      </button>
+                      <button
+                        type="button"
+                        className={styles.listAction}
+                        onClick={() => setEditing(null)}
+                      >
+                        Cancel
+                      </button>
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    {i + 1}. {note.note}
+                    <span className={styles.listMeta}>
+                      {note.section || note.path}
+                      {note.context ? ` · “${note.context.slice(0, 44)}”` : ''}
+                    </span>
+                    <div className={styles.listActions}>
+                      <button
+                        type="button"
+                        className={styles.listAction}
+                        onClick={() => startEdit(note)}
+                      >
+                        Edit
+                      </button>
+                      <button
+                        type="button"
+                        className={styles.listRemove}
+                        onClick={() => void removeNote(note)}
+                      >
+                        Remove
+                      </button>
+                    </div>
+                  </>
+                )}
               </div>
             ))
           )}

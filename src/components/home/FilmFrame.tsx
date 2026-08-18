@@ -59,14 +59,11 @@ export function FilmFrame() {
   }, []);
 
   const attachPlayer = () => {
+    // Vimeo's own script loaded, so Vimeo is reachable from this network —
+    // show the player.
+    setPlayerReady(true);
     if (playerRef.current || !frameRef.current || !window.Vimeo) return;
-    const player = new window.Vimeo.Player(frameRef.current);
-    playerRef.current = player;
-    // Only reveal the iframe once Vimeo confirms it is actually playing. If the
-    // network cannot reach Vimeo the event never fires and the still stays,
-    // rather than the browser drawing a broken-file icon over the page.
-    player.on?.('play', () => setPlayerReady(true));
-    player.on?.('loaded', () => setPlayerReady(true));
+    playerRef.current = new window.Vimeo.Player(frameRef.current);
   };
 
   const toggleSound = () => {
@@ -105,8 +102,11 @@ export function FilmFrame() {
     <>
       <Script
         src="https://player.vimeo.com/api/player.js"
-        strategy="lazyOnload"
+        strategy="afterInteractive"
         onLoad={attachPlayer}
+        // Vimeo unreachable — blocked at country level in some places. Leave
+        // the still in place rather than showing a broken embed.
+        onError={() => setPlayerReady(false)}
       />
       <div
         className={`${styles.frame} ${portrait ? styles.framePortrait : ''}`}

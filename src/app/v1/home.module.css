@@ -23,13 +23,16 @@
 
 /* EB Garamond, not the site's usual Cormorant Garamond: same classic-serif
    feeling (Cormorant is a stylized expansion of EB Garamond), but its
-   numeral 1 doesn't carry the full serif that reads as a capital I here. */
+   numeral 1 doesn't carry the full serif that reads as a capital I here.
+   EB Garamond's strokes are heavier than Cormorant's, so at the original
+   --color-ink it read visually darker; --color-ink-body (the site's body-
+   copy tone) restores the original lightness. */
 .trustFigure {
   font-family: var(--font-eb-garamond), 'EB Garamond', serif;
   font-weight: 400;
   font-size: clamp(19px, 2vw, 24px);
   line-height: 1;
-  color: var(--color-ink);
+  color: var(--color-ink-body);
   margin-bottom: 6px;
 }
 

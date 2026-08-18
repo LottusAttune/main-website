@@ -2,11 +2,17 @@
  * Content for the client's own layout, rebuilt from the Canva deck she sent
  * (LOTUS ATTUNE (MAIN).pdf, 6 pages).
  *
- * Her wording is reproduced exactly, including the typos in the original
- * ("greate", "Meaninful", "Togheter", "tothether", "impactul", "sort walking
- * distance", "cointainer", "know for their craftsmanship", "oferred",
- * "Cancelation"). They are marked below so they can be corrected in one pass
- * once she confirms — but nothing was silently reworded.
+ * Her wording, with the spelling and grammar slips in the deck corrected:
+ *
+ *   greate     -> greater          Meaninful  -> Meaningful
+ *   Togheter   -> Together         tothether  -> together
+ *   impactul   -> impactful        cointainer -> container
+ *   oferred    -> offered          sort       -> short (walking distance)
+ *   know for   -> known for        settle.    -> settle,
+ *   that last  -> that lasts       human Res. -> Human Resources
+ *
+ * Only spelling and grammar were touched. No sentence was rewritten, reordered
+ * or shortened — her voice is hers.
  */
 
 export const SILVANA_NAV = [
@@ -41,13 +47,11 @@ export const SILVANA_BENEFITS = {
         body: 'Reduce stress, tension, and emotional fatigue so you can feel more like yourself',
       },
       {
-        // sic: "greate" in the original
         title: 'Clear & Balanced Mind',
-        body: 'Support clearer thinking and greate emotional balance through guided practices',
+        body: 'Support clearer thinking and greater emotional balance through guided practices',
       },
       {
-        // sic: "Meaninful" in the original
-        title: 'Meaninful Connection',
+        title: 'Meaningful Connection',
         body: 'Make unique and unforgettable memories together with friends, family, and loved ones',
       },
     ],
@@ -56,13 +60,11 @@ export const SILVANA_BENEFITS = {
   },
   teams: {
     title: 'For Teams & Organizations',
-    // sic: "tothether" in the original
-    lede: 'Elevate your company culture through a new generation of team building where wellness and connection come tothether',
+    lede: 'Elevate your company culture through a new generation of team building where wellness and connection come together',
     image: 'for-teams',
     points: [
       {
-        // sic: "Togheter" in the original
-        title: 'Stronger Togheter',
+        title: 'Stronger Together',
         body: 'Promote healthier, more engaged, and resilient workplace cultures. Help teams reset, refocus, and strengthen collaboration',
       },
       {
@@ -70,13 +72,12 @@ export const SILVANA_BENEFITS = {
         body: 'Enhance mental clarity and support sustainable performance',
       },
       {
-        title: 'Culture that last',
+        title: 'Culture that lasts',
         body: 'An innovative approach for employee well-being that drives connection, collaboration and retention',
       },
     ],
-    // sic: "impactul" in the original
     closer:
-      'A unique and impactul experience for teams, departmental or leadership meetings, employee appreciation and Health & Wellness events',
+      'A unique and impactful experience for teams, departmental or leadership meetings, employee appreciation and Health & Wellness events',
   },
 } as const;
 
@@ -106,16 +107,14 @@ export const SILVANA_EXPERIENCE = {
       body: 'Experience a peaceful, layered soundscape featuring live crystal singing bowls, calming handpan melodies, organic African shakers, grounding shamanic drum rhythms, and other therapeutic instruments — designed to further promote relaxation, stress relief, clarity, and alignment with your authentic self',
     },
     {
-      // sic: "settle." mid-sentence in the original
       icon: 'icon-reintegration',
       title: 'Reintegration',
-      body: 'Close with a gentle transition to reconnect with your surroundings, allow the effects of the practice to settle. and carry a renewed sense of calm into the days ahead',
+      body: 'Close with a gentle transition to reconnect with your surroundings, allow the effects of the practice to settle, and carry a renewed sense of calm into the days ahead',
     },
   ],
   panelTitle: 'A Journey to Reset, Align and Thrive | Everything Curated into One Offering',
-  // sic: "cointainer" in the original
   panelBody:
-    'More than a traditional sound bath, this all-in-one holistic wellness journey combines restorative and transformational modalities within one cohesive, fully guided experience. Every element is intentionally selected and sequenced to create meaningful impact and a supportive cointainer for self-connection, restore inner balance, and feel renewed and empowered',
+    'More than a traditional sound bath, this all-in-one holistic wellness journey combines restorative and transformational modalities within one cohesive, fully guided experience. Every element is intentionally selected and sequenced to create meaningful impact and a supportive container for self-connection, restore inner balance, and feel renewed and empowered',
 } as const;
 
 export const SILVANA_INCLUDED = {
@@ -136,9 +135,8 @@ export const SILVANA_INCLUDED = {
       body: 'Fully guided somatic and mindfulness practices and a sensory connection exercise',
     },
     {
-      // sic: "know for their craftsmanship" in the original
       image: 'crystal-bowls',
-      body: 'Immersive sound session layered with multiple professional-grade sound healing instruments — all sourced from the most internationally recognized makers know for their craftsmanship and acoustic quality',
+      body: 'Immersive sound session layered with multiple professional-grade sound healing instruments — all sourced from the most internationally recognized makers known for their craftsmanship and acoustic quality',
     },
     {
       image: 'educational-video',
@@ -178,9 +176,8 @@ export const SILVANA_FOUNDER = {
   ],
   trainingHeading: 'TRAINING & DEVELOPMENT IN RESTORATIVE WELLNESS PRACTICES',
   credentialsHeading: 'EDUCATION & PROFESSIONAL CREDENTIALS',
-  // sic: lowercase "human Resources" in the original
   credentialsBody:
-    'I bring over 15 years of human Resources and wellness experience across leading organizations, including Metrolinx, Toronto Hydro, Infrastructure Ontario, Mount Sinai Hospital, George Brown College, Magna International, and Bell Canada. I have also provided services to Scotiabank, the University of Toronto, and other organizations.',
+    'I bring over 15 years of Human Resources and wellness experience across leading organizations, including Metrolinx, Toronto Hydro, Infrastructure Ontario, Mount Sinai Hospital, George Brown College, Magna International, and Bell Canada. I have also provided services to Scotiabank, the University of Toronto, and other organizations.',
   handpanLink: 'Explore My Handpan Sounds',
 } as const;
 
@@ -197,9 +194,8 @@ export const SILVANA_OFFERINGS = {
         body: 'Ideal for gatherings, birthdays, celebrations, and other special occasions.',
       },
       {
-        // sic: "oferred" in the original
         title: 'FOR ORGANIZATIONS & CORPORATE TEAMS',
-        body: 'Whether oferred as a one-time event, or as a monthly or quarterly team reset, it creates unique, meaningful, and memorable experiences that bring people together',
+        body: 'Whether offered as a one-time event, or as a monthly or quarterly team reset, it creates unique, meaningful, and memorable experiences that bring people together',
       },
     ],
     addonLabel: 'Optional Corporate Add-on:',
@@ -227,8 +223,7 @@ export const SILVANA_FOOTER = {
   locationLabel: 'Location:',
   location:
     'premium venue situated in downtown Toronto, just a couple of minutes walk from Bloor–Yonge subway station, and with easy access to the Don Valley Parkway (DVP).',
-  // sic: "a sort walking distance" in the original
   parking:
-    'Ample access to nearby public parking, including multiple Green P and paid parking facilities within a sort walking distance.',
+    'Ample access to nearby public parking, including multiple Green P and paid parking facilities within a short walking distance.',
   socialHeading: 'Get Social',
 } as const;

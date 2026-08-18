@@ -31,6 +31,22 @@ const TAG_CLASS = {
   corp: 'tag--corp',
 } as const;
 
+// Cormorant's upright "1" carries a full top-and-base serif that reads as a
+// capital I at this size. Only that character borrows the italic glyph
+// (which has the usual angled flag instead) so the figure otherwise stays
+// pixel-identical to figures with no "1" in them, like "Toronto".
+function trustFigureNodes(figure: string) {
+  return figure.split(/(1)/).map((part, i) =>
+    part === '1' ? (
+      <span key={i} className={styles.trustDigitOne}>
+        1
+      </span>
+    ) : (
+      part
+    )
+  );
+}
+
 export default function HomePage() {
   const portrait = asset('silvana-hero');
   const comfort = asset('comfort-items');
@@ -49,11 +65,7 @@ export default function HomePage() {
           <div className={styles.trustGrid}>
             {TRUST.map((item) => (
               <div key={item.label} className={styles.trustCell}>
-                <div
-                  className={`${styles.trustFigure} ${/\d/.test(item.figure) ? styles.trustFigureNumeric : ''}`}
-                >
-                  {item.figure}
-                </div>
+                <div className={styles.trustFigure}>{trustFigureNodes(item.figure)}</div>
                 <div className={styles.trustLabel}>{item.label}</div>
               </div>
             ))}

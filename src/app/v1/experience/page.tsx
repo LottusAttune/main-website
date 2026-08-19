@@ -224,7 +224,8 @@ export default function ExperiencePage() {
               </h2>
             </div>
             <p className={styles.sectionHeadNote} style={{ maxWidth: 380 }}>
-              Private sessions, groups and organizations
+              Private sessions, groups and organizations. Venue rental,
+              materials and refreshments are part of the package price.
             </p>
           </div>
 

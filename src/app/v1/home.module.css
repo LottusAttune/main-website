@@ -128,57 +128,6 @@
 
 /* ---------- The plan ---------- */
 
-.planCard {
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-  background: var(--color-cream);
-  padding: clamp(28px, 3.5vw, 40px) clamp(24px, 3vw, 34px);
-}
-
-.planTop {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-}
-
-.planIcon {
-  display: block;
-  width: 86px;
-  height: 86px;
-  background-repeat: no-repeat;
-  background-position: center;
-  background-size: contain;
-  mix-blend-mode: multiply;
-}
-
-.planNumber {
-  font-family: var(--font-display);
-  font-weight: 400;
-  font-size: 19px;
-  color: var(--color-gold-text);
-}
-
-.planTitle {
-  font-family: var(--font-display);
-  font-weight: 400;
-  font-size: 24px;
-  line-height: 1.25;
-}
-
-.planBody {
-  margin: 0;
-  font-size: var(--text-body-sm);
-  line-height: 1.8;
-  color: var(--color-ink-body);
-}
-
-.planFooter {
-  text-align: center;
-  margin-top: 44px;
-}
-
 /* ---------- Choose your path ---------- */
 
 .pathCard {

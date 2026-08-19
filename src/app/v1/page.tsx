@@ -10,16 +10,7 @@ import { StickyBookBar } from '@/components/chrome/StickyBookBar';
 import { FilmFrame } from '@/components/home/FilmFrame';
 import { HomeHero } from '@/components/home/HomeHero';
 import { ReviewsCarousel } from '@/components/home/ReviewsCarousel';
-import {
-  COMPONENTS,
-  FAQS,
-  GUIDE,
-  JOURNEY_INTRO,
-  PATHS,
-  PROBLEM,
-  REVIEWS,
-  TRUST,
-} from '@/data/content';
+import { FAQS, GUIDE, PATHS, PROBLEM, REVIEWS, TRUST } from '@/data/content';
 import { asset, assetUrl } from '@/lib/images';
 import { SITE } from '@/lib/site';
 import styles from './home.module.css';
@@ -105,52 +96,6 @@ export default function HomePage() {
             </div>
             <div data-reveal="">
               <FilmFrame />
-            </div>
-          </div>
-        </section>
-
-        {/* ---------- The plan ---------- */}
-        <section
-          className="section section--beige"
-          aria-labelledby="journey-heading"
-        >
-          <div className="shell">
-            <div className={styles.centered} data-reveal="">
-              <div className="eyebrow">The Experience</div>
-              <h2
-                id="journey-heading"
-                className={`display h2 ${styles.centeredHeading}`}
-              >
-                {JOURNEY_INTRO.heading}
-              </h2>
-              <p className={`body ${styles.centeredLede}`}>{JOURNEY_INTRO.lede}</p>
-            </div>
-
-            <div className="grid grid--tiles">
-              {COMPONENTS.map((step) => (
-                <div
-                  key={step.n}
-                  className={`card card--lift ${styles.planCard}`}
-                  data-reveal=""
-                >
-                  <div className={styles.planTop}>
-                    <span
-                      className={styles.planIcon}
-                      style={{ backgroundImage: assetUrl(step.icon) }}
-                      aria-hidden="true"
-                    />
-                    <span className={styles.planNumber}>{step.n}</span>
-                  </div>
-                  <div className={styles.planTitle}>{step.title}</div>
-                  <p className={styles.planBody}>{step.body}</p>
-                </div>
-              ))}
-            </div>
-
-            <div className={styles.planFooter}>
-              <Link href="/v1/experience" className="btn btn--outline">
-                Read the full experience
-              </Link>
             </div>
           </div>
         </section>

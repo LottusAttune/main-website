@@ -14,7 +14,6 @@ import {
   COMPONENTS,
   FAQS,
   GUIDE,
-  INCLUDED_SHORT,
   JOURNEY_INTRO,
   PATHS,
   PROBLEM,
@@ -33,7 +32,6 @@ const TAG_CLASS = {
 
 export default function HomePage() {
   const portrait = asset('silvana-hero');
-  const comfort = asset('comfort-items');
 
   return (
     <>
@@ -222,54 +220,6 @@ export default function HomePage() {
                   </div>
                 );
               })}
-            </div>
-          </div>
-        </section>
-
-        {/* ---------- What's included ---------- */}
-        <section
-          className="section--tall section--beige"
-          style={{ padding: 'var(--space-section-tall) var(--space-gutter)' }}
-          aria-labelledby="included-heading"
-        >
-          <div className="shell grid grid--split">
-            <div className="sticky-col" data-reveal="">
-              <div className="eyebrow">What is Included</div>
-              <h2
-                id="included-heading"
-                className={`display ${styles.includedIntro}`}
-                style={{ fontSize: 'var(--text-h2-sub)', lineHeight: 1.16 }}
-              >
-                Two-hour transformative journey included in all offerings
-              </h2>
-              <p className={`body ${styles.includedLede}`}>
-                Private sessions, groups and organizations. Venue rental, materials
-                and refreshments are part of the package price.
-              </p>
-              <div className={styles.includedPhoto}>
-                <Image
-                  src={comfort.src}
-                  alt="Branded wellness mats, pillows, blankets and eye masks"
-                  width={comfort.width}
-                  height={comfort.height}
-                  sizes="(max-width: 900px) 100vw, 40vw"
-                />
-              </div>
-              <Link href="/v1/experience" className="btn btn--outline">
-                See everything included
-              </Link>
-            </div>
-
-            <div data-reveal="">
-              {INCLUDED_SHORT.map((text, i) => (
-                <div key={text} className="numbered-row">
-                  <span className="numbered-row__n">
-                    {String(i + 1).padStart(2, '0')}
-                  </span>
-                  <span className="numbered-row__text">{text}</span>
-                </div>
-              ))}
-              <div className="rule-end" />
             </div>
           </div>
         </section>

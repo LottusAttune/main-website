@@ -18,6 +18,7 @@ import {
 import { asset, assetUrl } from '@/lib/images';
 import { SITE } from '@/lib/site';
 import styles from './experience.module.css';
+import homeStyles from '../home.module.css';
 
 export const metadata: Metadata = {
   robots: { index: false, follow: false },
@@ -54,20 +55,29 @@ export default function ExperiencePage() {
 
         {/* ---------- Five components ---------- */}
         <section className={styles.block} aria-label="The five components">
-          {COMPONENTS.map((step) => (
-            <div key={step.n} className={styles.componentRow} data-reveal="">
-              <span
-                className={styles.componentIcon}
-                style={{ backgroundImage: assetUrl(step.icon) }}
-                aria-hidden="true"
-              />
-              <span className={styles.componentNumber}>{step.n}</span>
-              <h2 className={styles.componentTitle}>{step.title}</h2>
-              <p className={styles.componentBody}>
-                {'bodyLong' in step ? step.bodyLong : step.body}
-              </p>
-            </div>
-          ))}
+          <div className={styles.componentGrid}>
+            {COMPONENTS.map((step) => (
+              <div
+                key={step.n}
+                className={`card card--lift ${styles.componentCard}`}
+                data-reveal=""
+              >
+                <div className={styles.componentTop}>
+                  <span
+                    className={styles.componentIcon}
+                    style={{ backgroundImage: assetUrl(step.icon) }}
+                    aria-hidden="true"
+                  />
+                </div>
+                <div className={styles.componentCardBody}>
+                  <h2 className={homeStyles.planTitle}>{step.title}</h2>
+                  <p className={homeStyles.planBody}>
+                    {'bodyLong' in step ? step.bodyLong : step.body}
+                  </p>
+                </div>
+              </div>
+            ))}
+          </div>
           <div className="rule-end" />
 
           <div className={styles.featurePair} data-reveal="">

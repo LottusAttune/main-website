@@ -64,7 +64,7 @@ export const COMPONENTS = [
   {
     n: '03',
     icon: 'icon-practice',
-    title: 'Guided Restorative Practice',
+    title: 'Guided Restorative Practices',
     body: 'Move through an easy-to-follow somatic technique and a mindfulness exercise designed to release tension and prepare the body for deeper immersion and connection',
   },
   {
@@ -72,8 +72,6 @@ export const COMPONENTS = [
     icon: 'icon-sound',
     title: 'Immersive Sound',
     body: 'Experience a peaceful, layered soundscape featuring live crystal singing bowls, calming handpan melodies, organic African shakers, grounding shamanic drum rhythms, and other therapeutic instruments',
-    bodyLong:
-      'Experience a peaceful, layered soundscape featuring live crystal singing bowls, calming handpan melodies, organic African shakers, grounding shamanic drum rhythms, and other therapeutic instruments — designed to further promote relaxation, stress relief, clarity, and alignment with your authentic self',
   },
   {
     n: '05',

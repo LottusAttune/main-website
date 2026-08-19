@@ -36,73 +36,78 @@
 
 /* ---------- Five components ---------- */
 
-.componentRow {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 16px clamp(20px, 3vw, 40px);
-  padding: clamp(26px, 3vw, 38px) 0;
-  border-top: 1px solid rgba(59, 46, 36, 0.16);
+.componentGrid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 16px;
 }
 
-.componentIcon {
-  display: block;
-  flex: none;
-  width: 92px;
-  height: 92px;
-  background-repeat: no-repeat;
-  background-position: center;
-  background-size: contain;
-  mix-blend-mode: multiply;
+@media (max-width: 1024px) {
+  .componentGrid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 760px) {
+  .componentGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 480px) {
+  .componentGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.componentCard {
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+  overflow: hidden;
+}
+
+.componentPhoto {
+  position: relative;
+  aspect-ratio: 4 / 5;
+  overflow: hidden;
+  min-height: 0;
+}
+
+.componentPhoto img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.componentCardBody {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  gap: 8px;
+  padding: clamp(18px, 2vw, 22px) clamp(18px, 2vw, 20px);
 }
 
 .componentNumber {
-  flex: none;
-  width: 32px;
   font-family: var(--font-display);
   font-weight: 400;
-  font-size: 19px;
+  font-size: 15px;
   color: var(--color-gold-text);
 }
 
 .componentTitle {
   font-family: var(--font-display);
   font-weight: 300;
-  font-size: var(--text-h3);
+  font-size: 19px;
   margin: 0;
-  flex: 1 1 240px;
-  min-width: 0;
+  line-height: 1.25;
 }
 
 .componentBody {
   margin: 0;
-  font-size: 16.5px;
-  line-height: 1.85;
+  font-size: 14px;
+  line-height: 1.55;
   color: var(--color-ink-body);
-  flex: 2 1 340px;
-  min-width: 0;
-}
-
-.featurePair {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 20px;
-  margin-top: clamp(40px, 5vw, 70px);
-}
-
-/* 16:9 matches the wide session photo exactly, so it is never cropped. */
-.featureImage {
-  position: relative;
-  aspect-ratio: 16 / 9;
-  border-radius: var(--radius-card);
-  overflow: hidden;
-}
-
-.featureImage img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: center 40%;
 }
 
 /* ---------- Benefits ---------- */

@@ -26,9 +26,15 @@ export const metadata: Metadata = {
     'A two-hour guided journey combining neuroscience education, intention setting, somatic and mindfulness practice, immersive live sound, and reintegration.',
 };
 
+const STEP_PHOTOS = {
+  '01': { name: 'photo-education', position: 'center 20%' },
+  '02': { name: 'photo-intention', position: 'center 55%' },
+  '03': { name: 'journey-intention', position: 'center 18%' },
+  '04': { name: 'crystal-bowls-sil', position: 'center 74%' },
+  '05': { name: 'photo-reintegration-alt2', position: 'center 45%' },
+} as const;
+
 export default function ExperiencePage() {
-  const wide = asset('somatic-main');
-  const bowls = asset('crystal-bowls');
 
   return (
     <>
@@ -54,43 +60,33 @@ export default function ExperiencePage() {
 
         {/* ---------- Five components ---------- */}
         <section className={styles.block} aria-label="The five components">
-          {COMPONENTS.map((step) => (
-            <div key={step.n} className={styles.componentRow} data-reveal="">
-              <span
-                className={styles.componentIcon}
-                style={{ backgroundImage: assetUrl(step.icon) }}
-                aria-hidden="true"
-              />
-              <span className={styles.componentNumber}>{step.n}</span>
-              <h2 className={styles.componentTitle}>{step.title}</h2>
-              <p className={styles.componentBody}>
-                {'bodyLong' in step ? step.bodyLong : step.body}
-              </p>
-            </div>
-          ))}
-          <div className="rule-end" />
-
-          <div className={styles.featurePair} data-reveal="">
-            <div className={styles.featureImage}>
-              <Image
-                src={wide.src}
-                alt="Participants resting with eye masks during a sound session"
-                width={wide.width}
-                height={wide.height}
-                sizes="(max-width: 900px) 100vw, 50vw"
-                quality={90}
-              />
-            </div>
-            <div className={styles.featureImage}>
-              <Image
-                src={bowls.src}
-                alt="Crystal singing bowls"
-                width={bowls.width}
-                height={bowls.height}
-                sizes="(max-width: 900px) 100vw, 50vw"
-                quality={90}
-              />
-            </div>
+          <div className={styles.componentGrid}>
+            {COMPONENTS.map((step) => {
+              const photo = asset(STEP_PHOTOS[step.n].name);
+              return (
+                <div
+                  key={step.n}
+                  className={`card card--lift ${styles.componentCard}`}
+                  data-reveal=""
+                >
+                  <div className={styles.componentPhoto}>
+                    <Image
+                      src={photo.src}
+                      alt=""
+                      width={photo.width}
+                      height={photo.height}
+                      sizes="(max-width: 1024px) 33vw, 20vw"
+                      style={{ objectPosition: STEP_PHOTOS[step.n].position }}
+                    />
+                  </div>
+                  <div className={styles.componentCardBody}>
+                    <span className={styles.componentNumber}>{step.n}</span>
+                    <h2 className={styles.componentTitle}>{step.title}</h2>
+                    <p className={styles.componentBody}>{step.body}</p>
+                  </div>
+                </div>
+              );
+            })}
           </div>
         </section>
 

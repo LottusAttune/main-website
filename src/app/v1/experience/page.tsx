@@ -18,7 +18,6 @@ import {
 import { asset, assetUrl } from '@/lib/images';
 import { SITE } from '@/lib/site';
 import styles from './experience.module.css';
-import homeStyles from '../home.module.css';
 
 export const metadata: Metadata = {
   robots: { index: false, follow: false },
@@ -28,8 +27,8 @@ export const metadata: Metadata = {
 };
 
 export default function ExperiencePage() {
-  const wide = asset('somatic-main');
-  const bowls = asset('crystal-bowls');
+  const bowls = asset('crystal-bowls-sil');
+  const intention = asset('journey-intention');
 
   return (
     <>
@@ -55,50 +54,43 @@ export default function ExperiencePage() {
 
         {/* ---------- Five components ---------- */}
         <section className={styles.block} aria-label="The five components">
-          <div className={styles.componentGrid}>
-            {COMPONENTS.map((step) => (
-              <div
-                key={step.n}
-                className={`card card--lift ${styles.componentCard}`}
-                data-reveal=""
-              >
-                <div className={styles.componentTop}>
-                  <span
-                    className={styles.componentIcon}
-                    style={{ backgroundImage: assetUrl(step.icon) }}
-                    aria-hidden="true"
-                  />
-                </div>
-                <div className={styles.componentCardBody}>
-                  <h2 className={homeStyles.planTitle}>{step.title}</h2>
-                  <p className={homeStyles.planBody}>
-                    {'bodyLong' in step ? step.bodyLong : step.body}
-                  </p>
-                </div>
-              </div>
-            ))}
-          </div>
+          {COMPONENTS.map((step) => (
+            <div key={step.n} className={styles.componentRow} data-reveal="">
+              <span
+                className={styles.componentIcon}
+                style={{ backgroundImage: assetUrl(step.icon) }}
+                aria-hidden="true"
+              />
+              <span className={styles.componentNumber}>{step.n}</span>
+              <h2 className={styles.componentTitle}>{step.title}</h2>
+              <p className={styles.componentBody}>
+                {'bodyLong' in step ? step.bodyLong : step.body}
+              </p>
+            </div>
+          ))}
           <div className="rule-end" />
 
           <div className={styles.featurePair} data-reveal="">
             <div className={styles.featureImage}>
               <Image
-                src={wide.src}
-                alt="Participants resting with eye masks during a sound session"
-                width={wide.width}
-                height={wide.height}
-                sizes="(max-width: 900px) 100vw, 50vw"
-                quality={90}
-              />
-            </div>
-            <div className={styles.featureImage}>
-              <Image
                 src={bowls.src}
-                alt="Crystal singing bowls"
+                alt="Silvana playing crystal singing bowls during a sound session"
                 width={bowls.width}
                 height={bowls.height}
                 sizes="(max-width: 900px) 100vw, 50vw"
                 quality={90}
+                style={{ objectPosition: 'center 74%' }}
+              />
+            </div>
+            <div className={styles.featureImage}>
+              <Image
+                src={intention.src}
+                alt="Silvana leading a guided breathing and intention-setting exercise"
+                width={intention.width}
+                height={intention.height}
+                sizes="(max-width: 900px) 100vw, 50vw"
+                quality={90}
+                style={{ objectPosition: 'center 18%' }}
               />
             </div>
           </div>

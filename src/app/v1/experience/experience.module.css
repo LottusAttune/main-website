@@ -34,63 +34,53 @@
   margin: 0 auto;
 }
 
-.componentGrid {
-  display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  gap: 16px;
-}
-
-@media (max-width: 1024px) {
-  .componentGrid {
-    grid-template-columns: repeat(3, 1fr);
-  }
-}
-
-@media (max-width: 760px) {
-  .componentGrid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-
-@media (max-width: 480px) {
-  .componentGrid {
-    grid-template-columns: 1fr;
-  }
-}
-
-.componentCard {
+/* Tightened from the original clamp(26px,3vw,38px) row padding so all five
+   rows read on one screen without heavy scrolling. */
+.componentRow {
   display: flex;
-  flex-direction: column;
-  padding: 0;
-  overflow: hidden;
-  background: var(--color-cream-raised);
-}
-
-.componentTop {
-  display: flex;
+  flex-wrap: wrap;
   align-items: center;
-  justify-content: center;
-  padding: 28px 16px 8px;
+  gap: 10px clamp(20px, 3vw, 40px);
+  padding: clamp(10px, 1.2vw, 14px) 0;
+  border-top: 1px solid rgba(59, 46, 36, 0.16);
 }
 
 .componentIcon {
   display: block;
-  width: 190px;
-  height: 190px;
+  flex: none;
+  width: 60px;
+  height: 60px;
   background-repeat: no-repeat;
   background-position: center;
-  /* The source icon art fills only ~40-60% of its own frame (built-in
-     padding), so "contain" renders it tiny. Zooming past contain crops
-     that dead space out and makes the actual glyph fill most of the box. */
-  background-size: 230%;
+  background-size: contain;
   mix-blend-mode: multiply;
 }
 
-.componentCardBody {
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-  padding: clamp(24px, 3vw, 32px) clamp(20px, 2.6vw, 28px);
+.componentNumber {
+  flex: none;
+  width: 32px;
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: 19px;
+  color: var(--color-gold-text);
+}
+
+.componentTitle {
+  font-family: var(--font-display);
+  font-weight: 300;
+  font-size: clamp(19px, 1.6vw, 22px);
+  margin: 0;
+  flex: 1 1 240px;
+  min-width: 0;
+}
+
+.componentBody {
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.55;
+  color: var(--color-ink-body);
+  flex: 2 1 340px;
+  min-width: 0;
 }
 
 .featurePair {
@@ -100,10 +90,11 @@
   margin-top: clamp(40px, 5vw, 70px);
 }
 
-/* 16:9 matches the wide session photo exactly, so it is never cropped. */
+/* 4:5 suits the portrait session photos — tall enough that faces near the
+   top of the frame are never cropped. */
 .featureImage {
   position: relative;
-  aspect-ratio: 16 / 9;
+  aspect-ratio: 4 / 5;
   border-radius: var(--radius-card);
   overflow: hidden;
 }
@@ -112,7 +103,6 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
-  object-position: center 40%;
 }
 
 /* ---------- Benefits ---------- */

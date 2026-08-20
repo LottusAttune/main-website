@@ -15,7 +15,7 @@ import {
   INCLUDED_FULL,
   JOURNEY_INTRO,
 } from '@/data/content';
-import { asset, assetUrl } from '@/lib/images';
+import { asset } from '@/lib/images';
 import { SITE } from '@/lib/site';
 import styles from './experience.module.css';
 
@@ -90,117 +90,73 @@ export default function ExperiencePage() {
           </div>
         </section>
 
-        {/* ---------- Benefits for individuals ---------- */}
-        <section className={styles.block} aria-labelledby="individuals-heading">
-          <div className={styles.sectionHead}>
-            <div style={{ minWidth: 0 }}>
-              <span className={`tag tag--one ${styles.benefitTag}`}>
-                1 : 1 &nbsp;·&nbsp; Private Group
-              </span>
-              <h2
-                id="individuals-heading"
-                className={`display ${styles.sectionHeadTitle}`}
-              >
-                Benefits for individuals
-              </h2>
-            </div>
-            <p className={styles.sectionHeadNote}>
-              Create space to reset, recharge, and reconnect from within
-            </p>
-          </div>
-
-          <div className="grid grid--photos">
-            {BENEFITS_INDIVIDUAL.map((benefit) => {
-              const photo = asset(benefit.img);
-              return (
-                <figure
-                  key={benefit.text}
-                  className={`card card--lift ${styles.benefitCard}`}
-                  data-reveal=""
-                >
-                  <div className={styles.benefitPhoto}>
-                    <Image
-                      src={photo.src}
-                      alt=""
-                      width={photo.width}
-                      height={photo.height}
-                      sizes="(max-width: 900px) 100vw, 25vw"
-                    />
-                  </div>
-                  <figcaption className={styles.benefitCaption}>
-                    {benefit.text}
-                  </figcaption>
-                </figure>
-              );
-            })}
-          </div>
-        </section>
-
-        {/* ---------- Teams & organizations ---------- */}
+        {/* ---------- Benefits ---------- */}
         <section
-          className="section--short section--dark"
-          style={{ padding: 'var(--space-section-short) var(--space-gutter)' }}
-          aria-labelledby="teams-heading"
+          className={`section section--beige ${styles.benefitsSection}`}
+          aria-label="Benefits"
         >
-          <div
-            data-bg="1"
-            className="photo-wash"
-            style={{ backgroundImage: assetUrl('venue-bar'), opacity: 0.06 }}
-          />
-          <div className="shell" style={{ position: 'relative' }}>
-            <div className={`${styles.sectionHead} ${styles.sectionHeadDark}`}>
-              <div style={{ minWidth: 0 }}>
-                <span
-                  className={`tag ${styles.benefitTag}`}
-                  style={{
-                    background: 'rgba(198,169,122,0.3)',
-                    color: '#F0E2CA',
-                  }}
-                >
-                  Corporate
-                </span>
-                <h2
-                  id="teams-heading"
-                  className={`display ${styles.sectionHeadTitle}`}
-                  style={{ color: 'var(--color-cream-text)' }}
-                >
-                  Teams &amp; Organizations
-                </h2>
+          <div className={`shell ${styles.benefitsShell}`}>
+            <h2 className={`display ${styles.benefitsHeading}`}>Benefits</h2>
+
+            <div className={styles.benefitsGroup}>
+              <div className={styles.sectionHead}>
+                <div style={{ minWidth: 0 }}>
+                  <span className={`tag ${styles.benefitTag}`}>
+                    1 : 1 &nbsp;·&nbsp; Private Groups
+                  </span>
+                  <h3
+                    id="individuals-heading"
+                    className={`display ${styles.sectionHeadTitle}`}
+                  >
+                    For Individuals
+                  </h3>
+                </div>
+                <p className={styles.sectionHeadNote}>
+                  Create space to reset, recharge, and reconnect from within
+                </p>
               </div>
-              <p
-                className={`${styles.sectionHeadNote} ${styles.sectionHeadNoteDark}`}
-              >
-                Elevate your company culture through a new generation of team
-                building where wellness and connection come together
-              </p>
+
+              <div className={styles.columns}>
+                {BENEFITS_INDIVIDUAL.items.map((item) => (
+                  <div key={item.title} className={styles.column} data-reveal="">
+                    <h3 className={styles.columnTitle}>{item.title}</h3>
+                    <p className={styles.columnBody}>{item.body}</p>
+                  </div>
+                ))}
+              </div>
+              <p className={styles.benefitsNote}>{BENEFITS_INDIVIDUAL.note}</p>
             </div>
 
-            <div className="grid grid--photos">
-              {BENEFITS_TEAMS.map((benefit) => {
-                const photo = asset(benefit.img);
-                return (
-                  <figure
-                    key={benefit.text}
-                    className={`card card--dark card--lift ${styles.benefitCard}`}
-                    data-reveal=""
+            <div className={styles.benefitsDivider} />
+
+            <div className={styles.benefitsGroup}>
+              <div className={styles.sectionHead}>
+                <div style={{ minWidth: 0 }}>
+                  <span className={`tag ${styles.benefitTag}`}>
+                    Corporate
+                  </span>
+                  <h3
+                    id="teams-heading"
+                    className={`display ${styles.sectionHeadTitle}`}
                   >
-                    <div className={styles.benefitPhoto}>
-                      <Image
-                        src={photo.src}
-                        alt=""
-                        width={photo.width}
-                        height={photo.height}
-                        sizes="(max-width: 900px) 100vw, 25vw"
-                      />
-                    </div>
-                    <figcaption
-                      className={`${styles.benefitCaption} ${styles.benefitCaptionDark}`}
-                    >
-                      {benefit.text}
-                    </figcaption>
-                  </figure>
-                );
-              })}
+                    For Teams &amp; Organizations
+                  </h3>
+                </div>
+                <p className={styles.sectionHeadNote}>
+                  Elevate your company culture through a new generation of
+                  team building where wellness and connection come together
+                </p>
+              </div>
+
+              <div className={styles.columns}>
+                {BENEFITS_TEAMS.items.map((item) => (
+                  <div key={item.title} className={styles.column} data-reveal="">
+                    <h3 className={styles.columnTitle}>{item.title}</h3>
+                    <p className={styles.columnBody}>{item.body}</p>
+                  </div>
+                ))}
+              </div>
+              <p className={styles.benefitsNote}>{BENEFITS_TEAMS.note}</p>
             </div>
           </div>
         </section>

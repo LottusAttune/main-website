@@ -139,55 +139,41 @@ export const INCLUDED_FULL = [
   'End-of-session reintegration',
 ] as const;
 
-export const BENEFITS_INDIVIDUAL = [
-  {
-    img: 'for-individuals',
-    text: 'Reduce stress, tension, and emotional fatigue',
-  },
-  {
-    img: 'handpan-tv',
-    text: 'Support clearer thinking and greater emotional balance',
-  },
-  {
-    img: 'crystal-bowls',
-    text: 'Regular participation helps deepen, reinforce, and sustain the benefits over time',
-  },
-  {
-    img: 'intention-cards-alt',
-    text: 'Make unique and unforgettable memories together with friends, family, and loved ones',
-  },
-  {
-    img: 'refreshments',
-    text: 'Ideal for birthdays, anniversaries, family gatherings, any meaningful occasions, celebrations, or just to treat yourself',
-  },
-] as const;
+export const BENEFITS_INDIVIDUAL = {
+  items: [
+    {
+      title: 'Rest & Restore',
+      body: 'Reduce stress, tension, and emotional fatigue so you can feel more like yourself',
+    },
+    {
+      title: 'Clear & Balanced Mind',
+      body: 'Support clearer thinking and greater emotional balance through guided practices',
+    },
+    {
+      title: 'Meaningful Connection',
+      body: 'Make unique and unforgettable memories together with friends, family, and loved ones',
+    },
+  ],
+  note: 'Ideal for birthdays, anniversaries, family gatherings, any meaningful occasions, celebrations, or just to treat yourself',
+} as const;
 
-export const BENEFITS_TEAMS = [
-  {
-    img: 'lounge-private',
-    text: 'Create space to reset, recharge, and reconnect from within',
-  },
-  {
-    img: 'for-teams',
-    text: 'Promote healthier, more engaged, and resilient workplace cultures, and help teams reset, refocus, and strengthen collaboration',
-  },
-  {
-    img: 'venue-signature',
-    text: 'Enhance mental clarity and support sustainable performance',
-  },
-  {
-    img: 'venue-bar',
-    text: 'Whether offered as a one-time event, or as a monthly or quarterly team reset, it creates unique, meaningful, and memorable experiences that bring people together',
-  },
-  {
-    img: 'educational-video',
-    text: 'An innovative solution for employee well-being initiatives and organizational Health & Wellness events',
-  },
-  {
-    img: 'comfort-items',
-    text: 'A unique and impactful experience for team, departmental, or leadership meetings, team-building activities, and employee appreciation events',
-  },
-] as const;
+export const BENEFITS_TEAMS = {
+  items: [
+    {
+      title: 'Stronger Together',
+      body: 'Promote healthier, more engaged, and resilient workplace cultures. Help teams reset, refocus, and strengthen collaboration',
+    },
+    {
+      title: 'Performance and Clarity',
+      body: 'Enhance mental clarity and support sustainable performance',
+    },
+    {
+      title: 'Culture that Lasts',
+      body: 'An innovative approach for employee well-being that drives connection, collaboration and retention',
+    },
+  ],
+  note: 'A unique and impactful experience for teams, departmental or leadership meetings, employee appreciation and Health & Wellness events',
+} as const;
 
 export const GALLERY = [
   { img: 'venue-signature', label: 'Premium Signature Venue' },

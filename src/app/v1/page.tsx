@@ -174,48 +174,6 @@ export default function HomePage() {
           </div>
         </section>
 
-        {/* ---------- The call ---------- */}
-        <section
-          className="section--dark"
-          style={{ padding: 'var(--space-section-tall) var(--space-gutter)' }}
-          aria-labelledby="call-heading"
-        >
-          <div
-            data-bg="1"
-            className="photo-wash"
-            style={{ backgroundImage: assetUrl('silvana-hero') }}
-          />
-          <div className={styles.call} data-reveal="">
-            <div className="eyebrow eyebrow--dark">Ready When You Are</div>
-            <h2 id="call-heading" className={styles.callHeading}>
-              {SITE.motto}
-            </h2>
-            <p className={styles.callBody}>
-              Create space to reset, recharge, and reconnect from within. Choose
-              your date and we will confirm every detail with you personally.
-            </p>
-            <div className="btn-row btn-row--center">
-              <Link href="/book" className="btn btn--cream btn--lg">
-                Book your session
-              </Link>
-              <a
-                href={`mailto:${SITE.email}`}
-                className="btn btn--outline-dark btn--lg"
-              >
-                Request a call
-              </a>
-            </div>
-            <div className={styles.callRisk}>
-              <span>No obligation — we confirm every detail with you</span>
-              <span className={styles.callDot}>·</span>
-              <span>Free rescheduling 48 hours ahead</span>
-            </div>
-            <div className={styles.callContact}>
-              {SITE.email} · {SITE.phone}
-            </div>
-          </div>
-        </section>
-
         {/* ---------- FAQ ---------- */}
         <section className="section" aria-labelledby="faq-heading">
           <div className={styles.faqGrid}>
@@ -254,6 +212,48 @@ export default function HomePage() {
               <Accordion
                 items={FAQS.map((faq) => ({ title: faq.q, answer: faq.a }))}
               />
+            </div>
+          </div>
+        </section>
+
+        {/* ---------- The call ---------- */}
+        <section
+          className="section--dark"
+          style={{ padding: 'var(--space-section-tall) var(--space-gutter)' }}
+          aria-labelledby="call-heading"
+        >
+          <div
+            data-bg="1"
+            className="photo-wash"
+            style={{ backgroundImage: assetUrl('silvana-hero') }}
+          />
+          <div className={styles.call} data-reveal="">
+            <div className="eyebrow eyebrow--dark">Ready When You Are</div>
+            <h2 id="call-heading" className={styles.callHeading}>
+              {SITE.motto}
+            </h2>
+            <p className={styles.callBody}>
+              Create space to reset, recharge, and reconnect from within. Choose
+              your date and we will confirm every detail with you personally.
+            </p>
+            <div className="btn-row btn-row--center">
+              <Link href="/book" className="btn btn--cream btn--lg">
+                Book your session
+              </Link>
+              <a
+                href={`mailto:${SITE.email}`}
+                className="btn btn--outline-dark btn--lg"
+              >
+                Request a call
+              </a>
+            </div>
+            <div className={styles.callRisk}>
+              <span>No obligation — we confirm every detail with you</span>
+              <span className={styles.callDot}>·</span>
+              <span>Free rescheduling 48 hours ahead</span>
+            </div>
+            <div className={styles.callContact}>
+              {SITE.email} · {SITE.phone}
             </div>
           </div>
         </section>

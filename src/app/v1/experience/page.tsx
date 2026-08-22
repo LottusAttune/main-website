@@ -31,7 +31,7 @@ const STEP_PHOTOS = {
   '02': { name: 'photo-intention', position: 'center 55%' },
   '03': { name: 'journey-intention', position: 'center 18%' },
   '04': { name: 'crystal-bowls-sil', position: 'center 74%' },
-  '05': { name: 'photo-reintegration-alt2', position: 'center 45%' },
+  '05': { name: 'photo-reintegration-alt2', position: 'center 45%', mirror: true },
 } as const;
 
 export default function ExperiencePage() {
@@ -62,7 +62,8 @@ export default function ExperiencePage() {
         <section className={styles.block} aria-label="The five components">
           <div className={styles.componentGrid}>
             {COMPONENTS.map((step) => {
-              const photo = asset(STEP_PHOTOS[step.n].name);
+              const stepPhoto = STEP_PHOTOS[step.n];
+              const photo = asset(stepPhoto.name);
               return (
                 <div
                   key={step.n}
@@ -76,7 +77,10 @@ export default function ExperiencePage() {
                       width={photo.width}
                       height={photo.height}
                       sizes="(max-width: 1024px) 33vw, 20vw"
-                      style={{ objectPosition: STEP_PHOTOS[step.n].position }}
+                      style={{
+                        objectPosition: stepPhoto.position,
+                        transform: 'mirror' in stepPhoto ? 'scaleX(-1)' : undefined,
+                      }}
                     />
                   </div>
                   <div className={styles.componentCardBody}>

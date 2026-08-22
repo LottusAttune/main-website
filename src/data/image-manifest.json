@@ -19,9 +19,17 @@
     "width": 1600,
     "height": 900
   },
+  "for-individuals-dof": {
+    "width": 1018,
+    "height": 1273
+  },
   "for-individuals": {
     "width": 1600,
     "height": 2844
+  },
+  "for-teams-cropped": {
+    "width": 941,
+    "height": 1289
   },
   "for-teams": {
     "width": 941,

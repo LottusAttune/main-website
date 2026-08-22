@@ -21,6 +21,12 @@ const TAG_CLASS = {
   corp: 'tag--corp',
 } as const;
 
+const PATH_PHOTO_POSITION: Record<string, string> = {
+  'for-individuals-dof': 'center center',
+  'somatic-main': 'center 35%',
+  'for-teams-cropped': 'center 30%',
+};
+
 export default function HomePage() {
   const portrait = asset('silvana-hero');
 
@@ -104,12 +110,11 @@ export default function HomePage() {
         <section id="paths" className="section" aria-labelledby="paths-heading">
           <div className="shell">
             <div className={styles.centered} data-reveal="">
-              <div className="eyebrow">Choose Your Path</div>
               <h2
                 id="paths-heading"
                 className={`display h2 ${styles.centeredHeading}`}
               >
-                For individuals, private gatherings, organizations and teams
+                For organizations and teams, private gatherings, and individuals
               </h2>
               <p className={`body ${styles.centeredLede}`}>
                 All sessions are offered in a two-hour format
@@ -132,6 +137,7 @@ export default function HomePage() {
                         width={photo.width}
                         height={photo.height}
                         sizes="(max-width: 900px) 100vw, 33vw"
+                        style={{ objectPosition: PATH_PHOTO_POSITION[path.img] }}
                       />
                     </div>
                     <div className={styles.pathBody}>
@@ -143,24 +149,6 @@ export default function HomePage() {
                       </div>
                       <h3 className={styles.pathTitle}>{path.title}</h3>
                       <p className={styles.pathText}>{path.body}</p>
-                      <div className={styles.pathFooter}>
-                        <div className={styles.pathPrice}>{path.price}</div>
-                        <div className={styles.pathSubline}>{path.subline}</div>
-                        <div className={styles.pathActions}>
-                          <Link
-                            href="/book"
-                            className={`btn btn--dark ${styles.pathBook}`}
-                          >
-                            Book
-                          </Link>
-                          <Link
-                            href="/v1/offerings"
-                            className={`btn btn--outline ${styles.pathDetails}`}
-                          >
-                            Details
-                          </Link>
-                        </div>
-                      </div>
                     </div>
                   </div>
                 );

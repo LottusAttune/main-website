@@ -1,7 +1,10 @@
-import Link from 'next/link';
+import Image from 'next/image';
 
 import { VENUE_COPY } from '@/data/content';
-import { NAV_LINKS, SITE, SOCIAL } from '@/lib/site';
+import { asset } from '@/lib/images';
+import { SITE, SOCIAL } from '@/lib/site';
+import { ExpandableNote } from './ExpandableNote';
+import { InstagramIcon, LinkedInIcon, MailIcon, PhoneIcon } from './FooterIcons';
 import styles from './SiteFooter.module.css';
 
 const SPECS = [
@@ -10,91 +13,96 @@ const SPECS = [
   { label: 'Booking notice', value: '5 days' },
 ];
 
-type Props = {
-  /** Prefix for the Explore links, so the /v1 backup stays inside itself. */
-  basePath?: string;
+const SOCIAL_ICONS = {
+  Instagram: InstagramIcon,
+  LinkedIn: LinkedInIcon,
 };
 
-export function SiteFooter({ basePath = '' }: Props) {
+export function SiteFooter() {
   return (
     <footer className={styles.footer}>
       <div className={styles.glow} />
 
-      <div className={styles.inner}>
-        <div className={styles.lockup}>
-          {/* The prototype sets the wordmark in type between two fading gold
-              rules rather than using the lockup image, which would repeat the
-              same words twice. Following the prototype. */}
-          <div className={styles.rule}>
-            <span className={styles.ruleWord}>LOTUS ATTUNE</span>
-          </div>
-          <div className={styles.eyebrow}>{SITE.tagline}</div>
-          <div className={styles.motto}>{SITE.motto}</div>
-          <div className="btn-row btn-row--center">
-            <Link href="/book" className="btn btn--dark">
-              Book a session
-            </Link>
-            <Link href="/gift" className="btn btn--outline">
-              Gift a session
-            </Link>
-          </div>
+      <div className={styles.lockup}>
+        <div className={styles.lockupPhoto}>
+          <Image
+            src={asset('footer-texture-journey2').src}
+            alt=""
+            width={asset('footer-texture-journey2').width}
+            height={asset('footer-texture-journey2').height}
+            sizes="(max-width: 900px) 100vw, 360px"
+          />
         </div>
 
-        <div className={styles.cells}>
+        <div className={styles.lockupContent}>
+          <div className={styles.brand}>
+            <div className={styles.brandName}>Lotus Attune</div>
+            <div className={styles.brandTagline}>{SITE.tagline}</div>
+          </div>
+          <div className={styles.mottoGroup}>
+            <div className={styles.readyEyebrow}>Ready When You Are</div>
+            <div className={styles.motto}>{SITE.motto}</div>
+          </div>
+          <p className={styles.body}>
+            Create space to recharge, renew and reconnect from within.
+          </p>
+        </div>
+      </div>
+
+      <div className={styles.inner}>
+        <div className={styles.cellsGrid}>
           <div className={styles.cell}>
             <div className={styles.cellTitle}>Contact</div>
             <div className={styles.stack}>
-              <a href={`mailto:${SITE.email}`}>{SITE.email}</a>
-              <a href={SITE.phoneHref}>{SITE.phone}</a>
+              <a href={`mailto:${SITE.email}`} className={styles.iconRow}>
+                <MailIcon className={styles.rowIcon} />
+                {SITE.email}
+              </a>
+              <a href={SITE.phoneHref} className={styles.iconRow}>
+                <PhoneIcon className={styles.rowIcon} />
+                {SITE.phone}
+              </a>
               <span className={styles.note}>Phone &amp; WhatsApp</span>
             </div>
             <div className={styles.socialTitle}>Get Social</div>
             <div className={styles.social}>
-              {SOCIAL.map((s) => (
-                <a
-                  key={s.label}
-                  href={s.href}
-                  className={`btn btn--outline ${styles.socialPill}`}
-                  rel="noopener noreferrer"
-                  target="_blank"
-                >
-                  {s.label}
-                </a>
-              ))}
+              {SOCIAL.filter((s) => s.label in SOCIAL_ICONS).map((s) => {
+                const Icon = SOCIAL_ICONS[s.label as keyof typeof SOCIAL_ICONS];
+                return (
+                  <a
+                    key={s.label}
+                    href={s.href}
+                    aria-label={s.label}
+                    className={styles.socialIcon}
+                    rel="noopener noreferrer"
+                    target="_blank"
+                  >
+                    <Icon />
+                  </a>
+                );
+              })}
             </div>
           </div>
 
           <div className={styles.cell}>
-            <div className={styles.cellTitle}>Explore</div>
-            <div className={styles.stack}>
-              {NAV_LINKS.map((link) => (
-                <Link
-                  key={link.href}
-                  href={link.href === '/' ? basePath || '/' : `${basePath}${link.href}`}
-                >
-                  {link.label}
-                </Link>
+            <div className={styles.cellTitle}>Location</div>
+            <div className={styles.locationLead}>Bloor–Yonge, Toronto</div>
+            <p className={styles.venueCopy}>{VENUE_COPY[0]}</p>
+            <ExpandableNote label="Parking">
+              <p className={styles.venueCopy}>{VENUE_COPY[1]}</p>
+            </ExpandableNote>
+          </div>
+
+          <div className={styles.cell}>
+            <div className={styles.goodToKnowInner}>
+              <div className={styles.cellTitle}>Good to Know</div>
+              {SPECS.map((spec) => (
+                <div key={spec.label} className={styles.spec}>
+                  <span>{spec.label}</span>
+                  <span className={styles.specValue}>{spec.value}</span>
+                </div>
               ))}
             </div>
-          </div>
-
-          <div className={styles.cell}>
-            <div className={styles.cellTitle}>The Venue</div>
-            {VENUE_COPY.map((paragraph) => (
-              <p key={paragraph} className={styles.venueCopy}>
-                {paragraph}
-              </p>
-            ))}
-          </div>
-
-          <div className={styles.cell}>
-            <div className={styles.cellTitle}>Good to Know</div>
-            {SPECS.map((spec) => (
-              <div key={spec.label} className={styles.spec}>
-                <span>{spec.label}</span>
-                <span className={styles.specValue}>{spec.value}</span>
-              </div>
-            ))}
           </div>
         </div>
 

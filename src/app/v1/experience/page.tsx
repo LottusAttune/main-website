@@ -1,6 +1,5 @@
 import type { Metadata } from 'next';
 import Image from 'next/image';
-import Link from 'next/link';
 
 import { Reveal } from '@/components/common/Reveal';
 import { SiteFooter } from '@/components/chrome/SiteFooter';
@@ -16,7 +15,6 @@ import {
   JOURNEY_INTRO,
 } from '@/data/content';
 import { asset } from '@/lib/images';
-import { SITE } from '@/lib/site';
 import styles from './experience.module.css';
 
 export const metadata: Metadata = {
@@ -207,34 +205,10 @@ export default function ExperiencePage() {
           ))}
           <div className="rule-end" />
         </section>
-
-        {/* ---------- Closer ---------- */}
-        <section
-          className={`section section--dark ${styles.closer}`}
-          aria-labelledby="experience-closer"
-        >
-          <div className={styles.closerInner}>
-            <h2 id="experience-closer" className={styles.closerHeading}>
-              {SITE.motto}
-            </h2>
-            <p className={styles.closerBody}>
-              Sessions are offered in a two-hour format for individuals, private
-              gatherings, organizations and teams.
-            </p>
-            <div className="btn-row btn-row--center">
-              <Link href="/book" className="btn btn--cream">
-                Book a session
-              </Link>
-              <Link href="/v1/offerings" className="btn btn--outline-dark">
-                See pricing
-              </Link>
-            </div>
-          </div>
-        </section>
       </main>
 
       <StickyBookBar />
-      <SiteFooter basePath="/v1" />
+      <SiteFooter />
     </>
   );
 }

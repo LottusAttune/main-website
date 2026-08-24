@@ -50,6 +50,12 @@
   color: rgba(239, 230, 218, 0.72);
 }
 
+.actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
 .cta {
   padding: 16px 36px;
   min-height: 48px;

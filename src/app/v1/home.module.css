@@ -216,55 +216,6 @@
   object-fit: cover;
 }
 
-/* ---------- The call ---------- */
-
-.call {
-  position: relative;
-  max-width: 920px;
-  margin: 0 auto;
-  text-align: center;
-}
-
-.callHeading {
-  font-family: var(--font-display);
-  font-weight: 300;
-  font-size: clamp(32px, 4.4vw, 66px);
-  line-height: 1.1;
-  margin: 0 0 26px;
-  color: var(--color-cream-text);
-}
-
-.callBody {
-  margin: 0 auto 42px;
-  max-width: 640px;
-  font-size: 17.5px;
-  line-height: 1.85;
-  color: rgba(239, 230, 218, 0.78);
-}
-
-.callRisk {
-  margin-top: 30px;
-  display: flex;
-  justify-content: center;
-  gap: clamp(14px, 3vw, 32px);
-  flex-wrap: wrap;
-  font-size: 13px;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: rgba(239, 230, 218, 0.6);
-}
-
-.callDot {
-  color: rgba(198, 169, 122, 0.6);
-}
-
-.callContact {
-  margin-top: 22px;
-  font-size: 14.5px;
-  letter-spacing: 0.06em;
-  color: rgba(239, 230, 218, 0.5);
-}
-
 /* ---------- FAQ ---------- */
 
 .faqGrid {

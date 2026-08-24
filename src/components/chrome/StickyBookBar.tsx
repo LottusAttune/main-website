@@ -11,7 +11,9 @@ import styles from './StickyBookBar.module.css';
  * about eighty pixels below an identical BOOK A SESSION button.
  *
  * So it stays out of the way until the reader has scrolled past roughly the
- * first screen, then slides up.
+ * first screen, then slides up. It also carries the site's only Book/Gift
+ * buttons at the very bottom of a page, since the footer's closing block is
+ * text-only to avoid repeating them.
  */
 export function StickyBookBar() {
   const [shown, setShown] = useState(false);
@@ -38,13 +40,22 @@ export function StickyBookBar() {
       <span className={styles.label}>
         Two-hour sessions &nbsp;·&nbsp; 1 to 24 people &nbsp;·&nbsp; downtown Toronto
       </span>
-      <Link
-        href="/book"
-        className={`btn btn--cream ${styles.cta}`}
-        tabIndex={shown ? undefined : -1}
-      >
-        Book a session
-      </Link>
+      <div className={styles.actions}>
+        <Link
+          href="/book"
+          className={`btn btn--cream ${styles.cta}`}
+          tabIndex={shown ? undefined : -1}
+        >
+          Book a session
+        </Link>
+        <Link
+          href="/gift"
+          className={`btn btn--outline-dark ${styles.cta}`}
+          tabIndex={shown ? undefined : -1}
+        >
+          Gift a session
+        </Link>
+      </div>
     </div>
   );
 }

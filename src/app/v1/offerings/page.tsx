@@ -228,7 +228,7 @@ export default async function OfferingsPage() {
       </main>
 
       <StickyBookBar />
-      <SiteFooter basePath="/v1" />
+      <SiteFooter />
     </>
   );
 }

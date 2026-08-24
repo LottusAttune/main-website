@@ -108,7 +108,7 @@ export default function FounderPage() {
       </main>
 
       <StickyBookBar />
-      <SiteFooter basePath="/v1" />
+      <SiteFooter />
     </>
   );
 }

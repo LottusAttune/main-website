@@ -28,22 +28,7 @@ export default async function OfferingsPage() {
       <Reveal />
 
       <main>
-        <section className={styles.intro} aria-labelledby="offerings-heading">
-          <h1
-            id="offerings-heading"
-            className="display h1"
-            style={{ marginBottom: 30 }}
-          >
-            Offerings
-          </h1>
-          <p className="lede" style={{ maxWidth: 900 }}>
-            For individuals, private gatherings, organizations and teams, all
-            sessions are offered in a two-hour format
-          </p>
-        </section>
-
-        {/* ---------- Build your session ---------- */}
-        <section className={styles.configurator} aria-labelledby="build-heading">
+        <section className={styles.configurator} aria-labelledby="offerings-heading">
           <div
             data-bg="1"
             className="photo-wash photo-wash--light"
@@ -51,15 +36,18 @@ export default async function OfferingsPage() {
           />
           <div className="shell" style={{ position: 'relative' }}>
             <div className={styles.configuratorHead}>
-              <div className="eyebrow" style={{ marginBottom: 22 }}>
-                Build Your Session
-              </div>
-              <h2
-                id="build-heading"
-                className={`display ${styles.configuratorHeading}`}
+              <h1
+                id="offerings-heading"
+                className="display h1"
+                style={{ marginBottom: 30 }}
               >
-                Choose your exact experience
-              </h2>
+                Offerings
+              </h1>
+              <p className="lede" style={{ maxWidth: 900, marginBottom: 44 }}>
+                For individuals, private gatherings, organizations and teams, all
+                sessions are offered in a two-hour format
+              </p>
+              <h2 className={styles.chooseHeading}>Choose your experience</h2>
               <p className="body" style={{ maxWidth: 700 }}>
                 Select a format and the details below. Your estimate updates as
                 you choose.

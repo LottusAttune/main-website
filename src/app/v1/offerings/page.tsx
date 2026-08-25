@@ -39,7 +39,7 @@ export default async function OfferingsPage() {
               <h1
                 id="offerings-heading"
                 className="display h1"
-                style={{ marginBottom: 30 }}
+                style={{ marginBottom: 14 }}
               >
                 Offerings
               </h1>

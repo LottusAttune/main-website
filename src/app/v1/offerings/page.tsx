@@ -47,7 +47,7 @@ export default async function OfferingsPage() {
                 For individuals, private gatherings, organizations and teams, all
                 sessions are offered in a two-hour format
               </p>
-              <h2 className={styles.chooseHeading}>Choose your experience</h2>
+              <h2 className={`display ${styles.chooseHeading}`}>Choose your experience</h2>
               <p className="body" style={{ maxWidth: 700 }}>
                 Select a format and the details below. Your estimate updates as
                 you choose.

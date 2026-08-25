@@ -1,7 +1,10 @@
 import type { Metadata } from 'next';
 import Image from 'next/image';
 
-import { BookGift, SilvanaFooter, SilvanaNav } from '@/components/silvana/Chrome';
+import { BookGift } from '@/components/silvana/Chrome';
+import { SiteFooter } from '@/components/chrome/SiteFooter';
+import { SiteNav } from '@/components/chrome/SiteNav';
+import { StickyBookBar } from '@/components/chrome/StickyBookBar';
 import { SILVANA_BENEFITS } from '@/data/silvana';
 import { asset, type AssetName } from '@/lib/images';
 import styles from '@/components/silvana/silvana.module.css';
@@ -46,7 +49,7 @@ function BenefitBlock({ group }: { group: Group }) {
 export default function BenefitsPage() {
   return (
     <div className={styles.page}>
-      <SilvanaNav />
+      <SiteNav />
       <main className={styles.section}>
         <div className={styles.shell}>
           <h1 className={styles.pageTitle}>{SILVANA_BENEFITS.heading}</h1>
@@ -60,7 +63,8 @@ export default function BenefitsPage() {
           <BookGift />
         </div>
       </main>
-      <SilvanaFooter />
+      <SiteFooter />
+      <StickyBookBar />
     </div>
   );
 }

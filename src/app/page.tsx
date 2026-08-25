@@ -2,7 +2,9 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 
 import { LocalBusinessSchema } from '@/components/common/LocalBusinessSchema';
-import { SilvanaFooter, SilvanaNav } from '@/components/silvana/Chrome';
+import { SiteFooter } from '@/components/chrome/SiteFooter';
+import { SiteNav } from '@/components/chrome/SiteNav';
+import { StickyBookBar } from '@/components/chrome/StickyBookBar';
 import { HomeFaq, HomeFilm, HomeReviews } from '@/components/silvana/HomeSections';
 import { SILVANA_HOME } from '@/data/silvana';
 import styles from '@/components/silvana/silvana.module.css';
@@ -17,7 +19,7 @@ export default function HomePage() {
   return (
     <div className={styles.page}>
       <LocalBusinessSchema />
-      <SilvanaNav />
+      <SiteNav />
 
       <main>
         <section className={styles.hero}>
@@ -48,7 +50,8 @@ export default function HomePage() {
         <HomeFaq />
       </main>
 
-      <SilvanaFooter />
+      <SiteFooter />
+      <StickyBookBar />
     </div>
   );
 }

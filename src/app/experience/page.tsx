@@ -1,6 +1,9 @@
 import type { Metadata } from 'next';
 
-import { BookGift, SilvanaFooter, SilvanaNav } from '@/components/silvana/Chrome';
+import { BookGift } from '@/components/silvana/Chrome';
+import { SiteFooter } from '@/components/chrome/SiteFooter';
+import { SiteNav } from '@/components/chrome/SiteNav';
+import { StickyBookBar } from '@/components/chrome/StickyBookBar';
 import { SILVANA_EXPERIENCE } from '@/data/silvana';
 import { assetUrl } from '@/lib/images';
 import styles from '@/components/silvana/silvana.module.css';
@@ -13,7 +16,7 @@ export const metadata: Metadata = {
 export default function ExperiencePage() {
   return (
     <div className={styles.page}>
-      <SilvanaNav />
+      <SiteNav />
       <main className={styles.section}>
         <div className={styles.shell}>
           <h1 className={styles.pageTitle}>{SILVANA_EXPERIENCE.heading}</h1>
@@ -42,7 +45,8 @@ export default function ExperiencePage() {
           <BookGift />
         </div>
       </main>
-      <SilvanaFooter />
+      <SiteFooter />
+      <StickyBookBar />
     </div>
   );
 }

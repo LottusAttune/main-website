@@ -1,8 +1,11 @@
 import type { Metadata } from 'next';
 import Image from 'next/image';
 
-import { BookGift, SilvanaFooter, SilvanaNav } from '@/components/silvana/Chrome';
+import { BookGift } from '@/components/silvana/Chrome';
 import { CredAccordion } from '@/components/silvana/CredAccordion';
+import { SiteFooter } from '@/components/chrome/SiteFooter';
+import { SiteNav } from '@/components/chrome/SiteNav';
+import { StickyBookBar } from '@/components/chrome/StickyBookBar';
 import { SILVANA_FOUNDER } from '@/data/silvana';
 import { asset } from '@/lib/images';
 import styles from '@/components/silvana/silvana.module.css';
@@ -18,7 +21,7 @@ export default function FounderPage() {
 
   return (
     <div className={styles.page}>
-      <SilvanaNav />
+      <SiteNav />
 
       <main>
         <section className={styles.section}>
@@ -85,7 +88,8 @@ export default function FounderPage() {
         </section>
       </main>
 
-      <SilvanaFooter />
+      <SiteFooter />
+      <StickyBookBar />
     </div>
   );
 }

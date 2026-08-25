@@ -26,11 +26,11 @@ export function SiteFooter() {
       <div className={styles.lockup}>
         <div className={styles.lockupPhoto}>
           <Image
-            src={asset('footer-texture-journey2').src}
+            src={asset('footer-photo-baked').src}
             alt=""
-            width={asset('footer-texture-journey2').width}
-            height={asset('footer-texture-journey2').height}
-            sizes="(max-width: 900px) 100vw, 360px"
+            width={asset('footer-photo-baked').width}
+            height={asset('footer-photo-baked').height}
+            sizes="(max-width: 900px) 100vw, 900px"
           />
         </div>
 

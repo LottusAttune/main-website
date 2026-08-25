@@ -19,9 +19,13 @@
     "width": 1600,
     "height": 900
   },
+  "footer-photo-baked": {
+    "width": 1420,
+    "height": 910
+  },
   "footer-texture-journey2": {
     "width": 720,
-    "height": 1190
+    "height": 910
   },
   "for-individuals-dof": {
     "width": 1018,

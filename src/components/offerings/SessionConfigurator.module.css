@@ -126,6 +126,19 @@
   margin-bottom: 28px;
 }
 
+.includedLink {
+  display: inline-block;
+  margin-bottom: 24px;
+  font-size: 14px;
+  color: var(--color-gold-light);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.includedLink:hover {
+  color: var(--color-cream-text);
+}
+
 .summaryActions {
   display: flex;
   flex-direction: column;

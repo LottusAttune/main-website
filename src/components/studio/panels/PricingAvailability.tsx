@@ -14,7 +14,6 @@ const PRICE_FIELDS: Array<{
 }> = [
   { key: 'privateSession', label: 'Private session', note: 'One-on-one, per session' },
   { key: 'privatePackage', label: 'Package of four', note: 'Private sessions, prepaid' },
-  { key: 'perParticipant', label: 'Group rate', note: 'Per participant, 2–24' },
   { key: 'teamAddon', label: 'Team-building add-on', note: 'Per corporate event' },
   { key: 'refreshments', label: 'Refreshments', note: 'Per participant, optional' },
   { key: 'deposit', label: 'Security deposit', note: 'Groups over 6, refundable' },
@@ -87,6 +86,13 @@ export function PricingAvailability({ settings }: { settings: SiteSettings }) {
                 <span className={styles.priceNote}>{field.note}</span>
               </label>
             ))}
+            <div className={styles.priceField}>
+              <span className={styles.priceLabel}>Group &amp; Corporate rate</span>
+              <span className={styles.priceNote}>
+                Fixed tiered rate, not editable here: $250 per participant up
+                to 10, then $100 per participant for 11–24.
+              </span>
+            </div>
           </div>
 
           <div className={styles.publishRow}>

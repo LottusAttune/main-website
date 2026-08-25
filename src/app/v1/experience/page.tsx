@@ -188,6 +188,7 @@ export default function ExperiencePage() {
 
         {/* ---------- Included list ---------- */}
         <section
+          id="included"
           style={{
             padding: '0 var(--space-gutter) var(--space-section)',
             maxWidth: 'var(--width-content)',

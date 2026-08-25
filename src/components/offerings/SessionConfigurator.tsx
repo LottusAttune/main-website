@@ -257,6 +257,9 @@ export function SessionConfigurator({ pricing }: Props) {
             ? 'Two-hour session. All comfort items, materials and refreshments included.'
             : `Two-hour session for ${participants} participants. All comfort items, materials and refreshments included.`}
         </div>
+        <Link href="/v1/experience#included" className={styles.includedLink}>
+          See everything that&apos;s included →
+        </Link>
         <div className={styles.summaryActions}>
           <Link href="/book" className="btn btn--cream btn--wide">
             Book this session

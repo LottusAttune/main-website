@@ -126,16 +126,12 @@
   margin-bottom: 28px;
 }
 
-.includedLink {
-  display: inline-block;
-  margin-bottom: 24px;
-  font-size: 14px;
+.includedBtn {
+  border-color: var(--color-gold-light);
   color: var(--color-gold-light);
-  text-decoration: underline;
-  text-underline-offset: 3px;
 }
 
-.includedLink:hover {
+.includedBtn:hover {
   color: var(--color-cream-text);
 }
 

@@ -4,16 +4,17 @@
   position: relative;
   overflow: hidden;
   background: var(--gradient-beige);
-  padding: var(--space-section-short) var(--space-gutter);
+  padding: 40px var(--space-gutter) 64px;
 }
 
 .configuratorHead {
-  margin-bottom: 56px;
+  margin-bottom: 20px;
 }
 
 .chooseHeading {
-  margin: 0 0 18px;
-  font-size: clamp(24px, 2.4vw, 32px);
-  line-height: 1.2;
-  color: var(--color-ink);
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--color-gold-text);
 }

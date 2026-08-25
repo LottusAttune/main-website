@@ -6,6 +6,9 @@ import { useId, useState } from 'react';
 import { quoteFor } from '@/lib/quote';
 import type { Pricing } from '@/lib/settings';
 import {
+  CORPORATE_INTRO_BASE_PRICE,
+  CORPORATE_INTRO_MIN_PARTICIPANTS,
+  CORPORATE_INTRO_PER_PARTICIPANT,
   MAX_PARTICIPANTS,
   MIN_PARTICIPANTS,
   money,
@@ -13,7 +16,7 @@ import {
 } from '@/lib/site';
 import styles from './SessionConfigurator.module.css';
 
-type Format = 'private' | 'group';
+type Format = 'private' | 'group' | 'corporateIntro';
 
 type Props = {
   pricing: Pricing;
@@ -28,24 +31,34 @@ export function SessionConfigurator({ pricing }: Props) {
   const selectId = useId();
 
   const isPrivate = format === 'private';
+  const isCorporateIntro = format === 'corporateIntro';
 
   const quote = quoteFor(
     {
       participants: isPrivate ? 1 : participants,
       isPackage: isPrivate && isPackage,
+      isCorporateIntro,
       teamAddon: !isPrivate && teamAddon,
       refreshments: !isPrivate && refreshments,
     },
     pricing
   );
 
+  const participantsMin = isCorporateIntro
+    ? CORPORATE_INTRO_MIN_PARTICIPANTS
+    : MIN_PARTICIPANTS;
+
   const participantOptions = Array.from(
-    { length: MAX_PARTICIPANTS - MIN_PARTICIPANTS + 1 },
+    { length: MAX_PARTICIPANTS - participantsMin + 1 },
     (_, i) => {
-      const n = i + MIN_PARTICIPANTS;
+      const n = i + participantsMin;
+      const price = isCorporateIntro
+        ? CORPORATE_INTRO_BASE_PRICE +
+          (n - CORPORATE_INTRO_MIN_PARTICIPANTS) * CORPORATE_INTRO_PER_PARTICIPANT
+        : n * pricing.perParticipant;
       return {
         value: n,
-        label: `${n} participants — ${money(n * pricing.perParticipant)}`,
+        label: `${n} participants — ${money(price)}`,
       };
     }
   );
@@ -58,18 +71,7 @@ export function SessionConfigurator({ pricing }: Props) {
           <button
             type="button"
             className="choice"
-            aria-pressed={isPrivate}
-            onClick={() => setFormat('private')}
-          >
-            <span className="choice__title">Private Sessions</span>
-            <span className="choice__note">
-              One-on-one, customizable based on individual preferences
-            </span>
-          </button>
-          <button
-            type="button"
-            className="choice"
-            aria-pressed={!isPrivate}
+            aria-pressed={format === 'group'}
             onClick={() => setFormat('group')}
           >
             <span className="choice__title">Group &amp; Corporate</span>
@@ -77,38 +79,67 @@ export function SessionConfigurator({ pricing }: Props) {
               2–24 participants — gatherings, celebrations, teams
             </span>
           </button>
+          <button
+            type="button"
+            className="choice"
+            aria-pressed={isCorporateIntro}
+            onClick={() => {
+              setFormat('corporateIntro');
+              setParticipants((p) =>
+                Math.max(p, CORPORATE_INTRO_MIN_PARTICIPANTS)
+              );
+            }}
+          >
+            <span className="choice__title">Corporate Introductory Experience</span>
+            <span className="choice__note">
+              Available for first-time organizational clients (minimum 7
+              participants)
+            </span>
+            <span className="choice__note">
+              Starting at {money(CORPORATE_INTRO_BASE_PRICE)}
+            </span>
+          </button>
         </div>
 
-        {isPrivate ? (
-          <div className={styles.fieldBlock}>
-            <div className={styles.legend}>Private sessions</div>
-            <div className={styles.choices}>
-              <button
-                type="button"
-                className="choice"
-                aria-pressed={!isPackage}
-                onClick={() => setIsPackage(false)}
-              >
-                <span className="choice__title">Single session</span>
-                <span className="choice__note">
-                  {money(pricing.privateSession)} per session
-                </span>
-              </button>
-              <button
-                type="button"
-                className="choice"
-                aria-pressed={isPackage}
-                onClick={() => setIsPackage(true)}
-              >
-                <span className="choice__title">Package of four</span>
-                <span className="choice__note">
-                  {money(pricing.privatePackage)} – save{' '}
-                  {money(pricing.privateSession * 4 - pricing.privatePackage)}
-                </span>
-              </button>
-            </div>
+        <div className={styles.fieldBlock}>
+          <div className={styles.legend}>Private sessions</div>
+          <div className={styles.choices}>
+            <button
+              type="button"
+              className="choice"
+              aria-pressed={isPrivate && !isPackage}
+              onClick={() => {
+                setFormat('private');
+                setIsPackage(false);
+              }}
+            >
+              <span className="choice__title">Private Sessions</span>
+              <span className="choice__note">
+                One-on-one, customizable based on individual preferences
+              </span>
+              <span className="choice__note">
+                {money(pricing.privateSession)} per session
+              </span>
+            </button>
+            <button
+              type="button"
+              className="choice"
+              aria-pressed={isPrivate && isPackage}
+              onClick={() => {
+                setFormat('private');
+                setIsPackage(true);
+              }}
+            >
+              <span className="choice__title">Package of four</span>
+              <span className="choice__note">
+                {money(pricing.privatePackage)} – save{' '}
+                {money(pricing.privateSession * 4 - pricing.privatePackage)}
+              </span>
+            </button>
           </div>
-        ) : (
+        </div>
+
+        {!isPrivate && (
           <>
             <div className={styles.fieldBlock}>
               <div className={styles.participantsHead}>

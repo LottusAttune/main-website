@@ -58,6 +58,11 @@ export const LOUNGE_MAX = 6;
 export const MIN_PARTICIPANTS = 2;
 export const MAX_PARTICIPANTS = 24;
 
+/** Corporate Introductory Experience: first-time organizational clients only. */
+export const CORPORATE_INTRO_MIN_PARTICIPANTS = 7;
+export const CORPORATE_INTRO_BASE_PRICE = 1300;
+export const CORPORATE_INTRO_PER_PARTICIPANT = 100;
+
 export const TIME_SLOTS = [
   { key: 'morning', label: '7 – 9 am', note: 'Morning reset' },
   { key: 'midday', label: '12 – 2 pm', note: 'Midday pause' },

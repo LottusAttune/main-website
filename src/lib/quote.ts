@@ -1,4 +1,9 @@
 import type { Pricing } from '@/lib/settings';
+import {
+  CORPORATE_INTRO_BASE_PRICE,
+  CORPORATE_INTRO_MIN_PARTICIPANTS,
+  CORPORATE_INTRO_PER_PARTICIPANT,
+} from '@/lib/site';
 
 /**
  * Pure pricing maths, shared by the configurators, the booking summary and the
@@ -22,6 +27,8 @@ export type BookingInput = {
   participants: number;
   /** Private bookings only: a package of four rather than a single session. */
   isPackage?: boolean;
+  /** First-time organizational clients only, minimum 7 participants. */
+  isCorporateIntro?: boolean;
   teamAddon?: boolean;
   refreshments?: boolean;
   /** Percentage off, already validated as active and group-eligible. */
@@ -57,6 +64,17 @@ export function quoteFor(
         value: money(pricing.privateSession),
       });
     }
+  } else if (
+    input.isCorporateIntro &&
+    people >= CORPORATE_INTRO_MIN_PARTICIPANTS
+  ) {
+    subtotal =
+      CORPORATE_INTRO_BASE_PRICE +
+      (people - CORPORATE_INTRO_MIN_PARTICIPANTS) * CORPORATE_INTRO_PER_PARTICIPANT;
+    lines.push({
+      label: `Corporate introductory experience — ${people} participants`,
+      value: money(subtotal),
+    });
   } else if (people >= MIN_GROUP_SIZE) {
     subtotal = people * pricing.perParticipant;
     lines.push({

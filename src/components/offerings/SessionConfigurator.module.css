@@ -2,7 +2,7 @@
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
   gap: 24px;
-  align-items: stretch;
+  align-items: start;
 }
 
 .panel {
@@ -54,6 +54,11 @@
   margin-bottom: 20px;
 }
 
+.fieldBlock:last-child,
+.panel > *:last-child {
+  margin-bottom: 0;
+}
+
 .participantsHead {
   display: flex;
   align-items: baseline;
@@ -102,8 +107,6 @@
 .summary {
   position: sticky;
   top: 110px;
-  display: flex;
-  flex-direction: column;
   background: var(--gradient-deep);
   border: 1px solid transparent;
   border-radius: 24px;
@@ -172,5 +175,4 @@
   display: flex;
   flex-direction: column;
   gap: 12px;
-  margin-top: auto;
 }

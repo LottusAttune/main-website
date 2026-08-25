@@ -258,14 +258,14 @@ export function SessionConfigurator({ pricing }: Props) {
         <div className={styles.summaryActions}>
           <Link
             href="/v1/experience#included"
-            className={`btn btn--outline-dark btn--wide ${styles.includedBtn}`}
+            className={`btn btn--sm btn--outline-dark btn--wide ${styles.includedBtn}`}
           >
             See What&apos;s Included
           </Link>
-          <Link href="/v1/book" className="btn btn--cream btn--wide">
+          <Link href="/v1/book" className="btn btn--sm btn--cream btn--wide">
             Book this session
           </Link>
-          <Link href="/v1/gift" className="btn btn--outline-dark btn--wide">
+          <Link href="/v1/gift" className="btn btn--sm btn--outline-dark btn--wide">
             Gift it
           </Link>
         </div>

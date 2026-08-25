@@ -63,6 +63,18 @@ export const CORPORATE_INTRO_MIN_PARTICIPANTS = 7;
 export const CORPORATE_INTRO_BASE_PRICE = 1300;
 export const CORPORATE_INTRO_PER_PARTICIPANT = 100;
 
+/** Group & Corporate: $250/participant up to 10, then $100 per participant beyond. */
+export const GROUP_BASE_RATE = 250;
+export const GROUP_BASE_TIER_MAX = 10;
+export const GROUP_INCREMENT_RATE = 100;
+
+export function groupPriceFor(participants: number): number {
+  const base = Math.min(participants, GROUP_BASE_TIER_MAX) * GROUP_BASE_RATE;
+  const extra =
+    Math.max(0, participants - GROUP_BASE_TIER_MAX) * GROUP_INCREMENT_RATE;
+  return base + extra;
+}
+
 export const TIME_SLOTS = [
   { key: 'morning', label: '7 – 9 am', note: 'Morning reset' },
   { key: 'midday', label: '12 – 2 pm', note: 'Midday pause' },

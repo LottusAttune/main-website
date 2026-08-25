@@ -28,6 +28,10 @@
   gap: 14px;
 }
 
+.choicePrimary {
+  background: rgba(198, 169, 122, 0.18);
+}
+
 .fieldBlock {
   margin-bottom: 44px;
 }

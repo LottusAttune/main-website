@@ -9,6 +9,7 @@ import {
   SITE,
   TIME_SLOTS,
   TWO_SESSION_THRESHOLD,
+  groupPriceFor,
   money,
 } from '@/lib/site';
 import { Calendar, formatDay, isoDay } from './Calendar';
@@ -228,7 +229,7 @@ export function BookingForm({
                 const n = i + 7;
                 return (
                   <option key={n} value={n}>
-                    {n} participants — {money(n * pricing.perParticipant)}
+                    {n} participants — {money(groupPriceFor(n))}
                   </option>
                 );
               })}
@@ -524,7 +525,7 @@ export function BookingForm({
             {people === 1
               ? `Private session · package of four: ${money(pricing.privatePackage)} – save ${money(pricing.privateSession * 4 - pricing.privatePackage)}`
               : people >= 2
-                ? `${people} participants × ${money(pricing.perParticipant)}${needsSecond ? ' · across two sessions' : ''}`
+                ? `${people} participants${needsSecond ? ' · across two sessions' : ''}`
                 : 'Select the number of participants'}
           </div>
         </div>

@@ -8,6 +8,7 @@ import {
   MAX_PARTICIPANTS,
   MIN_PARTICIPANTS,
   SITE,
+  groupPriceFor,
   money,
   venueNoteFor,
 } from '@/lib/site';
@@ -116,7 +117,7 @@ export function GiftCalculator({ pricing }: Props) {
       const n = i + MIN_PARTICIPANTS;
       return {
         value: n,
-        label: `${n} participants — ${money(n * pricing.perParticipant)}`,
+        label: `${n} participants — ${money(groupPriceFor(n))}`,
       };
     }
   );

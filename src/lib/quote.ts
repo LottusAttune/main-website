@@ -3,6 +3,7 @@ import {
   CORPORATE_INTRO_BASE_PRICE,
   CORPORATE_INTRO_MIN_PARTICIPANTS,
   CORPORATE_INTRO_PER_PARTICIPANT,
+  groupPriceFor,
 } from '@/lib/site';
 
 /**
@@ -76,9 +77,9 @@ export function quoteFor(
       value: money(subtotal),
     });
   } else if (people >= MIN_GROUP_SIZE) {
-    subtotal = people * pricing.perParticipant;
+    subtotal = groupPriceFor(people);
     lines.push({
-      label: `${people} participants × ${money(pricing.perParticipant)}`,
+      label: `${people} participants`,
       value: money(subtotal),
     });
   }
@@ -153,9 +154,9 @@ export function giftQuoteFor(
     }
   } else {
     const people = Number(input.participants) || 0;
-    subtotal = people * pricing.perParticipant;
+    subtotal = groupPriceFor(people);
     lines.push({
-      label: `${people} participants × ${money(pricing.perParticipant)}`,
+      label: `${people} participants`,
       value: money(subtotal),
     });
     if (input.addons.team) {

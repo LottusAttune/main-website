@@ -9,6 +9,7 @@ import {
   CORPORATE_INTRO_BASE_PRICE,
   CORPORATE_INTRO_MIN_PARTICIPANTS,
   CORPORATE_INTRO_PER_PARTICIPANT,
+  groupPriceFor,
   MAX_PARTICIPANTS,
   MIN_PARTICIPANTS,
   money,
@@ -55,7 +56,7 @@ export function SessionConfigurator({ pricing }: Props) {
       const price = isCorporateIntro
         ? CORPORATE_INTRO_BASE_PRICE +
           (n - CORPORATE_INTRO_MIN_PARTICIPANTS) * CORPORATE_INTRO_PER_PARTICIPANT
-        : n * pricing.perParticipant;
+        : groupPriceFor(n);
       return {
         value: n,
         label: `${n} participants — ${money(price)}`,
@@ -70,7 +71,7 @@ export function SessionConfigurator({ pricing }: Props) {
         <div className={`${styles.choices} ${styles.fieldBlock}`}>
           <button
             type="button"
-            className="choice"
+            className={`choice ${styles.choicePrimary}`}
             aria-pressed={format === 'group'}
             onClick={() => setFormat('group')}
           >
@@ -106,7 +107,7 @@ export function SessionConfigurator({ pricing }: Props) {
           <div className={styles.choices}>
             <button
               type="button"
-              className="choice"
+              className={`choice ${styles.choicePrimary}`}
               aria-pressed={isPrivate && !isPackage}
               onClick={() => {
                 setFormat('private');

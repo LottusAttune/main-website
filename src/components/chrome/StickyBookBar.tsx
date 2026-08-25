@@ -21,7 +21,12 @@ export function StickyBookBar() {
   useEffect(() => {
     const threshold = () => window.innerHeight * 0.75;
 
-    const update = () => setShown(window.scrollY > threshold());
+    const update = () => {
+      const nearBottom =
+        window.scrollY + window.innerHeight >=
+        document.documentElement.scrollHeight - 40;
+      setShown(window.scrollY > threshold() || nearBottom);
+    };
 
     update();
     window.addEventListener('scroll', update, { passive: true });

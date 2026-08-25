@@ -208,8 +208,8 @@ export default function ExperiencePage() {
         </section>
       </main>
 
-      <StickyBookBar />
       <SiteFooter />
+      <StickyBookBar />
     </>
   );
 }

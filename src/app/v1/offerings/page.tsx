@@ -55,8 +55,8 @@ export default async function OfferingsPage() {
         </section>
       </main>
 
-      <StickyBookBar />
       <SiteFooter />
+      <StickyBookBar />
     </>
   );
 }

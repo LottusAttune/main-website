@@ -107,8 +107,8 @@ export default function FounderPage() {
         </section>
       </main>
 
-      <StickyBookBar />
       <SiteFooter />
+      <StickyBookBar />
     </>
   );
 }

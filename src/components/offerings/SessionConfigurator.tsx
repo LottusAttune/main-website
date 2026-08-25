@@ -21,9 +21,14 @@ type Format = 'private' | 'group' | 'corporateIntro';
 
 type Props = {
   pricing: Pricing;
+  /** Where "See What's Included" links to. Defaults to the live page. */
+  includedHref?: string;
 };
 
-export function SessionConfigurator({ pricing }: Props) {
+export function SessionConfigurator({
+  pricing,
+  includedHref = '/included',
+}: Props) {
   const [format, setFormat] = useState<Format>('private');
   const [isPackage, setIsPackage] = useState(false);
   const [participants, setParticipants] = useState(8);
@@ -259,7 +264,7 @@ export function SessionConfigurator({ pricing }: Props) {
         </div>
         <div className={styles.summaryActions}>
           <Link
-            href="/v1/experience#included"
+            href={includedHref}
             className={`btn btn--outline-dark btn--wide ${styles.includedBtn}`}
           >
             See What&apos;s Included

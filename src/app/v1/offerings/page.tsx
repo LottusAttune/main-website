@@ -50,7 +50,10 @@ export default async function OfferingsPage() {
               <div className={styles.chooseHeading}>Choose your experience</div>
             </div>
 
-            <SessionConfigurator pricing={pricing} />
+            <SessionConfigurator
+              pricing={pricing}
+              includedHref="/v1/experience#included"
+            />
           </div>
         </section>
       </main>

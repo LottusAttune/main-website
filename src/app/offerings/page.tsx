@@ -1,122 +1,61 @@
 import type { Metadata } from 'next';
-import Image from 'next/image';
-import Link from 'next/link';
 
-import { SilvanaFooter, SilvanaNav } from '@/components/silvana/Chrome';
-import { SILVANA_OFFERINGS } from '@/data/silvana';
-import { asset } from '@/lib/images';
-import styles from '@/components/silvana/silvana.module.css';
+import { Reveal } from '@/components/common/Reveal';
+import { SiteFooter } from '@/components/chrome/SiteFooter';
+import { SiteNav } from '@/components/chrome/SiteNav';
+import { StickyBookBar } from '@/components/chrome/StickyBookBar';
+import { SessionConfigurator } from '@/components/offerings/SessionConfigurator';
+import { assetUrl } from '@/lib/images';
+import { getSettings } from '@/lib/settings';
+import styles from './offerings.module.css';
 
 export const metadata: Metadata = {
   title: 'Offerings',
-  description: SILVANA_OFFERINGS.intro,
+  description:
+    'Private sessions, group and corporate wellness, and a corporate introductory experience. Two-hour sessions for 1 to 24 people in downtown Toronto.',
 };
 
-function Actions() {
-  return (
-    <div className={styles.offerActions}>
-      <Link href="/included" className={`${styles.btn} ${styles.btnGhost}`}>
-        What&apos;s Included
-      </Link>
-      <div style={{ display: 'flex', gap: 12 }}>
-        <Link href="/book" className={styles.btn}>
-          BOOK
-        </Link>
-        <Link href="/gift" className={styles.btn}>
-          GIFT
-        </Link>
-      </div>
-    </div>
-  );
-}
+/** Pricing reads from the database; never let that block the build. */
+export const dynamic = 'force-dynamic';
 
-export default function OfferingsPage() {
-  const logo = asset('logo-lockup');
-  const { group, private: solo } = SILVANA_OFFERINGS;
+export default async function OfferingsPage() {
+  const { pricing } = await getSettings();
 
   return (
-    <div className={styles.page}>
-      <SilvanaNav />
+    <>
+      <SiteNav />
+      <Reveal />
 
-      <main className={styles.section}>
-        <div className={styles.shell}>
-          <div className={styles.offerHead}>
-            <div className={styles.offerLogo}>
-              <Image
-                src={logo.src}
-                alt="Lotus Attune"
-                width={logo.width}
-                height={logo.height}
-              />
+      <main>
+        <section className={styles.configurator} aria-labelledby="offerings-heading">
+          <div
+            data-bg="1"
+            className="photo-wash photo-wash--light"
+            style={{ backgroundImage: assetUrl('venue-signature') }}
+          />
+          <div className="shell" style={{ position: 'relative' }}>
+            <div className={styles.configuratorHead}>
+              <h1
+                id="offerings-heading"
+                className="display h1"
+                style={{ marginBottom: 8 }}
+              >
+                Offerings
+              </h1>
+              <p className="lede" style={{ maxWidth: 900, marginBottom: 16 }}>
+                For individuals, private gatherings, organizations and teams, all
+                sessions are offered in a two-hour format
+              </p>
+              <div className={styles.chooseHeading}>Choose your experience</div>
             </div>
-            <div>
-              <h1 className={styles.offerTitle}>{SILVANA_OFFERINGS.heading}</h1>
-              <p className={styles.offerIntro}>{SILVANA_OFFERINGS.intro}</p>
-            </div>
+
+            <SessionConfigurator pricing={pricing} />
           </div>
-
-          {/* Group bookings & corporate wellness */}
-          <div className={styles.offerCard}>
-            <div className={styles.offerAside}>
-              <div className={styles.offerAsideTitle}>
-                {group.panelTitle.map((line) => (
-                  <span key={line} style={{ display: 'block' }}>
-                    {line}
-                  </span>
-                ))}
-              </div>
-              <div className={styles.offerAsideNote}>{group.panelNote}</div>
-            </div>
-
-            <div className={styles.offerMain}>
-              <div>
-                {group.blocks.map((block) => (
-                  <div key={block.title}>
-                    <h2 className={styles.offerBlockTitle}>{block.title}</h2>
-                    <p className={styles.offerBlockBody}>{block.body}</p>
-                  </div>
-                ))}
-                <p className={styles.offerAddon}>
-                  <strong>{group.addonLabel}</strong> {group.addonBody}
-                </p>
-                <p className={styles.offerPrice}>{group.price}</p>
-              </div>
-              <Actions />
-            </div>
-          </div>
-
-          {/* Private sessions */}
-          <div className={styles.offerCard}>
-            <div className={styles.offerAside}>
-              <div className={styles.offerAsideTitle}>
-                {solo.panelTitle.map((line) => (
-                  <span key={line} style={{ display: 'block' }}>
-                    {line}
-                  </span>
-                ))}
-              </div>
-            </div>
-
-            <div className={styles.offerMain}>
-              <div>
-                <h2 className={styles.offerBlockTitle} style={{ fontWeight: 400, fontSize: 19 }}>
-                  {solo.title}
-                </h2>
-                {solo.lines.map((line) => (
-                  <p key={line} className={styles.offerBlockBody} style={{ marginBottom: 4 }}>
-                    {line}
-                  </p>
-                ))}
-                <p className={styles.offerPrice}>{solo.price}</p>
-                <p className={styles.offerPackage}>{solo.packageLine}</p>
-              </div>
-              <Actions />
-            </div>
-          </div>
-        </div>
+        </section>
       </main>
 
-      <SilvanaFooter />
-    </div>
+      <SiteFooter />
+      <StickyBookBar />
+    </>
   );
 }

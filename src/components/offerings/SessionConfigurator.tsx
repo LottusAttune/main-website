@@ -24,9 +24,9 @@ type Props = {
 };
 
 export function SessionConfigurator({ pricing }: Props) {
-  const [format, setFormat] = useState<Format>('private');
+  const [format, setFormat] = useState<Format>('group');
   const [isPackage, setIsPackage] = useState(false);
-  const [participants, setParticipants] = useState(8);
+  const [participants, setParticipants] = useState(MIN_PARTICIPANTS);
   const [teamAddon, setTeamAddon] = useState(false);
   const [refreshments, setRefreshments] = useState(false);
   const selectId = useId();
@@ -67,7 +67,6 @@ export function SessionConfigurator({ pricing }: Props) {
   return (
     <div className={styles.layout}>
       <div className={styles.panel}>
-        <div className={styles.legend}>Format</div>
         <div className={`${styles.choices} ${styles.fieldBlock}`}>
           <button
             type="button"
@@ -82,7 +81,7 @@ export function SessionConfigurator({ pricing }: Props) {
           </button>
           <button
             type="button"
-            className="choice"
+            className={`choice ${styles.choiceKeepWhite}`}
             aria-pressed={isCorporateIntro}
             onClick={() => {
               setFormat('corporateIntro');
@@ -103,7 +102,6 @@ export function SessionConfigurator({ pricing }: Props) {
         </div>
 
         <div className={styles.fieldBlock}>
-          <div className={styles.legend}>Private sessions</div>
           <div className={styles.choices}>
             <button
               type="button"
@@ -124,7 +122,7 @@ export function SessionConfigurator({ pricing }: Props) {
             </button>
             <button
               type="button"
-              className="choice"
+              className={`choice ${styles.choiceKeepWhite}`}
               aria-pressed={isPrivate && isPackage}
               onClick={() => {
                 setFormat('private');

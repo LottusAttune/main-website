@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { useId, useState } from 'react';
+import { useId, useLayoutEffect, useRef, useState } from 'react';
 
 import { quoteFor } from '@/lib/quote';
 import type { Pricing } from '@/lib/settings';
@@ -31,8 +31,35 @@ export function SessionConfigurator({ pricing }: Props) {
   const [refreshments, setRefreshments] = useState(false);
   const selectId = useId();
 
+  const panelRef = useRef<HTMLDivElement>(null);
+  const venueNoteRef = useRef<HTMLDivElement>(null);
+  const summaryRef = useRef<HTMLElement>(null);
+
   const isPrivate = format === 'private';
   const isCorporateIntro = format === 'corporateIntro';
+
+  // Match the estimate box's bottom to the venue note's bottom (not the
+  // taller add-ons below it) when a participant count is in play.
+  useLayoutEffect(() => {
+    const panel = panelRef.current;
+    const venueNote = venueNoteRef.current;
+    const summary = summaryRef.current;
+    if (!summary) return;
+
+    if (isPrivate || !panel || !venueNote) {
+      summary.style.height = '';
+      return;
+    }
+
+    const sync = () => {
+      const height = venueNote.getBoundingClientRect().bottom - panel.getBoundingClientRect().top;
+      summary.style.height = `${height}px`;
+    };
+
+    sync();
+    window.addEventListener('resize', sync);
+    return () => window.removeEventListener('resize', sync);
+  }, [isPrivate, participants, format]);
 
   const quote = quoteFor(
     {
@@ -66,7 +93,7 @@ export function SessionConfigurator({ pricing }: Props) {
 
   return (
     <div className={styles.layout}>
-      <div className={styles.panel}>
+      <div className={styles.panel} ref={panelRef}>
         <div className={`${styles.choices} ${styles.fieldBlock}`}>
           <button
             type="button"
@@ -159,7 +186,9 @@ export function SessionConfigurator({ pricing }: Props) {
                   </option>
                 ))}
               </select>
-              <div className={styles.venueNote}>{venueNoteFor(participants)}</div>
+              <div className={styles.venueNote} ref={venueNoteRef}>
+                {venueNoteFor(participants)}
+              </div>
             </div>
 
             <div>
@@ -233,7 +262,7 @@ export function SessionConfigurator({ pricing }: Props) {
         )}
       </div>
 
-      <aside className={styles.summary} aria-live="polite">
+      <aside className={styles.summary} aria-live="polite" ref={summaryRef}>
         <div className={styles.summaryTitle}>Your Estimate</div>
         <div className={styles.summaryLines}>
           {quote.lines.map((line) => (

@@ -174,18 +174,18 @@ export function SessionConfigurator({ pricing }: Props) {
                   onClick={() => setTeamAddon((v) => !v)}
                 >
                   <span
-                    style={{ display: 'flex', alignItems: 'center', gap: 14, minWidth: 0 }}
+                    style={{ display: 'flex', alignItems: 'center', gap: 10, minWidth: 0 }}
                   >
                     <span className="toggle-row__dot" />
                     <span style={{ minWidth: 0 }}>
-                      <span style={{ display: 'block', fontSize: 16.5, marginBottom: 4 }}>
+                      <span style={{ display: 'block', fontSize: 14.5, marginBottom: 2 }}>
                         Customized mindful team-building activity
                       </span>
                       <span
                         style={{
                           display: 'block',
-                          fontSize: 13.5,
-                          lineHeight: 1.65,
+                          fontSize: 12,
+                          lineHeight: 1.5,
                           color: 'var(--color-muted)',
                         }}
                       >
@@ -206,18 +206,18 @@ export function SessionConfigurator({ pricing }: Props) {
                   onClick={() => setRefreshments((v) => !v)}
                 >
                   <span
-                    style={{ display: 'flex', alignItems: 'center', gap: 14, minWidth: 0 }}
+                    style={{ display: 'flex', alignItems: 'center', gap: 10, minWidth: 0 }}
                   >
                     <span className="toggle-row__dot" />
                     <span style={{ minWidth: 0 }}>
-                      <span style={{ display: 'block', fontSize: 16.5, marginBottom: 4 }}>
+                      <span style={{ display: 'block', fontSize: 14.5, marginBottom: 2 }}>
                         Organic tea, snacks and refreshments
                       </span>
                       <span
                         style={{
                           display: 'block',
-                          fontSize: 13.5,
-                          lineHeight: 1.65,
+                          fontSize: 12,
+                          lineHeight: 1.5,
                           color: 'var(--color-muted)',
                         }}
                       >

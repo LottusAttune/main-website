@@ -61,7 +61,7 @@
 .participantsCount {
   font-family: var(--font-display);
   font-weight: 400;
-  font-size: 30px;
+  font-size: 24px;
 }
 
 .venueNote {
@@ -77,7 +77,20 @@
 .addons {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 8px;
+}
+
+.addons :global(.toggle-row) {
+  padding: 13px 16px;
+}
+
+.addons :global(.toggle-row__dot) {
+  width: 16px;
+  height: 16px;
+}
+
+.addons :global(.toggle-row__price) {
+  font-size: 18px;
 }
 
 /* ---------- Summary ---------- */

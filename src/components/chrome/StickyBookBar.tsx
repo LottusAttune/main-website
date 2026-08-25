@@ -53,7 +53,7 @@ export function StickyBookBar({ basePath = '' }: Props) {
       </span>
       <div className={styles.actions}>
         <Link
-          href={`${basePath}/book`}
+          href={basePath ? `${basePath}/offerings` : '/book'}
           className={`btn btn--cream ${styles.cta}`}
           tabIndex={shown ? undefined : -1}
         >

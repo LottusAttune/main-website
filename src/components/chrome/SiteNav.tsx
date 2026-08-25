@@ -75,7 +75,7 @@ export function SiteNav({ basePath = '' }: Props) {
 
         <div className={styles.actions}>
           <Link
-            href={`${basePath}/book`}
+            href={basePath ? `${basePath}/offerings` : '/book'}
             className={`btn btn--dark ${styles.actionPill}`}
           >
             Book

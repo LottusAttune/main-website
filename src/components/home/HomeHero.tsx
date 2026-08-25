@@ -88,7 +88,7 @@ export function HomeHero() {
 
         <div className={`btn-row btn-row--center ${styles.actions}`}>
           <Link
-            href="/v1/book"
+            href="/v1/offerings"
             className={`btn ${styles.heroBtn} ${styles.heroBtnSolid}`}
           >
             Book a session

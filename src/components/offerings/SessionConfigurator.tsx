@@ -264,10 +264,10 @@ export function SessionConfigurator({ pricing }: Props) {
           >
             See What&apos;s Included
           </Link>
-          <Link href="/book" className="btn btn--cream btn--wide">
+          <Link href="/v1/book" className="btn btn--cream btn--wide">
             Book this session
           </Link>
-          <Link href="/gift" className="btn btn--outline-dark btn--wide">
+          <Link href="/v1/gift" className="btn btn--outline-dark btn--wide">
             Gift it
           </Link>
         </div>

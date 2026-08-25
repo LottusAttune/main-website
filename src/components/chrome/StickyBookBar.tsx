@@ -15,7 +15,13 @@ import styles from './StickyBookBar.module.css';
  * buttons at the very bottom of a page, since the footer's closing block is
  * text-only to avoid repeating them.
  */
-export function StickyBookBar() {
+type Props = {
+  /** Prefix for the Book/Gift links. The /v1 backup passes "/v1" so it stays
+   *  inside itself rather than sending the reader to the live site. */
+  basePath?: string;
+};
+
+export function StickyBookBar({ basePath = '' }: Props) {
   const [shown, setShown] = useState(false);
 
   useEffect(() => {
@@ -47,14 +53,14 @@ export function StickyBookBar() {
       </span>
       <div className={styles.actions}>
         <Link
-          href="/book"
+          href={`${basePath}/book`}
           className={`btn btn--cream ${styles.cta}`}
           tabIndex={shown ? undefined : -1}
         >
           Book a session
         </Link>
         <Link
-          href="/gift"
+          href={`${basePath}/gift`}
           className={`btn btn--outline-dark ${styles.cta}`}
           tabIndex={shown ? undefined : -1}
         >

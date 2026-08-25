@@ -209,7 +209,7 @@ export default function ExperiencePage() {
       </main>
 
       <SiteFooter />
-      <StickyBookBar />
+      <StickyBookBar basePath="/v1" />
     </>
   );
 }

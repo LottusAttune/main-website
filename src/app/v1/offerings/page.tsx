@@ -56,7 +56,7 @@ export default async function OfferingsPage() {
       </main>
 
       <SiteFooter />
-      <StickyBookBar />
+      <StickyBookBar basePath="/v1" />
     </>
   );
 }

@@ -218,7 +218,7 @@ export default function HomePage() {
       </main>
 
       <SiteFooter />
-      <StickyBookBar />
+      <StickyBookBar basePath="/v1" />
     </>
   );
 }

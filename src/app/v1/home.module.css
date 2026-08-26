@@ -3,7 +3,7 @@
 .trust {
   background: var(--gradient-trust);
   border-bottom: 1px solid rgba(168, 135, 90, 0.28);
-  padding: clamp(14px, 1.6vw, 20px) var(--space-gutter);
+  padding: clamp(8px, 1vw, 12px) var(--space-gutter);
 }
 
 .trustGrid {
@@ -17,7 +17,7 @@
 
 .trustCell {
   background: var(--gradient-trust);
-  padding: 12px 14px;
+  padding: 8px 14px;
   text-align: center;
 }
 
@@ -30,7 +30,7 @@
 .trustFigure {
   font-family: var(--font-eb-garamond), 'EB Garamond', serif;
   font-weight: 400;
-  font-size: clamp(19px, 2vw, 24px);
+  font-size: clamp(17px, 1.8vw, 21px);
   line-height: 1;
   color: var(--color-ink-body);
   margin-bottom: 6px;

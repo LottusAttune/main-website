@@ -60,8 +60,10 @@
 }
 
 .mark {
-  width: clamp(56px, 6vw, 72px);
-  height: clamp(56px, 6vw, 72px);
+  /* Deliberately bigger than the 58px nav logo above it - this one should
+     read as the larger of the two. */
+  width: clamp(72px, 7.5vw, 92px);
+  height: clamp(72px, 7.5vw, 92px);
   border-radius: 50%;
   object-fit: cover;
   margin-bottom: 14px;
@@ -118,8 +120,8 @@
 }
 
 .heroBtn {
-  padding: 19px 46px;
-  min-height: 58px;
+  padding: 14px 38px;
+  min-height: 48px;
   font-size: var(--text-button);
   letter-spacing: 0.28em;
 }

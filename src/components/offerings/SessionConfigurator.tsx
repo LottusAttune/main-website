@@ -212,8 +212,10 @@ export function SessionConfigurator({ pricing }: Props) {
                           color: 'var(--color-muted)',
                         }}
                       >
-                        30-minute extension focused on recognition, values
-                        alignment, mindful communication, and team connection
+                        30-minute extension, featuring a facilitated activity
+                        focused on recognition, values alignment, mindful
+                        communication, and team connection — customized to
+                        your team objectives
                       </span>
                     </span>
                   </span>

@@ -13,7 +13,7 @@
 
 .panel {
   background: var(--gradient-card);
-  border: 1px solid var(--hairline-light-soft);
+  border: none;
   border-radius: var(--radius-card);
   box-shadow: var(--shadow-card);
   padding: clamp(20px, 3vw, 30px) clamp(18px, 3vw, 26px);

@@ -295,6 +295,13 @@ export function SessionConfigurator({ pricing }: Props) {
         {!isPrivate && (
           <div className={styles.logoSpacer}>
             <Image
+              src={asset('offerings-ghost-photo').src}
+              alt=""
+              fill
+              className={styles.ghostPhoto}
+              unoptimized
+            />
+            <Image
               src={asset('offerings-logo-on-brown').src}
               alt=""
               width={asset('offerings-logo-on-brown').width}

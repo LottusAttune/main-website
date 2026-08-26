@@ -126,6 +126,7 @@
 }
 
 .logoSpacer {
+  position: relative;
   flex: 1;
   display: flex;
   align-items: center;
@@ -134,7 +135,13 @@
   padding: 12px 0;
 }
 
+.ghostPhoto {
+  object-fit: cover;
+  pointer-events: none;
+}
+
 .logoImage {
+  position: relative;
   width: 78%;
   height: auto;
 }

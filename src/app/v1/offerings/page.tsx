@@ -32,7 +32,7 @@ export default async function OfferingsPage() {
             <div className={styles.configuratorHead}>
               <h1
                 id="offerings-heading"
-                className="display h1"
+                className={`display ${styles.pageTitle}`}
                 style={{ marginBottom: 8 }}
               >
                 Offerings

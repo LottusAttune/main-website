@@ -10,6 +10,10 @@
   margin-bottom: 20px;
 }
 
+.pageTitle {
+  font-size: clamp(32px, 3.6vw, 52px);
+}
+
 .chooseHeading {
   font-size: 12px;
   font-weight: 500;

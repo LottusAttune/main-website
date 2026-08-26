@@ -284,12 +284,14 @@ export function SessionConfigurator({ pricing }: Props) {
           >
             See What&apos;s Included
           </Link>
-          <Link href="/v1/book" className="btn btn--sm btn--cream btn--wide">
-            Book this session
-          </Link>
-          <Link href="/v1/gift" className="btn btn--sm btn--outline-dark btn--wide">
-            Gift it
-          </Link>
+          <div className={styles.summaryActionsRow}>
+            <Link href="/v1/book" className="btn btn--sm btn--cream btn--wide">
+              Book this session
+            </Link>
+            <Link href="/v1/gift" className="btn btn--sm btn--outline-dark btn--wide">
+              Gift it
+            </Link>
+          </div>
         </div>
 
         {!isPrivate && (

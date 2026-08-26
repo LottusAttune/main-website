@@ -87,12 +87,15 @@
 .links {
   display: none;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-end;
   flex-wrap: wrap;
   gap: 8px clamp(14px, 1.7vw, 28px);
   flex: 1 1 auto;
   min-width: 0;
   padding: 0 clamp(12px, 1.6vw, 24px);
+  /* Room before the Book/Gift buttons - roughly an inch, so the links read
+     as grouped with the logo rather than centered dead in the middle. */
+  padding-right: clamp(48px, 6vw, 84px);
   font-size: 12px;
   letter-spacing: 0.13em;
   text-transform: uppercase;

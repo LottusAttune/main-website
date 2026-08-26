@@ -12,9 +12,9 @@
 }
 
 .panel {
-  background: var(--color-cream);
-  border: 1px solid var(--hairline-light);
-  border-radius: 24px;
+  background: var(--gradient-card);
+  border: 1px solid var(--hairline-light-soft);
+  border-radius: var(--radius-card);
   box-shadow: var(--shadow-card);
   padding: clamp(20px, 3vw, 30px) clamp(18px, 3vw, 26px);
   min-width: 0;
@@ -117,7 +117,7 @@
   flex-direction: column;
   background: var(--gradient-deep);
   border: 1px solid transparent;
-  border-radius: 24px;
+  border-radius: 32px;
   overflow: hidden;
   box-shadow: var(--shadow-card-dark);
   color: var(--color-cream-text-soft);

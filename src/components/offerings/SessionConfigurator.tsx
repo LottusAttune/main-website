@@ -332,26 +332,41 @@ export function SessionConfigurator({ pricing }: Props) {
                 aria-hidden="true"
               >
                 <defs>
-                  <linearGradient id="flameOuterGrad" x1="0" y1="1" x2="0" y2="0">
-                    <stop offset="0%" stopColor="#e8862f" stopOpacity="0.95" />
-                    <stop offset="42%" stopColor="#ffb655" stopOpacity="1" />
-                    <stop offset="75%" stopColor="#ffdf9a" stopOpacity="1" />
-                    <stop offset="100%" stopColor="#fff8e0" stopOpacity="0.7" />
-                  </linearGradient>
-                  <linearGradient id="flameCoreGrad" x1="0" y1="1" x2="0" y2="0">
-                    <stop offset="0%" stopColor="#fffaea" stopOpacity="1" />
-                    <stop offset="55%" stopColor="#ffefc0" stopOpacity="0.9" />
-                    <stop offset="100%" stopColor="#fff8e0" stopOpacity="0" />
-                  </linearGradient>
+                  <radialGradient
+                    id="flameOuterGrad"
+                    cx="50%"
+                    cy="78%"
+                    r="65%"
+                    fx="50%"
+                    fy="82%"
+                  >
+                    <stop offset="0%" stopColor="#ffffff" stopOpacity="1" />
+                    <stop offset="40%" stopColor="#fffaee" stopOpacity="1" />
+                    <stop offset="70%" stopColor="#fff2d4" stopOpacity="0.92" />
+                    <stop offset="90%" stopColor="#ffecc0" stopOpacity="0.5" />
+                    <stop offset="100%" stopColor="#ffecc0" stopOpacity="0" />
+                  </radialGradient>
+                  <radialGradient
+                    id="flameCoreGrad"
+                    cx="50%"
+                    cy="82%"
+                    r="45%"
+                    fx="50%"
+                    fy="86%"
+                  >
+                    <stop offset="0%" stopColor="#ffffff" stopOpacity="1" />
+                    <stop offset="60%" stopColor="#fffdf5" stopOpacity="0.75" />
+                    <stop offset="100%" stopColor="#fff8e6" stopOpacity="0" />
+                  </radialGradient>
                 </defs>
                 <rect
-                  x="18.5"
-                  y="61"
-                  width="3"
-                  height="8"
-                  rx="1.2"
-                  fill="#2a1c12"
-                  opacity="0.8"
+                  x="18.6"
+                  y="62"
+                  width="2.8"
+                  height="6.5"
+                  rx="1.1"
+                  fill="#5a4530"
+                  opacity="0.55"
                 />
                 <path
                   className={styles.flameOuterPath}

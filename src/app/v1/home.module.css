@@ -110,6 +110,7 @@
 
 .guideText {
   padding: clamp(32px, 4vw, 56px) var(--space-gutter) clamp(32px, 4vw, 56px) 0;
+  max-width: 760px;
 }
 
 .guideQuote {

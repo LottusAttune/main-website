@@ -66,7 +66,7 @@ export default function HomePage() {
 
         {/* ---------- Guide ---------- */}
         <section className={`${styles.guideSection} section--dark`} aria-labelledby="guide-heading">
-          <div className={`shell ${styles.guideGrid}`}>
+          <div className={styles.guideGrid}>
             <div className={styles.guidePortrait} data-reveal="">
               <Image
                 src={portrait.src}

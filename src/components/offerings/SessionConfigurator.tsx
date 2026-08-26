@@ -30,7 +30,6 @@ export function SessionConfigurator({ pricing }: Props) {
   const [isPackage, setIsPackage] = useState(false);
   const [participants, setParticipants] = useState(MIN_PARTICIPANTS);
   const [teamAddon, setTeamAddon] = useState(false);
-  const [refreshments, setRefreshments] = useState(false);
   const selectId = useId();
 
   const panelRef = useRef<HTMLDivElement>(null);
@@ -67,7 +66,6 @@ export function SessionConfigurator({ pricing }: Props) {
       isPackage: isPrivate && isPackage,
       isCorporateIntro,
       teamAddon: !isPrivate && teamAddon,
-      refreshments: !isPrivate && refreshments,
     },
     pricing
   );
@@ -221,37 +219,6 @@ export function SessionConfigurator({ pricing }: Props) {
                   </span>
                   <span className="toggle-row__price">
                     {money(pricing.teamAddon)}
-                  </span>
-                </button>
-
-                <button
-                  type="button"
-                  className="toggle-row"
-                  aria-pressed={refreshments}
-                  onClick={() => setRefreshments((v) => !v)}
-                >
-                  <span
-                    style={{ display: 'flex', alignItems: 'center', gap: 10, minWidth: 0 }}
-                  >
-                    <span className="toggle-row__dot" />
-                    <span style={{ minWidth: 0 }}>
-                      <span style={{ display: 'block', fontSize: 14.5, marginBottom: 2 }}>
-                        Organic tea, snacks and refreshments
-                      </span>
-                      <span
-                        style={{
-                          display: 'block',
-                          fontSize: 12,
-                          lineHeight: 1.5,
-                          color: 'var(--color-muted)',
-                        }}
-                      >
-                        {money(pricing.refreshments)} per participant
-                      </span>
-                    </span>
-                  </span>
-                  <span className="toggle-row__price">
-                    {money(pricing.refreshments * participants)}
                   </span>
                 </button>
               </div>

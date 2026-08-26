@@ -31,6 +31,7 @@ export function SiteFooter() {
             width={asset('footer-photo-baked').width}
             height={asset('footer-photo-baked').height}
             sizes="(max-width: 900px) 100vw, 900px"
+            unoptimized
           />
         </div>
 

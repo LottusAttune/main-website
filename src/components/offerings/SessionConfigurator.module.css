@@ -124,13 +124,14 @@
 }
 
 .addons :global(.toggle-row__dot) {
+  position: relative;
   width: 16px;
   height: 16px;
 }
 
 .addons :global(.toggle-row[aria-pressed='true'] .toggle-row__dot) {
-  border-color: var(--color-gold-deep);
-  background: var(--color-gold-deep);
+  border-color: var(--color-gold-text);
+  background: var(--color-gold-text);
 }
 
 .addons :global(.toggle-row__price) {

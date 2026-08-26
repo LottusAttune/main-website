@@ -113,6 +113,8 @@
 .summary {
   position: sticky;
   top: 110px;
+  display: flex;
+  flex-direction: column;
   background: var(--gradient-deep);
   border: 1px solid transparent;
   border-radius: 24px;
@@ -121,6 +123,20 @@
   color: var(--color-cream-text-soft);
   padding: clamp(16px, 2.2vw, 20px) clamp(16px, 2.4vw, 22px);
   min-width: 0;
+}
+
+.logoSpacer {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 0;
+  padding: 12px 0;
+}
+
+.logoImage {
+  width: 78%;
+  height: auto;
 }
 
 .summaryTitle {

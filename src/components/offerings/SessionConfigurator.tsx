@@ -1,8 +1,10 @@
 'use client';
 
+import Image from 'next/image';
 import Link from 'next/link';
 import { useId, useLayoutEffect, useRef, useState } from 'react';
 
+import { asset } from '@/lib/images';
 import { quoteFor } from '@/lib/quote';
 import type { Pricing } from '@/lib/settings';
 import {
@@ -289,6 +291,19 @@ export function SessionConfigurator({ pricing }: Props) {
             Gift it
           </Link>
         </div>
+
+        {!isPrivate && (
+          <div className={styles.logoSpacer}>
+            <Image
+              src={asset('offerings-logo-on-brown').src}
+              alt=""
+              width={asset('offerings-logo-on-brown').width}
+              height={asset('offerings-logo-on-brown').height}
+              className={styles.logoImage}
+              unoptimized
+            />
+          </div>
+        )}
       </aside>
     </div>
   );

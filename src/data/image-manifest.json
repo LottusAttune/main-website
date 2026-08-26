@@ -111,6 +111,18 @@
     "width": 1600,
     "height": 900
   },
+  "offerings-corporate-photo-baked": {
+    "width": 760,
+    "height": 660
+  },
+  "offerings-corporate-photo": {
+    "width": 1280,
+    "height": 720
+  },
+  "offerings-logo-on-brown": {
+    "width": 1490,
+    "height": 745
+  },
   "photo-education": {
     "width": 720,
     "height": 1280

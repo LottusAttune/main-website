@@ -134,7 +134,7 @@
 .summaryLines {
   display: flex;
   flex-direction: column;
-  margin-bottom: 9px;
+  margin-bottom: 28px;
 }
 
 .totalRow {
@@ -173,7 +173,7 @@
 .summaryActions {
   display: flex;
   flex-direction: column;
-  gap: 18px;
+  gap: 22px;
 }
 
 .summaryActions :global(.btn--sm) {

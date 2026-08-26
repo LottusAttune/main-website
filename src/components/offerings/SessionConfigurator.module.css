@@ -113,7 +113,7 @@
   overflow: hidden;
   box-shadow: var(--shadow-card-dark);
   color: var(--color-cream-text-soft);
-  padding: clamp(12px, 1.8vw, 16px) clamp(16px, 2.4vw, 22px);
+  padding: clamp(16px, 2.2vw, 20px) clamp(16px, 2.4vw, 22px);
   min-width: 0;
 }
 
@@ -122,20 +122,20 @@
   letter-spacing: 0.32em;
   text-transform: uppercase;
   color: var(--color-gold-light);
-  margin-bottom: 6px;
+  margin-bottom: 9px;
 }
 
 .summaryLines {
   display: flex;
   flex-direction: column;
-  margin-bottom: 6px;
+  margin-bottom: 9px;
 }
 
 .totalRow {
   display: flex;
   justify-content: space-between;
   gap: 20px;
-  padding: 8px 0 0;
+  padding: 11px 0 0;
   border-top: 1px solid rgba(239, 230, 218, 0.35);
   margin-top: 4px;
 }
@@ -155,13 +155,6 @@
   color: var(--color-cream-text);
 }
 
-.totalNote {
-  font-size: 12.5px;
-  line-height: 1.4;
-  color: rgba(239, 230, 218, 0.6);
-  margin-bottom: 6px;
-}
-
 .includedBtn {
   border-color: var(--color-gold-light);
   color: var(--color-gold-light);
@@ -174,7 +167,7 @@
 .summaryActions {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 9px;
 }
 
 .summaryActions :global(.btn--sm) {

@@ -279,11 +279,6 @@ export function SessionConfigurator({ pricing }: Props) {
             <span className={styles.totalValue}>{money(quote.total)}</span>
           </div>
         </div>
-        <div className={styles.totalNote}>
-          {isPrivate
-            ? 'Two-hour session. All comfort items, materials and refreshments included.'
-            : `Two-hour session for ${participants} participants. All comfort items, materials and refreshments included.`}
-        </div>
         <div className={styles.summaryActions}>
           <Link
             href="/v1/experience#included"

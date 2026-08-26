@@ -81,25 +81,31 @@
 
 .guideGrid {
   display: grid;
-  grid-template-columns: minmax(280px, 460px) 1fr;
+  /* First column sizes itself from the portrait's own aspect ratio (see
+     below) rather than a fixed width - whatever width shows the complete,
+     uncropped photo at the row's full height. min-height pins the row to a
+     concrete number so that derivation has a fixed height to work from
+     instead of a circular one (auto column width + stretched height +
+     aspect-ratio all resolving against each other produces the wrong
+     result - it cropped the photo). */
+  grid-template-columns: auto 1fr;
   gap: clamp(28px, 4vw, 56px);
   align-items: stretch;
+  min-height: 560px;
 }
 
-/* Full-bleed, straight corners, full section height - fills the whole left
-   side edge-to-edge rather than sitting as an inset, rounded portrait.
-   object-position keeps her face and hands in frame; only the empty
-   background either side gets cropped. */
+/* Full-bleed, straight corners, full section height, nothing cropped. The
+   box is locked to the photo's own 962:1635 proportions so at whatever
+   height the row ends up, the width that shows 100% of the image with zero
+   letterboxing falls out automatically - no crop, no gap. */
 .guidePortrait {
   position: relative;
   overflow: hidden;
-  height: 100%;
-  min-height: 480px;
+  aspect-ratio: 962 / 1635;
 }
 
 .guidePortrait img {
-  object-fit: cover;
-  object-position: center 22%;
+  object-fit: contain;
 }
 
 .guideText {

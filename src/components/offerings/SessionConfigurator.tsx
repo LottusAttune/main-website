@@ -94,7 +94,7 @@ export function SessionConfigurator({ pricing }: Props) {
   return (
     <div className={styles.layout}>
       <div className={styles.panel} ref={panelRef}>
-        <div className={`${styles.choices} ${styles.fieldBlock}`}>
+        <div className={`${styles.choices} ${styles.choicesShadowed} ${styles.fieldBlock}`}>
           <button
             type="button"
             className={`choice ${styles.choicePrimary}`}
@@ -129,7 +129,7 @@ export function SessionConfigurator({ pricing }: Props) {
         </div>
 
         <div className={styles.fieldBlock}>
-          <div className={styles.choices}>
+          <div className={`${styles.choices} ${styles.choicesShadowed}`}>
             <button
               type="button"
               className={`choice ${styles.choicePrimary}`}

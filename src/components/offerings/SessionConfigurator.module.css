@@ -41,6 +41,10 @@
   position: relative;
 }
 
+.choicesShadowed :global(.choice) {
+  box-shadow: 0 2px 8px rgba(59, 46, 36, 0.1);
+}
+
 .choices :global(.choice__title) {
   font-size: 18px;
   margin-bottom: 4px;

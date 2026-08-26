@@ -14,6 +14,23 @@
   font-size: clamp(32px, 3.6vw, 52px);
 }
 
+.discoveryNote {
+  margin-top: 32px;
+  text-align: center;
+  font-size: 14px;
+  color: var(--color-muted);
+}
+
+.discoveryNote a {
+  color: var(--color-gold-text);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.discoveryNote a:hover {
+  color: var(--color-gold-deep);
+}
+
 .chooseHeading {
   font-size: 12px;
   font-weight: 500;

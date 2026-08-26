@@ -6,6 +6,7 @@ import { SiteNav } from '@/components/chrome/SiteNav';
 import { StickyBookBar } from '@/components/chrome/StickyBookBar';
 import { SessionConfigurator } from '@/components/offerings/SessionConfigurator';
 import { getSettings } from '@/lib/settings';
+import { SITE } from '@/lib/site';
 import styles from './offerings.module.css';
 
 export const metadata: Metadata = {
@@ -45,6 +46,13 @@ export default async function OfferingsPage() {
             </div>
 
             <SessionConfigurator pricing={pricing} />
+
+            <p className={styles.discoveryNote}>
+              Still have a question?{' '}
+              <a href={`mailto:${SITE.email}?subject=Discovery call`}>
+                Book a discovery call
+              </a>
+            </p>
           </div>
         </section>
       </main>

@@ -164,7 +164,11 @@ export default function ExperiencePage() {
         </section>
 
         {/* ---------- Gallery ---------- */}
-        <section className={styles.galleryBlock} aria-labelledby="gallery-heading">
+        <section
+          id="included"
+          className={styles.galleryBlock}
+          aria-labelledby="gallery-heading"
+        >
           <div className={styles.galleryHead}>
             <div style={{ minWidth: 0 }}>
               <div className="eyebrow" style={{ marginBottom: 22 }}>
@@ -188,7 +192,6 @@ export default function ExperiencePage() {
 
         {/* ---------- Included list ---------- */}
         <section
-          id="included"
           style={{
             padding: '0 var(--space-gutter) var(--space-section)',
             maxWidth: 'var(--width-content)',

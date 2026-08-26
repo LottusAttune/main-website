@@ -86,7 +86,7 @@ export type SlotKey = (typeof TIME_SLOTS)[number]['key'];
 
 export const VENUE_NOTE = {
   lounge:
-    'Private Wellness Lounge — an intimate space with exclusive access to both the Arrival Lounge and the Experience Room. Venue rental included.',
+    'Wellness Lounge — an intimate space with exclusive access to both the Arrival Lounge and the Experience Room. Venue rental included.',
   signature:
     'Premium Signature Venue — an ample, high-end space with three private gender-inclusive washrooms and kitchen. Venue rental included.',
 } as const;

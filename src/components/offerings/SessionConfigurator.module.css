@@ -192,7 +192,7 @@
 
 .totalValue {
   font-family: var(--font-display);
-  font-size: clamp(26px, 3vw, 34px);
+  font-size: clamp(20px, 2.2vw, 24px);
   line-height: 1;
   color: var(--color-cream-text);
 }
@@ -218,13 +218,13 @@
 }
 
 .giftBtn {
-  background: var(--color-cream-raised);
+  background: var(--color-cream);
   border-color: var(--gold-rim);
   color: var(--color-ink);
 }
 
 .giftBtn:hover {
-  background: #fff;
+  background: var(--color-cream-raised);
   border-color: var(--gold-rim-strong);
   color: var(--color-ink);
 }

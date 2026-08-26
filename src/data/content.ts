@@ -129,7 +129,7 @@ export const INCLUDED_SHORT = [
 /** Experience-page "What's included" — the full nine-line version. */
 export const INCLUDED_FULL = [
   'Premium Signature Venue (for 6-24 participants). Features an ample, high-end space with three private gender-inclusive washrooms and kitchen. Venue rental is included in the package price',
-  'Private Wellness Lounge (for up to 6 participants). Intimate space that supports a personalized and warm atmosphere. Venue rental is included in the package price and provides exclusive access to both the Arrival Lounge and the Experience Room',
+  'Wellness Lounge (for up to 6 participants). Intimate space that supports a personalized and warm atmosphere. Venue rental is included in the package price and provides exclusive access to both the Arrival Lounge and the Experience Room',
   'Fully guided somatic and mindfulness practices and a sensory connection exercise',
   'Immersive sound session layered with multiple professional-grade sound healing instruments — all sourced from the most internationally recognized makers known for their craftsmanship and acoustic quality',
   'Educational video about neuroscience and sound benefits',
@@ -178,7 +178,7 @@ export const BENEFITS_TEAMS = {
 export const GALLERY = [
   { img: 'venue-signature', label: 'Premium Signature Venue' },
   { img: 'venue-bar', label: 'Premium Venue — bar and lounge' },
-  { img: 'lounge-private', label: 'Private Wellness Lounge' },
+  { img: 'lounge-private', label: 'Wellness Lounge' },
   { img: 'comfort-items', label: 'Comfort items and materials' },
   { img: 'educational-video', label: 'Educational video — neuroscience of sound' },
   { img: 'crystal-bowls', label: 'Crystal singing bowls' },

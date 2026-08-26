@@ -15,6 +15,7 @@ import {
   MAX_PARTICIPANTS,
   MIN_PARTICIPANTS,
   money,
+  VENUE_NOTE,
   venueNoteFor,
 } from '@/lib/site';
 import styles from './SessionConfigurator.module.css';
@@ -161,6 +162,9 @@ export function SessionConfigurator({ pricing }: Props) {
               </span>
             </button>
           </div>
+          {isPrivate && (
+            <div className={styles.venueNote}>{VENUE_NOTE.lounge}</div>
+          )}
         </div>
 
         {!isPrivate && (

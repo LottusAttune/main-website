@@ -154,7 +154,7 @@
 .proof {
   background: var(--gradient-trust);
   border-bottom: 1px solid rgba(168, 135, 90, 0.28);
-  padding: 16px var(--space-gutter);
+  padding: 10px var(--space-gutter);
 }
 
 .proofGrid {
@@ -168,7 +168,7 @@
 
 .proofCell {
   background: var(--gradient-trust);
-  padding: 12px 14px;
+  padding: 9px 14px;
   text-align: center;
 }
 

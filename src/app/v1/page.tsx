@@ -52,9 +52,11 @@ export default function HomePage() {
         </section>
 
         {/* ---------- Problem ---------- */}
-        <section className="section" aria-labelledby="problem-heading">
+        <section className={styles.problemSection} aria-labelledby="problem-heading">
           <div className={styles.problem} data-reveal="">
-            <div className="eyebrow">Why This Exists</div>
+            <div className="eyebrow" style={{ fontSize: '12.5px' }}>
+              Why This Exists
+            </div>
             <p id="problem-heading" className={styles.problemStatement}>
               {PROBLEM.statement}
             </p>

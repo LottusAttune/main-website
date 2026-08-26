@@ -45,6 +45,13 @@
 
 /* ---------- Problem ---------- */
 
+/* This section is content-light (an eyebrow, one statement, one support
+   line) - it doesn't need the same padding as sections with a full grid or
+   cards underneath, and shouldn't need a scroll to read in one screen. */
+.problemSection {
+  padding: clamp(28px, 3.2vw, 44px) var(--space-gutter) clamp(24px, 2.6vw, 36px);
+}
+
 .problem {
   max-width: 1040px;
   margin: 0 auto;
@@ -52,10 +59,10 @@
 }
 
 .problemStatement {
-  margin: 0 0 34px;
+  margin: 0 0 28px;
   font-family: var(--font-display);
   font-weight: 300;
-  font-size: clamp(25px, 3.2vw, 44px);
+  font-size: clamp(22px, 2.7vw, 37px);
   line-height: 1.42;
 }
 

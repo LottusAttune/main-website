@@ -22,9 +22,9 @@ export const TRUST = [
 
 export const PROBLEM = {
   statement:
-    'Chronic stress, burnout, mental fatigue, workplace disconnection, and the growing need for sustainable well-being.',
+    'Chronic stress, burnout, mental fatigue, workplace disconnection, and the growing need for sustainable well-being',
   support:
-    'Throughout my career, I witnessed a consistent gap between the investment organizations made in productivity and the support available to employees quietly managing anxiety, emotional overload, and fatigue.',
+    'Throughout my career, I witnessed a consistent gap between the investment organizations made in productivity and the support available to employees quietly managing anxiety, emotional overload, and fatigue',
 } as const;
 
 export const GUIDE = {

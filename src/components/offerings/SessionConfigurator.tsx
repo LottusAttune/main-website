@@ -95,7 +95,7 @@ export function SessionConfigurator({ pricing }: Props) {
         <div className={`${styles.choices} ${styles.fieldBlock}`}>
           <button
             type="button"
-            className="choice"
+            className={`choice ${styles.choicePrimary}`}
             aria-pressed={format === 'group'}
             onClick={() => setFormat('group')}
           >
@@ -106,7 +106,7 @@ export function SessionConfigurator({ pricing }: Props) {
           </button>
           <button
             type="button"
-            className="choice"
+            className={`choice ${styles.choiceKeepWhite}`}
             aria-pressed={isCorporateIntro}
             onClick={() => {
               setFormat('corporateIntro');
@@ -130,7 +130,7 @@ export function SessionConfigurator({ pricing }: Props) {
           <div className={styles.choices}>
             <button
               type="button"
-              className="choice"
+              className={`choice ${styles.choicePrimary}`}
               aria-pressed={isPrivate && !isPackage}
               onClick={() => {
                 setFormat('private');
@@ -147,7 +147,7 @@ export function SessionConfigurator({ pricing }: Props) {
             </button>
             <button
               type="button"
-              className="choice"
+              className={`choice ${styles.choiceKeepWhite}`}
               aria-pressed={isPrivate && isPackage}
               onClick={() => {
                 setFormat('private');

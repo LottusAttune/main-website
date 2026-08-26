@@ -36,13 +36,13 @@
 
 .choices :global(.choice) {
   padding: 15px 18px;
-  border: none;
+  border: 1.5px solid transparent;
   border-radius: 6px;
   background: #f6f0e6;
 }
 
 .choices :global(.choice[aria-pressed='true']) {
-  background: rgba(198, 169, 122, 0.34);
+  border-color: var(--color-gold-deep);
 }
 
 .choices :global(.choice__title) {
@@ -53,6 +53,14 @@
 .choices :global(.choice__note) {
   font-size: 12.5px;
   line-height: 1.45;
+}
+
+.choicePrimary {
+  background: rgba(198, 169, 122, 0.18);
+}
+
+.choiceKeepWhite {
+  background: var(--color-cream-raised) !important;
 }
 
 .fieldBlock {

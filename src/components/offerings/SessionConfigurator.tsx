@@ -288,7 +288,7 @@ export function SessionConfigurator({ pricing }: Props) {
             <Link href="/v1/book" className="btn btn--sm btn--cream btn--wide">
               Book this session
             </Link>
-            <Link href="/v1/gift" className="btn btn--sm btn--outline-dark btn--wide">
+            <Link href="/v1/gift" className={`btn btn--sm btn--wide ${styles.giftBtn}`}>
               Gift it
             </Link>
           </div>

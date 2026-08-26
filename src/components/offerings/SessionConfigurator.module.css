@@ -210,6 +210,16 @@
   padding: 11px 30px;
 }
 
+.giftBtn {
+  background: var(--color-gold-warm);
+  color: var(--color-ink);
+}
+
+.giftBtn:hover {
+  background: var(--color-gold-light);
+  color: var(--color-ink);
+}
+
 .summaryActionsRow {
   display: flex;
   gap: 10px;

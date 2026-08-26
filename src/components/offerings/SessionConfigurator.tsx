@@ -35,6 +35,8 @@ export function SessionConfigurator({ pricing }: Props) {
 
   const panelRef = useRef<HTMLDivElement>(null);
   const summaryRef = useRef<HTMLElement>(null);
+  const photoBleedRef = useRef<HTMLDivElement>(null);
+  const flameRef = useRef<HTMLDivElement>(null);
 
   const isPrivate = format === 'private';
   const isCorporateIntro = format === 'corporateIntro';
@@ -54,6 +56,35 @@ export function SessionConfigurator({ pricing }: Props) {
     const sync = () => {
       const height = panel.getBoundingClientRect().bottom - panel.getBoundingClientRect().top;
       summary.style.height = `${height}px`;
+    };
+
+    sync();
+    window.addEventListener('resize', sync);
+    return () => window.removeEventListener('resize', sync);
+  }, [isPrivate, participants, format]);
+
+  // The photo scales with object-fit: contain, so its rendered box is
+  // letterboxed inside the container rather than filling it. Position the
+  // flame overlay against the photo's actual displayed rect (not the
+  // container's) so it stays on the candle at every size.
+  useLayoutEffect(() => {
+    const container = photoBleedRef.current;
+    const flame = flameRef.current;
+    if (!container || !flame || isPrivate) return;
+
+    const FLAME_X_FRAC = 0.5;
+    const FLAME_Y_FRAC = 0.537;
+
+    const sync = () => {
+      const { width: cw, height: ch } = container.getBoundingClientRect();
+      const scale = Math.min(cw / 720, ch / 940);
+      const displayW = 720 * scale;
+      const displayH = 940 * scale;
+      const offsetX = (cw - displayW) / 2;
+      const offsetY = 0; // object-position: center top
+
+      flame.style.left = `${offsetX + FLAME_X_FRAC * displayW}px`;
+      flame.style.top = `${offsetY + FLAME_Y_FRAC * displayH}px`;
     };
 
     sync();
@@ -268,7 +299,7 @@ export function SessionConfigurator({ pricing }: Props) {
         </div>
 
         {!isPrivate && (
-          <div className={styles.photoBleed}>
+          <div className={styles.photoBleed} ref={photoBleedRef}>
             <Image
               src={asset('offerings-box-photo').src}
               alt=""
@@ -276,7 +307,7 @@ export function SessionConfigurator({ pricing }: Props) {
               className={styles.boxPhoto}
               unoptimized
             />
-            <div className={styles.flameFlicker} />
+            <div className={styles.flameFlicker} ref={flameRef} />
           </div>
         )}
       </aside>

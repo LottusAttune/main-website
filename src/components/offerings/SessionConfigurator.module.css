@@ -145,34 +145,62 @@
 
 .photoBleed {
   position: relative;
-  aspect-ratio: 720 / 940;
+  flex: 1;
+  min-height: 0;
   margin: 20px clamp(-22px, -2.4vw, -16px) clamp(-20px, -2.2vw, -16px);
 }
 
 .boxPhoto {
-  object-fit: cover;
+  object-fit: contain;
+  object-position: center top;
   pointer-events: none;
 }
 
 .flameFlicker {
   position: absolute;
-  left: 50%;
-  top: 57%;
-  width: 20px;
-  height: 34px;
+  width: 18px;
+  height: 28px;
   transform-origin: 50% 100%;
   transform: translate(-50%, -95%);
-  border-radius: 50% 50% 50% 50% / 65% 65% 35% 35%;
+  border-radius: 42% 58% 55% 45% / 60% 55% 60% 40%;
   background: radial-gradient(
-    ellipse at 50% 65%,
-    rgba(255, 220, 140, 0.9) 0%,
-    rgba(255, 180, 70, 0.5) 45%,
-    rgba(255, 140, 20, 0) 75%
+    ellipse at 50% 70%,
+    rgba(255, 225, 150, 0.85) 0%,
+    rgba(255, 190, 90, 0.4) 35%,
+    rgba(255, 140, 20, 0) 58%
   );
-  filter: blur(1.5px);
   mix-blend-mode: screen;
   pointer-events: none;
   animation: flameFlicker 4.2s ease-in-out infinite;
+}
+
+.flameFlicker::before {
+  content: '';
+  position: absolute;
+  left: 50%;
+  bottom: -3px;
+  width: 75%;
+  height: 48%;
+  transform: translateX(-50%);
+  border-radius: 50%;
+  background: radial-gradient(
+    ellipse,
+    rgba(255, 150, 60, 0.55) 0%,
+    rgba(255, 120, 40, 0.25) 50%,
+    rgba(255, 100, 30, 0) 75%
+  );
+  mix-blend-mode: screen;
+  animation: flameBase 4.2s ease-in-out infinite;
+}
+
+@keyframes flameBase {
+  0%,
+  100% {
+    opacity: 0.65;
+  }
+  50% {
+    opacity: 0.9;
+  }
 }
 
 @keyframes flameFlicker {
@@ -180,22 +208,27 @@
   100% {
     opacity: 0.85;
     transform: translate(-50%, -95%) scale(1, 1) skewX(0deg);
+    border-radius: 42% 58% 55% 45% / 60% 55% 60% 40%;
   }
   20% {
-    opacity: 0.95;
-    transform: translate(-50%, -95%) scale(0.97, 1.05) skewX(-1.5deg);
+    opacity: 1;
+    transform: translate(-50%, -95%) scale(0.92, 1.1) skewX(-3deg);
+    border-radius: 48% 52% 50% 50% / 55% 60% 55% 45%;
   }
   45% {
-    opacity: 0.78;
-    transform: translate(-50%, -95%) scale(1.02, 0.96) skewX(1.2deg);
+    opacity: 0.72;
+    transform: translate(-50%, -95%) scale(1.06, 0.9) skewX(2.5deg);
+    border-radius: 55% 45% 45% 55% / 60% 50% 60% 40%;
   }
   70% {
-    opacity: 0.95;
-    transform: translate(-50%, -95%) scale(0.98, 1.03) skewX(-1deg);
+    opacity: 1;
+    transform: translate(-50%, -95%) scale(0.95, 1.06) skewX(-2deg);
+    border-radius: 45% 55% 55% 45% / 58% 55% 58% 42%;
   }
   85% {
-    opacity: 0.85;
-    transform: translate(-50%, -95%) scale(1.01, 0.98) skewX(0.7deg);
+    opacity: 0.88;
+    transform: translate(-50%, -95%) scale(1.03, 0.95) skewX(1.5deg);
+    border-radius: 50% 50% 50% 50% / 60% 55% 60% 40%;
   }
 }
 
@@ -271,6 +304,7 @@
   background: var(--color-cream);
   border-color: var(--gold-rim-strong);
   color: var(--color-ink);
+  transform: translateY(-2px);
 }
 
 .summaryActionsRow {

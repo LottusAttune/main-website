@@ -32,27 +32,25 @@ export function SessionConfigurator({ pricing }: Props) {
   const selectId = useId();
 
   const panelRef = useRef<HTMLDivElement>(null);
-  const venueNoteRef = useRef<HTMLDivElement>(null);
   const summaryRef = useRef<HTMLElement>(null);
 
   const isPrivate = format === 'private';
   const isCorporateIntro = format === 'corporateIntro';
 
-  // Match the estimate box's bottom to the venue note's bottom (not the
-  // taller add-ons below it) when a participant count is in play.
+  // Match the estimate box's bottom to the panel's own bottom (under the
+  // add-ons) when a participant count is in play.
   useLayoutEffect(() => {
     const panel = panelRef.current;
-    const venueNote = venueNoteRef.current;
     const summary = summaryRef.current;
     if (!summary) return;
 
-    if (isPrivate || !panel || !venueNote) {
+    if (isPrivate || !panel) {
       summary.style.height = '';
       return;
     }
 
     const sync = () => {
-      const height = venueNote.getBoundingClientRect().bottom - panel.getBoundingClientRect().top;
+      const height = panel.getBoundingClientRect().bottom - panel.getBoundingClientRect().top;
       summary.style.height = `${height}px`;
     };
 
@@ -186,9 +184,7 @@ export function SessionConfigurator({ pricing }: Props) {
                   </option>
                 ))}
               </select>
-              <div className={styles.venueNote} ref={venueNoteRef}>
-                {venueNoteFor(participants)}
-              </div>
+              <div className={styles.venueNote}>{venueNoteFor(participants)}</div>
             </div>
 
             <div>

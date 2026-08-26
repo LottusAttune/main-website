@@ -1,8 +1,14 @@
 .layout {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+  grid-template-columns: minmax(340px, 5fr) minmax(260px, 3fr);
   gap: 24px;
   align-items: start;
+}
+
+@media (max-width: 860px) {
+  .layout {
+    grid-template-columns: 1fr;
+  }
 }
 
 .panel {
@@ -167,7 +173,7 @@
 .summaryActions {
   display: flex;
   flex-direction: column;
-  gap: 9px;
+  gap: 18px;
 }
 
 .summaryActions :global(.btn--sm) {

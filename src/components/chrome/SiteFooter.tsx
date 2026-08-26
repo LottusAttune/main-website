@@ -4,7 +4,7 @@ import { VENUE_COPY } from '@/data/content';
 import { asset } from '@/lib/images';
 import { SITE, SOCIAL } from '@/lib/site';
 import { ExpandableNote } from './ExpandableNote';
-import { InstagramIcon, LinkedInIcon, MailIcon, PhoneIcon } from './FooterIcons';
+import { FacebookIcon, InstagramIcon, LinkedInIcon, MailIcon, PhoneIcon } from './FooterIcons';
 import styles from './SiteFooter.module.css';
 
 const SPECS = [
@@ -14,8 +14,9 @@ const SPECS = [
 ];
 
 const SOCIAL_ICONS = {
-  Instagram: InstagramIcon,
   LinkedIn: LinkedInIcon,
+  Facebook: FacebookIcon,
+  Instagram: InstagramIcon,
 };
 
 export function SiteFooter() {

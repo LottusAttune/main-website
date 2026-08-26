@@ -172,12 +172,22 @@
 }
 
 .socialIcon {
-  color: var(--color-ink);
-  transition: color var(--duration-button, 0.2s) ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 11px;
+  background: var(--color-ink);
+  color: var(--color-cream-text);
+  transition:
+    background var(--duration-button, 0.2s) ease,
+    transform var(--duration-button, 0.2s) ease;
 }
 
 .socialIcon:hover {
-  color: var(--color-gold-deep);
+  background: var(--color-gold-deep);
+  transform: translateY(-2px);
 }
 
 .locationLead {

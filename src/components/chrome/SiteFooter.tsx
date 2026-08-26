@@ -36,10 +36,14 @@ export function SiteFooter() {
         </div>
 
         <div className={styles.lockupContent}>
-          <div className={styles.brand}>
-            <div className={styles.brandName}>Lotus Attune</div>
-            <div className={styles.brandTagline}>{SITE.tagline}</div>
-          </div>
+          <Image
+            src={asset('offerings-logo-on-brown').src}
+            alt={SITE.name}
+            width={asset('offerings-logo-on-brown').width}
+            height={asset('offerings-logo-on-brown').height}
+            className={styles.brandMark}
+            unoptimized
+          />
           <div className={styles.mottoGroup}>
             <div className={styles.readyEyebrow}>Ready When You Are</div>
             <div className={styles.motto}>{SITE.motto}</div>

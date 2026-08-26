@@ -32,7 +32,7 @@
   align-items: center;
   justify-content: center;
   text-align: center;
-  min-height: clamp(240px, 28vw, 320px);
+  min-height: clamp(200px, 22vw, 260px);
   background: var(--gradient-deep);
   padding: clamp(26px, 3.4vw, 40px) var(--space-gutter);
 }
@@ -63,29 +63,14 @@
 
 @media (max-width: 760px) {
   .lockup {
-    min-height: clamp(220px, 50vw, 280px);
+    min-height: clamp(200px, 44vw, 240px);
   }
 }
 
-.brand {
+.brandMark {
+  width: clamp(160px, 16vw, 220px);
+  height: auto;
   margin-bottom: 20px;
-}
-
-.brandName {
-  font-family: var(--font-display);
-  font-weight: 400;
-  font-size: clamp(19px, 2.4vw, 26px);
-  letter-spacing: 0.26em;
-  text-transform: uppercase;
-  color: var(--color-cream-text);
-  margin-bottom: 8px;
-}
-
-.brandTagline {
-  font-size: var(--text-micro);
-  letter-spacing: 0.4em;
-  text-transform: uppercase;
-  color: var(--color-cream-text);
 }
 
 .mottoGroup {

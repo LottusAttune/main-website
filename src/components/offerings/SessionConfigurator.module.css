@@ -36,6 +36,7 @@
 
 .choices :global(.choice) {
   padding: 15px 18px;
+  border-radius: 12px;
 }
 
 .choices :global(.choice__title) {
@@ -128,7 +129,7 @@
   flex-direction: column;
   background: var(--gradient-deep);
   border: 1px solid transparent;
-  border-radius: 32px;
+  border-radius: var(--radius-card);
   overflow: hidden;
   box-shadow: var(--shadow-card-dark);
   color: var(--color-cream-text-soft);

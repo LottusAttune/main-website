@@ -96,8 +96,11 @@
      should still end where the "Why This Exists" section's text ends -
      that section centers on a 1040px box (.problem), so its right edge
      sits at (100vw - 1040) / 2 from the viewport's right side. Matching
-     that formula here lines the two sections' text up exactly. */
-  padding-right: max(var(--space-gutter), calc((100vw - 1040px) / 2));
+     that formula here lines the two sections' text up exactly on
+     laptop-width screens. Above ~1520px it's capped instead of left to
+     keep growing - past that point the gap it creates stops looking like
+     alignment and starts looking like an empty hole on the right. */
+  padding-right: max(var(--space-gutter), min(calc((100vw - 1040px) / 2), 240px));
 }
 
 /* Full-bleed, straight corners, full section height, nothing cropped. The

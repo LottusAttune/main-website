@@ -89,9 +89,15 @@
      aspect-ratio all resolving against each other produces the wrong
      result - it cropped the photo). */
   grid-template-columns: auto 1fr;
-  gap: clamp(28px, 4vw, 56px);
+  gap: clamp(40px, 6vw, 84px);
   align-items: stretch;
   min-height: 560px;
+  /* The photo bleeds to the true left edge (no shell), but the text side
+     should still end where the "Why This Exists" section's text ends -
+     that section centers on a 1040px box (.problem), so its right edge
+     sits at (100vw - 1040) / 2 from the viewport's right side. Matching
+     that formula here lines the two sections' text up exactly. */
+  padding-right: max(var(--space-gutter), calc((100vw - 1040px) / 2));
 }
 
 /* Full-bleed, straight corners, full section height, nothing cropped. The
@@ -109,8 +115,7 @@
 }
 
 .guideText {
-  padding: clamp(32px, 4vw, 56px) var(--space-gutter) clamp(32px, 4vw, 56px) 0;
-  max-width: 760px;
+  padding: clamp(32px, 4vw, 56px) 0;
 }
 
 .guideQuote {

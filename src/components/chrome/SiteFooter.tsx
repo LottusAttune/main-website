@@ -24,23 +24,18 @@ export function SiteFooter() {
       <div className={styles.glow} />
 
       <div className={styles.lockup}>
-        <Image
-          src={asset('offerings-ghost-photo').src}
-          alt=""
-          fill
-          className={styles.lockupGhost}
-          unoptimized
-        />
-
-        <div className={styles.lockupContent}>
+        <div className={styles.lockupPhoto}>
           <Image
-            src={asset('offerings-logo-on-brown').src}
+            src={asset('footer-lockup-combo').src}
             alt={SITE.name}
-            width={asset('offerings-logo-on-brown').width}
-            height={asset('offerings-logo-on-brown').height}
-            className={styles.brandMark}
+            width={asset('footer-lockup-combo').width}
+            height={asset('footer-lockup-combo').height}
+            sizes="(max-width: 900px) 100vw, 720px"
             unoptimized
           />
+        </div>
+
+        <div className={styles.lockupContent}>
           <div className={styles.mottoGroup}>
             <div className={styles.readyEyebrow}>Ready When You Are</div>
             <div className={styles.motto}>{SITE.motto}</div>

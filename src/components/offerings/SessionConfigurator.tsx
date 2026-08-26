@@ -63,10 +63,10 @@ export function SessionConfigurator({ pricing }: Props) {
     return () => window.removeEventListener('resize', sync);
   }, [isPrivate, participants, format]);
 
-  // The photo scales with object-fit: contain, so its rendered box is
-  // letterboxed inside the container rather than filling it. Position the
-  // flame overlay against the photo's actual displayed rect (not the
-  // container's) so it stays on the candle at every size.
+  // The photo scales with object-fit: cover (top-anchored), so depending on
+  // the container's aspect ratio it may bleed past the sides or crop the
+  // bottom. Position the flame overlay against the photo's actual displayed
+  // rect (not the container's) so it stays on the candle at every size.
   useLayoutEffect(() => {
     const container = photoBleedRef.current;
     const flame = flameRef.current;
@@ -77,7 +77,7 @@ export function SessionConfigurator({ pricing }: Props) {
 
     const sync = () => {
       const { width: cw, height: ch } = container.getBoundingClientRect();
-      const scale = Math.min(cw / 720, ch / 940);
+      const scale = Math.max(cw / 720, ch / 940);
       const displayW = 720 * scale;
       const displayH = 940 * scale;
       const offsetX = (cw - displayW) / 2;

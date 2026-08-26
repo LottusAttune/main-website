@@ -3,7 +3,6 @@
 .configurator {
   position: relative;
   overflow: hidden;
-  background: var(--gradient-beige);
   padding: 40px var(--space-gutter) 64px;
 }
 

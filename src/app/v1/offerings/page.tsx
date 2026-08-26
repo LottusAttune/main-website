@@ -5,7 +5,6 @@ import { SiteFooter } from '@/components/chrome/SiteFooter';
 import { SiteNav } from '@/components/chrome/SiteNav';
 import { StickyBookBar } from '@/components/chrome/StickyBookBar';
 import { SessionConfigurator } from '@/components/offerings/SessionConfigurator';
-import { assetUrl } from '@/lib/images';
 import { getSettings } from '@/lib/settings';
 import styles from './offerings.module.css';
 
@@ -29,11 +28,6 @@ export default async function OfferingsPage() {
 
       <main>
         <section className={styles.configurator} aria-labelledby="offerings-heading">
-          <div
-            data-bg="1"
-            className="photo-wash photo-wash--light"
-            style={{ backgroundImage: assetUrl('venue-signature') }}
-          />
           <div className="shell" style={{ position: 'relative' }}>
             <div className={styles.configuratorHead}>
               <h1

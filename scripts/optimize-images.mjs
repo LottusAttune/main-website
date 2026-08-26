@@ -57,6 +57,7 @@ const NEEDS_ALPHA = new Set([
   'logo-circle',
   'logo-lockup',
   'logo-wordmark',
+  'offerings-box-photo',
 ]);
 
 async function main() {

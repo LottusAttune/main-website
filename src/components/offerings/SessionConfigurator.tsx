@@ -100,7 +100,7 @@ export function SessionConfigurator({ pricing }: Props) {
             aria-pressed={format === 'group'}
             onClick={() => setFormat('group')}
           >
-            <span className="choice__title">Group &amp; Corporate</span>
+            <span className="choice__title">Groups &amp; Corporate</span>
             <span className="choice__note">
               2–24 participants — gatherings, celebrations, teams
             </span>
@@ -276,6 +276,7 @@ export function SessionConfigurator({ pricing }: Props) {
               className={styles.boxPhoto}
               unoptimized
             />
+            <div className={styles.flameFlicker} />
           </div>
         )}
       </aside>

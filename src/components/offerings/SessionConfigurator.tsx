@@ -90,8 +90,8 @@ export function SessionConfigurator({ pricing }: Props) {
     const flame = flameRef.current;
     if (!container || !flame || isPrivate) return;
 
-    const FLAME_X_FRAC = 0.5;
-    const FLAME_Y_FRAC = 0.537;
+    const FLAME_X_FRAC = 0.525;
+    const FLAME_Y_FRAC = 0.589;
 
     const sync = () => {
       const { width: cw, height: ch } = container.getBoundingClientRect();
@@ -333,15 +333,15 @@ export function SessionConfigurator({ pricing }: Props) {
               >
                 <defs>
                   <linearGradient id="flameOuterGrad" x1="0" y1="1" x2="0" y2="0">
-                    <stop offset="0%" stopColor="#ff5a1a" stopOpacity="0.85" />
-                    <stop offset="42%" stopColor="#ffa93f" stopOpacity="0.92" />
-                    <stop offset="75%" stopColor="#ffd873" stopOpacity="0.85" />
-                    <stop offset="100%" stopColor="#ffedb0" stopOpacity="0.3" />
+                    <stop offset="0%" stopColor="#ffab3d" stopOpacity="0.75" />
+                    <stop offset="42%" stopColor="#ffcf6e" stopOpacity="0.88" />
+                    <stop offset="75%" stopColor="#ffe9a8" stopOpacity="0.8" />
+                    <stop offset="100%" stopColor="#fff8e0" stopOpacity="0.25" />
                   </linearGradient>
                   <linearGradient id="flameCoreGrad" x1="0" y1="1" x2="0" y2="0">
-                    <stop offset="0%" stopColor="#fff3d6" stopOpacity="0.9" />
-                    <stop offset="55%" stopColor="#ffe08a" stopOpacity="0.7" />
-                    <stop offset="100%" stopColor="#ffedb0" stopOpacity="0" />
+                    <stop offset="0%" stopColor="#fffaea" stopOpacity="0.9" />
+                    <stop offset="55%" stopColor="#ffefc0" stopOpacity="0.6" />
+                    <stop offset="100%" stopColor="#fff8e0" stopOpacity="0" />
                   </linearGradient>
                 </defs>
                 <path

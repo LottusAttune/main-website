@@ -71,12 +71,11 @@ export default function HomePage() {
               <Image
                 src={portrait.src}
                 alt="Silvana, founder of Lotus Attune, with her handpan"
-                width={portrait.width}
-                height={portrait.height}
-                sizes="(max-width: 900px) 100vw, 340px"
+                fill
+                sizes="(max-width: 900px) 100vw, 460px"
               />
             </div>
-            <div data-reveal="">
+            <div className={styles.guideText} data-reveal="">
               <div className="eyebrow eyebrow--dark" style={{ fontSize: '13.5px', marginBottom: 18 }}>
                 Your Guide
               </div>

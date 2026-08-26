@@ -73,30 +73,37 @@
 
 /* ---------- Guide ---------- */
 
+/* No padding here - the portrait bleeds to this section's own edges, the
+   text column carries its own padding instead (see .guideText). */
 .guideSection {
-  padding: clamp(32px, 4vw, 56px) var(--space-gutter);
+  padding: 0;
 }
 
 .guideGrid {
   display: grid;
-  grid-template-columns: minmax(220px, 340px) 1fr;
+  grid-template-columns: minmax(280px, 460px) 1fr;
   gap: clamp(28px, 4vw, 56px);
-  align-items: center;
+  align-items: stretch;
 }
 
-/* Her portrait is never cropped — it keeps its natural proportion so her head
-   and hands stay in frame at every width. */
+/* Full-bleed, straight corners, full section height - fills the whole left
+   side edge-to-edge rather than sitting as an inset, rounded portrait.
+   object-position keeps her face and hands in frame; only the empty
+   background either side gets cropped. */
 .guidePortrait {
   position: relative;
-  border-radius: 16px;
   overflow: hidden;
-  max-width: 340px;
+  height: 100%;
+  min-height: 480px;
 }
 
 .guidePortrait img {
-  width: 100%;
-  height: auto;
-  display: block;
+  object-fit: cover;
+  object-position: center 22%;
+}
+
+.guideText {
+  padding: clamp(32px, 4vw, 56px) var(--space-gutter) clamp(32px, 4vw, 56px) 0;
 }
 
 .guideQuote {

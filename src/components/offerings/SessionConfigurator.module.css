@@ -125,25 +125,16 @@
   min-width: 0;
 }
 
-.logoSpacer {
+.photoBleed {
   position: relative;
   flex: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 0;
-  padding: 12px 0;
+  min-height: 120px;
+  margin: 0 clamp(-22px, -2.4vw, -16px) clamp(-20px, -2.2vw, -16px);
 }
 
-.ghostPhoto {
+.boxPhoto {
   object-fit: cover;
   pointer-events: none;
-}
-
-.logoImage {
-  position: relative;
-  width: 78%;
-  height: auto;
 }
 
 .summaryTitle {

@@ -370,7 +370,7 @@ export function SessionConfigurator({ pricing }: Props) {
                 />
                 <path
                   className={styles.flameOuterPath}
-                  d="M20 4C11 18 7 32 8.5 44C9.5 53 14 60.5 20 63C26 60.5 30.5 53 31.5 44C33 32 29 18 20 4Z"
+                  d="M20 4C14.5 12.5 7 32 8.5 44C9.5 53 14 60.5 20 63C26 60.5 30.5 53 31.5 44C33 32 25.5 12.5 20 4Z"
                   fill="url(#flameOuterGrad)"
                 />
                 <path

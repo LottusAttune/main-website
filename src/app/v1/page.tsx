@@ -73,7 +73,7 @@ export default function HomePage() {
                 alt="Silvana, founder of Lotus Attune, with her handpan"
                 width={portrait.width}
                 height={portrait.height}
-                sizes="(max-width: 900px) 100vw, 300px"
+                sizes="(max-width: 900px) 100vw, 340px"
               />
             </div>
             <div data-reveal="">
@@ -95,7 +95,7 @@ export default function HomePage() {
                   {paragraph}
                 </p>
               ))}
-              <Link href="/v1/founder" className="btn btn--outline-dark">
+              <Link href="/v1/founder" className={`btn btn--outline-dark ${styles.guideBtn}`}>
                 Meet Silvana
               </Link>
             </div>

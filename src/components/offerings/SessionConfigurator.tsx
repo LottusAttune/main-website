@@ -333,17 +333,26 @@ export function SessionConfigurator({ pricing }: Props) {
               >
                 <defs>
                   <linearGradient id="flameOuterGrad" x1="0" y1="1" x2="0" y2="0">
-                    <stop offset="0%" stopColor="#ffab3d" stopOpacity="0.75" />
-                    <stop offset="42%" stopColor="#ffcf6e" stopOpacity="0.88" />
-                    <stop offset="75%" stopColor="#ffe9a8" stopOpacity="0.8" />
-                    <stop offset="100%" stopColor="#fff8e0" stopOpacity="0.25" />
+                    <stop offset="0%" stopColor="#e8862f" stopOpacity="0.95" />
+                    <stop offset="42%" stopColor="#ffb655" stopOpacity="1" />
+                    <stop offset="75%" stopColor="#ffdf9a" stopOpacity="1" />
+                    <stop offset="100%" stopColor="#fff8e0" stopOpacity="0.7" />
                   </linearGradient>
                   <linearGradient id="flameCoreGrad" x1="0" y1="1" x2="0" y2="0">
-                    <stop offset="0%" stopColor="#fffaea" stopOpacity="0.9" />
-                    <stop offset="55%" stopColor="#ffefc0" stopOpacity="0.6" />
+                    <stop offset="0%" stopColor="#fffaea" stopOpacity="1" />
+                    <stop offset="55%" stopColor="#ffefc0" stopOpacity="0.9" />
                     <stop offset="100%" stopColor="#fff8e0" stopOpacity="0" />
                   </linearGradient>
                 </defs>
+                <rect
+                  x="18.5"
+                  y="61"
+                  width="3"
+                  height="8"
+                  rx="1.2"
+                  fill="#2a1c12"
+                  opacity="0.8"
+                />
                 <path
                   className={styles.flameOuterPath}
                   d="M20 4C11 18 7 32 8.5 44C9.5 53 14 60.5 20 63C26 60.5 30.5 53 31.5 44C33 32 29 18 20 4Z"

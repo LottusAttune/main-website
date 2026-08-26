@@ -312,7 +312,37 @@ export function SessionConfigurator({ pricing }: Props) {
               className={styles.boxPhoto}
               unoptimized
             />
-            <div className={styles.flameFlicker} ref={flameRef} />
+            <div className={styles.flameFlicker} ref={flameRef}>
+              <svg
+                className={styles.flameSvg}
+                viewBox="0 0 40 70"
+                aria-hidden="true"
+              >
+                <defs>
+                  <linearGradient id="flameOuterGrad" x1="0" y1="1" x2="0" y2="0">
+                    <stop offset="0%" stopColor="#ff5a1a" stopOpacity="0.85" />
+                    <stop offset="42%" stopColor="#ffa93f" stopOpacity="0.92" />
+                    <stop offset="75%" stopColor="#ffd873" stopOpacity="0.85" />
+                    <stop offset="100%" stopColor="#ffedb0" stopOpacity="0.3" />
+                  </linearGradient>
+                  <linearGradient id="flameCoreGrad" x1="0" y1="1" x2="0" y2="0">
+                    <stop offset="0%" stopColor="#fff3d6" stopOpacity="0.9" />
+                    <stop offset="55%" stopColor="#ffe08a" stopOpacity="0.7" />
+                    <stop offset="100%" stopColor="#ffedb0" stopOpacity="0" />
+                  </linearGradient>
+                </defs>
+                <path
+                  className={styles.flameOuterPath}
+                  d="M20 4C11 18 7 32 8.5 44C9.5 53 14 60.5 20 63C26 60.5 30.5 53 31.5 44C33 32 29 18 20 4Z"
+                  fill="url(#flameOuterGrad)"
+                />
+                <path
+                  className={styles.flameCorePath}
+                  d="M20 24C14.5 33 12.5 41 13.5 48C14.3 54 17 58.5 20 60C23 58.5 25.7 54 26.5 48C27.5 41 25.5 33 20 24Z"
+                  fill="url(#flameCoreGrad)"
+                />
+              </svg>
+            </div>
           </div>
         )}
       </aside>

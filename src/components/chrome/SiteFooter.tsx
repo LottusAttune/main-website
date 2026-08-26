@@ -24,16 +24,13 @@ export function SiteFooter() {
       <div className={styles.glow} />
 
       <div className={styles.lockup}>
-        <div className={styles.lockupPhoto}>
-          <Image
-            src={asset('footer-photo-baked').src}
-            alt=""
-            width={asset('footer-photo-baked').width}
-            height={asset('footer-photo-baked').height}
-            sizes="(max-width: 900px) 100vw, 900px"
-            unoptimized
-          />
-        </div>
+        <Image
+          src={asset('offerings-ghost-photo').src}
+          alt=""
+          fill
+          className={styles.lockupGhost}
+          unoptimized
+        />
 
         <div className={styles.lockupContent}>
           <Image

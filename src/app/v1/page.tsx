@@ -80,15 +80,15 @@ export default function HomePage() {
               <div className="eyebrow eyebrow--dark" style={{ fontSize: '13.5px', marginBottom: 18 }}>
                 Your Guide
               </div>
-              {/* Same words as GUIDE.quote, verbatim - broken onto 3 fixed
-                  lines (one pairing per line) rather than left to wrap
-                  differently at each screen width. */}
+              {/* Same words as GUIDE.quote, verbatim - broken onto 2 fixed
+                  lines rather than left to wrap differently at each screen
+                  width. Each pairing (performance/restoration,
+                  productivity/well-being, excellence/human connection) stays
+                  whole on one line. */}
               <blockquote id="guide-heading" className={styles.guideQuote}>
                 ”I bridge the gap between performance and restoration,
                 <br />
-                productivity and well-being, and
-                <br />
-                excellence and human connection.”
+                productivity and well-being, and excellence and human connection”
               </blockquote>
               {GUIDE.paragraphs.map((paragraph) => (
                 <p key={paragraph} className={`body body--dark ${styles.guideBody}`}>

@@ -65,7 +65,7 @@ export default function HomePage() {
         </section>
 
         {/* ---------- Guide ---------- */}
-        <section className="section section--dark" aria-labelledby="guide-heading">
+        <section className={`${styles.guideSection} section--dark`} aria-labelledby="guide-heading">
           <div className={`shell ${styles.guideGrid}`}>
             <div className={styles.guidePortrait} data-reveal="">
               <Image
@@ -73,13 +73,22 @@ export default function HomePage() {
                 alt="Silvana, founder of Lotus Attune, with her handpan"
                 width={portrait.width}
                 height={portrait.height}
-                sizes="(max-width: 900px) 100vw, 46vw"
+                sizes="(max-width: 900px) 100vw, 300px"
               />
             </div>
             <div data-reveal="">
-              <div className="eyebrow eyebrow--dark">Your Guide</div>
+              <div className="eyebrow eyebrow--dark" style={{ fontSize: '13.5px', marginBottom: 18 }}>
+                Your Guide
+              </div>
+              {/* Same words as GUIDE.quote, verbatim - broken onto 3 fixed
+                  lines (one pairing per line) rather than left to wrap
+                  differently at each screen width. */}
               <blockquote id="guide-heading" className={styles.guideQuote}>
-                {GUIDE.quote}
+                ”I bridge the gap between performance and restoration,
+                <br />
+                productivity and well-being, and
+                <br />
+                excellence and human connection.”
               </blockquote>
               {GUIDE.paragraphs.map((paragraph) => (
                 <p key={paragraph} className={`body body--dark ${styles.guideBody}`}>

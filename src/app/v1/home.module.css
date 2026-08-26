@@ -73,19 +73,28 @@
 
 /* ---------- Guide ---------- */
 
+/* Content-light section (an eyebrow, a 3-line quote, two short paragraphs,
+   one button) - doesn't need the shared section padding sized for sections
+   with a full grid underneath. */
+.guideSection {
+  padding: clamp(28px, 3.2vw, 44px) var(--space-gutter);
+}
+
 .guideGrid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: var(--space-split);
+  grid-template-columns: minmax(200px, 260px) 1fr;
+  gap: clamp(28px, 4vw, 56px);
   align-items: center;
 }
 
 /* Her portrait is never cropped — it keeps its natural proportion so her head
-   and hands stay in frame at every width. */
+   and hands stay in frame at every width. Capped narrower than before so it
+   reads as an accompanying portrait, not the dominant element. */
 .guidePortrait {
   position: relative;
   border-radius: 28px;
   overflow: hidden;
+  max-width: 260px;
 }
 
 .guidePortrait img {
@@ -95,21 +104,21 @@
 }
 
 .guideQuote {
-  margin: 0 0 34px;
+  margin: 0 0 20px;
   font-family: var(--font-display);
   font-weight: 300;
-  font-size: var(--text-quote);
-  line-height: 1.3;
+  font-size: clamp(18px, 2.1vw, 29px);
+  line-height: 1.32;
   color: var(--color-cream-text);
   text-wrap: pretty;
 }
 
 .guideBody {
-  margin: 0 0 22px;
+  margin: 0 0 14px;
 }
 
 .guideBody:last-of-type {
-  margin-bottom: 36px;
+  margin-bottom: 22px;
 }
 
 /* ---------- Section headers ---------- */

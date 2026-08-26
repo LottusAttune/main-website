@@ -211,12 +211,14 @@
 }
 
 .giftBtn {
-  background: var(--color-gold-warm);
+  background: var(--color-cream-raised);
+  border-color: var(--gold-rim);
   color: var(--color-ink);
 }
 
 .giftBtn:hover {
-  background: var(--color-gold-light);
+  background: #fff;
+  border-color: var(--gold-rim-strong);
   color: var(--color-ink);
 }
 

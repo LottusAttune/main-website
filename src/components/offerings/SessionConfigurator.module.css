@@ -145,9 +145,8 @@
 
 .photoBleed {
   position: relative;
-  flex: 1;
-  min-height: 120px;
-  margin: 0 clamp(-22px, -2.4vw, -16px) clamp(-20px, -2.2vw, -16px);
+  aspect-ratio: 720 / 820;
+  margin: 20px clamp(-22px, -2.4vw, -16px) clamp(-20px, -2.2vw, -16px);
 }
 
 .boxPhoto {
@@ -157,8 +156,8 @@
 
 .flameFlicker {
   position: absolute;
-  left: 52%;
-  top: 62%;
+  left: 50%;
+  top: 61%;
   width: 26px;
   height: 42px;
   transform: translate(-50%, -50%);

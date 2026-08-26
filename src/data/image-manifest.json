@@ -95,6 +95,10 @@
     "width": 1365,
     "height": 2048
   },
+  "journey2-original": {
+    "width": 720,
+    "height": 1280
+  },
   "logo-circle": {
     "width": 600,
     "height": 600
@@ -117,7 +121,7 @@
   },
   "offerings-box-photo": {
     "width": 720,
-    "height": 910
+    "height": 820
   },
   "offerings-corporate-photo-baked": {
     "width": 760,

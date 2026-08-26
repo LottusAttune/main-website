@@ -54,7 +54,7 @@ export default function HomePage() {
         {/* ---------- Problem ---------- */}
         <section className={styles.problemSection} aria-labelledby="problem-heading">
           <div className={styles.problem} data-reveal="">
-            <div className="eyebrow" style={{ fontSize: '12.5px' }}>
+            <div className="eyebrow" style={{ fontSize: '13.5px', marginBottom: 18 }}>
               Why This Exists
             </div>
             <p id="problem-heading" className={styles.problemStatement}>

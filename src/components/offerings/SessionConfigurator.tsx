@@ -42,7 +42,10 @@ export function SessionConfigurator({ pricing }: Props) {
   const isCorporateIntro = format === 'corporateIntro';
 
   // Match the estimate box's bottom to the panel's own bottom (under the
-  // add-ons) when a participant count is in play.
+  // add-ons) when a participant count is in play. Only applies once the
+  // layout is side-by-side (matches the .layout breakpoint) — below that,
+  // the panel stacks into one long column and forcing the same height onto
+  // the summary box stretches its photo absurdly tall.
   useLayoutEffect(() => {
     const panel = panelRef.current;
     const summary = summaryRef.current;
@@ -53,19 +56,29 @@ export function SessionConfigurator({ pricing }: Props) {
       return;
     }
 
+    const query = window.matchMedia('(min-width: 861px)');
+
     // The panel's own height leaves too little room for the photo to show
     // more than a sliver of the candle, so give the box some extra height
     // here rather than cropping the photo tighter.
     const EXTRA_FOR_PHOTO = 100;
 
     const sync = () => {
+      if (!query.matches) {
+        summary.style.height = '';
+        return;
+      }
       const height = panel.getBoundingClientRect().bottom - panel.getBoundingClientRect().top;
       summary.style.height = `${height + EXTRA_FOR_PHOTO}px`;
     };
 
     sync();
     window.addEventListener('resize', sync);
-    return () => window.removeEventListener('resize', sync);
+    query.addEventListener('change', sync);
+    return () => {
+      window.removeEventListener('resize', sync);
+      query.removeEventListener('change', sync);
+    };
   }, [isPrivate, participants, format]);
 
   // The photo scales with object-fit: cover (top-anchored), so depending on

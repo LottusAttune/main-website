@@ -2,6 +2,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 
 import { Accordion } from '@/components/common/Accordion';
+import { CopyButton } from '@/components/common/CopyButton';
 import { LocalBusinessSchema } from '@/components/common/LocalBusinessSchema';
 import { Reveal } from '@/components/common/Reveal';
 import { SiteFooter } from '@/components/chrome/SiteFooter';
@@ -195,7 +196,7 @@ export default function HomePage() {
         </section>
 
         {/* ---------- FAQ ---------- */}
-        <section className="section section--soft" aria-labelledby="faq-heading">
+        <section className={`${styles.faqSection} section--soft`} aria-labelledby="faq-heading">
           <div className={styles.faqGrid}>
             <div className="sticky-col" data-reveal="">
               <div className="eyebrow" style={{ fontSize: '13.5px', marginBottom: 18 }}>
@@ -211,20 +212,21 @@ export default function HomePage() {
               <div className={`card ${styles.faqCard}`}>
                 <div className={styles.faqCardTitle}>Still have a question?</div>
                 <p className={styles.faqCardBody}>
-                  Write or call and Silvana will answer personally.
+                  Write or WhatsApp and Silvana will answer personally.
                 </p>
                 <div className={styles.faqCardActions}>
-                  <a
-                    href={`mailto:${SITE.email}`}
+                  <CopyButton
+                    value={SITE.email}
+                    label="Email us"
                     className={`btn btn--dark ${styles.faqCardBtn}`}
-                  >
-                    Email us
-                  </a>
+                  />
                   <a
-                    href={SITE.phoneHref}
+                    href={SITE.whatsappHref}
+                    target="_blank"
+                    rel="noopener noreferrer"
                     className={`btn btn--outline ${styles.faqCardBtn}`}
                   >
-                    {SITE.phone}
+                    WhatsApp us
                   </a>
                 </div>
               </div>

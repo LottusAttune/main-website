@@ -7,6 +7,7 @@ export const SITE = {
   email: 'info@LotusAttune.com',
   phone: '416-871-5610',
   phoneHref: 'tel:4168715610',
+  whatsappHref: 'https://wa.me/14168715610',
   area: 'Toronto & the GTA',
   description:
     'An immersive wellness experience designed to support relaxation, nervous system regulation and deep inner connection. Two-hour sessions in downtown Toronto for 1 to 24 people.',

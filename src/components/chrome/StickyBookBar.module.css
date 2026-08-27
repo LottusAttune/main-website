@@ -88,7 +88,9 @@
   font-size: 11.5px;
   letter-spacing: 0.18em;
   text-transform: uppercase;
-  color: var(--color-cream-text);
+  /* Same muted tone as the label text next to it, so the two read as one
+     family at rest - only the hover state brightens. */
+  color: rgba(239, 230, 218, 0.72);
   border-bottom: 1px solid rgba(239, 230, 218, 0.4);
   padding-bottom: 2px;
   white-space: nowrap;

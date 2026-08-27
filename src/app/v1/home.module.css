@@ -180,9 +180,14 @@
 /* Fixed to 2 lines via an explicit <br/> in the JSX rather than left to
    wrap naturally - max-width just needs to be wide enough that neither
    line wraps again on its own. */
+/* Only used here (Paths), not Watch/Reviews - this is the one heading that
+   wraps to 2 lines, so a smaller size and tighter rhythm keep it from
+   reading as bigger than the others despite sharing the same base token. */
 .centeredHeading {
-  margin: 0 auto 20px;
+  margin: 0 auto 14px;
   max-width: 32ch;
+  font-size: clamp(24px, 3.2vw, 44px);
+  line-height: 1.1;
 }
 
 .centeredLede {

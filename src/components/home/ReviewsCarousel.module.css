@@ -114,50 +114,67 @@
   color: var(--color-gold-text);
 }
 
-.controls {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 22px;
-  margin-top: 38px;
-}
-
+/* Floats over the card row itself (not in a row below it) so the mouse can
+   move straight from an arrow to "Read full review" without a trip down to
+   a separate controls bar. */
 .arrow {
+  position: absolute;
+  top: 50%;
+  z-index: 5;
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 48px;
-  height: 48px;
+  width: 44px;
+  height: 44px;
   padding: 0 0 3px;
   border-radius: 10px;
   border: 1px solid transparent;
   background: var(--gradient-button-dark);
   color: var(--color-cream-text);
-  font-size: 22px;
+  font-size: 20px;
   font-weight: 200;
   cursor: pointer;
+  box-shadow: 0 16px 32px -16px rgba(59, 46, 36, 0.55);
   transition:
     transform var(--duration-button) ease,
     border-color var(--duration-button) ease,
-    box-shadow var(--duration-button) ease;
+    box-shadow var(--duration-button) ease,
+    opacity var(--duration-button) ease;
+}
+
+.arrowLeft {
+  left: clamp(2px, 1vw, 14px);
+  transform: translateY(-50%);
+}
+
+.arrowRight {
+  right: clamp(2px, 1vw, 14px);
+  transform: translateY(-50%);
 }
 
 .arrow:hover:not(:disabled) {
-  transform: translateY(-2px);
   box-shadow: var(--shadow-pill-dark);
 }
 
+.arrowLeft:hover:not(:disabled) {
+  transform: translateY(-50%) translateX(-2px);
+}
+
+.arrowRight:hover:not(:disabled) {
+  transform: translateY(-50%) translateX(2px);
+}
+
 .arrow:disabled {
-  border-color: rgba(59, 46, 36, 0.14);
-  background: transparent;
-  color: var(--color-disabled);
+  opacity: 0.35;
   cursor: default;
 }
 
 .dots {
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 9px;
+  margin-top: 26px;
 }
 
 .dot {

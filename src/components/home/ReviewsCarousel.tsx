@@ -5,7 +5,7 @@ import { useCallback, useEffect, useState } from 'react';
 import styles from './ReviewsCarousel.module.css';
 
 const GAP = 18;
-const AUTOPLAY_MS = 9000;
+const AUTOPLAY_MS = 13000;
 const EXCERPT_LIMIT = 230;
 
 export type Review = {
@@ -149,37 +149,39 @@ export function ReviewsCarousel({ reviews }: Props) {
         </div>
       </div>
 
-      <div className={styles.controls}>
-        <button
-          type="button"
-          className={styles.arrow}
-          aria-label="Previous review"
-          disabled={index === 0}
-          onClick={() => setIndex((i) => Math.max(0, i - 1))}
-        >
-          ‹
-        </button>
-        <div className={styles.dots}>
-          {Array.from({ length: maxIndex + 1 }, (_, i) => (
-            <button
-              key={i}
-              type="button"
-              className={`${styles.dot} ${i === index ? styles.dotActive : ''}`}
-              aria-label={`Go to review ${i + 1}`}
-              aria-current={i === index}
-              onClick={() => setIndex(i)}
-            />
-          ))}
-        </div>
-        <button
-          type="button"
-          className={styles.arrow}
-          aria-label="Next review"
-          disabled={index >= maxIndex}
-          onClick={() => setIndex((i) => Math.min(maxIndex, i + 1))}
-        >
-          ›
-        </button>
+      {/* Floating over the card row itself (vertically centered, pinned to
+          each edge) rather than in a row below - the mouse never has to
+          leave the cards to move between them and "Read full review". */}
+      <button
+        type="button"
+        className={`${styles.arrow} ${styles.arrowLeft}`}
+        aria-label="Previous review"
+        disabled={index === 0}
+        onClick={() => setIndex((i) => Math.max(0, i - 1))}
+      >
+        ‹
+      </button>
+      <button
+        type="button"
+        className={`${styles.arrow} ${styles.arrowRight}`}
+        aria-label="Next review"
+        disabled={index >= maxIndex}
+        onClick={() => setIndex((i) => Math.min(maxIndex, i + 1))}
+      >
+        ›
+      </button>
+
+      <div className={styles.dots}>
+        {Array.from({ length: maxIndex + 1 }, (_, i) => (
+          <button
+            key={i}
+            type="button"
+            className={`${styles.dot} ${i === index ? styles.dotActive : ''}`}
+            aria-label={`Go to review ${i + 1}`}
+            aria-current={i === index}
+            onClick={() => setIndex(i)}
+          />
+        ))}
       </div>
 
       {active ? (

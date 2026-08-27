@@ -120,7 +120,7 @@ export function ReviewsCarousel({ reviews }: Props) {
             return (
               <figure
                 key={review.name}
-                className={`card ${styles.card} ${inView ? styles.cardActive : ''}`}
+                className={`card card--lift ${styles.card} ${inView ? styles.cardActive : ''}`}
                 style={{ width: cardWidth }}
                 aria-hidden={!inView}
               >

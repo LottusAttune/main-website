@@ -194,10 +194,11 @@
 
 /* ---------- Choose your path ---------- */
 
+/* Square, not rounded - a flatter, more modern edge than the site's usual
+   rounded cards. */
 .pathCard {
   display: flex;
   flex-direction: column;
-  border-radius: var(--radius-lg);
   overflow: hidden;
   /* Cleaner and whiter than the shared .card gradient - stands out clearly
      against this section's own warmer background instead of blending into
@@ -233,6 +234,19 @@
   gap: 10px;
   flex-wrap: wrap;
   margin-bottom: 16px;
+}
+
+/* Scoped to these cards only (not the shared .tag--group/.tag--one, which
+   the /lp landing page also uses) - the green read as out of place here,
+   and the gold "one-on-one" tag needed to sit lighter next to it. */
+.pathTags :global(.tag--group) {
+  background: #f2e8d8;
+  color: var(--color-ink-body);
+}
+
+.pathTags :global(.tag--one) {
+  background: rgba(198, 169, 122, 0.12);
+  color: var(--color-gold-deep);
 }
 
 .pathEyebrow {

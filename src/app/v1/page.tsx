@@ -145,7 +145,7 @@ export default function HomePage() {
                 return (
                   <div
                     key={path.title}
-                    className={`card card--lift ${styles.pathCard}`}
+                    className={`card ${styles.pathCard}`}
                     data-reveal=""
                   >
                     <div className={styles.pathPhoto}>

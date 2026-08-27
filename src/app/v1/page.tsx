@@ -105,8 +105,10 @@ export default function HomePage() {
         <section className="section" aria-labelledby="watch-heading">
           <div className="shell--prose">
             <div className={styles.centered} data-reveal="">
-              <div className="eyebrow">Watch</div>
-              <h2 id="watch-heading" className="display h2">
+              <div className="eyebrow" style={{ fontSize: '13.5px', marginBottom: 18 }}>
+                Watch
+              </div>
+              <h2 id="watch-heading" className={`display ${styles.watchHeading}`}>
                 A glimpse inside the experience
               </h2>
             </div>

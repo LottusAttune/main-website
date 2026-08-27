@@ -145,6 +145,16 @@
   border-radius: var(--radius-input);
 }
 
+/* ---------- Watch ---------- */
+
+/* Same statement size as "Why This Exists" and "Your Guide" - this section
+   used the shared, much larger .h2 token before, which stood out of step
+   with the two sections above it. */
+.watchHeading {
+  font-size: clamp(18px, 2.1vw, 29px);
+  line-height: 1.42;
+}
+
 /* ---------- Section headers ---------- */
 
 .centered {

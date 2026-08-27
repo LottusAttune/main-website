@@ -105,7 +105,9 @@ export default function HomePage() {
         <section className="section" aria-labelledby="watch-heading">
           <div className="shell--prose">
             <div className={styles.centered} data-reveal="">
-              <div className="eyebrow">Watch</div>
+              <div className="eyebrow" style={{ fontSize: '13.5px', marginBottom: 18 }}>
+                Watch
+              </div>
               <h2 id="watch-heading" className="display h2">
                 A glimpse inside the experience
               </h2>
@@ -171,7 +173,9 @@ export default function HomePage() {
         <section className="section" aria-labelledby="reviews-heading">
           <div className="shell">
             <div className={styles.centered} data-reveal="">
-              <div className="eyebrow">Client Reviews</div>
+              <div className="eyebrow" style={{ fontSize: '13.5px', marginBottom: 18 }}>
+                Client Reviews
+              </div>
               <h2
                 id="reviews-heading"
                 className="display"
@@ -188,7 +192,9 @@ export default function HomePage() {
         <section className="section" aria-labelledby="faq-heading">
           <div className={styles.faqGrid}>
             <div className="sticky-col" data-reveal="">
-              <div className="eyebrow">Before you arrive</div>
+              <div className="eyebrow" style={{ fontSize: '13.5px', marginBottom: 18 }}>
+                Before you arrive
+              </div>
               <h2 id="faq-heading" className={`display ${styles.faqHeading}`}>
                 Frequently Asked
               </h2>

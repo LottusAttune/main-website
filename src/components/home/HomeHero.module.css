@@ -75,7 +75,10 @@
   letter-spacing: 0.56em;
   text-transform: uppercase;
   color: rgba(246, 239, 229, 0.94);
-  margin-bottom: 12px;
+  /* Matches the headline's own gap down to the rule + positioning text
+     below (16px + the rule's 1px + its 16px margin) so the headline sits
+     centered between its neighbors instead of crowded against the eyebrow. */
+  margin-bottom: 33px;
   text-shadow: 0 2px 14px rgba(0, 0, 0, 0.6);
 }
 
@@ -85,7 +88,9 @@
   font-size: clamp(34px, 4.4vw, 60px);
   line-height: 1.08;
   letter-spacing: -0.02em;
-  max-width: 15ch;
+  /* No max-width - "The Lotus Attune Experience" reads as one line on
+     anything laptop-width or wider; only a genuinely narrow phone screen
+     forces it to wrap, same as any other heading. */
   margin: 0 0 16px;
   color: #fdfaf4;
   text-shadow:

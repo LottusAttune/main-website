@@ -39,16 +39,16 @@ function Wave() {
   return (
     <svg
       className={styles.wave}
-      width="22"
-      height="10"
-      viewBox="0 0 22 10"
+      width="13"
+      height="8"
+      viewBox="0 0 13 8"
       aria-hidden="true"
     >
       <path
-        d="M1 5 Q4 1 7 5 T13 5 T19 5"
+        d="M1 4.5 Q6.5 2.8 12 4.5"
         fill="none"
         stroke="currentColor"
-        strokeWidth="1.2"
+        strokeWidth="1"
         strokeLinecap="round"
       />
     </svg>

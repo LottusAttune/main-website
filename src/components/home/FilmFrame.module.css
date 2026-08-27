@@ -3,10 +3,9 @@
   aspect-ratio: 16 / 9;
   margin: 0 auto;
   background: #241b15;
-  border: 1px solid rgba(198, 169, 122, 0.35);
-  /* Almost square, not the token's much larger 18-34px curve - a soft edge
-     rather than a rounded one. */
-  border-radius: 12px;
+  /* No border - it showed as a visible line against lighter parts of the
+     video. Fully square, no rounding at all. */
+  border-radius: 0;
   overflow: hidden;
   box-shadow: 0 40px 90px -55px rgba(46, 36, 28, 0.9);
 }

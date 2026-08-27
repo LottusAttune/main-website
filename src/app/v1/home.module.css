@@ -162,7 +162,9 @@
    where an outline read as too faint and a solid black one nearly vanished
    into the section's own dark brown. */
 .guideBtn {
-  border-radius: var(--radius-input);
+  /* Soft-square, matching the corner used on the nav Book/Gift buttons -
+     var(--radius-input) (16px) read as too rounded next to those. */
+  border-radius: 8px;
 }
 
 /* ---------- Watch ---------- */
@@ -227,14 +229,14 @@
   padding: clamp(24px, 3vw, 36px) var(--space-gutter);
 }
 
-/* Almost square, not fully sharp - a soft edge rather than the harsh 0 corner
-   tried earlier, but still far flatter than the site's usual rounded cards
-   (the shared .card class this is paired with sets its own 26px radius,
-   which this overrides). */
+/* The photo sits flush at the top - fully straight corners there, no
+   rounding at all. The soft edge only applies to the bottom of the card,
+   below the photo (the shared .card class this is paired with sets its own
+   26px radius on all four corners, which this overrides). */
 .pathCard {
   display: flex;
   flex-direction: column;
-  border-radius: 8px;
+  border-radius: 0 0 6px 6px;
   overflow: hidden;
   /* Cleaner and whiter than the shared .card gradient - stands out clearly
      against this section's own warmer background instead of blending into
@@ -270,6 +272,13 @@
   gap: 10px;
   flex-wrap: wrap;
   margin-bottom: 10px;
+}
+
+/* Scoped to these cards only (not the shared .tag, which the /lp landing
+   page also uses) - soft-square rather than the full pill, matching the
+   corner treatment used elsewhere on this page. */
+.pathTags :global(.tag) {
+  border-radius: 4px;
 }
 
 /* Scoped to these cards only (not the shared .tag--group/.tag--one, which
@@ -367,10 +376,9 @@
 .faqCard {
   padding: 20px 22px;
   max-width: 400px;
-  /* Almost square, matching the flatter corner used elsewhere on this page -
-     the shared .card class this is paired with sets its own 26px radius,
-     which this overrides. */
-  border-radius: 8px;
+  /* Fully square - the shared .card class this is paired with sets its own
+     26px radius, which this overrides. */
+  border-radius: 0;
 }
 
 .faqCardTitle {

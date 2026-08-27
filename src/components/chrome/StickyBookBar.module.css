@@ -28,6 +28,13 @@
     visibility 0s linear 0.45s;
 }
 
+/* Solid black, not the translucent brown above - a persistent bar on every
+   page reads as more premium as a true dark surface than a glassy tint. */
+.barDark {
+  background: linear-gradient(180deg, var(--color-ink-deep) 0%, var(--color-ink-deepest) 100%);
+  backdrop-filter: none;
+}
+
 .barShown {
   visibility: visible;
   opacity: 1;
@@ -61,4 +68,20 @@
   min-height: 42px;
   font-size: 11px;
   letter-spacing: 0.22em;
+}
+
+/* A quieter, more architectural corner than the shared pill shape - the same
+   soft-round used on the guide section's "Meet Silvana" button. */
+.ctaSquared {
+  border-radius: var(--radius-input);
+}
+
+/* The shared .btn--outline-dark hover wash was tuned for the old translucent
+   brown bar - against the new solid black it read as an odd light-brown
+   smear, so this bar's Gift button gets a neutral, colorless hover instead.
+   Doubled selector beats .btn--outline-dark:hover's specificity regardless
+   of stylesheet order. */
+.giftCta.giftCta:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(239, 230, 218, 0.55);
 }

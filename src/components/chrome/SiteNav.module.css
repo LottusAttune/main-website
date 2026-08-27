@@ -134,6 +134,13 @@
   letter-spacing: 0.2em;
 }
 
+/* Matches the sticky bar's black - this Book button and that bar are the two
+   pieces of chrome present on every page, so they're meant to read as one
+   consistent dark accent rather than two different browns. */
+.actionPillDark {
+  background: linear-gradient(135deg, var(--color-ink-deep) 0%, var(--color-ink-deepest) 100%);
+}
+
 .burger {
   display: flex;
   flex-direction: column;

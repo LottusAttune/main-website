@@ -45,7 +45,7 @@ export function StickyBookBar({ basePath = '' }: Props) {
 
   return (
     <div
-      className={`${styles.bar} ${shown ? styles.barShown : ''}`}
+      className={`${styles.bar} ${shown ? styles.barShown : ''} ${basePath ? styles.barDark : ''}`}
       aria-hidden={!shown}
     >
       <span className={styles.label}>
@@ -54,14 +54,14 @@ export function StickyBookBar({ basePath = '' }: Props) {
       <div className={styles.actions}>
         <Link
           href={basePath ? `${basePath}/offerings` : '/book'}
-          className={`btn btn--cream ${styles.cta}`}
+          className={`btn btn--cream ${styles.cta} ${basePath ? styles.ctaSquared : ''}`}
           tabIndex={shown ? undefined : -1}
         >
           Book a session
         </Link>
         <Link
           href={`${basePath}/gift`}
-          className={`btn btn--outline-dark ${styles.cta}`}
+          className={`btn btn--outline-dark ${styles.cta} ${basePath ? `${styles.ctaSquared} ${styles.giftCta}` : ''}`}
           tabIndex={shown ? undefined : -1}
         >
           Gift a session

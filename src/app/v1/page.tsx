@@ -77,7 +77,10 @@ export default function HomePage() {
               />
             </div>
             <div className={styles.guideText} data-reveal="">
-              <div className="eyebrow eyebrow--dark" style={{ fontSize: '13.5px', marginBottom: 18 }}>
+              <div
+                className="eyebrow eyebrow--dark"
+                style={{ fontSize: '13.5px', marginBottom: 18, color: 'var(--color-cream-text-bright)' }}
+              >
                 Your Guide
               </div>
               {/* Same words as GUIDE.quote, verbatim - broken onto 2 fixed
@@ -93,11 +96,13 @@ export default function HomePage() {
               <div className={styles.guideSignature}>
                 — Silvana, Founder &amp; Facilitator
               </div>
-              {GUIDE.paragraphs.map((paragraph) => (
-                <p key={paragraph} className={`body body--dark ${styles.guideBody}`}>
-                  {paragraph}
-                </p>
-              ))}
+              {/* Only the first paragraph here - the second is a shorter
+                  echo of a sentence that appears in full on the Founder
+                  page's bio, so it's dropped from this teaser rather than
+                  repeated in two places at two different lengths. */}
+              <p className={`body body--dark ${styles.guideBody}`}>
+                {GUIDE.paragraphs[0]}
+              </p>
               <Link href="/v1/founder" className={`btn btn--cream ${styles.guideBtn}`}>
                 Her Story
               </Link>

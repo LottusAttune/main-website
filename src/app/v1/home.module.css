@@ -118,7 +118,10 @@
 }
 
 .guideText {
-  padding: clamp(32px, 4vw, 56px) 0;
+  /* Cap raised from 56px - on wide screens there's plenty of height to
+     spare in this row, so it should feel airier instead of pinning to the
+     same padding a laptop screen uses. */
+  padding: clamp(32px, 4vw, 92px) 0;
 }
 
 .guideQuote {

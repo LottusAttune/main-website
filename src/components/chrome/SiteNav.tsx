@@ -76,13 +76,13 @@ export function SiteNav({ basePath = '' }: Props) {
         <div className={styles.actions}>
           <Link
             href={basePath ? `${basePath}/offerings` : '/book'}
-            className={`btn btn--dark ${styles.actionPill} ${basePath ? styles.actionPillDark : ''}`}
+            className={`btn btn--dark ${styles.actionPill} ${basePath ? `${styles.actionPillDark} ${styles.actionPillSquared}` : ''}`}
           >
             Book
           </Link>
           <Link
             href={`${basePath}/gift`}
-            className={`btn btn--outline ${styles.actionPill}`}
+            className={`btn btn--outline ${styles.actionPill} ${basePath ? styles.actionPillSquared : ''}`}
           >
             Gift
           </Link>

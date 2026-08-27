@@ -14,9 +14,14 @@
   backdrop-filter: blur(18px);
 }
 
+/* A hairline on this edge only (not the pill's old all-round outline, which
+   is stripped by .pillNoOutline below) - without it the bar can read as the
+   same flat cream as whatever section is scrolled underneath it. Same gold
+   used on the Gift button's own outline, so the two read as one family. */
 .wrapPlain {
   background: var(--color-cream-raised);
   backdrop-filter: none;
+  border-bottom: 1px solid var(--gold-rim);
 }
 
 .pill {
@@ -139,6 +144,12 @@
    consistent dark accent rather than two different browns. */
 .actionPillDark {
   background: linear-gradient(135deg, var(--color-ink-deep) 0%, var(--color-ink-deepest) 100%);
+}
+
+/* Matches the sticky bar's Book/Gift corner - a quieter, more architectural
+   shape than the shared full pill. */
+.actionPillSquared {
+  border-radius: var(--radius-input);
 }
 
 .burger {

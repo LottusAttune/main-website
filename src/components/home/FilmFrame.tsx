@@ -46,6 +46,7 @@ export function FilmFrame() {
   const [portrait, setPortrait] = useState(false);
   const [soundOn, setSoundOn] = useState(false);
   const [started, setStarted] = useState(false);
+  const [ready, setReady] = useState(false);
   const frameRef = useRef<HTMLIFrameElement>(null);
   const playerRef = useRef<VimeoPlayer | null>(null);
   const wrapRef = useRef<HTMLDivElement>(null);
@@ -81,14 +82,29 @@ export function FilmFrame() {
 
   const attachPlayer = () => {
     if (playerRef.current || !frameRef.current || !window.Vimeo) return;
-    playerRef.current = new window.Vimeo.Player(frameRef.current);
+    const player = new window.Vimeo.Player(frameRef.current);
+    playerRef.current = player;
+    // Only reveal the iframe once Vimeo confirms playback actually started -
+    // if it never fires (blocked network, region outage), the iframe stays
+    // invisible and the poster underneath keeps showing instead of the
+    // browser's broken-frame page.
+    player.on?.('play', () => setReady(true));
   };
+
+  // The iframe remounts (its key changes) when the orientation swap crosses
+  // the 820px breakpoint - the old player instance and ready state belong to
+  // the iframe that just unmounted. Runs before the reattach effect below so
+  // that effect sees a cleared ref, not the stale player.
+  useEffect(() => {
+    playerRef.current = null;
+    setReady(false);
+  }, [portrait]);
 
   // The player.js script tag can finish loading before the iframe exists
   // (it isn't created until scrolled into view) - retry once it mounts.
   useEffect(() => {
     if (started) attachPlayer();
-  }, [started]);
+  }, [started, portrait]);
 
   const toggleSound = () => {
     const next = !soundOn;
@@ -153,6 +169,7 @@ export function FilmFrame() {
             allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media; web-share"
             referrerPolicy="strict-origin-when-cross-origin"
             allowFullScreen
+            className={ready ? styles.playerReady : styles.playerHidden}
           />
         ) : null}
         <button

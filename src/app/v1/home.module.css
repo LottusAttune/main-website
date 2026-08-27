@@ -133,6 +133,7 @@
 
 .guideBody {
   margin: 0 0 14px;
+  text-align: justify;
 }
 
 .guideBody:last-of-type {

@@ -152,10 +152,12 @@
   background: linear-gradient(135deg, var(--color-ink-deep) 0%, var(--color-ink-deepest) 100%);
 }
 
-/* Matches the sticky bar's Book/Gift corner - a quieter, more architectural
-   shape than the shared full pill. */
+/* --radius-input (16px) is a big radius on this button's short 44px height -
+   the curve ate most of each side and read as a diagonal cut rather than a
+   soft rounding. 8px keeps the same "not a full pill" intent at a scale that
+   actually suits this button's size. */
 .actionPillSquared {
-  border-radius: var(--radius-input);
+  border-radius: 8px;
 }
 
 /* Same gold as the active nav link's underline (e.g. "Home"), not the

@@ -190,6 +190,9 @@ Ask Silvana about these rather than guessing:
    material says 2–24. The site uses 24.
 3. **Venue street address** — deliberately left out of the structured data until
    she confirms it should be public.
+4. **Founder page portrait** (`/v1/founder`) — Silvana wants her name added
+   somewhere on this section, but it's getting resized/reworked separately.
+   Revisit name placement when that redesign happens, not before.
 
 The landscape film (`src/data/content.ts`, `FILM.landscape`) was replaced with
 her final cut. One standing caution stays relevant regardless of which video

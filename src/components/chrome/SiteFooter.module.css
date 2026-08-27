@@ -177,7 +177,7 @@
   justify-content: center;
   width: 28px;
   height: 28px;
-  border-radius: 8px;
+  border-radius: 4px;
   background: var(--color-ink);
   color: var(--color-cream-text);
   transition:

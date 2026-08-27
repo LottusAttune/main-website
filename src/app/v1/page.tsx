@@ -90,13 +90,16 @@ export default function HomePage() {
                 <br />
                 productivity and well-being, and excellence and human connection”
               </blockquote>
+              <div className={styles.guideSignature}>
+                — Silvana, Founder &amp; Facilitator
+              </div>
               {GUIDE.paragraphs.map((paragraph) => (
                 <p key={paragraph} className={`body body--dark ${styles.guideBody}`}>
                   {paragraph}
                 </p>
               ))}
-              <Link href="/v1/founder" className={`btn btn--outline-dark ${styles.guideBtn}`}>
-                Meet Silvana
+              <Link href="/v1/founder" className={`btn btn--cream ${styles.guideBtn}`}>
+                Her Story
               </Link>
             </div>
           </div>

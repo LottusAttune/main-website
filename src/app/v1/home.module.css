@@ -125,13 +125,24 @@
 }
 
 .guideQuote {
-  margin: 0 0 36px;
+  margin: 0 0 14px;
   font-family: var(--font-display);
   font-weight: 300;
   font-size: clamp(18px, 2.1vw, 29px);
   line-height: 1.32;
   color: var(--color-cream-text);
   text-wrap: pretty;
+}
+
+/* The quote and the paragraphs below it are both written in first person and
+   never name her - this is the one place in the section that does, so a
+   reader knows whose words these are without having to click through. */
+.guideSignature {
+  margin: 0 0 28px;
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: 15px;
+  color: var(--color-gold-light);
 }
 
 .guideBody {
@@ -144,18 +155,13 @@
 }
 
 /* Softer than the site's usual full-pill buttons - a subtle round, not a
-   stadium shape, to sit quietly next to the portrait's own gentle corners. */
+   stadium shape, to sit quietly next to the portrait's own gentle corners.
+   Uses the shared .btn--cream (solid fill, dark text) rather than an outline
+   - a confident, clearly-visible call to action against this dark section,
+   where an outline read as too faint and a solid black one nearly vanished
+   into the section's own dark brown. */
 .guideBtn {
   border-radius: var(--radius-input);
-}
-
-/* The shared .btn--outline-dark hover is a gold wash - doubled to outrank
-   that rule regardless of stylesheet order, this swaps it for a neutral
-   cream brighten instead, matching the black theme used elsewhere. */
-.guideBtn.guideBtn:hover {
-  border-color: var(--color-cream-text-bright);
-  background: rgba(255, 255, 255, 0.08);
-  box-shadow: none;
 }
 
 /* ---------- Watch ---------- */

@@ -45,7 +45,7 @@ function Wave() {
       aria-hidden="true"
     >
       <path
-        d="M1 4.5 Q6.5 2.8 12 4.5"
+        d="M1 5 C5 1 8 7 12 3"
         fill="none"
         stroke="currentColor"
         strokeWidth="1"

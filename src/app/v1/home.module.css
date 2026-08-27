@@ -149,6 +149,15 @@
   border-radius: var(--radius-input);
 }
 
+/* The shared .btn--outline-dark hover is a gold wash - doubled to outrank
+   that rule regardless of stylesheet order, this swaps it for a neutral
+   cream brighten instead, matching the black theme used elsewhere. */
+.guideBtn.guideBtn:hover {
+  border-color: var(--color-cream-text-bright);
+  background: rgba(255, 255, 255, 0.08);
+  box-shadow: none;
+}
+
 /* ---------- Watch ---------- */
 
 /* Trimmed well below the shared .section padding (which alone runs up to

@@ -185,8 +185,13 @@
     transform var(--duration-button, 0.2s) ease;
 }
 
+/* Darker, not a lighter gold pop - matches the black theme used elsewhere
+   rather than introducing a warm gold flash. Re-declares color because the
+   icon glyphs use currentColor - without it, the global `a:hover` rule turns
+   them dark ink, invisible against this now-darker background. */
 .socialIcon:hover {
-  background: var(--color-gold-deep);
+  background: var(--color-ink-deep);
+  color: var(--color-cream-text);
   transform: translateY(-2px);
 }
 

@@ -150,9 +150,14 @@
   backdrop-filter: blur(6px);
 }
 
+/* The global `a:hover` rule turns link text dark ink by default; this hover
+   state never re-asserted its own cream color, so that generic rule won on
+   specificity and the text went dark-on-dark - unreadable against the hero
+   photo. Re-declaring color here fixes it. */
 .heroBtnGhost:hover {
   border-color: var(--color-cream-text);
   background: rgba(246, 239, 229, 0.1);
+  color: var(--color-cream-text);
 }
 
 .motto {

@@ -292,13 +292,14 @@
   color: var(--color-cream-text);
 }
 
-.includedBtn {
-  border-color: var(--color-gold-light);
-  color: var(--color-gold-light);
-}
-
-.includedBtn:hover {
-  color: var(--color-cream-text);
+/* Was gold at rest and on hover - matches the "no brown" treatment used
+   elsewhere (guide button, footer icons) instead: the shared
+   .btn--outline-dark's own neutral cream at rest, and a neutral brighten on
+   hover rather than a gold wash. Doubled to outrank .btn--outline-dark's own
+   hover rule regardless of stylesheet order. */
+.includedBtn.includedBtn:hover {
+  border-color: var(--color-cream-text-bright);
+  background: rgba(255, 255, 255, 0.08);
 }
 
 .summaryActions {

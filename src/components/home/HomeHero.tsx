@@ -79,23 +79,25 @@ export function HomeHero() {
           className={styles.mark}
           priority
         />
-        <div className={styles.eyebrow}>{HERO.eyebrow}</div>
-        <h1 id="hero-heading" className={styles.headline}>
-          {HERO.headline}
-        </h1>
-        <div className={styles.rule} />
-        <p className={styles.positioning}>{HERO.positioning}</p>
+        <div className={styles.textGroup}>
+          <div className={styles.eyebrow}>{HERO.eyebrow}</div>
+          <h1 id="hero-heading" className={styles.headline}>
+            {HERO.headline}
+          </h1>
+          <div className={styles.rule} />
+          <p className={styles.positioning}>{HERO.positioning}</p>
 
-        <div className={`btn-row btn-row--center ${styles.actions}`}>
-          <Link
-            href="/v1/offerings"
-            className={`btn ${styles.heroBtn} ${styles.heroBtnSolid}`}
-          >
-            Book a session
-          </Link>
-          <a href="#paths" className={`btn ${styles.heroBtn} ${styles.heroBtnGhost}`}>
-            See the options
-          </a>
+          <div className={`btn-row btn-row--center ${styles.actions}`}>
+            <Link
+              href="/v1/offerings"
+              className={`btn ${styles.heroBtn} ${styles.heroBtnSolid}`}
+            >
+              Book a session
+            </Link>
+            <a href="#paths" className={`btn ${styles.heroBtn} ${styles.heroBtnGhost}`}>
+              See the options
+            </a>
+          </div>
         </div>
 
         <div className={styles.motto}>{SITE.motto}</div>

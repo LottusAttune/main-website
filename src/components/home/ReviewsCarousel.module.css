@@ -36,6 +36,10 @@
   padding: clamp(28px, 3.4vw, 40px) clamp(24px, 3vw, 34px) clamp(24px, 3vw, 30px);
   opacity: 0.45;
   transition: opacity 0.6s ease;
+  /* Cleaner and whiter than the shared .card gradient - stands out clearly
+     against this section's own warmer background instead of blending into
+     a similar tan. */
+  background: linear-gradient(170deg, #ffffff 0%, #fdfbf7 100%);
 }
 
 .cardActive {

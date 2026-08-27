@@ -123,7 +123,7 @@ export default function HomePage() {
         </section>
 
         {/* ---------- Choose your path ---------- */}
-        <section id="paths" className="section" aria-labelledby="paths-heading">
+        <section id="paths" className="section section--soft" aria-labelledby="paths-heading">
           <div className="shell">
             <div className={styles.centered} data-reveal="">
               <h2
@@ -195,7 +195,7 @@ export default function HomePage() {
         </section>
 
         {/* ---------- FAQ ---------- */}
-        <section className="section" aria-labelledby="faq-heading">
+        <section className="section section--soft" aria-labelledby="faq-heading">
           <div className={styles.faqGrid}>
             <div className="sticky-col" data-reveal="">
               <div className="eyebrow" style={{ fontSize: '13.5px', marginBottom: 18 }}>

@@ -167,8 +167,6 @@
 .centeredLede {
   margin: 0 auto;
   max-width: 820px;
-  font-size: 13.5px;
-  color: var(--color-gold-text);
 }
 
 /* ---------- The plan ---------- */

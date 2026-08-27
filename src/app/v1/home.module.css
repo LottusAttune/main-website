@@ -142,7 +142,9 @@
   font-family: var(--font-display);
   font-style: italic;
   font-size: 15px;
-  color: var(--color-cream-text-bright);
+  /* A richer, deeper gold than the site's lighter gold tokens - closer to
+     the handpan's own copper tone in the portrait beside it. */
+  color: var(--color-gold);
 }
 
 .guideBody {

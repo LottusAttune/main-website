@@ -176,9 +176,9 @@ export default function HomePage() {
         </section>
 
         {/* ---------- Reviews ---------- */}
-        <section className="section" aria-labelledby="reviews-heading">
+        <section className={styles.reviewsSection} aria-labelledby="reviews-heading">
           <div className="shell">
-            <div className={styles.centered} data-reveal="">
+            <div className={styles.centered} data-reveal="" style={{ marginBottom: 28 }}>
               <div className="eyebrow" style={{ fontSize: '13.5px', marginBottom: 18 }}>
                 Client Reviews
               </div>

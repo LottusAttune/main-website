@@ -191,8 +191,9 @@ export const GALLERY = [
 ] as const;
 
 /**
- * Reviews. Only Serge has a real photo — the rest use an initial monogram.
- * Never substitute a stock or generated face.
+ * Reviews. `face` is unused by the current design (no avatar is shown at
+ * all) but kept in case a future design wants it - if so, never substitute
+ * a stock or generated photo for a reviewer without a real one.
  */
 export const REVIEWS = [
   {

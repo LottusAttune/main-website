@@ -1,9 +1,7 @@
 'use client';
 
-import Image from 'next/image';
 import { useCallback, useEffect, useState } from 'react';
 
-import { asset } from '@/lib/images';
 import styles from './ReviewsCarousel.module.css';
 
 const GAP = 18;
@@ -35,23 +33,25 @@ function excerptOf(text: string): { excerpt: string; truncated: boolean } {
   };
 }
 
-function Avatar({
-  review,
-  className,
-}: {
-  review: Review;
-  className?: string;
-}) {
-  if (!review.face) {
-    return (
-      <span className={`${styles.avatar} ${className ?? ''}`} aria-hidden="true" />
-    );
-  }
-  const image = asset(review.face as Parameters<typeof asset>[0]);
+/** A small signature-like flourish next to each reviewer's name, in place of
+    a circle that was neither a real photo nor adding real information. */
+function Wave() {
   return (
-    <span className={`${styles.avatar} ${className ?? ''}`}>
-      <Image src={image.src} alt="" width={52} height={52} />
-    </span>
+    <svg
+      className={styles.wave}
+      width="22"
+      height="10"
+      viewBox="0 0 22 10"
+      aria-hidden="true"
+    >
+      <path
+        d="M1 5 Q4 1 7 5 T13 5 T19 5"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.2"
+        strokeLinecap="round"
+      />
+    </svg>
   );
 }
 
@@ -126,18 +126,22 @@ export function ReviewsCarousel({ reviews }: Props) {
                   ”
                 </div>
                 <blockquote className={styles.excerpt}>{excerpt}</blockquote>
-                {truncated ? (
-                  <button
-                    type="button"
-                    className={styles.more}
-                    onClick={() => setOpenReview(i)}
-                  >
-                    Read full review
-                  </button>
-                ) : null}
-                <figcaption className={styles.caption}>
-                  <Avatar review={review} />
-                  <span className={styles.name}>{review.name}</span>
+                <figcaption className={styles.footer}>
+                  {truncated ? (
+                    <button
+                      type="button"
+                      className={styles.more}
+                      onClick={() => setOpenReview(i)}
+                    >
+                      Read full review
+                    </button>
+                  ) : (
+                    <span />
+                  )}
+                  <span className={styles.signature}>
+                    <Wave />
+                    <span className={styles.name}>{review.name}</span>
+                  </span>
                 </figcaption>
               </figure>
             );
@@ -192,7 +196,7 @@ export function ReviewsCarousel({ reviews }: Props) {
             </div>
             <p className={styles.modalText}>{active.text}</p>
             <div className={styles.modalCaption}>
-              <Avatar review={active} className={styles.modalAvatar} />
+              <Wave />
               <span className={styles.name}>{active.name}</span>
             </div>
           </div>

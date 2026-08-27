@@ -63,8 +63,6 @@
 }
 
 .more {
-  align-self: flex-start;
-  margin: 0 0 20px;
   padding: 0;
   border: none;
   background: none;
@@ -74,6 +72,7 @@
   color: var(--color-gold-text);
   border-bottom: 1px solid rgba(168, 135, 90, 0.5);
   cursor: pointer;
+  white-space: nowrap;
   transition:
     color 0.25s ease,
     border-color 0.25s ease;
@@ -84,31 +83,28 @@
   border-color: var(--color-ink);
 }
 
-.caption {
+/* Replaces the old avatar-circle row - no photo, no initial, just the name
+   and a small signature-like flourish, on the same line as the read-more
+   link instead of a separate row below it. */
+.footer {
   display: flex;
   align-items: center;
+  justify-content: space-between;
   gap: 14px;
   padding-top: 20px;
   border-top: 1px solid rgba(59, 46, 36, 0.12);
 }
 
-/* No initial letter, no stock photo - a plain, quiet dark-brown mark rather
-   than a per-reviewer detail that isn't real (only an actual photo is). */
-.avatar {
-  flex: none;
-  width: 46px;
-  height: 46px;
-  border-radius: 50%;
-  overflow: hidden;
-  background: var(--gradient-button-dark);
-  box-shadow: 0 0 0 1px rgba(168, 135, 90, 0.45);
+.signature {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--color-gold-text);
 }
 
-.avatar img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: center 25%;
+.wave {
+  flex: none;
+  color: inherit;
 }
 
 .name {
@@ -133,7 +129,7 @@
   width: 48px;
   height: 48px;
   padding: 0 0 3px;
-  border-radius: 50%;
+  border-radius: 10px;
   border: 1px solid transparent;
   background: var(--gradient-button-dark);
   color: var(--color-cream-text);
@@ -229,13 +225,8 @@
 .modalCaption {
   display: flex;
   align-items: center;
-  gap: 14px;
+  gap: 8px;
   padding-top: 22px;
   border-top: 1px solid var(--hairline-light);
-}
-
-.modalAvatar {
-  width: 52px;
-  height: 52px;
-  font-size: 22px;
+  color: var(--color-gold-text);
 }

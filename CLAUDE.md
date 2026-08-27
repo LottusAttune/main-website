@@ -51,8 +51,8 @@ to be removed permanently. Every photograph on this site is hers.
 If a section needs an image and no suitable photo exists, leave the space empty
 and say so. Do not generate one, and do not substitute stock.
 
-The same applies to faces in reviews: a review without a real photo shows an
-initial in a circle, never a stock portrait.
+The same applies to faces in reviews: reviews show no avatar at all rather
+than a stock portrait or a placeholder standing in for a real photo.
 
 ### 3. Images go through the pipeline
 

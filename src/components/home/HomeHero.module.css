@@ -51,21 +51,11 @@
   );
 }
 
-/* Fills the hero's full height and spaces its 3 direct children (logo,
-   text group, motto) with equal gaps - logo sits near the top, motto near
-   the bottom, and the text group floats in the middle, instead of the
-   whole thing collapsing into one dense block vertically centered with
-   empty photo above and below it. */
 .copy {
   position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: space-between;
-  /* flex: 1 (not height: 100%) is what actually stretches this to fill
-     .hero's full height - height: 100% doesn't resolve reliably against a
-     min-height parent. */
-  flex: 1;
   pointer-events: none;
 }
 
@@ -76,13 +66,13 @@
 }
 
 .mark {
-  /* Deliberately bigger than the 58px nav logo above it - this one should
-     read as the larger of the two. */
-  width: clamp(72px, 7.5vw, 92px);
-  height: clamp(72px, 7.5vw, 92px);
+  /* Bigger than the 58px nav logo above it, and a notch bigger again than
+     it was - this one should clearly read as the larger of the two. */
+  width: clamp(82px, 8.5vw, 104px);
+  height: clamp(82px, 8.5vw, 104px);
   border-radius: 50%;
   object-fit: cover;
-  margin-bottom: 14px;
+  margin-bottom: 16px;
   box-shadow: 0 24px 60px -30px rgba(0, 0, 0, 0.9);
 }
 
@@ -92,9 +82,9 @@
   text-transform: uppercase;
   color: rgba(246, 239, 229, 0.94);
   /* Matches the headline's own gap down to the rule + positioning text
-     below (16px + the rule's 1px + its 16px margin) so the headline sits
-     centered between its neighbors instead of crowded against the eyebrow. */
-  margin-bottom: 33px;
+     below (15px + the rule's 1px + its 6px margin) so the headline sits
+     centered between its neighbors with equal air on each side. */
+  margin-bottom: 22px;
   text-shadow: 0 2px 14px rgba(0, 0, 0, 0.6);
 }
 
@@ -107,7 +97,7 @@
   /* No max-width - "The Lotus Attune Experience" reads as one line on
      anything laptop-width or wider; only a genuinely narrow phone screen
      forces it to wrap, same as any other heading. */
-  margin: 0 0 16px;
+  margin: 0 0 15px;
   color: #fdfaf4;
   text-shadow:
     0 2px 24px rgba(0, 0, 0, 0.55),
@@ -118,7 +108,7 @@
 .rule {
   width: 72px;
   height: 1px;
-  margin-bottom: 16px;
+  margin-bottom: 6px;
   background: linear-gradient(
     90deg,
     rgba(198, 169, 122, 0) 0%,
@@ -129,7 +119,8 @@
 
 .positioning {
   max-width: 620px;
-  margin: 0 0 20px;
+  /* More room before the buttons than the tight rhythm above it. */
+  margin: 0 0 36px;
   font-size: clamp(15.5px, 1.7vw, 17.5px);
   line-height: 1.7;
   color: rgba(250, 244, 235, 0.95);
@@ -165,6 +156,7 @@
 }
 
 .motto {
+  margin-top: 28px;
   font-family: var(--font-display);
   font-weight: 400;
   font-size: clamp(15px, 1.7vw, 19px);

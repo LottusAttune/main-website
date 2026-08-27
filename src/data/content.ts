@@ -363,4 +363,4 @@ export const FILM = {
 } as const;
 
 /** Shown until the player reports ready, and left in place if it never does. */
-export const FILM_POSTER = 'somatic-main';
+export const FILM_POSTER = 'watch-poster-candle';

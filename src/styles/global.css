@@ -108,7 +108,7 @@ p {
 /* Flat, not a gradient - a gradient starting near-white left no visible
    separation right at the section boundary, which was the actual complaint. */
 .section--soft {
-  background: #f6eee1;
+  background: #f9f3e7;
 }
 
 .section--dark {

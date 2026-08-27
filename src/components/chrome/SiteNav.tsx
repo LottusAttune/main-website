@@ -56,7 +56,10 @@ export function SiteNav({ basePath = '' }: Props) {
           </span>
         </Link>
 
-        <nav className={styles.links} aria-label="Main navigation">
+        <nav
+          className={`${styles.links} ${basePath ? styles.linksCloser : ''}`}
+          aria-label="Main navigation"
+        >
           {NAV_LINKS.map((link) => {
             const href = link.href === '/' ? basePath || '/' : `${basePath}${link.href}`;
             const active = pathname === href;

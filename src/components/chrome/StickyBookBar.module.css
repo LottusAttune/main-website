@@ -29,8 +29,12 @@
 }
 
 /* Solid black, not the translucent brown above - a persistent bar on every
-   page reads as more premium as a true dark surface than a glassy tint. */
+   page reads as more premium as a true dark surface than a glassy tint. With
+   only one text link now instead of two buttons, this version also gets more
+   breathing room at the edges and between the label and the link. */
 .barDark {
+  gap: clamp(18px, 3vw, 40px);
+  padding: 12px clamp(28px, 6vw, 64px) calc(12px + env(safe-area-inset-bottom));
   background: linear-gradient(180deg, var(--color-ink-deep) 0%, var(--color-ink-deepest) 100%);
   backdrop-filter: none;
 }
@@ -64,24 +68,32 @@
 }
 
 .cta {
-  padding: 8px 20px;
-  min-height: 34px;
+  padding: 12px 30px;
+  min-height: 42px;
   font-size: 11px;
   letter-spacing: 0.22em;
 }
 
-/* A quieter, more architectural corner than the shared pill shape - the same
-   soft-round used on the guide section's "Meet Silvana" button. */
-.ctaSquared {
-  border-radius: var(--radius-input);
+/* /v1's replacement for the two buttons above - plain text, not a pill, so it
+   reads as a quiet nudge rather than a second, competing call to action next
+   to the nav's own black Book button. */
+.quietLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 11.5px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--color-cream-text);
+  border-bottom: 1px solid rgba(239, 230, 218, 0.4);
+  padding-bottom: 2px;
+  white-space: nowrap;
+  transition:
+    color 0.25s ease,
+    border-color 0.25s ease;
 }
 
-/* The shared .btn--outline-dark hover wash was tuned for the old translucent
-   brown bar - against the new solid black it read as an odd light-brown
-   smear, so this bar's Gift button gets a neutral, colorless hover instead.
-   Doubled selector beats .btn--outline-dark:hover's specificity regardless
-   of stylesheet order. */
-.giftCta.giftCta:hover {
-  background: rgba(255, 255, 255, 0.08);
-  border-color: rgba(239, 230, 218, 0.55);
+.quietLink:hover {
+  color: var(--color-gold-light);
+  border-color: var(--color-gold-light);
 }

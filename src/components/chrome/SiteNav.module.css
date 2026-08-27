@@ -109,6 +109,12 @@
   text-transform: uppercase;
 }
 
+/* Pulled in much closer to Book/Gift - the wide gap above left the links
+   looking centered in dead space rather than grouped with either side. */
+.linksCloser {
+  padding-right: clamp(16px, 2vw, 28px);
+}
+
 .link {
   padding-bottom: 3px;
   border-bottom: 1px solid transparent;

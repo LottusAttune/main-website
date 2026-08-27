@@ -94,11 +94,16 @@ export function ReviewsCarousel({ reviews }: Props) {
     return () => document.removeEventListener('keydown', onKey);
   }, [openReview, close]);
 
-  const peek = perView === 1 ? 0.86 : 0.94;
+  // Narrower than an even split so the next card's edge visibly peeks in on
+  // the right, signalling more are coming - the mask then fades that sliver
+  // instead of hiding it outright.
+  const peek = perView === 1 ? 0.86 : 0.88;
   const cardWidth = `calc((100% - ${GAP * (perView - 1)}px) / ${perView} * ${peek})`;
   const step = `calc((100% - ${GAP * (perView - 1)}px) / ${perView} + ${GAP}px)`;
 
   const active = openReview !== null ? reviews[openReview] : null;
+  const atStart = index === 0;
+  const atEnd = index >= maxIndex;
 
   return (
     <div
@@ -107,7 +112,9 @@ export function ReviewsCarousel({ reviews }: Props) {
       onMouseLeave={() => setPaused(false)}
       onTouchStart={() => setPaused(true)}
     >
-      <div className={styles.window}>
+      <div
+        className={`${styles.window} ${atStart ? styles.noFadeLeft : ''} ${atEnd ? styles.noFadeRight : ''}`}
+      >
         <div
           className={styles.track}
           style={{ transform: `translateX(calc(-1 * ${index} * ${step}))` }}

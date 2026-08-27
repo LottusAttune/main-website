@@ -7,6 +7,9 @@
   padding-left: clamp(50px, 6vw, 66px);
 }
 
+/* The edge fade signals "there's more this way" - at either end of the
+   carousel that isn't true, so .noFadeLeft/.noFadeRight (applied when
+   index is at the start/end) drop the fade on that side only. */
 .window {
   overflow: hidden;
   -webkit-mask-image: linear-gradient(
@@ -23,6 +26,21 @@
     #000 92%,
     transparent 100%
   );
+}
+
+.noFadeLeft {
+  -webkit-mask-image: linear-gradient(90deg, #000 0, #000 92%, transparent 100%);
+  mask-image: linear-gradient(90deg, #000 0, #000 92%, transparent 100%);
+}
+
+.noFadeRight {
+  -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 3%, #000 100%);
+  mask-image: linear-gradient(90deg, transparent 0, #000 3%, #000 100%);
+}
+
+.noFadeLeft.noFadeRight {
+  -webkit-mask-image: none;
+  mask-image: none;
 }
 
 .track {

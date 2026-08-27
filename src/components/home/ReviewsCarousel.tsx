@@ -4,9 +4,10 @@ import { useCallback, useEffect, useState } from 'react';
 
 import styles from './ReviewsCarousel.module.css';
 
-const GAP = 18;
-const AUTOPLAY_MS = 9000;
 const EXCERPT_LIMIT = 230;
+/** Seconds per card - keeps the drift slow and easy to read regardless of
+    how many reviews there are. */
+const SECONDS_PER_CARD = 8;
 
 export type Review = {
   name: string;
@@ -18,12 +19,6 @@ export type Review = {
 type Props = {
   reviews: readonly Review[];
 };
-
-function perViewFor(width: number): number {
-  if (width >= 1180) return 3;
-  if (width >= 820) return 2;
-  return 1;
-}
 
 function excerptOf(text: string): { excerpt: string; truncated: boolean } {
   if (text.length <= EXCERPT_LIMIT) return { excerpt: text, truncated: false };
@@ -56,37 +51,13 @@ function Wave() {
 }
 
 export function ReviewsCarousel({ reviews }: Props) {
-  const [index, setIndex] = useState(0);
-  const [perView, setPerView] = useState(3);
   const [paused, setPaused] = useState(false);
-  const [openReview, setOpenReview] = useState<number | null>(null);
-
-  const maxIndex = Math.max(0, reviews.length - perView);
-
-  useEffect(() => {
-    const fit = () => {
-      const next = perViewFor(window.innerWidth);
-      setPerView(next);
-      setIndex((i) => Math.min(i, Math.max(0, reviews.length - next)));
-    };
-    fit();
-    window.addEventListener('resize', fit);
-    return () => window.removeEventListener('resize', fit);
-  }, [reviews.length]);
-
-  // Autoplay pauses on hover/touch and while the full-review modal is open.
-  useEffect(() => {
-    if (paused || openReview !== null) return;
-    const id = setInterval(() => {
-      setIndex((i) => (i >= maxIndex ? 0 : i + 1));
-    }, AUTOPLAY_MS);
-    return () => clearInterval(id);
-  }, [paused, openReview, maxIndex]);
+  const [openReview, setOpenReview] = useState<Review | null>(null);
 
   const close = useCallback(() => setOpenReview(null), []);
 
   useEffect(() => {
-    if (openReview === null) return;
+    if (!openReview) return;
     const onKey = (e: KeyboardEvent) => {
       if (e.key === 'Escape') close();
     };
@@ -94,11 +65,10 @@ export function ReviewsCarousel({ reviews }: Props) {
     return () => document.removeEventListener('keydown', onKey);
   }, [openReview, close]);
 
-  const peek = perView === 1 ? 0.86 : 0.94;
-  const cardWidth = `calc((100% - ${GAP * (perView - 1)}px) / ${perView} * ${peek})`;
-  const step = `calc((100% - ${GAP * (perView - 1)}px) / ${perView} + ${GAP}px)`;
-
-  const active = openReview !== null ? reviews[openReview] : null;
+  // Rendered twice back to back so the CSS animation can scroll from 0 to
+  // -50% and loop with no visible seam, instead of snapping back to start.
+  const loop = [...reviews, ...reviews];
+  const duration = `${reviews.length * SECONDS_PER_CARD}s`;
 
   return (
     <div
@@ -106,21 +76,23 @@ export function ReviewsCarousel({ reviews }: Props) {
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
       onTouchStart={() => setPaused(true)}
+      onTouchEnd={() => setPaused(false)}
+      onTouchCancel={() => setPaused(false)}
     >
       <div className={styles.window}>
         <div
           className={styles.track}
-          style={{ transform: `translateX(calc(-1 * ${index} * ${step}))` }}
+          style={{
+            animationDuration: duration,
+            animationPlayState: paused || openReview ? 'paused' : 'running',
+          }}
         >
-          {reviews.map((review, i) => {
+          {loop.map((review, i) => {
             const { excerpt, truncated } = excerptOf(review.text);
-            const inView = i >= index && i < index + perView;
             return (
               <figure
-                key={review.name}
-                className={`card card--lift ${styles.card} ${inView ? styles.cardActive : ''}`}
-                style={{ width: cardWidth }}
-                aria-hidden={!inView}
+                key={`${review.name}-${i}`}
+                className={`card card--lift ${styles.card}`}
               >
                 <div className={styles.quoteMark} aria-hidden="true">
                   ”
@@ -131,7 +103,7 @@ export function ReviewsCarousel({ reviews }: Props) {
                     <button
                       type="button"
                       className={styles.more}
-                      onClick={() => setOpenReview(i)}
+                      onClick={() => setOpenReview(review)}
                     >
                       Read full review
                     </button>
@@ -149,55 +121,22 @@ export function ReviewsCarousel({ reviews }: Props) {
         </div>
       </div>
 
-      <div className={styles.controls}>
-        <button
-          type="button"
-          className={styles.arrow}
-          aria-label="Previous review"
-          disabled={index === 0}
-          onClick={() => setIndex((i) => Math.max(0, i - 1))}
-        >
-          ‹
-        </button>
-        <div className={styles.dots}>
-          {Array.from({ length: maxIndex + 1 }, (_, i) => (
-            <button
-              key={i}
-              type="button"
-              className={`${styles.dot} ${i === index ? styles.dotActive : ''}`}
-              aria-label={`Go to review ${i + 1}`}
-              aria-current={i === index}
-              onClick={() => setIndex(i)}
-            />
-          ))}
-        </div>
-        <button
-          type="button"
-          className={styles.arrow}
-          aria-label="Next review"
-          disabled={index >= maxIndex}
-          onClick={() => setIndex((i) => Math.min(maxIndex, i + 1))}
-        >
-          ›
-        </button>
-      </div>
-
-      {active ? (
+      {openReview ? (
         <div
           className={styles.overlay}
           role="dialog"
           aria-modal="true"
-          aria-label={`Full review from ${active.name}`}
+          aria-label={`Full review from ${openReview.name}`}
           onClick={close}
         >
           <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
             <div className={styles.modalQuote} aria-hidden="true">
               ”
             </div>
-            <p className={styles.modalText}>{active.text}</p>
+            <p className={styles.modalText}>{openReview.text}</p>
             <div className={styles.modalCaption}>
               <Wave />
-              <span className={styles.name}>{active.name}</span>
+              <span className={styles.name}>{openReview.name}</span>
             </div>
           </div>
         </div>

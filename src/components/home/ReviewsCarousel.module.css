@@ -92,21 +92,16 @@
   border-top: 1px solid rgba(59, 46, 36, 0.12);
 }
 
+/* No initial letter, no stock photo - a plain, quiet dark-brown mark rather
+   than a per-reviewer detail that isn't real (only an actual photo is). */
 .avatar {
   flex: none;
-  display: flex;
-  align-items: center;
-  justify-content: center;
   width: 46px;
   height: 46px;
   border-radius: 50%;
   overflow: hidden;
-  background: linear-gradient(160deg, #f3e7d2, #e2cfb0);
+  background: var(--gradient-button-dark);
   box-shadow: 0 0 0 1px rgba(168, 135, 90, 0.45);
-  font-family: var(--font-display);
-  font-weight: 400;
-  font-size: 20px;
-  color: var(--color-gold-deep);
 }
 
 .avatar img {
@@ -117,18 +112,10 @@
 }
 
 .name {
-  display: block;
   font-size: 11.5px;
   letter-spacing: 0.28em;
   text-transform: uppercase;
   color: var(--color-gold-text);
-  margin-bottom: 4px;
-}
-
-.meta {
-  display: block;
-  font-size: 12.5px;
-  color: var(--color-faint);
 }
 
 .controls {
@@ -147,9 +134,9 @@
   height: 48px;
   padding: 0 0 3px;
   border-radius: 50%;
-  border: 1px solid var(--gold-rim-strong);
-  background: var(--gradient-card);
-  color: var(--color-gold-deep);
+  border: 1px solid transparent;
+  background: var(--gradient-button-dark);
+  color: var(--color-cream-text);
   font-size: 22px;
   font-weight: 200;
   cursor: pointer;
@@ -161,7 +148,7 @@
 
 .arrow:hover:not(:disabled) {
   transform: translateY(-2px);
-  box-shadow: var(--shadow-gold-halo);
+  box-shadow: var(--shadow-pill-dark);
 }
 
 .arrow:disabled {
@@ -192,7 +179,7 @@
 
 .dotActive {
   width: 26px;
-  background: linear-gradient(90deg, #c6a97a, #a8875a);
+  background: var(--gradient-button-dark);
 }
 
 /* ---------- Full-review modal ---------- */

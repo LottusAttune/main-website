@@ -44,9 +44,7 @@ function Avatar({
 }) {
   if (!review.face) {
     return (
-      <span className={`${styles.avatar} ${className ?? ''}`} aria-hidden="true">
-        {review.name.charAt(0)}
-      </span>
+      <span className={`${styles.avatar} ${className ?? ''}`} aria-hidden="true" />
     );
   }
   const image = asset(review.face as Parameters<typeof asset>[0]);
@@ -139,10 +137,7 @@ export function ReviewsCarousel({ reviews }: Props) {
                 ) : null}
                 <figcaption className={styles.caption}>
                   <Avatar review={review} />
-                  <span>
-                    <span className={styles.name}>{review.name}</span>
-                    <span className={styles.meta}>{review.meta}</span>
-                  </span>
+                  <span className={styles.name}>{review.name}</span>
                 </figcaption>
               </figure>
             );
@@ -198,10 +193,7 @@ export function ReviewsCarousel({ reviews }: Props) {
             <p className={styles.modalText}>{active.text}</p>
             <div className={styles.modalCaption}>
               <Avatar review={active} className={styles.modalAvatar} />
-              <span>
-                <span className={styles.name}>{active.name}</span>
-                <span className={styles.meta}>{active.meta}</span>
-              </span>
+              <span className={styles.name}>{active.name}</span>
             </div>
           </div>
         </div>

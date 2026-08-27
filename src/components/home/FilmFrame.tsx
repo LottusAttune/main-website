@@ -45,8 +45,10 @@ function embedUrl(id: string): string {
 export function FilmFrame() {
   const [portrait, setPortrait] = useState(false);
   const [soundOn, setSoundOn] = useState(false);
+  const [started, setStarted] = useState(false);
   const frameRef = useRef<HTMLIFrameElement>(null);
   const playerRef = useRef<VimeoPlayer | null>(null);
+  const wrapRef = useRef<HTMLDivElement>(null);
 
   // The film swaps orientation at 820px — portrait crop for phones.
   useEffect(() => {
@@ -57,10 +59,36 @@ export function FilmFrame() {
     return () => media.removeEventListener('change', fit);
   }, []);
 
+  // The iframe (and its autoplay) isn't created until this section is
+  // actually scrolled into view, so every visitor's first look at it starts
+  // from the beginning rather than joining a loop already in progress.
+  useEffect(() => {
+    const el = wrapRef.current;
+    if (!el) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setStarted(true);
+          observer.disconnect();
+        }
+      },
+      { threshold: 0.4 }
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+
   const attachPlayer = () => {
     if (playerRef.current || !frameRef.current || !window.Vimeo) return;
     playerRef.current = new window.Vimeo.Player(frameRef.current);
   };
+
+  // The player.js script tag can finish loading before the iframe exists
+  // (it isn't created until scrolled into view) - retry once it mounts.
+  useEffect(() => {
+    if (started) attachPlayer();
+  }, [started]);
 
   const toggleSound = () => {
     const next = !soundOn;
@@ -102,9 +130,11 @@ export function FilmFrame() {
         onLoad={attachPlayer}
       />
       <div
+        ref={wrapRef}
         className={`${styles.frame} ${portrait ? styles.framePortrait : ''}`}
       >
-        {/* Backdrop only, so the frame is never empty while the film loads. */}
+        {/* Backdrop only, so the frame is never empty while the film loads
+            (and before it starts). */}
         <Image
           src={poster.src}
           alt=""
@@ -114,15 +144,17 @@ export function FilmFrame() {
           style={{ objectFit: 'cover' }}
           priority
         />
-        <iframe
-          ref={frameRef}
-          key={portrait ? 'portrait' : 'landscape'}
-          src={embedUrl(videoId)}
-          title="The Lotus Attune Experience"
-          allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media; web-share"
-          referrerPolicy="strict-origin-when-cross-origin"
-          allowFullScreen
-        />
+        {started ? (
+          <iframe
+            ref={frameRef}
+            key={portrait ? 'portrait' : 'landscape'}
+            src={embedUrl(videoId)}
+            title="The Lotus Attune Experience"
+            allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media; web-share"
+            referrerPolicy="strict-origin-when-cross-origin"
+            allowFullScreen
+          />
+        ) : null}
         <button
           type="button"
           className={`${styles.sound} ${soundOn ? styles.soundOn : ''}`}

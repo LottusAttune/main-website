@@ -348,7 +348,7 @@ export const CORPORATE_ADDON_COPY =
   'Includes a 30-minute extension featuring a facilitated activity focused on recognition, values alignment, mindful communication, and team connection —customized to your team’s objectives. Additional $500 per event.';
 
 /**
- * Vimeo IDs. The client labelled the landscape film "change for final".
+ * Vimeo IDs.
  *
  * These are embedded behind a poster: the still shows first and the player
  * only replaces it once Vimeo confirms it is ready. Vimeo's Singapore edge was
@@ -358,7 +358,7 @@ export const CORPORATE_ADDON_COPY =
  * browser's broken-file icon.
  */
 export const FILM = {
-  landscape: '1218205534',
+  landscape: '1221652776',
   portrait: '1218205483',
 } as const;
 

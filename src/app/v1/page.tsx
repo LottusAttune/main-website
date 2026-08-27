@@ -102,9 +102,13 @@ export default function HomePage() {
         </section>
 
         {/* ---------- Video ---------- */}
-        <section className="section" aria-labelledby="watch-heading">
+        <section className={styles.watchSection} aria-labelledby="watch-heading">
           <div className="shell--prose">
-            <div className={styles.centered} data-reveal="">
+            <div
+              className={styles.centered}
+              data-reveal=""
+              style={{ marginBottom: 24 }}
+            >
               <div className="eyebrow" style={{ fontSize: '13.5px', marginBottom: 18 }}>
                 Watch
               </div>
@@ -112,7 +116,7 @@ export default function HomePage() {
                 A glimpse inside the experience
               </h2>
             </div>
-            <div data-reveal="">
+            <div className={styles.watchFrameWrap} data-reveal="">
               <FilmFrame />
             </div>
           </div>

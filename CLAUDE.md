@@ -186,14 +186,15 @@ shape.
 Ask Silvana about these rather than guessing:
 
 1. **Social handles** — footer links are placeholders (`/lotusattune`).
-2. **The main film** — she marked the landscape video "change for final". IDs
-   are in `src/data/content.ts` under `FILM`. Note the frame shows a still
-   until Vimeo confirms the player is running: Vimeo's Singapore edge was seen
-   returning 400 for every request, its own homepage included, so a whole
-   region can be unable to reach Vimeo while the videos are perfectly healthy.
-   Do not "fix" a video that looks broken without checking from another
-   network first.
-3. **Gift certificate maximum** — her notes said "up to 21", the rest of her
+2. **Gift certificate maximum** — her notes said "up to 21", the rest of her
    material says 2–24. The site uses 24.
-4. **Venue street address** — deliberately left out of the structured data until
+3. **Venue street address** — deliberately left out of the structured data until
    she confirms it should be public.
+
+The landscape film (`src/data/content.ts`, `FILM.landscape`) was replaced with
+her final cut. One standing caution stays relevant regardless of which video
+ID is live: the frame shows a still until Vimeo confirms the player is
+running, because Vimeo's Singapore edge was seen returning 400 for every
+request — its own homepage included — so a whole region can be unable to
+reach Vimeo while the video itself is perfectly healthy. Don't "fix" a video
+that looks broken without checking from another network first.

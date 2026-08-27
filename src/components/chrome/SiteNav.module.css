@@ -2,7 +2,10 @@
   position: sticky;
   top: 0;
   z-index: 60;
-  padding: 10px clamp(12px, 3vw, 28px);
+  /* Trimmed from 10px - this bar sits on every page, so its own height
+     comes out of every section's room below it. Keeps the same thick,
+     pill look, just a touch less outer air around it. */
+  padding: 6px clamp(12px, 3vw, 28px);
   background: linear-gradient(
     180deg,
     rgba(251, 247, 241, 0.96) 0%,
@@ -23,7 +26,7 @@
   gap: 12px;
   max-width: 1500px;
   margin: 0 auto;
-  padding: 8px clamp(12px, 2.4vw, 22px);
+  padding: 6px clamp(12px, 2.4vw, 22px);
   background: linear-gradient(
     135deg,
     rgba(255, 253, 250, 0.9) 0%,

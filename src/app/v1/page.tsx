@@ -96,13 +96,11 @@ export default function HomePage() {
               <div className={styles.guideSignature}>
                 — Silvana, Founder &amp; Facilitator
               </div>
-              {/* Only the first paragraph here - the second is a shorter
-                  echo of a sentence that appears in full on the Founder
-                  page's bio, so it's dropped from this teaser rather than
-                  repeated in two places at two different lengths. */}
-              <p className={`body body--dark ${styles.guideBody}`}>
-                {GUIDE.paragraphs[0]}
-              </p>
+              {GUIDE.paragraphs.map((paragraph) => (
+                <p key={paragraph} className={`body body--dark ${styles.guideBody}`}>
+                  {paragraph}
+                </p>
+              ))}
               <Link href="/v1/founder" className={`btn btn--cream ${styles.guideBtn}`}>
                 Her Story
               </Link>

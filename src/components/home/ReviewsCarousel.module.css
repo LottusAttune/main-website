@@ -1,5 +1,10 @@
+/* Left gutter clears the floating left arrow so it doesn't sit on top of
+   the first card's own text - the arrows are positioned from this
+   element's padding edge, so the gutter pushes the cards over without
+   moving the arrow itself. */
 .viewport {
   position: relative;
+  padding-left: clamp(50px, 6vw, 66px);
 }
 
 .window {

@@ -227,13 +227,14 @@
   padding: clamp(24px, 3vw, 36px) var(--space-gutter);
 }
 
-/* Square, not rounded - a flatter, more modern edge than the site's usual
-   rounded cards. Explicitly 0, not just omitted - the shared .card class
-   this is paired with sets its own 26px radius, which would otherwise win. */
+/* Almost square, not fully sharp - a soft edge rather than the harsh 0 corner
+   tried earlier, but still far flatter than the site's usual rounded cards
+   (the shared .card class this is paired with sets its own 26px radius,
+   which this overrides). */
 .pathCard {
   display: flex;
   flex-direction: column;
-  border-radius: 0;
+  border-radius: 8px;
   overflow: hidden;
   /* Cleaner and whiter than the shared .card gradient - stands out clearly
      against this section's own warmer background instead of blending into
@@ -366,6 +367,10 @@
 .faqCard {
   padding: 20px 22px;
   max-width: 400px;
+  /* Almost square, matching the flatter corner used elsewhere on this page -
+     the shared .card class this is paired with sets its own 26px radius,
+     which this overrides. */
+  border-radius: 8px;
 }
 
 .faqCardTitle {

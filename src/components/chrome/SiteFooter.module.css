@@ -180,9 +180,6 @@
   border-radius: 4px;
   background: var(--color-ink);
   color: var(--color-cream-text);
-  /* A thin gold ring around the edge, and a bigger glyph inside (see
-     FooterIcons.tsx) - the icons read as too small on their own before. */
-  box-shadow: 0 0 0 1px var(--gold-rim);
   transition:
     background var(--duration-button, 0.2s) ease,
     transform var(--duration-button, 0.2s) ease;

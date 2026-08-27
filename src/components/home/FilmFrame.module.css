@@ -4,7 +4,9 @@
   margin: 0 auto;
   background: #241b15;
   border: 1px solid rgba(198, 169, 122, 0.35);
-  border-radius: var(--radius-video);
+  /* Almost square, not the token's much larger 18-34px curve - a soft edge
+     rather than a rounded one. */
+  border-radius: 12px;
   overflow: hidden;
   box-shadow: 0 40px 90px -55px rgba(46, 36, 28, 0.9);
 }
@@ -35,7 +37,9 @@
   gap: 10px;
   padding: 12px 22px;
   min-height: 46px;
-  border-radius: var(--radius-pill);
+  /* Almost square, not the full pill used elsewhere - matches the flatter
+     corner used across the rest of this page. */
+  border-radius: 8px;
   border: 1px solid rgba(246, 239, 229, 0.45);
   background: rgba(28, 21, 15, 0.55);
   backdrop-filter: blur(10px);
@@ -69,7 +73,9 @@
   z-index: 2;
   padding: 12px 22px;
   min-height: 46px;
-  border-radius: var(--radius-pill);
+  /* Almost square, not the full pill used elsewhere - matches the flatter
+     corner used across the rest of this page. */
+  border-radius: 8px;
   border: 1px solid rgba(246, 239, 229, 0.45);
   background: rgba(28, 21, 15, 0.55);
   backdrop-filter: blur(10px);

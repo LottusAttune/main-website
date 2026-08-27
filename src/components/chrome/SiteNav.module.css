@@ -158,11 +158,11 @@
   border-radius: var(--radius-input);
 }
 
-/* The shared .btn--outline is gold - washed-out next to the new solid black
-   Book button. Neutral ink instead, doubled to outrank .btn--outline's own
-   hover rule regardless of stylesheet order. */
+/* Same gold as the active nav link's underline (e.g. "Home"), not the
+   shared .btn--outline's washed-out gold rim. Doubled to outrank
+   .btn--outline's own hover rule regardless of stylesheet order. */
 .actionPillNeutral {
-  border-color: rgba(59, 46, 36, 0.3);
+  border-color: var(--color-gold-text);
 }
 
 .actionPillNeutral.actionPillNeutral:hover {

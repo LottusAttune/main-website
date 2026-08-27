@@ -12,6 +12,8 @@ import styles from './FilmFrame.module.css';
 type VimeoPlayer = {
   setMuted: (muted: boolean) => Promise<boolean>;
   setVolume: (volume: number) => Promise<number>;
+  setCurrentTime: (seconds: number) => Promise<number>;
+  play: () => Promise<void>;
   on?: (event: string, handler: () => void) => void;
 };
 
@@ -135,6 +137,29 @@ export function FilmFrame() {
     }
   };
 
+  // Lets a visitor who scrolled away and back (or just wants to rewatch)
+  // jump the loop back to 0:00 on demand, rather than waiting for it to
+  // come back around.
+  const restart = () => {
+    const player = playerRef.current;
+    if (player) {
+      void player.setCurrentTime(0).then(() => player.play());
+      return;
+    }
+    try {
+      frameRef.current?.contentWindow?.postMessage(
+        { method: 'setCurrentTime', value: 0 },
+        'https://player.vimeo.com'
+      );
+      frameRef.current?.contentWindow?.postMessage(
+        { method: 'play' },
+        'https://player.vimeo.com'
+      );
+    } catch {
+      // No running player to reach yet - nothing to restart.
+    }
+  };
+
   const videoId = portrait ? FILM.portrait : FILM.landscape;
   const poster = asset(FILM_POSTER);
 
@@ -171,6 +196,16 @@ export function FilmFrame() {
             allowFullScreen
             className={ready ? styles.playerReady : styles.playerHidden}
           />
+        ) : null}
+        {started ? (
+          <button
+            type="button"
+            className={styles.restart}
+            onClick={restart}
+            aria-label="Watch from the beginning"
+          >
+            Watch from start
+          </button>
         ) : null}
         <button
           type="button"

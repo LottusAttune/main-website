@@ -59,6 +59,36 @@
   border-color: rgba(198, 169, 122, 0.85);
 }
 
+/* Mirrors .sound on the opposite corner - lets anyone jump the loop back to
+   0:00 on demand (scrolled away and back, or just wants to rewatch), rather
+   than waiting for it to come back around. */
+.restart {
+  position: absolute;
+  left: clamp(14px, 2vw, 24px);
+  bottom: clamp(14px, 2vw, 24px);
+  z-index: 2;
+  padding: 12px 22px;
+  min-height: 46px;
+  border-radius: var(--radius-pill);
+  border: 1px solid rgba(246, 239, 229, 0.45);
+  background: rgba(28, 21, 15, 0.55);
+  backdrop-filter: blur(10px);
+  color: var(--color-cream-text);
+  font-size: 10.5px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition:
+    border-color var(--duration-button) ease,
+    background var(--duration-button) ease,
+    transform var(--duration-button) ease;
+}
+
+.restart:hover {
+  transform: translateY(-2px);
+  border-color: var(--color-gold-light);
+}
+
 /* The player sits over the still and is only revealed once Vimeo reports it is
    running. A network that cannot reach Vimeo therefore shows the photograph,
    not the browser's broken-file icon. */

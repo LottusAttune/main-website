@@ -45,12 +45,12 @@ export function InstagramIcon({ className }: IconProps) {
   return (
     <svg
       className={className}
-      width="14"
-      height="14"
+      width="20"
+      height="20"
       viewBox="0 0 24 24"
       fill="none"
       stroke="currentColor"
-      strokeWidth="1.6"
+      strokeWidth="1.4"
       aria-hidden="true"
     >
       <rect x="3.5" y="3.5" width="17" height="17" rx="5" />
@@ -64,12 +64,12 @@ export function LinkedInIcon({ className }: IconProps) {
   return (
     <svg
       className={className}
-      width="14"
-      height="14"
+      width="20"
+      height="20"
       viewBox="0 0 24 24"
       fill="none"
       stroke="currentColor"
-      strokeWidth="1.8"
+      strokeWidth="1.6"
       aria-hidden="true"
     >
       <line x1="7.5" y1="10.5" x2="7.5" y2="17" />
@@ -84,8 +84,8 @@ export function FacebookIcon({ className }: IconProps) {
   return (
     <svg
       className={className}
-      width="14"
-      height="14"
+      width="20"
+      height="20"
       viewBox="0 0 24 24"
       fill="currentColor"
       aria-hidden="true"

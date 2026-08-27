@@ -105,8 +105,10 @@ p {
    trust bar's own gradient (too close to plain cream to read as a change) -
    enough warmth to actually separate two cream sections, without the
    heavier, more saturated tan of the beige gradient. */
+/* Flat, not a gradient - a gradient starting near-white left no visible
+   separation right at the section boundary, which was the actual complaint. */
 .section--soft {
-  background: linear-gradient(180deg, #fdf9f1 0%, #f1e6d4 100%);
+  background: #f6eee1;
 }
 
 .section--dark {

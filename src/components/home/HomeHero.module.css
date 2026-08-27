@@ -51,11 +51,19 @@
   );
 }
 
+/* flex: 1 stretches this to fill .hero's full height (not height: 100% -
+   that doesn't resolve reliably against a min-height parent). Combined
+   with justify-content: space-between, the 3 direct children - logo, text
+   group, motto - land with equal gaps: logo near the top, motto near the
+   bottom, text group floating in the middle with its own internal rhythm
+   below untouched. */
 .copy {
   position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: space-between;
+  flex: 1;
   pointer-events: none;
 }
 
@@ -156,7 +164,6 @@
 }
 
 .motto {
-  margin-top: 28px;
   font-family: var(--font-display);
   font-weight: 400;
   font-size: clamp(15px, 1.7vw, 19px);

@@ -194,6 +194,12 @@
 
 /* ---------- Choose your path ---------- */
 
+/* Trimmed well below the shared .section padding - this section should read
+   in as close to one screen as its 3 full photo cards allow. */
+.pathsSection {
+  padding: clamp(24px, 3vw, 36px) var(--space-gutter);
+}
+
 /* Square, not rounded - a flatter, more modern edge than the site's usual
    rounded cards. Explicitly 0, not just omitted - the shared .card class
    this is paired with sets its own 26px radius, which would otherwise win. */
@@ -227,7 +233,7 @@
   display: flex;
   flex-direction: column;
   flex: 1;
-  padding: clamp(28px, 3.5vw, 40px) clamp(24px, 3vw, 36px);
+  padding: clamp(18px, 2.2vw, 26px) clamp(20px, 2.5vw, 30px);
 }
 
 .pathTags {
@@ -235,7 +241,7 @@
   align-items: center;
   gap: 10px;
   flex-wrap: wrap;
-  margin-bottom: 16px;
+  margin-bottom: 10px;
 }
 
 /* Scoped to these cards only (not the shared .tag--group/.tag--one, which
@@ -261,15 +267,15 @@
 .pathTitle {
   font-family: var(--font-display);
   font-weight: 300;
-  font-size: 30px;
+  font-size: 26px;
   line-height: 1.2;
-  margin: 0 0 14px;
+  margin: 0 0 8px;
 }
 
 .pathText {
-  margin: 0 0 26px;
-  font-size: 16px;
-  line-height: 1.8;
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.6;
   color: var(--color-ink-body);
 }
 

@@ -16,12 +16,12 @@
 
 /* A hairline on this edge only (not the pill's old all-round outline, which
    is stripped by .pillNoOutline below) - without it the bar can read as the
-   same flat cream as whatever section is scrolled underneath it. Same gold
-   used on the Gift button's own outline, so the two read as one family. */
+   same flat cream as whatever section is scrolled underneath it. Neutral ink,
+   not gold - ties to the black Book button instead of adding a third color. */
 .wrapPlain {
   background: var(--color-cream-raised);
   backdrop-filter: none;
-  border-bottom: 1px solid var(--gold-rim);
+  border-bottom: 1px solid var(--hairline-light-strong);
 }
 
 .pill {
@@ -156,6 +156,18 @@
    shape than the shared full pill. */
 .actionPillSquared {
   border-radius: var(--radius-input);
+}
+
+/* The shared .btn--outline is gold - washed-out next to the new solid black
+   Book button. Neutral ink instead, doubled to outrank .btn--outline's own
+   hover rule regardless of stylesheet order. */
+.actionPillNeutral {
+  border-color: rgba(59, 46, 36, 0.3);
+}
+
+.actionPillNeutral.actionPillNeutral:hover {
+  border-color: var(--color-ink);
+  background: rgba(59, 46, 36, 0.06);
 }
 
 .burger {

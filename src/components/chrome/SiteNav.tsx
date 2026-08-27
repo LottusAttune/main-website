@@ -85,7 +85,7 @@ export function SiteNav({ basePath = '' }: Props) {
           </Link>
           <Link
             href={`${basePath}/gift`}
-            className={`btn btn--outline ${styles.actionPill} ${basePath ? styles.actionPillSquared : ''}`}
+            className={`btn btn--outline ${styles.actionPill} ${basePath ? `${styles.actionPillSquared} ${styles.actionPillNeutral}` : ''}`}
           >
             Gift
           </Link>

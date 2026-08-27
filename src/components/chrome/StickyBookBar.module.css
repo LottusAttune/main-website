@@ -31,12 +31,16 @@
 /* Solid black, not the translucent brown above - a persistent bar on every
    page reads as more premium as a true dark surface than a glassy tint. With
    only one text link now instead of two buttons, this version also gets more
-   breathing room at the edges and between the label and the link. */
+   breathing room at the edges and between the label and the link. The gold
+   top border above was tuned for the old translucent bar - against solid
+   black it read as a brown line, so it's dropped here to match the nav's
+   black Book button exactly (which has no border at all). */
 .barDark {
   gap: clamp(18px, 3vw, 40px);
   padding: 12px clamp(28px, 6vw, 64px) calc(12px + env(safe-area-inset-bottom));
   background: linear-gradient(180deg, var(--color-ink-deep) 0%, var(--color-ink-deepest) 100%);
   backdrop-filter: none;
+  border-top: none;
 }
 
 .barShown {
@@ -93,7 +97,9 @@
     border-color 0.25s ease;
 }
 
+/* Neutral brighten, not gold - same "no brown" criteria as the nav's Gift
+   button and hairline. */
 .quietLink:hover {
-  color: var(--color-gold-light);
-  border-color: var(--color-gold-light);
+  color: var(--color-cream-text-bright);
+  border-color: rgba(239, 230, 218, 0.8);
 }

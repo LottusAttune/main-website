@@ -268,9 +268,9 @@
 }
 
 .faqHeading {
-  font-size: clamp(30px, 3.4vw, 46px);
+  font-size: var(--text-h2);
   margin: 0 0 24px;
-  line-height: 1.15;
+  line-height: 1.14;
 }
 
 .faqLede {

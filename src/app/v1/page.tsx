@@ -188,9 +188,9 @@ export default function HomePage() {
         <section className="section" aria-labelledby="faq-heading">
           <div className={styles.faqGrid}>
             <div className="sticky-col" data-reveal="">
-              <div className="eyebrow">Frequently Asked</div>
+              <div className="eyebrow">Before you arrive</div>
               <h2 id="faq-heading" className={`display ${styles.faqHeading}`}>
-                Before you arrive
+                Frequently Asked
               </h2>
               <p className={`body ${styles.faqLede}`}>
                 Everything you need is provided, and every session is fully guided

@@ -38,6 +38,11 @@
   color: #fbf6ec;
 }
 
+.headCompact {
+  padding: 16px 0;
+  font-size: clamp(16px, 1.7vw, 18.5px);
+}
+
 .headLabel {
   display: flex;
   align-items: baseline;
@@ -70,6 +75,10 @@
   margin-bottom: 26px;
 }
 
+.bodyCompact.bodyOpen {
+  margin-bottom: 16px;
+}
+
 .answer {
   margin: 0;
   background: var(--gradient-answer);
@@ -79,6 +88,12 @@
   font-size: 16.5px;
   line-height: 1.85;
   color: var(--color-ink-body);
+}
+
+.answerCompact {
+  padding: clamp(14px, 1.8vw, 20px) clamp(14px, 1.8vw, 20px);
+  font-size: 14.5px;
+  line-height: 1.6;
 }
 
 .bullets {

@@ -18,6 +18,8 @@ type Props = {
   defaultOpen?: number | null;
   /** Show an "N entries" count beside each title. */
   showCounts?: boolean;
+  /** Smaller type and tighter spacing, for a shorter list sharing space with other content. */
+  compact?: boolean;
 };
 
 /** One panel open at a time. Body height is measured, never capped. */
@@ -26,6 +28,7 @@ export function Accordion({
   tone = 'light',
   defaultOpen = null,
   showCounts = false,
+  compact = false,
 }: Props) {
   const [open, setOpen] = useState<number | null>(defaultOpen);
   const bodyRefs = useRef<Array<HTMLDivElement | null>>([]);
@@ -60,6 +63,7 @@ export function Accordion({
               className={[
                 styles.head,
                 dark ? styles.headDark : '',
+                compact ? styles.headCompact : '',
                 isOpen ? (dark ? styles.headDarkOpen : styles.headOpen) : '',
               ]
                 .filter(Boolean)
@@ -95,10 +99,12 @@ export function Accordion({
               ref={(el) => {
                 bodyRefs.current[i] = el;
               }}
-              className={`${styles.body} ${isOpen ? styles.bodyOpen : ''}`}
+              className={`${styles.body} ${isOpen ? styles.bodyOpen : ''} ${compact ? styles.bodyCompact : ''}`}
             >
               {item.answer ? (
-                <p className={styles.answer}>{item.answer}</p>
+                <p className={`${styles.answer} ${compact ? styles.answerCompact : ''}`}>
+                  {item.answer}
+                </p>
               ) : null}
               {item.items ? (
                 <div className={styles.bullets}>

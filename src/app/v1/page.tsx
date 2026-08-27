@@ -235,6 +235,7 @@ export default function HomePage() {
             <div data-reveal="">
               <Accordion
                 items={FAQS.map((faq) => ({ title: faq.q, answer: faq.a }))}
+                compact
               />
             </div>
           </div>

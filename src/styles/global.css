@@ -101,6 +101,14 @@ p {
   background: var(--gradient-beige);
 }
 
+/* A middle ground between .section--beige (too flat/tan on its own) and the
+   trust bar's own gradient (too close to plain cream to read as a change) -
+   enough warmth to actually separate two cream sections, without the
+   heavier, more saturated tan of the beige gradient. */
+.section--soft {
+  background: linear-gradient(180deg, #fdf9f1 0%, #f1e6d4 100%);
+}
+
 .section--dark {
   position: relative;
   overflow: hidden;

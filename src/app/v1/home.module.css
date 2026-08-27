@@ -156,9 +156,12 @@
   margin-bottom: 24px;
 }
 
+/* Fixed to 2 lines via an explicit <br/> in the JSX rather than left to
+   wrap naturally - max-width just needs to be wide enough that neither
+   line wraps again on its own. */
 .centeredHeading {
   margin: 0 auto 20px;
-  max-width: 22ch;
+  max-width: 32ch;
 }
 
 .centeredLede {

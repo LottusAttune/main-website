@@ -126,7 +126,9 @@ export default function HomePage() {
                 id="paths-heading"
                 className={`display h2 ${styles.centeredHeading}`}
               >
-                For organizations and teams, private gatherings, and individuals
+                For organizations and teams,
+                <br />
+                private gatherings, and individuals
               </h2>
               <p className={`body ${styles.centeredLede}`}>
                 All sessions are offered in a two-hour format

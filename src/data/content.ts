@@ -24,7 +24,7 @@ export const PROBLEM = {
   statement:
     'Chronic stress, burnout, mental fatigue, workplace disconnection, and the growing need for sustainable well-being',
   support:
-    'Throughout my career, I witnessed a consistent gap between the significant investment organizations made in productivity and the support available to employees quietly managing anxiety, emotional overload, and fatigue',
+    'Throughout my career, I recognized the importance of aligning organizational performance with meaningful employee support',
 } as const;
 
 export const GUIDE = {

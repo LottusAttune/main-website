@@ -129,6 +129,10 @@
 
 .actions {
   pointer-events: auto;
+  /* With the "Reset. Align. Thrive" tagline removed from below, this pulls
+     the buttons down into roughly the space that used to occupy, rather
+     than leaving the whole block shorter and higher. */
+  margin-top: clamp(20px, 3vw, 40px);
 }
 
 .heroBtn {
@@ -160,12 +164,3 @@
   color: var(--color-cream-text);
 }
 
-.motto {
-  margin-top: 28px;
-  font-family: var(--font-display);
-  font-weight: 400;
-  font-size: clamp(15px, 1.7vw, 19px);
-  letter-spacing: 0.42em;
-  color: var(--color-gold-warm);
-  text-shadow: 0 2px 14px rgba(0, 0, 0, 0.6);
-}

@@ -6,7 +6,6 @@ import { useEffect, useRef } from 'react';
 
 import { HERO } from '@/data/content';
 import { asset } from '@/lib/images';
-import { SITE } from '@/lib/site';
 import styles from './HomeHero.module.css';
 
 export function HomeHero() {
@@ -99,8 +98,6 @@ export function HomeHero() {
             </a>
           </div>
         </div>
-
-        <div className={styles.motto}>{SITE.motto}</div>
       </div>
     </section>
   );

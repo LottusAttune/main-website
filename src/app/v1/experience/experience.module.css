@@ -247,6 +247,17 @@
   color: var(--color-ink-strong);
 }
 
+/* Quiet enough not to compete with the description above it - just enough
+   of a nudge that a first-time visitor doesn't feel stuck inside the modal.
+   Solid --color-ink-body (not an alpha blend) - still clears 7:1 against
+   this modal's background at both ends of its gradient. */
+.componentModalHint {
+  margin: 22px 0 0;
+  font-size: 12px;
+  letter-spacing: 0.02em;
+  color: var(--color-ink-body);
+}
+
 /* ---------- Benefits ---------- */
 
 /* Trimmed further on both ends - between this and the panel's own internal

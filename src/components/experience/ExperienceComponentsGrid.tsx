@@ -61,6 +61,7 @@ export function ExperienceComponentsGrid({ cards }: Props) {
             <span className={styles.componentModalNumber}>{active.n}</span>
             <h2 className={styles.componentModalTitle}>{active.title}</h2>
             <p className={styles.componentModalBody}>{active.body}</p>
+            <p className={styles.componentModalHint}>Click outside or press Esc to close</p>
           </div>
         </div>
       ) : null}

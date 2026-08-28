@@ -157,11 +157,13 @@
 
 /* ---------- Benefits ---------- */
 
-/* Top trimmed well below the bottom value - the background color change
-   at this section's edge already signals the new section on its own, so
-   it doesn't also need a large empty gap before "Benefits" appears. */
+/* Trimmed further on both ends - between this and the panel's own internal
+   padding below, the section was running taller than a laptop screen could
+   show in one view. The background color change at this section's edge
+   already signals the new section on its own, so it doesn't need a large
+   empty gap on top of that to do the same job. */
 .benefitsSection {
-  padding: clamp(28px, 3.4vw, 40px) 0 clamp(48px, 6vw, 76px);
+  padding: clamp(16px, 2vw, 24px) 0 clamp(32px, 4vw, 48px);
 }
 
 /* The shared .shell class only caps max-width, with no side gutter of its
@@ -170,7 +172,7 @@
    without it here the Benefits panels ran wider than everything else on
    the page instead of lining up with it. */
 .benefitsShell {
-  padding-bottom: clamp(16px, 2vw, 24px);
+  padding-bottom: clamp(10px, 1.4vw, 16px);
   padding-left: var(--space-gutter);
   padding-right: var(--space-gutter);
 }
@@ -294,31 +296,29 @@
   color: var(--color-ink);
 }
 
-/* More top air than before - now that the tag pill above the heading is
-   gone, this is the only thing separating the heading from the panel's
-   own top edge. */
+/* Still more top air than the tag pill used to leave, just trimmed back
+   from its first pass - that version plus everything else on the page
+   added up to more than a laptop screen could show at once. */
 .benefitsCellHeader {
-  padding-top: clamp(36px, 4vw, 52px);
+  padding-top: clamp(24px, 2.8vw, 34px);
 }
 
 .benefitsCellClosing {
-  padding-bottom: clamp(28px, 3.2vw, 44px);
+  padding-bottom: clamp(18px, 2.2vw, 28px);
 }
 
 .benefitsPanelHeading {
-  /* More room below the heading, before the note - it used to share that
-     gap with the tag pill's own margin, which is gone now. */
-  margin: 0 0 18px;
+  margin: 0 0 12px;
   font-weight: 300;
-  font-size: clamp(24px, 2.6vw, 32px);
+  font-size: clamp(22px, 2.4vw, 28px);
   line-height: 1.15;
 }
 
 .benefitsPanelNote {
   margin: 0;
   max-width: 490px;
-  font-size: 15.5px;
-  line-height: 1.7;
+  font-size: 15px;
+  line-height: 1.6;
 }
 
 .benefitsCellDark .benefitsPanelNote {
@@ -330,8 +330,8 @@
 }
 
 .benefitsCellItem {
-  padding-top: 16px;
-  padding-bottom: 16px;
+  padding-top: 12px;
+  padding-bottom: 12px;
   border-top: 1px solid;
 }
 
@@ -344,16 +344,16 @@
 }
 
 .benefitsItemTitle {
-  margin: 0 0 6px;
+  margin: 0 0 4px;
   font-family: var(--font-display);
   font-weight: 400;
-  font-size: 19px;
+  font-size: 18px;
 }
 
 .benefitsItemBody {
   margin: 0;
-  font-size: 14.5px;
-  line-height: 1.6;
+  font-size: 14px;
+  line-height: 1.5;
 }
 
 .benefitsCellDark .benefitsItemBody {
@@ -368,7 +368,7 @@
   margin: 0;
   font-family: var(--font-display);
   font-weight: 400;
-  font-size: 16px;
+  font-size: 15px;
 }
 
 /* Upright on the Corporate side - the italic read as too "cursive" there.

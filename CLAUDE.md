@@ -108,7 +108,16 @@ don't ship in the first place:
 - **Two-sided or mirrored layouts.** When a design has a light/dark (or
   otherwise paired) side, keep font sizes, weights, italics and opacity
   symmetric between them unless there's a clear reason not to — check both
-  sides side by side, not just the one you're actively editing.
+  sides side by side, not just the one you're actively editing. This
+  includes internal hierarchy, not just the two sides against each other: if
+  one side dims its body text below its headings (e.g. ink for headings,
+  softer ink-body for paragraphs), the other side needs the same relative
+  step, not just "some cream color" for everything. When in doubt, actually
+  compute contrast for each role in the ratio on both sides (headings vs
+  headings, body vs body) rather than eyeballing whether two different hex
+  values "look similarly muted" — a solid color can pass WCAG AA on its own
+  and still read as noticeably bolder/brighter than its counterpart if its
+  contrast ratio is meaningfully higher.
 - **Row alignment across split layouts.** When two columns need their rows
   to line up despite different copy lengths, use CSS Grid so each row sizes
   to its tallest cell (an explicit `grid-template-rows` if anything spans

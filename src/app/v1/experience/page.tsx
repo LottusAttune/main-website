@@ -92,72 +92,65 @@ export default function ExperiencePage() {
         </section>
 
         {/* ---------- Benefits ---------- */}
-        <section
-          className={`section section--soft ${styles.benefitsSection}`}
-          aria-label="Benefits"
-        >
+        <section className={styles.benefitsSection} aria-label="Benefits">
           <div className={`shell ${styles.benefitsShell}`}>
             <h2 className={`display ${styles.benefitsHeading}`}>Benefits</h2>
+          </div>
 
-            <div className={styles.benefitsGroup}>
-              <div className={styles.sectionHead}>
-                <div style={{ minWidth: 0 }}>
-                  <span className={`tag ${styles.benefitTag}`}>
-                    Corporate
-                  </span>
-                  <h3
-                    id="teams-heading"
-                    className={`display ${styles.sectionHeadTitle}`}
-                  >
-                    For Teams &amp; Organizations
-                  </h3>
-                </div>
-                <p className={styles.sectionHeadNote}>
+          <div className={`shell ${styles.benefitsSplit}`}>
+            <div
+              className={`${styles.benefitsPanel} ${styles.benefitsPanelDark}`}
+            >
+              <div className={styles.benefitsPanelHeader}>
+                <span className={styles.benefitsPanelTag}>Corporate</span>
+                <h3
+                  id="teams-heading"
+                  className={`display ${styles.benefitsPanelHeading}`}
+                >
+                  For Teams &amp; Organizations
+                </h3>
+                <p className={styles.benefitsPanelNote}>
                   Elevate your company culture through a new generation of
                   team building where wellness and connection come together
                 </p>
               </div>
 
-              <div className={styles.columns}>
-                {BENEFITS_TEAMS.items.map((item) => (
-                  <div key={item.title} className={styles.column} data-reveal="">
-                    <h3 className={styles.columnTitle}>{item.title}</h3>
-                    <p className={styles.columnBody}>{item.body}</p>
-                  </div>
-                ))}
-              </div>
-              <p className={styles.benefitsNote}>{BENEFITS_TEAMS.note}</p>
+              {BENEFITS_TEAMS.items.map((item) => (
+                <div key={item.title} className={styles.benefitsItem} data-reveal="">
+                  <h4 className={styles.benefitsItemTitle}>{item.title}</h4>
+                  <p className={styles.benefitsItemBody}>{item.body}</p>
+                </div>
+              ))}
+
+              <p className={styles.benefitsClosing}>{BENEFITS_TEAMS.note}</p>
             </div>
 
-            <div className={styles.benefitsDivider} />
-
-            <div className={styles.benefitsGroup}>
-              <div className={styles.sectionHead}>
-                <div style={{ minWidth: 0 }}>
-                  <span className={`tag ${styles.benefitTag}`}>
-                    1 : 1 &nbsp;·&nbsp; Private Groups
-                  </span>
-                  <h3
-                    id="individuals-heading"
-                    className={`display ${styles.sectionHeadTitle}`}
-                  >
-                    For Individuals
-                  </h3>
-                </div>
-                <p className={styles.sectionHeadNote}>
+            <div
+              className={`${styles.benefitsPanel} ${styles.benefitsPanelLight}`}
+            >
+              <div className={styles.benefitsPanelHeader}>
+                <span className={styles.benefitsPanelTag}>
+                  1 : 1 &nbsp;·&nbsp; Private Groups
+                </span>
+                <h3
+                  id="individuals-heading"
+                  className={`display ${styles.benefitsPanelHeading}`}
+                >
+                  For Individuals
+                </h3>
+                <p className={styles.benefitsPanelNote}>
                   Create space to reset, recharge, and reconnect from within
                 </p>
               </div>
 
-              <div className={styles.columns}>
-                {BENEFITS_INDIVIDUAL.items.map((item) => (
-                  <div key={item.title} className={styles.column} data-reveal="">
-                    <h3 className={styles.columnTitle}>{item.title}</h3>
-                    <p className={styles.columnBody}>{item.body}</p>
-                  </div>
-                ))}
-              </div>
-              <p className={styles.benefitsNote}>{BENEFITS_INDIVIDUAL.note}</p>
+              {BENEFITS_INDIVIDUAL.items.map((item) => (
+                <div key={item.title} className={styles.benefitsItem} data-reveal="">
+                  <h4 className={styles.benefitsItemTitle}>{item.title}</h4>
+                  <p className={styles.benefitsItemBody}>{item.body}</p>
+                </div>
+              ))}
+
+              <p className={styles.benefitsClosing}>{BENEFITS_INDIVIDUAL.note}</p>
             </div>
           </div>
         </section>

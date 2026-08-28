@@ -153,144 +153,152 @@
 /* ---------- Benefits ---------- */
 
 .benefitsSection {
-  position: relative;
-  overflow: hidden;
-}
-
-/* Faint grain so the beige backdrop reads as a textured surface rather
-   than a flat fill. */
-.benefitsSection::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background-image: radial-gradient(rgba(139, 106, 69, 0.09) 1px, transparent 1px);
-  background-size: 15px 15px;
-  pointer-events: none;
-}
-
-.benefitsShell {
-  position: relative;
   padding: clamp(48px, 6vw, 76px) 0;
 }
 
-.benefitsDivider {
-  height: clamp(20px, 2.6vw, 32px);
+.benefitsShell {
+  padding-bottom: clamp(28px, 3.4vw, 40px);
 }
 
 /* Matches .title (the "A Journey to Reset, Align and Thrive" heading) -
    this was on its own bigger scale, which read as an inconsistent jump in
    heading sizes on the same page. */
 .benefitsHeading {
-  margin: 0 0 clamp(32px, 4vw, 48px);
+  margin: 0;
   font-weight: 300;
   font-size: clamp(26px, 3.4vw, 48px);
   line-height: 1.14;
 }
 
-.sectionHead {
-  position: relative;
-  display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
-  gap: 32px;
-  flex-wrap: wrap;
-  padding-bottom: 20px;
-  border-bottom: 1px solid rgba(59, 46, 36, 0.18);
-  margin-bottom: 24px;
-}
-
-.sectionHeadTitle {
-  margin: 0;
-  font-size: clamp(26px, 3.2vw, 42px);
-  line-height: 1.1;
-}
-
-.sectionHeadNote {
-  margin: 0;
-  max-width: 460px;
-  font-size: 16px;
-  line-height: 1.7;
-  color: var(--color-ink-body);
-}
-
-/* The shared .tag class this is paired with is a full pill - a very subtle
-   corner instead, matching the minimal roundness used elsewhere. */
-.benefitTag {
-  display: inline-block;
-  width: 232px;
-  text-align: center;
-  margin-bottom: 16px;
-  padding: 9px 20px;
-  font-size: 12px;
-  background: var(--color-ink);
-  color: var(--color-cream-text);
-  border-radius: 6px;
-}
-
-/* ---------- Benefits redesign: shared ---------- */
-
-.benefitsNote {
-  margin: clamp(22px, 2.6vw, 30px) auto 0;
-  max-width: 640px;
-  text-align: center;
-  font-family: var(--font-display);
-  font-weight: 400;
-  font-style: italic;
-  font-size: 17px;
-  color: var(--color-gold-text);
-}
-
-/* ---------- Divided columns ---------- */
-
-.columns {
+/* Two panels, one dark (Corporate) and one light (Individuals) - echoes the
+   Guide section's dark treatment on the home page instead of the flat beige
+   card language used elsewhere on this page. */
+.benefitsSplit {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: clamp(28px, 3.5vw, 48px);
+  grid-template-columns: 1fr 1fr;
+  gap: 2px;
 }
 
 @media (max-width: 760px) {
-  .columns {
+  .benefitsSplit {
     grid-template-columns: 1fr;
   }
 }
 
-.column {
-  padding-left: clamp(24px, 2.6vw, 32px);
-  border-left: 1px solid var(--hairline-light);
+.benefitsPanel {
+  padding: clamp(28px, 3.2vw, 44px) clamp(24px, 3vw, 44px);
+  border-radius: 6px;
 }
 
-.column:first-child {
-  padding-left: 0;
-  border-left: none;
+.benefitsPanelDark {
+  background: var(--gradient-deep);
+  color: var(--color-cream-text-soft);
 }
 
-@media (max-width: 760px) {
-  .column {
-    padding-left: 0;
-    border-left: none;
-    padding-top: 24px;
-    border-top: 1px solid var(--hairline-light);
-  }
-
-  .column:first-child {
-    padding-top: 0;
-    border-top: none;
-  }
+.benefitsPanelLight {
+  background: #f9f3e7;
+  color: var(--color-ink);
 }
 
-.columnTitle {
-  margin: 0 0 8px;
+/* Fixed so both panels' item rows start at the same height regardless of
+   how many lines their own note wraps to - without this the longer
+   Corporate note pushed its items lower than the Individuals side. */
+.benefitsPanelHeader {
+  min-height: clamp(150px, 15vw, 190px);
+}
+
+/* Mirrors between panels rather than matching the shared .tag pill used
+   elsewhere - solid cream on dark, solid ink on light, no gold/tan. */
+.benefitsPanelTag {
+  display: inline-block;
+  margin-bottom: 16px;
+  padding: 9px 20px;
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  border-radius: 6px;
+}
+
+.benefitsPanelDark .benefitsPanelTag {
+  background: var(--color-cream-text);
+  color: var(--color-ink);
+}
+
+.benefitsPanelLight .benefitsPanelTag {
+  background: var(--color-ink);
+  color: var(--color-cream-text);
+}
+
+.benefitsPanelHeading {
+  margin: 0 0 12px;
+  font-weight: 300;
+  font-size: clamp(24px, 2.6vw, 32px);
+  line-height: 1.15;
+}
+
+.benefitsPanelNote {
+  margin: 0;
+  max-width: 46ch;
+  font-size: 15.5px;
+  line-height: 1.7;
+}
+
+.benefitsPanelDark .benefitsPanelNote {
+  color: rgba(246, 239, 229, 0.75);
+}
+
+.benefitsPanelLight .benefitsPanelNote {
+  color: var(--color-ink-body);
+}
+
+.benefitsItem {
+  padding: 16px 0;
+  border-top: 1px solid;
+}
+
+.benefitsPanelDark .benefitsItem {
+  border-color: var(--hairline-dark);
+}
+
+.benefitsPanelLight .benefitsItem {
+  border-color: var(--hairline-light);
+}
+
+.benefitsItemTitle {
+  margin: 0 0 6px;
   font-family: var(--font-display);
   font-weight: 400;
-  font-size: 21px;
-  color: var(--color-ink-strong);
+  font-size: 19px;
 }
 
-.columnBody {
+.benefitsItemBody {
   margin: 0;
-  font-size: 15px;
-  line-height: 1.65;
+  font-size: 14.5px;
+  line-height: 1.6;
+}
+
+.benefitsPanelDark .benefitsItemBody {
+  color: rgba(246, 239, 229, 0.7);
+}
+
+.benefitsPanelLight .benefitsItemBody {
   color: var(--color-ink-body);
+}
+
+.benefitsClosing {
+  margin: clamp(20px, 2.4vw, 26px) 0 0;
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-style: italic;
+  font-size: 16px;
+}
+
+.benefitsPanelDark .benefitsClosing {
+  color: var(--color-gold-light);
+}
+
+.benefitsPanelLight .benefitsClosing {
+  color: var(--color-gold-text);
 }
 
 /* ---------- Gallery block ---------- */

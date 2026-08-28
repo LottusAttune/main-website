@@ -60,11 +60,12 @@
   text-align: justify;
 }
 
-/* Bottom padding sized so even the longest component's open popover (see
-   .componentPopover) clears the Benefits panel below instead of overlapping
-   its dark background. */
+/* The modal (see .componentOverlay below) never overlaps Benefits, so this
+   doesn't need to reserve clearance for an open card the way an in-place
+   reveal would - just a bit of normal breathing room before the section
+   below. */
 .block {
-  padding: 0 var(--space-gutter) clamp(28px, 6.3vw, 86px);
+  padding: 0 var(--space-gutter) clamp(20px, 2.6vw, 32px);
   max-width: var(--width-content);
   margin: 0 auto;
 }
@@ -107,11 +108,10 @@
    of five - hovering keeps the shadow/border change below without the
    movement. */
 .componentCard {
-  position: relative;
   display: flex;
   flex-direction: column;
   padding: 0;
-  overflow: visible;
+  overflow: hidden;
   border: none;
   border-radius: 0 0 6px 6px;
 }
@@ -170,34 +170,9 @@
   line-height: 1.25;
 }
 
-/* Floats below the card on open, overlapping whatever sits underneath,
-   instead of pushing the card taller - so the card itself never changes
-   size and every card's toggle line stays at the same level. A small gap
-   above (see .componentToggle's margin) is the only "air" a closed card
-   shows; there's no reserved blank space for the description. */
-.componentPopover {
-  position: absolute;
-  top: 100%;
-  left: 0;
-  right: 0;
-  z-index: 5;
-  margin-top: -1px;
-  padding: 10px clamp(18px, 2vw, 20px) 18px;
-  background: linear-gradient(170deg, #ffffff 0%, #fdfbf7 100%);
-  border-radius: 0 0 6px 6px;
-  box-shadow: var(--shadow-card-hover);
-}
-
-.componentBody {
-  margin: 0;
-  font-size: 14px;
-  line-height: 1.55;
-  color: var(--color-ink-body);
-}
-
-/* Reveals .componentPopover on click instead of showing all five
-   descriptions at once - keeps the row reading as five photos and titles,
-   not a wall of text, while the full wording stays one tap away. */
+/* Opens .componentOverlay on click instead of showing all five descriptions
+   at once - keeps the row reading as five photos and titles, not a wall of
+   text, while the full wording stays one tap away. */
 .componentToggle {
   display: flex;
   align-items: center;
@@ -210,6 +185,66 @@
   text-transform: uppercase;
   color: var(--color-gold-text);
   cursor: pointer;
+}
+
+/* ---------- Component detail modal ---------- */
+
+/* Same centered-dialog pattern as the review cards' "Read full review" -
+   every card looks identical when open (same size, same position), so a
+   short description and a long one never read as uneven, and it can never
+   overlap the Benefits panel below. */
+.componentOverlay {
+  position: fixed;
+  inset: 0;
+  z-index: 210;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: clamp(20px, 5vw, 60px);
+  background: rgba(30, 23, 17, 0.86);
+  backdrop-filter: blur(6px);
+  border: none;
+}
+
+.componentModal {
+  position: relative;
+  width: 100%;
+  max-width: 560px;
+  max-height: 86vh;
+  overflow: auto;
+  text-align: left;
+  background: var(--gradient-card);
+  border: 1px solid rgba(168, 135, 90, 0.45);
+  border-radius: var(--radius-lg);
+  box-shadow: 0 60px 120px -50px rgba(0, 0, 0, 0.85);
+  padding: clamp(32px, 4vw, 48px);
+}
+
+.componentModalNumber {
+  display: block;
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: 15px;
+  color: var(--color-gold-text);
+  margin-bottom: 6px;
+}
+
+/* The title stays visible at the top of the modal (rather than disappearing
+   along with the photo/toggle) so it's always clear which of the five
+   topics is being read. */
+.componentModalTitle {
+  font-family: var(--font-display);
+  font-weight: 300;
+  font-size: clamp(24px, 2.6vw, 30px);
+  line-height: 1.2;
+  margin: 0 0 20px;
+}
+
+.componentModalBody {
+  margin: 0;
+  font-size: var(--text-body);
+  line-height: 1.8;
+  color: var(--color-ink-strong);
 }
 
 /* ---------- Benefits ---------- */

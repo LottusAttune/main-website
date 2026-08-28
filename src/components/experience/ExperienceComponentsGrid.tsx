@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 import styles from '@/app/v1/experience/experience.module.css';
 import { ExperienceComponentCard } from './ExperienceComponentCard';
@@ -20,10 +20,23 @@ type Props = {
   cards: ExperienceComponentCardData[];
 };
 
-/** Only one card's details open at a time - opening another closes whichever
-    was open, so reading one never leaves the row permanently crowded. */
+/** "Details" opens a centered modal (same pattern as the review cards' "Read
+    full review") instead of an in-place reveal - every card looks identical
+    when open, none of them can overlap the Benefits panel below, and there's
+    no uneven depth between a short description and a long one. */
 export function ExperienceComponentsGrid({ cards }: Props) {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
+  const close = useCallback(() => setOpenIndex(null), []);
+  const active = openIndex !== null ? cards[openIndex] : null;
+
+  useEffect(() => {
+    if (openIndex === null) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') close();
+    };
+    document.addEventListener('keydown', onKey);
+    return () => document.removeEventListener('keydown', onKey);
+  }, [openIndex, close]);
 
   return (
     <div className={styles.componentGrid}>
@@ -32,9 +45,25 @@ export function ExperienceComponentsGrid({ cards }: Props) {
           key={card.n}
           {...card}
           open={openIndex === i}
-          onToggle={() => setOpenIndex((current) => (current === i ? null : i))}
+          onOpen={() => setOpenIndex(i)}
         />
       ))}
+
+      {active ? (
+        <div
+          className={styles.componentOverlay}
+          role="dialog"
+          aria-modal="true"
+          aria-label={active.title}
+          onClick={close}
+        >
+          <div className={styles.componentModal} onClick={(e) => e.stopPropagation()}>
+            <span className={styles.componentModalNumber}>{active.n}</span>
+            <h2 className={styles.componentModalTitle}>{active.title}</h2>
+            <p className={styles.componentModalBody}>{active.body}</p>
+          </div>
+        </div>
+      ) : null}
     </div>
   );
 }

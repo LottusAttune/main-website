@@ -25,7 +25,17 @@ const TAG_CLASS = {
 const PATH_PHOTO_POSITION: Record<string, string> = {
   'for-individuals-dof': 'center center',
   'somatic-main': 'center 35%',
-  'for-teams-cropped': 'center 30%',
+  // Bottom-anchored so any crop comes only from the empty ceiling at the
+  // top of the room, never from the people on the floor below.
+  'for-teams-cropped': 'center 100%',
+};
+
+// Corporate Wellness gets a shorter box than the shared 4:5 - just enough to
+// trim the empty ceiling above the chandelier, not the people (see the
+// bottom-anchored object-position above). The other two photos stay at the
+// default 4:5 so they show exactly as they always have.
+const PATH_PHOTO_ASPECT: Record<string, string> = {
+  'for-teams-cropped': '4 / 4.7',
 };
 
 export default function HomePage() {
@@ -132,10 +142,10 @@ export default function HomePage() {
         {/* ---------- Choose your path ---------- */}
         <section id="paths" className={`${styles.pathsSection} section--soft`} aria-labelledby="paths-heading">
           <div className="shell">
-            <div className={styles.centered} data-reveal="" style={{ marginBottom: 6 }}>
+            <div className={styles.centered} data-reveal="" style={{ marginBottom: 36 }}>
               <h2
                 id="paths-heading"
-                className={`display h2 ${styles.centeredHeading}`}
+                className={`display h2 ${styles.centeredHeading} ${styles.pathsHeading}`}
               >
                 For organizations and teams,
                 <br />
@@ -155,7 +165,10 @@ export default function HomePage() {
                     className={`card ${styles.pathCard}`}
                     data-reveal=""
                   >
-                    <div className={styles.pathPhoto}>
+                    <div
+                      className={styles.pathPhoto}
+                      style={{ aspectRatio: PATH_PHOTO_ASPECT[path.img] }}
+                    >
                       <Image
                         src={photo.src}
                         alt=""

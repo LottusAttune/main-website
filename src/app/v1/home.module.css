@@ -238,10 +238,16 @@
    three read as the same size rather than the default --text-h2 looking
    noticeably bigger on the single-line headings. */
 .centeredHeading {
-  margin: 0 auto 0;
+  margin: 0 auto 14px;
   max-width: 32ch;
   font-size: clamp(24px, 3.2vw, 44px);
   line-height: 1.1;
+}
+
+/* Paths-only - a size down from .centeredHeading's default, freeing up
+   vertical room for more air around the cards below instead. */
+.pathsHeading {
+  font-size: clamp(20px, 2.6vw, 32px);
 }
 
 .sectionHeadingSm {
@@ -274,12 +280,10 @@
 
 /* ---------- Choose your path ---------- */
 
-/* Trimmed well below the shared .section padding - this section should read
-   in as close to one screen as its 3 full photo cards allow. scroll-margin-top
-   keeps the sticky nav from covering the heading when "See the options"
-   jumps straight to this anchor. */
+/* scroll-margin-top keeps the sticky nav from covering the heading when
+   "See the options" jumps straight to this anchor. */
 .pathsSection {
-  padding: clamp(6px, 0.8vw, 10px) var(--space-gutter);
+  padding: clamp(28px, 3.5vw, 44px) var(--space-gutter);
   scroll-margin-top: 100px;
 }
 
@@ -299,9 +303,13 @@
   background: linear-gradient(170deg, #ffffff 0%, #fdfbf7 100%);
 }
 
+/* Default 4:5 shows each photo at its own native crop (unchanged from how
+   these were originally framed) - Corporate gets a shorter box via an
+   inline style override in page.tsx (aspect-ratio 4/4.7, bottom-anchored
+   object-position) so only its empty ceiling trims, never the people. */
 .pathPhoto {
   position: relative;
-  aspect-ratio: 4 / 3.6;
+  aspect-ratio: 4 / 5;
   overflow: hidden;
   min-height: 0;
 }
@@ -318,7 +326,7 @@
   display: flex;
   flex-direction: column;
   flex: 1;
-  padding: clamp(6px, 0.8vw, 8px) clamp(20px, 2.5vw, 30px);
+  padding: clamp(20px, 2.4vw, 28px) clamp(20px, 2.5vw, 30px);
 }
 
 .pathTags {
@@ -326,7 +334,7 @@
   align-items: center;
   gap: 10px;
   flex-wrap: wrap;
-  margin-bottom: 2px;
+  margin-bottom: 10px;
 }
 
 /* Scoped to these cards only (not the shared .tag, which the /lp landing
@@ -359,15 +367,15 @@
 .pathTitle {
   font-family: var(--font-display);
   font-weight: 300;
-  font-size: 20px;
+  font-size: 24px;
   line-height: 1.2;
-  margin: 0 0 2px;
+  margin: 0 0 8px;
 }
 
 .pathText {
   margin: 0;
   font-size: 15px;
-  line-height: 1.35;
+  line-height: 1.6;
   color: var(--color-ink-body);
 }
 

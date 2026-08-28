@@ -245,14 +245,14 @@
 
 /* Matches the display-font treatment of the Experience page's
    "Everything Curated into One Offering" subtitle (same family, weight and
-   color) but a size down from its clamp(18px,2vw,22px) - this is a lede
+   color) just a notch down from its clamp(18px,2vw,22px) - this is a lede
    line under a heading, not a section subtitle. */
 .centeredLede {
   margin: 0 auto;
   max-width: 820px;
   font-family: var(--font-display);
   font-weight: 400;
-  font-size: clamp(15px, 1.6vw, 17px);
+  font-size: clamp(17px, 1.9vw, 20px);
   color: var(--color-gold-text);
 }
 

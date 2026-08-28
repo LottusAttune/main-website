@@ -170,13 +170,32 @@
   line-height: 1.14;
 }
 
-/* Two panels, one dark (Corporate) and one light (Individuals) - echoes the
-   Guide section's dark treatment on the home page instead of the flat beige
-   card language used elsewhere on this page. */
+/* Two columns, one dark (Corporate) and one light (Individuals) - echoes
+   the Guide section's dark treatment on the home page instead of the flat
+   beige card language used elsewhere on this page.
+
+   Each column is `display: contents` here, so its cells (header, each
+   item, the closing note) become direct grid items and pair row-for-row
+   with the same row in the other column - a grid row always sizes to its
+   tallest cell, so Teams and Individuals line up exactly at every row
+   regardless of how their copy lengths differ, with the shorter cell just
+   gaining the extra room as breathing space.
+
+   overflow: hidden + radius on this container (rather than on each cell)
+   means the rounded corners land correctly around the whole shape without
+   needing separate corner rules per cell. */
 .benefitsSplit {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 2px;
+  /* Explicit rows (header, 3 items, closing) so "grid-row: 1 / -1" below
+     has an actual explicit grid to span - without this, -1 only counts
+     against explicit rows (of which there'd be none) and collapses to
+     nothing past row 1. */
+  grid-template-rows: repeat(5, auto);
+  column-gap: 2px;
+  row-gap: 0;
+  border-radius: 6px;
+  overflow: hidden;
 }
 
 @media (max-width: 760px) {
@@ -185,30 +204,85 @@
   }
 }
 
-.benefitsPanel {
-  padding: clamp(28px, 3.2vw, 44px) clamp(24px, 3vw, 44px);
-  border-radius: 6px;
+/* One continuous background per column at desktop width, rather than each
+   cell painting its own copy of the gradient - a `display: contents`
+   column has no box of its own to carry a background, so this spans every
+   row behind it instead. Hidden below 760px, where the column itself
+   becomes a normal block and carries its own background directly. */
+.benefitsBg {
+  grid-row: 1 / -1;
 }
 
-.benefitsPanelDark {
+.benefitsBgDark {
+  grid-column: 1;
   background: var(--gradient-deep);
+}
+
+.benefitsBgLight {
+  grid-column: 2;
+  background: #f9f3e7;
+}
+
+@media (max-width: 760px) {
+  .benefitsBg {
+    display: none;
+  }
+}
+
+.benefitsCol {
+  display: contents;
+}
+
+/* Below 760px each column becomes one continuous block instead of
+   `contents` - its cells stack in normal flow as one piece (Teams
+   entirely, then Individuals entirely) rather than interleaving row by
+   row the way the desktop grid pairs them, and it carries its own
+   background since .benefitsBg is hidden at this width. */
+@media (max-width: 760px) {
+  .benefitsCol {
+    display: block;
+  }
+
+  .benefitsColDark {
+    background: var(--gradient-deep);
+  }
+
+  .benefitsColLight {
+    background: #f9f3e7;
+  }
+}
+
+.benefitsCol > *:nth-child(1) { grid-row: 1; }
+.benefitsCol > *:nth-child(2) { grid-row: 2; }
+.benefitsCol > *:nth-child(3) { grid-row: 3; }
+.benefitsCol > *:nth-child(4) { grid-row: 4; }
+.benefitsCol > *:nth-child(5) { grid-row: 5; }
+
+.benefitsCell {
+  padding-left: clamp(24px, 3vw, 44px);
+  padding-right: clamp(24px, 3vw, 44px);
+}
+
+.benefitsCellDark {
+  grid-column: 1;
   color: var(--color-cream-text-soft);
 }
 
-.benefitsPanelLight {
-  background: #f9f3e7;
+.benefitsCellLight {
+  grid-column: 2;
   color: var(--color-ink);
 }
 
-/* Fixed so both panels' item rows start at the same height - both notes
-   are one line at this width, so this only needs to cover that, not a
-   second wrapped line. */
-.benefitsPanelHeader {
-  min-height: clamp(118px, 12vw, 148px);
+.benefitsCellHeader {
+  padding-top: clamp(28px, 3.2vw, 44px);
 }
 
-/* Mirrors between panels rather than matching the shared .tag pill used
-   elsewhere - solid cream on dark, solid ink on light, no gold/tan. */
+.benefitsCellClosing {
+  padding-bottom: clamp(28px, 3.2vw, 44px);
+}
+
+/* Mirrors between the two sides rather than matching the shared .tag pill
+   used elsewhere - solid cream on dark, solid ink on light, no gold/tan. */
 .benefitsPanelTag {
   display: inline-block;
   margin-bottom: 16px;
@@ -219,12 +293,12 @@
   border-radius: 6px;
 }
 
-.benefitsPanelDark .benefitsPanelTag {
+.benefitsCellDark .benefitsPanelTag {
   background: var(--color-cream-text);
   color: var(--color-ink);
 }
 
-.benefitsPanelLight .benefitsPanelTag {
+.benefitsCellLight .benefitsPanelTag {
   background: var(--color-ink);
   color: var(--color-cream-text);
 }
@@ -243,24 +317,25 @@
   line-height: 1.7;
 }
 
-.benefitsPanelDark .benefitsPanelNote {
+.benefitsCellDark .benefitsPanelNote {
   color: rgba(246, 239, 229, 0.75);
 }
 
-.benefitsPanelLight .benefitsPanelNote {
+.benefitsCellLight .benefitsPanelNote {
   color: var(--color-ink-body);
 }
 
-.benefitsItem {
-  padding: 16px 0;
+.benefitsCellItem {
+  padding-top: 16px;
+  padding-bottom: 16px;
   border-top: 1px solid;
 }
 
-.benefitsPanelDark .benefitsItem {
+.benefitsCellDark.benefitsCellItem {
   border-color: var(--hairline-dark);
 }
 
-.benefitsPanelLight .benefitsItem {
+.benefitsCellLight.benefitsCellItem {
   border-color: var(--hairline-light);
 }
 
@@ -277,27 +352,27 @@
   line-height: 1.6;
 }
 
-.benefitsPanelDark .benefitsItemBody {
+.benefitsCellDark .benefitsItemBody {
   color: rgba(246, 239, 229, 0.7);
 }
 
-.benefitsPanelLight .benefitsItemBody {
+.benefitsCellLight .benefitsItemBody {
   color: var(--color-ink-body);
 }
 
 .benefitsClosing {
-  margin: clamp(20px, 2.4vw, 26px) 0 0;
+  margin: 0;
   font-family: var(--font-display);
   font-weight: 400;
   font-style: italic;
   font-size: 16px;
 }
 
-.benefitsPanelDark .benefitsClosing {
+.benefitsCellDark .benefitsClosing {
   color: var(--color-gold-light);
 }
 
-.benefitsPanelLight .benefitsClosing {
+.benefitsCellLight .benefitsClosing {
   color: var(--color-gold-text);
 }
 

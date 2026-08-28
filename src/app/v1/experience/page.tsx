@@ -98,15 +98,26 @@ export default function ExperiencePage() {
           </div>
 
           <div className={`shell ${styles.benefitsSplit}`}>
-            <div
-              className={`${styles.benefitsPanel} ${styles.benefitsPanelDark}`}
-            >
-              <div className={styles.benefitsPanelHeader}>
+            {/* One continuous background per side, rather than each row
+                painting its own copy of the gradient - spans every row so
+                the dark/light fills read as one solid panel, not banded
+                strips. Hidden below 760px, where the two column wrappers
+                below carry their own continuous background instead. */}
+            <div className={`${styles.benefitsBg} ${styles.benefitsBgDark}`} aria-hidden="true" />
+            <div className={`${styles.benefitsBg} ${styles.benefitsBgLight}`} aria-hidden="true" />
+
+            {/* Each column is `display: contents` at desktop width, so its
+                children become direct grid items and pair row-for-row with
+                the other column (a grid row always sizes to its tallest
+                cell, so Teams and Individuals line up exactly no matter how
+                their copy lengths differ). Below 760px it becomes a normal
+                block instead, so the column stacks as one continuous piece
+                - Teams entirely, then Individuals - rather than
+                interleaving row by row. */}
+            <div className={`${styles.benefitsCol} ${styles.benefitsColDark}`}>
+              <div className={`${styles.benefitsCell} ${styles.benefitsCellDark} ${styles.benefitsCellHeader}`}>
                 <span className={styles.benefitsPanelTag}>Corporate</span>
-                <h3
-                  id="teams-heading"
-                  className={`display ${styles.benefitsPanelHeading}`}
-                >
+                <h3 id="teams-heading" className={`display ${styles.benefitsPanelHeading}`}>
                   For Teams &amp; Organizations
                 </h3>
                 <p className={styles.benefitsPanelNote}>
@@ -116,26 +127,27 @@ export default function ExperiencePage() {
               </div>
 
               {BENEFITS_TEAMS.items.map((item) => (
-                <div key={item.title} className={styles.benefitsItem} data-reveal="">
+                <div
+                  key={item.title}
+                  className={`${styles.benefitsCell} ${styles.benefitsCellDark} ${styles.benefitsCellItem}`}
+                  data-reveal=""
+                >
                   <h4 className={styles.benefitsItemTitle}>{item.title}</h4>
                   <p className={styles.benefitsItemBody}>{item.body}</p>
                 </div>
               ))}
 
-              <p className={styles.benefitsClosing}>{BENEFITS_TEAMS.note}</p>
+              <div className={`${styles.benefitsCell} ${styles.benefitsCellDark} ${styles.benefitsCellClosing}`}>
+                <p className={styles.benefitsClosing}>{BENEFITS_TEAMS.note}</p>
+              </div>
             </div>
 
-            <div
-              className={`${styles.benefitsPanel} ${styles.benefitsPanelLight}`}
-            >
-              <div className={styles.benefitsPanelHeader}>
+            <div className={`${styles.benefitsCol} ${styles.benefitsColLight}`}>
+              <div className={`${styles.benefitsCell} ${styles.benefitsCellLight} ${styles.benefitsCellHeader}`}>
                 <span className={styles.benefitsPanelTag}>
                   1 : 1 &nbsp;·&nbsp; Private Groups
                 </span>
-                <h3
-                  id="individuals-heading"
-                  className={`display ${styles.benefitsPanelHeading}`}
-                >
+                <h3 id="individuals-heading" className={`display ${styles.benefitsPanelHeading}`}>
                   For Individuals
                 </h3>
                 <p className={styles.benefitsPanelNote}>
@@ -144,13 +156,19 @@ export default function ExperiencePage() {
               </div>
 
               {BENEFITS_INDIVIDUAL.items.map((item) => (
-                <div key={item.title} className={styles.benefitsItem} data-reveal="">
+                <div
+                  key={item.title}
+                  className={`${styles.benefitsCell} ${styles.benefitsCellLight} ${styles.benefitsCellItem}`}
+                  data-reveal=""
+                >
                   <h4 className={styles.benefitsItemTitle}>{item.title}</h4>
                   <p className={styles.benefitsItemBody}>{item.body}</p>
                 </div>
               ))}
 
-              <p className={styles.benefitsClosing}>{BENEFITS_INDIVIDUAL.note}</p>
+              <div className={`${styles.benefitsCell} ${styles.benefitsCellLight} ${styles.benefitsCellClosing}`}>
+                <p className={styles.benefitsClosing}>{BENEFITS_INDIVIDUAL.note}</p>
+              </div>
             </div>
           </div>
         </section>

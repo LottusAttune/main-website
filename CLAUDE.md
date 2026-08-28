@@ -86,6 +86,47 @@ small sizes the labels use.
 
 Every text colour on the site currently passes WCAG AA. Keep it that way.
 
+### 6. Visual QA — check these yourself, before she has to
+
+Recurring issues that took multiple rounds to catch by eye on past changes.
+Check them proactively on any layout/colour work, not just when asked, so they
+don't ship in the first place:
+
+- **Side margins.** Sections on a page share a `--width-content` +
+  `--space-gutter` pattern (see e.g. `.intro`, `.block`, `.galleryBlock` in
+  `experience.module.css`). If new markup uses the bare `.shell` class,
+  confirm it also gets its own gutter padding like its neighbours — `.shell`
+  alone only caps max-width, so without it the block runs wider than the
+  rest of the page.
+- **Contrast on any new text colour.** Before applying a colour to text on a
+  dark or gradient background, compute contrast against *both ends* of the
+  gradient (not just eyeballing) and confirm it clears 4.5:1 for body-sized
+  text. Never use a semi-transparent colour (`rgba(...)` / `opacity`) for
+  body text sitting on a background — use a solid colour or token instead.
+  Alpha-blended text renders visibly softer/blurrier than solid text,
+  especially obvious side-by-side with a solid counterpart.
+- **Two-sided or mirrored layouts.** When a design has a light/dark (or
+  otherwise paired) side, keep font sizes, weights, italics and opacity
+  symmetric between them unless there's a clear reason not to — check both
+  sides side by side, not just the one you're actively editing.
+- **Row alignment across split layouts.** When two columns need their rows
+  to line up despite different copy lengths, use CSS Grid so each row sizes
+  to its tallest cell (an explicit `grid-template-rows` if anything spans
+  `grid-row: 1 / -1`) rather than fixed heights or eyeballing it.
+- **Vertical rhythm.** A section should read in close to one screen without
+  forcing a scroll for no reason, but shouldn't feel cramped either — compare
+  new padding against neighbouring sections' actual values instead of
+  picking numbers in isolation.
+- **Corners and one-off colours.** Match the page's already-established
+  system (this site currently defaults to a 6px soft-square radius, with 0
+  reserved for a couple of deliberately flat elements) rather than
+  introducing a new radius or a new hex value without first checking whether
+  an existing token already fits.
+- **Verify visually, not just by reading the CSS.** Screenshot the actual
+  rendered result — ideally at more than one breakpoint — before calling a
+  layout change done. CSS that looks correct on paper (e.g. `grid-row: 1 /
+  -1` without a `grid-template-rows` to anchor it) can silently fail.
+
 ---
 
 ## Where things are

@@ -238,7 +238,7 @@
    three read as the same size rather than the default --text-h2 looking
    noticeably bigger on the single-line headings. */
 .centeredHeading {
-  margin: 0 auto 14px;
+  margin: 0 auto 6px;
   max-width: 32ch;
   font-size: clamp(24px, 3.2vw, 44px);
   line-height: 1.1;
@@ -283,8 +283,29 @@
 /* scroll-margin-top keeps the sticky nav from covering the heading when
    "See the options" jumps straight to this anchor. */
 .pathsSection {
-  padding: clamp(28px, 3.5vw, 44px) var(--space-gutter);
+  padding: clamp(20px, 2.6vw, 32px) var(--space-gutter);
   scroll-margin-top: 100px;
+}
+
+/* Narrower than the section's full width - scales all three cards (photo and
+   text together) down uniformly so the whole card is smaller, rather than
+   cropping any more out of the photos themselves. Every photo keeps its
+   native 4:5 framing at this smaller size. grid-template-columns overrides
+   the shared .grid--cards auto-fit rule (minmax(290px,1fr)), which otherwise
+   collapses to 2 columns - and 2 rows - at this narrower width. */
+.pathsGrid {
+  max-width: 680px;
+  margin: 0 auto;
+  grid-template-columns: repeat(3, 1fr);
+}
+
+/* Below this width three fixed columns would be too narrow to read - fall
+   back to the original responsive auto-fit behavior at full section width. */
+@media (max-width: 900px) {
+  .pathsGrid {
+    max-width: 100%;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  }
 }
 
 /* The photo sits flush at the top - fully straight corners there, no
@@ -303,10 +324,10 @@
   background: linear-gradient(170deg, #ffffff 0%, #fdfbf7 100%);
 }
 
-/* Default 4:5 shows each photo at its own native crop (unchanged from how
-   these were originally framed) - Corporate gets a shorter box via an
-   inline style override in page.tsx (aspect-ratio 4/4.7, bottom-anchored
-   object-position) so only its empty ceiling trims, never the people. */
+/* All three photos share this same 4:5 box, at their native crop - unchanged
+   from how they were originally framed. Corporate's object-position is
+   bottom-anchored (see PATH_PHOTO_POSITION) so its very slight crop trims
+   only the empty ceiling, never the people. */
 .pathPhoto {
   position: relative;
   aspect-ratio: 4 / 5;
@@ -326,15 +347,15 @@
   display: flex;
   flex-direction: column;
   flex: 1;
-  padding: clamp(20px, 2.4vw, 28px) clamp(20px, 2.5vw, 30px);
+  padding: clamp(12px, 1.5vw, 16px) clamp(16px, 2vw, 24px);
 }
 
 .pathTags {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
   flex-wrap: wrap;
-  margin-bottom: 10px;
+  margin-bottom: 6px;
 }
 
 /* Scoped to these cards only (not the shared .tag, which the /lp landing
@@ -367,15 +388,15 @@
 .pathTitle {
   font-family: var(--font-display);
   font-weight: 300;
-  font-size: 24px;
+  font-size: 17px;
   line-height: 1.2;
-  margin: 0 0 8px;
+  margin: 0 0 4px;
 }
 
 .pathText {
   margin: 0;
-  font-size: 15px;
-  line-height: 1.6;
+  font-size: 13px;
+  line-height: 1.35;
   color: var(--color-ink-body);
 }
 

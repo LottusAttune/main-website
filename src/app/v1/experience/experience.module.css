@@ -104,8 +104,10 @@
 
 /* The shared .card class sets a 26px radius and a hairline border on all
    four corners - square corners here instead (photo flush square at the
-   top, matching the home page's path cards), and no border line. The
-   card--lift hover motion is untouched. */
+   top, matching the home page's path cards), and no border line. Not
+   card--lift: the hover lift/translate read as unwanted motion across a row
+   of five - hovering keeps the shadow/border change below without the
+   movement. */
 .componentCard {
   display: flex;
   flex-direction: column;
@@ -113,6 +115,11 @@
   overflow: hidden;
   border: none;
   border-radius: 0 0 6px 6px;
+}
+
+.componentCard:hover {
+  border-color: var(--gold-rim-strong);
+  box-shadow: var(--shadow-card-hover);
 }
 
 .componentPhoto {
@@ -132,10 +139,21 @@
   display: flex;
   flex-direction: column;
   flex: 1;
-  gap: 8px;
+  gap: 10px;
   /* Bottom trimmed smaller than the top - the leftover white space below the
      text read as too much empty margin. */
   padding: clamp(18px, 2vw, 22px) clamp(18px, 2vw, 20px) clamp(12px, 1.4vw, 16px);
+}
+
+/* Reserves room for a wrapped 2-line title - so every card's title block is
+   the same height regardless of whether this particular title wraps to 1 or
+   2 lines, which (combined with .componentDetails below) keeps all five
+   cards exactly the same size. */
+.componentHead {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-height: 74px;
 }
 
 .componentNumber {
@@ -153,11 +171,29 @@
   line-height: 1.25;
 }
 
+/* Fixed height reserved for the toggle + description, sized to fit the
+   longest of the five descriptions - every card reserves the same space
+   whether its own text is short or long and whether it's open or closed, so
+   toggling never changes any card's height. */
+.componentDetails {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-height: 170px;
+}
+
 .componentBody {
   margin: 0;
   font-size: 14px;
   line-height: 1.55;
   color: var(--color-ink-body);
+  opacity: 0;
+  visibility: hidden;
+}
+
+.componentBodyOpen {
+  opacity: 1;
+  visibility: visible;
 }
 
 /* Reveals .componentBody on click instead of showing all five descriptions

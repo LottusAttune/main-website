@@ -6,7 +6,7 @@ import styles from './ReviewsCarousel.module.css';
 
 const GAP = 18;
 const AUTOPLAY_MS = 13000;
-const EXCERPT_LIMIT = 150;
+const EXCERPT_LIMIT = 115;
 
 export type Review = {
   name: string;

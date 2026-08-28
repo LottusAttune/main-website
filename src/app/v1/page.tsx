@@ -30,14 +30,6 @@ const PATH_PHOTO_POSITION: Record<string, string> = {
   'for-teams-cropped': 'center 100%',
 };
 
-// Corporate Wellness gets a shorter box than the shared 4:5 - just enough to
-// trim the empty ceiling above the chandelier, not the people (see the
-// bottom-anchored object-position above). The other two photos stay at the
-// default 4:5 so they show exactly as they always have.
-const PATH_PHOTO_ASPECT: Record<string, string> = {
-  'for-teams-cropped': '4 / 4.7',
-};
-
 export default function HomePage() {
   const portrait = asset('silvana-hero');
 
@@ -142,7 +134,7 @@ export default function HomePage() {
         {/* ---------- Choose your path ---------- */}
         <section id="paths" className={`${styles.pathsSection} section--soft`} aria-labelledby="paths-heading">
           <div className="shell">
-            <div className={styles.centered} data-reveal="" style={{ marginBottom: 36 }}>
+            <div className={styles.centered} data-reveal="" style={{ marginBottom: 16 }}>
               <h2
                 id="paths-heading"
                 className={`display h2 ${styles.centeredHeading} ${styles.pathsHeading}`}
@@ -156,7 +148,7 @@ export default function HomePage() {
               </p>
             </div>
 
-            <div className="grid grid--cards">
+            <div className={`grid grid--cards ${styles.pathsGrid}`}>
               {PATHS.map((path) => {
                 const photo = asset(path.img);
                 return (
@@ -165,10 +157,7 @@ export default function HomePage() {
                     className={`card ${styles.pathCard}`}
                     data-reveal=""
                   >
-                    <div
-                      className={styles.pathPhoto}
-                      style={{ aspectRatio: PATH_PHOTO_ASPECT[path.img] }}
-                    >
+                    <div className={styles.pathPhoto}>
                       <Image
                         src={photo.src}
                         alt=""

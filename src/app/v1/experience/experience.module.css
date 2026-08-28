@@ -321,8 +321,11 @@
   line-height: 1.6;
 }
 
+/* A solid token rather than a semi-transparent rgba blend - the partial
+   opacity was rendering noticeably softer/hazier than the fully-opaque ink
+   text on the Individuals side, not just more muted. */
 .benefitsCellDark .benefitsPanelNote {
-  color: rgba(246, 239, 229, 0.75);
+  color: var(--color-cream-text-soft);
 }
 
 .benefitsCellLight .benefitsPanelNote {
@@ -357,7 +360,7 @@
 }
 
 .benefitsCellDark .benefitsItemBody {
-  color: rgba(246, 239, 229, 0.7);
+  color: var(--color-cream-text-soft);
 }
 
 .benefitsCellLight .benefitsItemBody {

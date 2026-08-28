@@ -32,7 +32,6 @@ export const GUIDE = {
     '”I bridge the gap between performance and restoration, productivity and well-being, and excellence and human connection.”',
   paragraphs: [
     'As a Wellness Facilitator with a strong Human Resources background, I help individuals and organizations across Toronto and the GTA reduce stress, restore balance, and enhance overall well-being through curated, immersive sound-based experiences combined with somatic practices and mindfulness.',
-    'Unlike many wellness practitioners, I bring over 15 years of experience in Human Resources across recognized private and public-sector organizations and corporations.',
   ],
 } as const;
 

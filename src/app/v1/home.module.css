@@ -160,8 +160,11 @@
   color: var(--color-cream-text-soft);
 }
 
+/* More room than before - with the second paragraph removed, this single
+   paragraph needs more air before the button rather than the tighter gap
+   that made sense between two stacked paragraphs. */
 .guideBody:last-of-type {
-  margin-bottom: 34px;
+  margin-bottom: 48px;
 }
 
 /* Softer than the site's usual full-pill buttons - a subtle round, not a
@@ -173,6 +176,10 @@
 .guideBtn {
   /* Matches the minimal roundness standard used across the page. */
   border-radius: 6px;
+  /* A bit more presence than the shared .btn default - with less text
+     above it now, the button carries more of the section's visual weight. */
+  padding: 18px 46px;
+  min-height: 56px;
 }
 
 /* ---------- Watch ---------- */

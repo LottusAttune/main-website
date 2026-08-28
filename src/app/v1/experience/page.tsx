@@ -93,42 +93,11 @@ export default function ExperiencePage() {
 
         {/* ---------- Benefits ---------- */}
         <section
-          className={`section section--beige ${styles.benefitsSection}`}
+          className={`section section--soft ${styles.benefitsSection}`}
           aria-label="Benefits"
         >
           <div className={`shell ${styles.benefitsShell}`}>
             <h2 className={`display ${styles.benefitsHeading}`}>Benefits</h2>
-
-            <div className={styles.benefitsGroup}>
-              <div className={styles.sectionHead}>
-                <div style={{ minWidth: 0 }}>
-                  <span className={`tag ${styles.benefitTag}`}>
-                    1 : 1 &nbsp;·&nbsp; Private Groups
-                  </span>
-                  <h3
-                    id="individuals-heading"
-                    className={`display ${styles.sectionHeadTitle}`}
-                  >
-                    For Individuals
-                  </h3>
-                </div>
-                <p className={styles.sectionHeadNote}>
-                  Create space to reset, recharge, and reconnect from within
-                </p>
-              </div>
-
-              <div className={styles.columns}>
-                {BENEFITS_INDIVIDUAL.items.map((item) => (
-                  <div key={item.title} className={styles.column} data-reveal="">
-                    <h3 className={styles.columnTitle}>{item.title}</h3>
-                    <p className={styles.columnBody}>{item.body}</p>
-                  </div>
-                ))}
-              </div>
-              <p className={styles.benefitsNote}>{BENEFITS_INDIVIDUAL.note}</p>
-            </div>
-
-            <div className={styles.benefitsDivider} />
 
             <div className={styles.benefitsGroup}>
               <div className={styles.sectionHead}>
@@ -158,6 +127,37 @@ export default function ExperiencePage() {
                 ))}
               </div>
               <p className={styles.benefitsNote}>{BENEFITS_TEAMS.note}</p>
+            </div>
+
+            <div className={styles.benefitsDivider} />
+
+            <div className={styles.benefitsGroup}>
+              <div className={styles.sectionHead}>
+                <div style={{ minWidth: 0 }}>
+                  <span className={`tag ${styles.benefitTag}`}>
+                    1 : 1 &nbsp;·&nbsp; Private Groups
+                  </span>
+                  <h3
+                    id="individuals-heading"
+                    className={`display ${styles.sectionHeadTitle}`}
+                  >
+                    For Individuals
+                  </h3>
+                </div>
+                <p className={styles.sectionHeadNote}>
+                  Create space to reset, recharge, and reconnect from within
+                </p>
+              </div>
+
+              <div className={styles.columns}>
+                {BENEFITS_INDIVIDUAL.items.map((item) => (
+                  <div key={item.title} className={styles.column} data-reveal="">
+                    <h3 className={styles.columnTitle}>{item.title}</h3>
+                    <p className={styles.columnBody}>{item.body}</p>
+                  </div>
+                ))}
+              </div>
+              <p className={styles.benefitsNote}>{BENEFITS_INDIVIDUAL.note}</p>
             </div>
           </div>
         </section>

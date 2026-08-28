@@ -177,11 +177,14 @@
   height: clamp(20px, 2.6vw, 32px);
 }
 
+/* Matches .title (the "A Journey to Reset, Align and Thrive" heading) -
+   this was on its own bigger scale, which read as an inconsistent jump in
+   heading sizes on the same page. */
 .benefitsHeading {
   margin: 0 0 clamp(32px, 4vw, 48px);
   font-weight: 300;
-  font-size: clamp(34px, 4.4vw, 56px);
-  line-height: 1.1;
+  font-size: clamp(26px, 3.4vw, 48px);
+  line-height: 1.14;
 }
 
 .sectionHead {
@@ -210,6 +213,8 @@
   color: var(--color-ink-body);
 }
 
+/* The shared .tag class this is paired with is a full pill - a very subtle
+   corner instead, matching the minimal roundness used elsewhere. */
 .benefitTag {
   display: inline-block;
   width: 232px;
@@ -219,6 +224,7 @@
   font-size: 12px;
   background: var(--color-ink);
   color: var(--color-cream-text);
+  border-radius: 6px;
 }
 
 /* ---------- Benefits redesign: shared ---------- */

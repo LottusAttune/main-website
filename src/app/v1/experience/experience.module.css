@@ -368,22 +368,26 @@
   margin: 0;
   font-family: var(--font-display);
   font-weight: 400;
-  font-style: italic;
   font-size: 16px;
 }
 
-/* None of the existing gold tokens land right against this specific dark
-   gradient at this text weight: gold-light reads too yellow, and the
+/* Upright on the Corporate side - the italic read as too "cursive" there.
+   Individuals keeps the italic, which reads fine as-is.
+
+   Color: none of the existing gold tokens land right against this specific
+   dark gradient at this text weight: gold-light reads too yellow, and the
    darker gold tokens (gold, gold-deep) drop under 4.5:1 contrast here
    (checked against both ends of --gradient-deep) - failing the site's own
    "every text colour passes WCAG AA" rule. This is a one-off, deliberately
    desaturated toward champagne/pewter rather than straight yellow-gold,
    picked to clear 4.5:1 at both ends of the gradient. */
 .benefitsCellDark .benefitsClosing {
+  font-style: normal;
   color: #baa287;
 }
 
 .benefitsCellLight .benefitsClosing {
+  font-style: italic;
   color: var(--color-gold-text);
 }
 

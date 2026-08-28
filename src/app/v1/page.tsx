@@ -132,7 +132,7 @@ export default function HomePage() {
         {/* ---------- Choose your path ---------- */}
         <section id="paths" className={`${styles.pathsSection} section--soft`} aria-labelledby="paths-heading">
           <div className="shell">
-            <div className={styles.centered} data-reveal="" style={{ marginBottom: 28 }}>
+            <div className={styles.centered} data-reveal="" style={{ marginBottom: 6 }}>
               <h2
                 id="paths-heading"
                 className={`display h2 ${styles.centeredHeading}`}

@@ -1,5 +1,7 @@
+/* Trimmed well below the shared .section padding - reads in one screen
+   rather than needing a scroll. */
 .intro {
-  padding: var(--space-section-short) var(--space-gutter) clamp(40px, 5vw, 72px);
+  padding: clamp(24px, 3vw, 36px) var(--space-gutter);
   max-width: var(--width-content);
   margin: 0 auto;
 }
@@ -8,23 +10,28 @@
   margin-bottom: 30px;
 }
 
+/* Matches --text-h2, the size used for section headings on the home page
+   (e.g. "In their words") - the page's own h1 treatment (up to 76px) was
+   sized like a hero, but this page has no separate hero above it. */
 .title {
-  margin: 0 0 18px;
+  font-size: var(--text-h2);
+  line-height: 1.14;
+  margin: 0 0 14px;
   max-width: 1000px;
 }
 
 .subtitle {
   font-family: var(--font-display);
   font-weight: 400;
-  font-size: clamp(20px, 2.4vw, 26px);
+  font-size: clamp(18px, 2vw, 22px);
   color: var(--color-gold-text);
-  margin-bottom: 46px;
+  margin-bottom: 30px;
 }
 
 .introGrid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
-  gap: clamp(28px, 4vw, 52px);
+  gap: clamp(20px, 3vw, 36px);
   max-width: var(--width-prose);
 }
 

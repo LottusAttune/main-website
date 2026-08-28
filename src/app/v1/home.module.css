@@ -235,6 +235,7 @@
 .pathCard {
   display: flex;
   flex-direction: column;
+  border: none;
   border-radius: 0 0 6px 6px;
   overflow: hidden;
   /* Cleaner and whiter than the shared .card gradient - stands out clearly
@@ -375,8 +376,9 @@
 .faqCard {
   padding: 20px 22px;
   max-width: 400px;
-  /* Fully square - the shared .card class this is paired with sets its own
-     26px radius, which this overrides. */
+  /* Fully square, no border - the shared .card class this is paired with
+     sets its own 26px radius and a hairline border, which this overrides. */
+  border: none;
   border-radius: 0;
 }
 

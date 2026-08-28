@@ -39,9 +39,9 @@ export const GUIDE = {
 export const JOURNEY_INTRO = {
   heading: 'A Journey to Reset, Align and Thrive',
   subtitle: 'Everything Curated into One Offering',
-  lede: 'Each session brings together five carefully curated components in one seamless offering that supports deep relaxation, nervous system regulation, and sustainable well-being',
+  lede: 'Each session brings together five carefully curated components in one seamless offering that supports deep relaxation, nervous system regulation, and sustainable well-being.',
   longIntro:
-    'More than a traditional sound bath, this all-in-one holistic wellness journey combines restorative and transformational modalities within one cohesive, fully guided experience. Every element is intentionally selected and sequenced to create meaningful impact and a supportive container for self-connection, restore inner balance, and feel renewed and empowered',
+    'More than a traditional sound bath, this all-in-one holistic wellness journey combines restorative and transformational modalities within one cohesive, fully guided experience. Every element is intentionally selected and sequenced to create meaningful impact and a supportive container for self-connection, restore inner balance, and feel renewed and empowered.',
 } as const;
 
 /**

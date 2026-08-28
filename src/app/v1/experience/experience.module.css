@@ -1,7 +1,9 @@
 /* Trimmed well below the shared .section padding - reads in one screen
-   rather than needing a scroll. */
+   rather than needing a scroll. Top padding is smaller than the bottom -
+   without the eyebrow that used to sit here, the old symmetric padding left
+   an empty gap above the heading. */
 .intro {
-  padding: clamp(24px, 3vw, 36px) var(--space-gutter);
+  padding: clamp(12px, 1.6vw, 20px) var(--space-gutter) clamp(24px, 3vw, 36px);
   max-width: var(--width-content);
   margin: 0 auto;
 }
@@ -10,11 +12,12 @@
   margin-bottom: 30px;
 }
 
-/* Matches --text-h2, the size used for section headings on the home page
-   (e.g. "In their words") - the page's own h1 treatment (up to 76px) was
-   sized like a hero, but this page has no separate hero above it. */
+/* A notch below --text-h2 (the size used for section headings on the home
+   page, e.g. "In their words") - at laptop widths the full text-h2 clamp
+   wrapped this heading to 2 lines, eating into the room needed for the
+   photo cards below. */
 .title {
-  font-size: var(--text-h2);
+  font-size: clamp(26px, 3.4vw, 48px);
   line-height: 1.14;
   margin: 0 0 14px;
   max-width: 1000px;
@@ -28,11 +31,32 @@
   margin-bottom: 30px;
 }
 
+/* No max-width of its own - matches the full width of the photo row below
+   (both sit inside .intro/.block, which share the same --width-content
+   container), so the right edge of the second column lines up with the
+   right edge of the Reintegration photo instead of stopping short. */
 .introGrid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+  grid-template-columns: 1fr;
   gap: clamp(20px, 3vw, 36px);
-  max-width: var(--width-prose);
+  align-items: start;
+}
+
+/* Two equal-width columns - the paragraphs are different lengths on
+   purpose (two separate thoughts), so they naturally end at different
+   points, but both start at the same top line with generous space between
+   them. */
+@media (min-width: 760px) {
+  .introGrid {
+    /* Barely-there asymmetry, mostly invisible to the eye, just enough to
+       pull "well-being" up onto the line above instead of standing alone. */
+    grid-template-columns: 0.94fr 1.06fr;
+    gap: clamp(32px, 4vw, 48px);
+  }
+}
+
+.introGrid p {
+  text-align: justify;
 }
 
 .block {
@@ -98,7 +122,9 @@
   flex-direction: column;
   flex: 1;
   gap: 8px;
-  padding: clamp(18px, 2vw, 22px) clamp(18px, 2vw, 20px);
+  /* Bottom trimmed smaller than the top - the leftover white space below the
+     text read as too much empty margin. */
+  padding: clamp(18px, 2vw, 22px) clamp(18px, 2vw, 20px) clamp(12px, 1.4vw, 16px);
 }
 
 .componentNumber {

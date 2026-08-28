@@ -104,7 +104,12 @@ don't ship in the first place:
   text. Never use a semi-transparent colour (`rgba(...)` / `opacity`) for
   body text sitting on a background — use a solid colour or token instead.
   Alpha-blended text renders visibly softer/blurrier than solid text,
-  especially obvious side-by-side with a solid counterpart.
+  especially obvious side-by-side with a solid counterpart. This check
+  applies the moment you touch *any* background or colour in a component —
+  grep that whole file for other `rgba(...)`/`opacity` text colours and fix
+  them in the same pass, rather than only the one line you were asked to
+  change. Don't wait to be told about the second one; the first occurrence
+  is the signal to check the rest.
 - **Two-sided or mirrored layouts.** When a design has a light/dark (or
   otherwise paired) side, keep font sizes, weights, italics and opacity
   symmetric between them unless there's a clear reason not to — check both

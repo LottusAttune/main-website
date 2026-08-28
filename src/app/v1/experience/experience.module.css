@@ -422,42 +422,62 @@
   color: var(--color-gold-text);
 }
 
-.benefitsCellItem {
+/* Wraps all 3 item titles plus the single "See details" toggle for this
+   side. */
+.benefitsCellItems {
   padding-top: 12px;
-  padding-bottom: 12px;
+  padding-bottom: 16px;
   border-top: 1px solid;
 }
 
-.benefitsCellDark.benefitsCellItem {
+.benefitsCellDark.benefitsCellItems {
   border-color: var(--hairline-dark);
 }
 
-.benefitsCellLight.benefitsCellItem {
+.benefitsCellLight.benefitsCellItems {
   border-color: var(--hairline-light);
 }
 
-/* Full-width, unstyled button so the whole row (not just the title text) is
-   the click target. Opens .benefitsFlyout below instead of revealing the
-   body text in place. */
+.benefitsItemRow {
+  padding: 8px 0;
+}
+
+.benefitsItemRow + .benefitsItemRow {
+  border-top: 1px solid;
+}
+
+.benefitsCellDark .benefitsItemRow + .benefitsItemRow {
+  border-color: var(--hairline-dark);
+}
+
+.benefitsCellLight .benefitsItemRow + .benefitsItemRow {
+  border-color: var(--hairline-light);
+}
+
+.benefitsItemTitle {
+  display: block;
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: 18px;
+}
+
+/* One toggle per side reveals all 3 descriptions at once (see
+   .benefitsItemRow above) instead of opening each individually - unstyled
+   button, small and understated since it's a secondary action below the
+   titles it controls. */
 .benefitsItemToggle {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-  width: 100%;
+  gap: 8px;
+  margin-top: 10px;
   padding: 0;
   background: none;
   border: none;
   color: inherit;
-  font: inherit;
-  text-align: left;
+  font-size: 13px;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
   cursor: pointer;
-}
-
-.benefitsItemTitle {
-  font-family: var(--font-display);
-  font-weight: 400;
-  font-size: 18px;
 }
 
 .benefitsItemArrow {
@@ -471,20 +491,13 @@
   transform: rotate(180deg);
 }
 
-/* A small in-place reveal, not the full-screen modal used for the
-   Experience cards/reviews - these one-line benefits are too short to earn
-   a full dialog. Normal flow (not absolute) so it pushes the rest of its
-   own column down rather than overlapping the next item or the closing
-   note - each column is now independent (see .benefitsCol), so this never
-   stretches or leaves blank space in the opposite column. Closes on
-   click-away (click a different item, or leave the row with the mouse -
-   see the item cell's onMouseLeave). */
-.benefitsFlyout {
-  padding: 4px 0 12px;
-}
-
+/* Sits inline right under each title once "See details" is clicked - not
+   the full-screen modal used for the Experience cards/reviews (these
+   one-line benefits are too short to earn a full dialog), and not an
+   absolutely-positioned overlay either, so it just pushes the rest of this
+   side down in normal flow with no leftover blank space when closed. */
 .benefitsFlyoutBody {
-  margin: 0;
+  margin: 6px 0 0;
   font-size: 14px;
   line-height: 1.5;
 }

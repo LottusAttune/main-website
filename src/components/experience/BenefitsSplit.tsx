@@ -15,52 +15,44 @@ type Props = {
   individual: BenefitsGroup;
 };
 
-/** Each item's body reveals inline, right below its own title, instead of
-    the full-screen modal used for the Experience cards/reviews - these
-    one-line benefits are too short to earn a full dialog. Opens on click,
-    closes on click-away or on leaving the row with the mouse, and only one
-    item is open at a time. Each column (Teams/Individuals) is independent,
-    so an open item pushes only its own column down - never the opposite
-    column, and never leaves reserved blank space when closed. */
+/** One toggle per side reveals all 3 of that side's descriptions at once
+    (2 clicks total to see everything, not 6) - a single "See details" click
+    rather than opening each benefit individually. Opens on click, closes on
+    click-away or on leaving the panel with the mouse. The two sides are
+    independent, so opening one never affects the other. */
 export function BenefitsSplit({ teams, individual }: Props) {
-  const [openKey, setOpenKey] = useState<string | null>(null);
+  const [openSide, setOpenSide] = useState<'teams' | 'individual' | null>(null);
 
-  const renderColumn = (
-    group: BenefitsGroup,
-    prefix: 'teams' | 'individual',
-    tone: 'Dark' | 'Light',
-  ) =>
-    group.items.map((item, i) => {
-      const key = `${prefix}-${i}`;
-      const open = openKey === key;
-      return (
-        <div
-          key={item.title}
-          className={`${styles.benefitsCell} ${styles[`benefitsCell${tone}`]} ${styles.benefitsCellItem}`}
-          data-reveal=""
-          onMouseLeave={() => {
-            if (open) setOpenKey(null);
-          }}
-        >
-          <button
-            type="button"
-            className={styles.benefitsItemToggle}
-            onClick={() => setOpenKey((current) => (current === key ? null : key))}
-            aria-expanded={open}
-          >
+  const renderColumn = (group: BenefitsGroup, side: 'teams' | 'individual', tone: 'Dark' | 'Light') => {
+    const open = openSide === side;
+    return (
+      <div
+        className={`${styles.benefitsCell} ${styles[`benefitsCell${tone}`]} ${styles.benefitsCellItems}`}
+        onMouseLeave={() => {
+          if (open) setOpenSide(null);
+        }}
+      >
+        {group.items.map((item) => (
+          <div key={item.title} className={styles.benefitsItemRow}>
             <span className={styles.benefitsItemTitle}>{item.title}</span>
-            <span className={`${styles.benefitsItemArrow} ${open ? styles.benefitsItemArrowOpen : ''}`}>
-              <ChevronIcon />
-            </span>
-          </button>
-          {open ? (
-            <div className={styles.benefitsFlyout}>
-              <p className={styles.benefitsFlyoutBody}>{item.body}</p>
-            </div>
-          ) : null}
-        </div>
-      );
-    });
+            {open ? <p className={styles.benefitsFlyoutBody}>{item.body}</p> : null}
+          </div>
+        ))}
+
+        <button
+          type="button"
+          className={styles.benefitsItemToggle}
+          onClick={() => setOpenSide((current) => (current === side ? null : side))}
+          aria-expanded={open}
+        >
+          <span>{open ? 'Hide details' : 'See details'}</span>
+          <span className={`${styles.benefitsItemArrow} ${open ? styles.benefitsItemArrowOpen : ''}`}>
+            <ChevronIcon />
+          </span>
+        </button>
+      </div>
+    );
+  };
 
   return (
     <div className={styles.benefitsSplit}>

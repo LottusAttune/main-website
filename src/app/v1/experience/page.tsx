@@ -1,10 +1,10 @@
 import type { Metadata } from 'next';
-import Image from 'next/image';
 
 import { Reveal } from '@/components/common/Reveal';
 import { SiteFooter } from '@/components/chrome/SiteFooter';
 import { SiteNav } from '@/components/chrome/SiteNav';
 import { StickyBookBar } from '@/components/chrome/StickyBookBar';
+import { ExperienceComponentCard } from '@/components/experience/ExperienceComponentCard';
 import { Gallery } from '@/components/experience/Gallery';
 import {
   BENEFITS_INDIVIDUAL,
@@ -62,30 +62,17 @@ export default function ExperiencePage() {
               const stepPhoto = STEP_PHOTOS[step.n];
               const photo = asset(stepPhoto.name);
               return (
-                <div
+                <ExperienceComponentCard
                   key={step.n}
-                  className={`card card--lift ${styles.componentCard}`}
-                  data-reveal=""
-                >
-                  <div className={styles.componentPhoto}>
-                    <Image
-                      src={photo.src}
-                      alt=""
-                      width={photo.width}
-                      height={photo.height}
-                      sizes="(max-width: 1024px) 33vw, 20vw"
-                      style={{
-                        objectPosition: stepPhoto.position,
-                        transform: 'mirror' in stepPhoto ? 'scaleX(-1)' : undefined,
-                      }}
-                    />
-                  </div>
-                  <div className={styles.componentCardBody}>
-                    <span className={styles.componentNumber}>{step.n}</span>
-                    <h2 className={styles.componentTitle}>{step.title}</h2>
-                    <p className={styles.componentBody}>{step.body}</p>
-                  </div>
-                </div>
+                  n={step.n}
+                  title={step.title}
+                  body={step.body}
+                  photoSrc={photo.src}
+                  photoWidth={photo.width}
+                  photoHeight={photo.height}
+                  photoPosition={stepPhoto.position}
+                  mirror={'mirror' in stepPhoto}
+                />
               );
             })}
           </div>

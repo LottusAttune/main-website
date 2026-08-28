@@ -155,6 +155,23 @@
   color: var(--color-ink-body);
 }
 
+/* Reveals .componentBody on click instead of showing all five descriptions
+   at once - keeps the row reading as five photos and titles, not a wall of
+   text, while the full wording stays one tap away. */
+.componentToggle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0;
+  background: none;
+  border: none;
+  font-size: 12.5px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--color-gold-text);
+  cursor: pointer;
+}
+
 /* ---------- Benefits ---------- */
 
 /* Trimmed further on both ends - between this and the panel's own internal

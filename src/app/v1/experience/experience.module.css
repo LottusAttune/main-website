@@ -164,8 +164,15 @@
   padding: clamp(28px, 3.4vw, 40px) 0 clamp(48px, 6vw, 76px);
 }
 
+/* The shared .shell class only caps max-width, with no side gutter of its
+   own - every other section on this page (.intro, .block, .galleryBlock)
+   pairs that same max-width with its own var(--space-gutter) padding, so
+   without it here the Benefits panels ran wider than everything else on
+   the page instead of lining up with it. */
 .benefitsShell {
   padding-bottom: clamp(16px, 2vw, 24px);
+  padding-left: var(--space-gutter);
+  padding-right: var(--space-gutter);
 }
 
 /* Matches .title (the "A Journey to Reset, Align and Thrive" heading) -
@@ -205,6 +212,8 @@
   row-gap: 0;
   border-radius: 0;
   overflow: hidden;
+  padding-left: var(--space-gutter);
+  padding-right: var(--space-gutter);
 }
 
 @media (max-width: 760px) {
@@ -363,11 +372,15 @@
   font-size: 16px;
 }
 
-/* Neutral bright cream rather than gold here - against this dark
-   background the warm gold read as too yellow/brown; a cooler, brighter
-   tone reads cleaner without losing the italic serif's quiet emphasis. */
+/* None of the existing gold tokens land right against this specific dark
+   gradient at this text weight: gold-light reads too yellow, and the
+   darker gold tokens (gold, gold-deep) drop under 4.5:1 contrast here
+   (checked against both ends of --gradient-deep) - failing the site's own
+   "every text colour passes WCAG AA" rule. This is a one-off, deliberately
+   desaturated toward champagne/pewter rather than straight yellow-gold,
+   picked to clear 4.5:1 at both ends of the gradient. */
 .benefitsCellDark .benefitsClosing {
-  color: var(--color-cream-text-bright);
+  color: #baa287;
 }
 
 .benefitsCellLight .benefitsClosing {

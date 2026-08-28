@@ -136,10 +136,14 @@
      top - with less text now than before, top-aligned content left a big
      empty gap below the button; centering distributes any extra room
      above and below instead, so the button doesn't sit stranded near the
-     top of the row. */
+     top of the row. align-items: flex-start keeps children (the button in
+     particular) at their own natural width - the flex column's default
+     stretch was forcing the button to fill the full column width instead
+     of its normal compact pill size. */
   display: flex;
   flex-direction: column;
   justify-content: center;
+  align-items: flex-start;
 }
 
 .guideQuote {
@@ -194,10 +198,6 @@
 .guideBtn {
   /* Matches the minimal roundness standard used across the page. */
   border-radius: 6px;
-  /* A bit more presence than the shared .btn default - with less text
-     above it now, the button carries more of the section's visual weight. */
-  padding: 18px 46px;
-  min-height: 56px;
 }
 
 /* ---------- Watch ---------- */

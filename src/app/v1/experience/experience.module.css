@@ -314,9 +314,15 @@
   line-height: 1.15;
 }
 
+/* Same font/size/style as .benefitsClosing below - a deliberate echo of
+   the closing note's serif treatment for a bit of texture against the
+   sans-serif item titles/body, rather than reading as plain body copy. */
 .benefitsPanelNote {
   margin: 0;
   max-width: 490px;
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-style: normal;
   font-size: 15px;
   line-height: 1.6;
 }
@@ -337,8 +343,11 @@
   color: #d7cbb6;
 }
 
+/* Matches .benefitsClosing's color on this side too (gold-text), not just
+   its font/size/style - "Create space to reset..." now reads exactly like
+   "Ideal for birthdays..." below it. */
 .benefitsCellLight .benefitsPanelNote {
-  color: var(--color-ink-body);
+  color: var(--color-gold-text);
 }
 
 .benefitsCellItem {

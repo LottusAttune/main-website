@@ -4,6 +4,7 @@ import { Reveal } from '@/components/common/Reveal';
 import { SiteFooter } from '@/components/chrome/SiteFooter';
 import { SiteNav } from '@/components/chrome/SiteNav';
 import { StickyBookBar } from '@/components/chrome/StickyBookBar';
+import { BenefitsSplit } from '@/components/experience/BenefitsSplit';
 import { ExperienceComponentsGrid } from '@/components/experience/ExperienceComponentsGrid';
 import { Gallery } from '@/components/experience/Gallery';
 import {
@@ -84,75 +85,8 @@ export default function ExperiencePage() {
             <h2 className={`display ${styles.benefitsHeading}`}>Benefits</h2>
           </div>
 
-          <div className={`shell ${styles.benefitsSplit}`}>
-            {/* One continuous background per side, rather than each row
-                painting its own copy of the gradient - spans every row so
-                the dark/light fills read as one solid panel, not banded
-                strips. Hidden below 760px, where the two column wrappers
-                below carry their own continuous background instead. */}
-            <div className={`${styles.benefitsBg} ${styles.benefitsBgDark}`} aria-hidden="true" />
-            <div className={`${styles.benefitsBg} ${styles.benefitsBgLight}`} aria-hidden="true" />
-
-            {/* Each column is `display: contents` at desktop width, so its
-                children become direct grid items and pair row-for-row with
-                the other column (a grid row always sizes to its tallest
-                cell, so Teams and Individuals line up exactly no matter how
-                their copy lengths differ). Below 760px it becomes a normal
-                block instead, so the column stacks as one continuous piece
-                - Teams entirely, then Individuals - rather than
-                interleaving row by row. */}
-            <div className={`${styles.benefitsCol} ${styles.benefitsColDark}`}>
-              <div className={`${styles.benefitsCell} ${styles.benefitsCellDark} ${styles.benefitsCellHeader}`}>
-                <h3 id="teams-heading" className={`display ${styles.benefitsPanelHeading}`}>
-                  For Teams &amp; Organizations
-                </h3>
-                <p className={styles.benefitsPanelNote}>
-                  Elevate your company culture through a new generation of
-                  team building
-                </p>
-              </div>
-
-              {BENEFITS_TEAMS.items.map((item) => (
-                <div
-                  key={item.title}
-                  className={`${styles.benefitsCell} ${styles.benefitsCellDark} ${styles.benefitsCellItem}`}
-                  data-reveal=""
-                >
-                  <h4 className={styles.benefitsItemTitle}>{item.title}</h4>
-                  <p className={styles.benefitsItemBody}>{item.body}</p>
-                </div>
-              ))}
-
-              <div className={`${styles.benefitsCell} ${styles.benefitsCellDark} ${styles.benefitsCellClosing}`}>
-                <p className={styles.benefitsClosing}>{BENEFITS_TEAMS.note}</p>
-              </div>
-            </div>
-
-            <div className={`${styles.benefitsCol} ${styles.benefitsColLight}`}>
-              <div className={`${styles.benefitsCell} ${styles.benefitsCellLight} ${styles.benefitsCellHeader}`}>
-                <h3 id="individuals-heading" className={`display ${styles.benefitsPanelHeading}`}>
-                  For Individuals
-                </h3>
-                <p className={styles.benefitsPanelNote}>
-                  Create space to reset, recharge, and reconnect from within
-                </p>
-              </div>
-
-              {BENEFITS_INDIVIDUAL.items.map((item) => (
-                <div
-                  key={item.title}
-                  className={`${styles.benefitsCell} ${styles.benefitsCellLight} ${styles.benefitsCellItem}`}
-                  data-reveal=""
-                >
-                  <h4 className={styles.benefitsItemTitle}>{item.title}</h4>
-                  <p className={styles.benefitsItemBody}>{item.body}</p>
-                </div>
-              ))}
-
-              <div className={`${styles.benefitsCell} ${styles.benefitsCellLight} ${styles.benefitsCellClosing}`}>
-                <p className={styles.benefitsClosing}>{BENEFITS_INDIVIDUAL.note}</p>
-              </div>
-            </div>
+          <div className="shell">
+            <BenefitsSplit teams={BENEFITS_TEAMS} individual={BENEFITS_INDIVIDUAL} />
           </div>
         </section>
 

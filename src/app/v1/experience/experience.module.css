@@ -486,28 +486,35 @@
   border-color: var(--hairline-light);
 }
 
+/* Full-width, unstyled button so the whole row (not just the title text) is
+   the click target, and clicking opens the shared modal (see
+   .componentOverlay/.componentModal, reused from the Experience cards)
+   instead of revealing the body text in place - a short item and a long one
+   never leave uneven blank space behind. */
+.benefitsItemToggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  width: 100%;
+  padding: 0;
+  background: none;
+  border: none;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
 .benefitsItemTitle {
-  margin: 0 0 4px;
   font-family: var(--font-display);
   font-weight: 400;
   font-size: 18px;
 }
 
-.benefitsItemBody {
-  margin: 0;
-  font-size: 14px;
-  line-height: 1.5;
-}
-
-/* Matches .benefitsPanelNote's color above, for the same reason - dimmer
-   than the heading, mirroring the Individuals side's own heading/body
-   tonal split rather than rendering both at the same brightness. */
-.benefitsCellDark .benefitsItemBody {
-  color: #d7cbb6;
-}
-
-.benefitsCellLight .benefitsItemBody {
-  color: var(--color-ink-body);
+.benefitsItemArrow {
+  flex: none;
+  color: inherit;
 }
 
 .benefitsClosing {

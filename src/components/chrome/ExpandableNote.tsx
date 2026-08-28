@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 
+import { ChevronIcon } from '@/components/common/ChevronIcon';
 import styles from './SiteFooter.module.css';
 
 type Props = {
@@ -23,21 +24,7 @@ export function ExpandableNote({ label, labelClassName, children }: Props) {
       >
         <span className={labelClassName}>{label}</span>
         <span className={`${styles.expandableArrow} ${open ? styles.expandableArrowOpen : ''}`}>
-          <svg
-            width="11"
-            height="7"
-            viewBox="0 0 11 7"
-            fill="none"
-            aria-hidden="true"
-          >
-            <path
-              d="M1 1L5.5 5.5L10 1"
-              stroke="currentColor"
-              strokeWidth="1.6"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-          </svg>
+          <ChevronIcon />
         </span>
       </button>
       {open && <div className={styles.expandableBody}>{children}</div>}

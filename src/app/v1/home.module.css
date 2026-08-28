@@ -368,14 +368,20 @@
 
 .faqLede {
   margin: 0 0 18px;
-  max-width: 34ch;
+  /* Matches the white card's own width below it, not a wider measure of its
+     own - the wrap and the justify should both line up with that box. */
+  max-width: 420px;
   font-size: 15.5px;
   line-height: 1.65;
+  text-align: justify;
 }
 
 .faqCard {
   padding: 20px 22px;
-  max-width: 400px;
+  /* Widened just enough (measured: the "Write or WhatsApp..." sentence
+     needs 402px) to keep that line from wrapping, without stretching the
+     box any more than necessary. */
+  max-width: 420px;
   /* Fully square, no border - the shared .card class this is paired with
      sets its own 26px radius and a hairline border, which this overrides. */
   border: none;

@@ -146,9 +146,18 @@
   color: var(--color-gold-light);
 }
 
+/* Smaller and a solid color, overriding the shared .body--dark class
+   (also used on /lp, so not changed there) rather than inheriting its
+   17px size and semi-transparent rgba - at that size/brightness this
+   paragraph competed with the quote above it for attention and read as
+   "a lot to read" rather than a quiet supporting note. Solid color also
+   keeps it crisp rather than the soft/blurry look alpha-blended text gets
+   against a dark background. */
 .guideBody {
   margin: 0 0 22px;
   text-align: justify;
+  font-size: 15px;
+  color: var(--color-cream-text-soft);
 }
 
 .guideBody:last-of-type {

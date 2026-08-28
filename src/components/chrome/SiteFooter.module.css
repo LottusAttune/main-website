@@ -33,6 +33,12 @@
   justify-content: center;
   text-align: center;
   min-height: clamp(200px, 22vw, 260px);
+  /* Reverted to the gradient - a flat solid version of its dark end (tried
+     briefly) matched the Founder page's dark section, but that section's
+     own tall height is what let its own visible area land near the dark
+     end; here, flattening the whole box that dark also flattened the
+     lighter band the logo photo's ghost swirl/glow needs to read against,
+     and lost it. */
   background: var(--gradient-deep);
   padding: clamp(26px, 3.4vw, 40px) var(--space-gutter);
 }
@@ -91,12 +97,14 @@
   margin: 0 0 14px;
 }
 
+/* A solid color rather than a semi-transparent rgba blend - the partial
+   opacity rendered noticeably softer/blurrier than solid text at this size. */
 .body {
   margin: 0 auto;
   max-width: 640px;
   font-size: 16px;
   line-height: 1.6;
-  color: rgba(239, 230, 218, 0.78);
+  color: var(--color-cream-text-soft);
 }
 
 .cellsGrid {

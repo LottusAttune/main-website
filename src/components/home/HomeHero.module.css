@@ -81,10 +81,11 @@
   letter-spacing: 0.56em;
   text-transform: uppercase;
   color: rgba(246, 239, 229, 0.94);
-  /* Matches the headline's own gap down to the rule + positioning text
-     below (15px + the rule's 1px + its 6px margin) so the headline sits
-     centered between its neighbors with equal air on each side. */
-  margin-bottom: 22px;
+  /* Matches .positioning's own margin-bottom below - the gap from the
+     eyebrow down to the headline equals the gap from the positioning text
+     down to the buttons, so the three groups (logo+eyebrow / headline+
+     positioning / buttons) read as evenly, symmetrically spaced. */
+  margin-bottom: 50px;
   text-shadow: 0 2px 14px rgba(0, 0, 0, 0.6);
 }
 
@@ -119,8 +120,10 @@
 
 .positioning {
   max-width: 620px;
-  /* More room before the buttons than the tight rhythm above it. */
-  margin: 0 0 36px;
+  /* The boundary between the "headline + positioning" group and the
+     button group - a subtle step up from 36px, same idea as the eyebrow's
+     gap above, marking the buttons as their own group. */
+  margin: 0 0 50px;
   font-size: clamp(15.5px, 1.7vw, 17.5px);
   line-height: 1.7;
   color: rgba(250, 244, 235, 0.95);
@@ -129,10 +132,6 @@
 
 .actions {
   pointer-events: auto;
-  /* With the "Reset. Align. Thrive" tagline removed from below, this pulls
-     the buttons down into roughly the space that used to occupy, rather
-     than leaving the whole block shorter and higher. */
-  margin-top: clamp(20px, 3vw, 40px);
 }
 
 .heroBtn {

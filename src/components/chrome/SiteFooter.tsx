@@ -84,8 +84,9 @@ export function SiteFooter() {
 
           <div className={styles.cell}>
             <div className={styles.cellTitle}>Location</div>
-            <div className={styles.locationLead}>Bloor–Yonge, Toronto</div>
-            <p className={styles.venueCopy}>{VENUE_COPY[0]}</p>
+            <ExpandableNote label="Bloor–Yonge, Toronto" labelClassName={styles.locationLead}>
+              <p className={styles.venueCopy}>{VENUE_COPY[0]}</p>
+            </ExpandableNote>
             <ExpandableNote label="Parking">
               <p className={styles.venueCopy}>{VENUE_COPY[1]}</p>
             </ExpandableNote>

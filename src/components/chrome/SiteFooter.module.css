@@ -210,7 +210,6 @@
   font-size: 16px;
   font-weight: 400;
   color: var(--color-ink-body);
-  margin-bottom: 10px;
 }
 
 .venueCopy {
@@ -228,10 +227,16 @@
   margin-top: 4px;
 }
 
+/* Gap between the Bloor-Yonge and Parking toggles - replaces the vertical
+   flow that used to come from the static lead line + paragraph margins. */
+.expandable + .expandable {
+  margin-top: 14px;
+}
+
 .expandableToggle {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
   padding: 0;
   background: none;
   border: none;
@@ -242,7 +247,8 @@
 }
 
 .expandableArrow {
-  display: inline-block;
+  display: inline-flex;
+  color: var(--color-gold-text);
   transition: transform 0.2s ease;
 }
 

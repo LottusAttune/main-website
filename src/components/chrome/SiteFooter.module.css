@@ -33,13 +33,15 @@
   justify-content: center;
   text-align: center;
   min-height: clamp(200px, 22vw, 260px);
-  /* Reverted to the gradient - a flat solid version of its dark end (tried
-     briefly) matched the Founder page's dark section, but that section's
-     own tall height is what let its own visible area land near the dark
-     end; here, flattening the whole box that dark also flattened the
-     lighter band the logo photo's ghost swirl/glow needs to read against,
-     and lost it. */
-  background: var(--gradient-deep);
+  /* Same dark tone as the very bottom of the Founder page's dark section.
+     A flat solid version of the gradient's dark end used to wash out the
+     logo photo's ghost swirl/glow, since that graphic's visibility
+     depended on the gradient's lighter band - fixed at the source instead:
+     footer-lockup-combo.png was recomposited with a sharper icon (from the
+     higher-resolution offerings-logo-on-brown asset) and boosted swirl/
+     glow opacity, so it no longer needs a lighter patch of background to
+     read clearly and this box can just be uniformly dark. */
+  background: var(--color-ink-deep);
   padding: clamp(26px, 3.4vw, 40px) var(--space-gutter);
 }
 

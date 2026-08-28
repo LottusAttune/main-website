@@ -141,7 +141,16 @@ don't ship in the first place:
   — e.g. via canvas `measureText` (`actualBoundingBoxAscent/Descent` for the
   specific text, `fontBoundingBoxAscent` for the line's baseline position)
   — not just the CSS box edges, and adjust the smaller-font side's margin
-  down (or the larger side's up) until the measured ink gaps match.
+  down (or the larger side's up) until the measured ink gaps match. Measure
+  the specific glyphs actually being compared, not a proxy for the whole
+  string: `actualBoundingBoxAscent` on a multi-word line is set by its
+  tallest character anywhere in that line (a capital elsewhere in the
+  string), which overstates the ascent of a specific lowercase word the eye
+  is actually keying off — measure that substring alone (or a plain
+  x-height letter like "n") instead. Same for a wrapped multi-line
+  paragraph: measuring the full un-wrapped string as one line does not
+  represent the true last visual line - get the actual rendered line box
+  first (e.g. `Range.getClientRects()`), then measure only that line's text.
 - **Corners and one-off colours.** Match the page's already-established
   system (this site currently defaults to a 6px soft-square radius, with 0
   reserved for a couple of deliberately flat elements) rather than

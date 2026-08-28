@@ -42,7 +42,6 @@ export default function ExperiencePage() {
       <main>
         {/* ---------- Intro ---------- */}
         <section className={styles.intro} aria-labelledby="experience-heading">
-          <div className={`eyebrow ${styles.introEyebrow}`}>The Experience</div>
           <h1
             id="experience-heading"
             className={`display h1 ${styles.title}`}

@@ -60,11 +60,17 @@
   }
 }
 
+/* The shared .card class sets a 26px radius and a hairline border on all
+   four corners - square corners here instead (photo flush square at the
+   top, matching the home page's path cards), and no border line. The
+   card--lift hover motion is untouched. */
 .componentCard {
   display: flex;
   flex-direction: column;
   padding: 0;
   overflow: hidden;
+  border: none;
+  border-radius: 0 0 6px 6px;
 }
 
 .componentPhoto {

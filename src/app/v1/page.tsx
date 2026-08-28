@@ -119,7 +119,7 @@ export default function HomePage() {
               <div className="eyebrow" style={{ fontSize: '13.5px', marginBottom: 18 }}>
                 Watch
               </div>
-              <h2 id="watch-heading" className="display h2">
+              <h2 id="watch-heading" className={`display h2 ${styles.sectionHeadingSm}`}>
                 A glimpse inside the experience
               </h2>
             </div>
@@ -189,11 +189,7 @@ export default function HomePage() {
               <div className="eyebrow" style={{ fontSize: '13.5px', marginBottom: 18 }}>
                 Client Reviews
               </div>
-              <h2
-                id="reviews-heading"
-                className="display"
-                style={{ fontSize: 'var(--text-h2)', lineHeight: 1.1 }}
-              >
+              <h2 id="reviews-heading" className={`display ${styles.sectionHeadingSm}`}>
                 In their words
               </h2>
             </div>

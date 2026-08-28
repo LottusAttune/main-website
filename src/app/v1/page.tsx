@@ -186,7 +186,7 @@ export default function HomePage() {
         <section className={styles.reviewsSection} aria-labelledby="reviews-heading">
           <div className="shell">
             <div className={styles.centered} data-reveal="" style={{ marginBottom: 28 }}>
-              <div className="eyebrow" style={{ fontSize: '13.5px', marginBottom: 18 }}>
+              <div className="eyebrow" style={{ fontSize: '13.5px', marginBottom: 14 }}>
                 Client Reviews
               </div>
               <h2 id="reviews-heading" className={`display ${styles.sectionHeadingSm}`}>

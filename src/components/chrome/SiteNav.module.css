@@ -157,7 +157,9 @@
    soft rounding. 8px keeps the same "not a full pill" intent at a scale that
    actually suits this button's size. */
 .actionPillSquared {
-  border-radius: 8px;
+  /* Matches the minimal roundness of the path cards - 8px looked too curved
+     (almost triangular) on a button this short. */
+  border-radius: 6px;
 }
 
 /* Same gold as the active nav link's underline (e.g. "Home"), not the

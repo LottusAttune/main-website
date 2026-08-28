@@ -162,9 +162,8 @@
    where an outline read as too faint and a solid black one nearly vanished
    into the section's own dark brown. */
 .guideBtn {
-  /* Soft-square, matching the corner used on the nav Book/Gift buttons -
-     var(--radius-input) (16px) read as too rounded next to those. */
-  border-radius: 8px;
+  /* Matches the minimal roundness standard used across the page. */
+  border-radius: 6px;
 }
 
 /* ---------- Watch ---------- */
@@ -278,7 +277,7 @@
    page also uses) - soft-square rather than the full pill, matching the
    corner treatment used elsewhere on this page. */
 .pathTags :global(.tag) {
-  border-radius: 4px;
+  border-radius: 6px;
 }
 
 /* Scoped to these cards only (not the shared .tag--group/.tag--one, which

@@ -177,7 +177,8 @@
   justify-content: center;
   width: 28px;
   height: 28px;
-  border-radius: 4px;
+  /* Matches the minimal roundness standard used across the site. */
+  border-radius: 6px;
   background: var(--color-ink);
   color: var(--color-cream-text);
   transition:

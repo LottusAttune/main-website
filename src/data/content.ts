@@ -160,16 +160,16 @@ export const BENEFITS_INDIVIDUAL = {
 export const BENEFITS_TEAMS = {
   items: [
     {
+      title: 'Culture that Lasts',
+      body: 'An innovative approach for employee well-being that drives connection, collaboration and retention',
+    },
+    {
       title: 'Stronger Together',
       body: 'Promote healthier, more engaged, and resilient workplace cultures. Help teams reset, refocus, and strengthen collaboration',
     },
     {
       title: 'Performance and Clarity',
       body: 'Enhance mental clarity and support sustainable performance',
-    },
-    {
-      title: 'Culture that Lasts',
-      body: 'An innovative approach for employee well-being that drives connection, collaboration and retention',
     },
   ],
   note: 'A unique and impactful experience for teams, departmental or leadership meetings, employee appreciation and Health & Wellness events',

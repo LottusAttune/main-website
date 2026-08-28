@@ -111,7 +111,7 @@ export default function ExperiencePage() {
                 </h3>
                 <p className={styles.benefitsPanelNote}>
                   Elevate your company culture through a new generation of
-                  team building where wellness and connection come together
+                  team building
                 </p>
               </div>
 

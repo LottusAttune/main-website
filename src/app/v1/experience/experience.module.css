@@ -200,11 +200,11 @@
   color: var(--color-ink);
 }
 
-/* Fixed so both panels' item rows start at the same height regardless of
-   how many lines their own note wraps to - without this the longer
-   Corporate note pushed its items lower than the Individuals side. */
+/* Fixed so both panels' item rows start at the same height - both notes
+   are one line at this width, so this only needs to cover that, not a
+   second wrapped line. */
 .benefitsPanelHeader {
-  min-height: clamp(150px, 15vw, 190px);
+  min-height: clamp(118px, 12vw, 148px);
 }
 
 /* Mirrors between panels rather than matching the shared .tag pill used
@@ -238,7 +238,7 @@
 
 .benefitsPanelNote {
   margin: 0;
-  max-width: 46ch;
+  max-width: 490px;
   font-size: 15.5px;
   line-height: 1.7;
 }

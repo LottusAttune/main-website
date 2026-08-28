@@ -321,11 +321,20 @@
   line-height: 1.6;
 }
 
-/* A solid token rather than a semi-transparent rgba blend - the partial
+/* A solid color rather than a semi-transparent rgba blend - the partial
    opacity was rendering noticeably softer/hazier than the fully-opaque ink
-   text on the Individuals side, not just more muted. */
+   text on the Individuals side, not just more muted.
+
+   Deliberately dimmer than the heading's cream-text-soft, and a one-off
+   rather than an existing cream token: the Individuals side has a real
+   tonal hierarchy (headings in --color-ink, body copy in the softer
+   --color-ink-body) with body text measuring ~8:1 contrast against its
+   background. Using the same cream-text-soft here for both headings and
+   body copy gave the whole panel one uniform brightness (~10.5-13.7:1),
+   which read as bolder/brighter overall than the Individuals side - this
+   value mirrors that same hierarchy and lands close to the same ~8:1. */
 .benefitsCellDark .benefitsPanelNote {
-  color: var(--color-cream-text-soft);
+  color: #d7cbb6;
 }
 
 .benefitsCellLight .benefitsPanelNote {
@@ -359,8 +368,11 @@
   line-height: 1.5;
 }
 
+/* Matches .benefitsPanelNote's color above, for the same reason - dimmer
+   than the heading, mirroring the Individuals side's own heading/body
+   tonal split rather than rendering both at the same brightness. */
 .benefitsCellDark .benefitsItemBody {
-  color: var(--color-cream-text-soft);
+  color: #d7cbb6;
 }
 
 .benefitsCellLight .benefitsItemBody {
@@ -374,8 +386,9 @@
   font-size: 15px;
 }
 
-/* Upright on the Corporate side - the italic read as too "cursive" there.
-   Individuals keeps the italic, which reads fine as-is.
+/* Upright on both sides now - the italic read as too "cursive" on the
+   Corporate side, and leaving Individuals italic while Corporate went
+   upright was its own inconsistency between the two mirrored panels.
 
    Color: none of the existing gold tokens land right against this specific
    dark gradient at this text weight: gold-light reads too yellow, and the
@@ -390,7 +403,7 @@
 }
 
 .benefitsCellLight .benefitsClosing {
-  font-style: italic;
+  font-style: normal;
   color: var(--color-gold-text);
 }
 

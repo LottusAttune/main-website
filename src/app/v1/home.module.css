@@ -91,7 +91,13 @@
   grid-template-columns: auto 1fr;
   gap: clamp(40px, 6vw, 84px);
   align-items: stretch;
-  min-height: 560px;
+  /* Trimmed from 560px - combined with the sticky nav and sticky book bar
+     (both always on screen), 560px ran taller than a real laptop browser
+     window shows at once (browser chrome eats real space a bare viewport
+     height doesn't account for), forcing a scroll to see the whole
+     portrait. This still shows the complete, uncropped photo at whatever
+     width its own aspect ratio derives - just a smaller box overall. */
+  min-height: 460px;
   /* The photo bleeds to the true left edge (no shell), but the text side
      should still end where the "Why This Exists" section's text ends -
      that section centers on a 1040px box (.problem), so its right edge
@@ -110,7 +116,11 @@
 .guidePortrait {
   position: relative;
   overflow: hidden;
-  aspect-ratio: 962 / 1635;
+  /* Matches silvana-hero.png's own cropped dimensions (962 x 1515) - a
+     deliberate small trim off the top of the source photo (empty wall/
+     tree-branch space, not the subject) so the portrait can stay wide at a
+     shorter row height instead of shrinking uniformly and losing presence. */
+  aspect-ratio: 962 / 1515;
 }
 
 .guidePortrait img {
@@ -122,6 +132,14 @@
      spare in this row, so it should feel airier instead of pinning to the
      same padding a laptop screen uses. */
   padding: clamp(32px, 4vw, 92px) 0;
+  /* Centers the content block within the row instead of pinning it to the
+     top - with less text now than before, top-aligned content left a big
+     empty gap below the button; centering distributes any extra room
+     above and below instead, so the button doesn't sit stranded near the
+     top of the row. */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
 .guideQuote {

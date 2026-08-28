@@ -363,8 +363,11 @@
   font-size: 16px;
 }
 
+/* Neutral bright cream rather than gold here - against this dark
+   background the warm gold read as too yellow/brown; a cooler, brighter
+   tone reads cleaner without losing the italic serif's quiet emphasis. */
 .benefitsCellDark .benefitsClosing {
-  color: var(--color-gold-light);
+  color: var(--color-cream-text-bright);
 }
 
 .benefitsCellLight .benefitsClosing {

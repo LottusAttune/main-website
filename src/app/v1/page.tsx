@@ -141,7 +141,7 @@ export default function HomePage() {
                 <br />
                 private gatherings, and individuals
               </h2>
-              <p className={`eyebrow ${styles.centeredLede}`} style={{ fontSize: '13.5px' }}>
+              <p className={styles.centeredLede}>
                 All sessions are offered in a two-hour format
               </p>
             </div>

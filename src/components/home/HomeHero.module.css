@@ -120,16 +120,11 @@
 
 .positioning {
   max-width: 620px;
-  /* Measured against the actual glyphs, precisely: the eyebrow-to-headline
-     gap is measured from the eyebrow's own ink-bottom up to the x-height
-     top of "ttune" specifically (not the tallest capital elsewhere in the
-     headline, which sits noticeably higher) - that gap measures ~85px at
-     a 50px CSS margin. The positioning-to-button gap is measured from the
-     true last rendered line ("regulation and deep inner connection") down
-     to the button's own box top, using the browser's own line boxes
-     (getClientRects) rather than treating the two-line paragraph as one
-     unwrapped line. 86px here brings that gap to the same ~85px. */
-  margin: 0 0 86px;
+  /* Trimmed back from 86px - that matched the eyebrow-to-headline ink gap
+     exactly, but on shorter/smaller screens it pushed the buttons low
+     enough to look cramped against the hero's bottom edge. A tiny bit
+     tighter here, buttons only, nothing else touched. */
+  margin: 0 0 68px;
   font-size: clamp(15.5px, 1.7vw, 17.5px);
   line-height: 1.7;
   color: rgba(250, 244, 235, 0.95);

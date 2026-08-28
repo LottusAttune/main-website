@@ -109,10 +109,11 @@
    of five - hovering keeps the shadow/border change below without the
    movement. */
 .componentCard {
+  position: relative;
   display: flex;
   flex-direction: column;
   padding: 0;
-  overflow: hidden;
+  overflow: visible;
   border: none;
   border-radius: 0 0 6px 6px;
 }
@@ -147,8 +148,8 @@
 
 /* Reserves room for a wrapped 2-line title - so every card's title block is
    the same height regardless of whether this particular title wraps to 1 or
-   2 lines, which (combined with .componentDetails below) keeps all five
-   cards exactly the same size. */
+   2 lines, keeping all five cards' toggles (and their bottom edges) level
+   with each other. */
 .componentHead {
   display: flex;
   flex-direction: column;
@@ -171,15 +172,22 @@
   line-height: 1.25;
 }
 
-/* Fixed height reserved for the toggle + description, sized to fit the
-   longest of the five descriptions - every card reserves the same space
-   whether its own text is short or long and whether it's open or closed, so
-   toggling never changes any card's height. */
-.componentDetails {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  min-height: 170px;
+/* Floats below the card on open, overlapping whatever sits underneath,
+   instead of pushing the card taller - so the card itself never changes
+   size and every card's toggle line stays at the same level. A small gap
+   above (see .componentToggle's margin) is the only "air" a closed card
+   shows; there's no reserved blank space for the description. */
+.componentPopover {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  z-index: 5;
+  margin-top: -1px;
+  padding: 10px clamp(18px, 2vw, 20px) 18px;
+  background: linear-gradient(170deg, #ffffff 0%, #fdfbf7 100%);
+  border-radius: 0 0 6px 6px;
+  box-shadow: var(--shadow-card-hover);
 }
 
 .componentBody {
@@ -187,18 +195,11 @@
   font-size: 14px;
   line-height: 1.55;
   color: var(--color-ink-body);
-  opacity: 0;
-  visibility: hidden;
 }
 
-.componentBodyOpen {
-  opacity: 1;
-  visibility: visible;
-}
-
-/* Reveals .componentBody on click instead of showing all five descriptions
-   at once - keeps the row reading as five photos and titles, not a wall of
-   text, while the full wording stays one tap away. */
+/* Reveals .componentPopover on click instead of showing all five
+   descriptions at once - keeps the row reading as five photos and titles,
+   not a wall of text, while the full wording stays one tap away. */
 .componentToggle {
   display: flex;
   align-items: center;

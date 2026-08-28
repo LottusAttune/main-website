@@ -55,23 +55,23 @@ export function ExperienceComponentCard({
           <span className={styles.componentNumber}>{n}</span>
           <h2 className={styles.componentTitle}>{title}</h2>
         </div>
-        {/* Fixed-height reserved area (see .componentDetails) - every card
-            stays exactly the same size whether its details are open or
-            closed, instead of the row growing/shifting per card. */}
-        <div className={styles.componentDetails}>
-          <button
-            type="button"
-            className={styles.componentToggle}
-            onClick={onToggle}
-            aria-expanded={open}
-          >
-            <span>{open ? 'Less' : 'Details'}</span>
-            <span className={`sign ${open ? 'sign--open' : ''}`} aria-hidden="true" />
-          </button>
-          <p className={`${styles.componentBody} ${open ? styles.componentBodyOpen : ''}`}>
-            {body}
-          </p>
-        </div>
+        <button
+          type="button"
+          className={styles.componentToggle}
+          onClick={onToggle}
+          aria-expanded={open}
+        >
+          <span>{open ? 'Less' : 'Details'}</span>
+          <span className={`sign ${open ? 'sign--open' : ''}`} aria-hidden="true" />
+        </button>
+        {/* Floats over whatever sits below the card instead of pushing the
+            card taller - every card stays exactly the same height whether
+            open or closed, with no reserved blank space underneath. */}
+        {open ? (
+          <div className={styles.componentPopover}>
+            <p className={styles.componentBody}>{body}</p>
+          </div>
+        ) : null}
       </div>
     </div>
   );

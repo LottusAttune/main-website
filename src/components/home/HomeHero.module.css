@@ -120,10 +120,15 @@
 
 .positioning {
   max-width: 620px;
-  /* The boundary between the "headline + positioning" group and the
-     button group - a subtle step up from 36px, same idea as the eyebrow's
-     gap above, marking the buttons as their own group. */
-  margin: 0 0 50px;
+  /* Measured to the actual visible glyphs, not the CSS box: the headline's
+     big serif font carries far more built-in space above its cap-height
+     than this paragraph's line-height carries below its own descenders,
+     so an equal CSS margin here (matching the eyebrow's 50px) produced a
+     visibly bigger gap down to the buttons than the gap from the eyebrow
+     up to the headline. 36px here makes the two ink-to-ink gaps land
+     within a pixel of each other (~66px both, measured via canvas text
+     metrics), even though the box-margins themselves now differ. */
+  margin: 0 0 36px;
   font-size: clamp(15.5px, 1.7vw, 17.5px);
   line-height: 1.7;
   color: rgba(250, 244, 235, 0.95);

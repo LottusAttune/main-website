@@ -48,14 +48,15 @@
    them. */
 @media (min-width: 760px) {
   .introGrid {
-    /* Barely-there asymmetry, mostly invisible to the eye, just enough to
-       pull "well-being" up onto the line above instead of standing alone. */
-    grid-template-columns: 0.94fr 1.06fr;
-    gap: clamp(32px, 4vw, 48px);
+    grid-template-columns: 1fr 1fr;
+    gap: clamp(24px, 3vw, 40px);
   }
 }
 
 .introGrid p {
+  /* A touch below --text-body-sm (15.5px) - small enough that the longer
+     paragraph wraps to 4 lines instead of 5 even at laptop widths. */
+  font-size: 15px;
   text-align: justify;
 }
 

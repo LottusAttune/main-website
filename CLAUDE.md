@@ -131,6 +131,17 @@ don't ship in the first place:
   forcing a scroll for no reason, but shouldn't feel cramped either — compare
   new padding against neighbouring sections' actual values instead of
   picking numbers in isolation.
+- **Equal CSS margins ≠ equal visual gaps.** Different font sizes/families
+  carry very different amounts of built-in empty space above/below their
+  visible glyphs (a big serif display font's line-box can hold 15-20px of
+  invisible space a small sans-serif paragraph's doesn't) — matching two
+  gaps' CSS margin values does not make them look equal if the elements on
+  either side are different font sizes or families. When two gaps need to
+  read as the same, measure the actual glyph-to-glyph (ink-to-ink) distance
+  — e.g. via canvas `measureText` (`actualBoundingBoxAscent/Descent` for the
+  specific text, `fontBoundingBoxAscent` for the line's baseline position)
+  — not just the CSS box edges, and adjust the smaller-font side's margin
+  down (or the larger side's up) until the measured ink gaps match.
 - **Corners and one-off colours.** Match the page's already-established
   system (this site currently defaults to a 6px soft-square radius, with 0
   reserved for a couple of deliberately flat elements) rather than

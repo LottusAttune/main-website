@@ -31,7 +31,7 @@ export const GUIDE = {
   quote:
     '”I bridge the gap between performance and restoration, productivity and well-being, and excellence and human connection.”',
   paragraphs: [
-    'As a Wellness Facilitator with a strong Human Resources background, I help individuals and organizations across Toronto and the GTA reduce stress, restore balance, and enhance overall well-being through curated, immersive sound-based experiences combined with mindfulness wellness experiences.',
+    'As a Wellness Facilitator with a strong Human Resources background, I help individuals and organizations across Toronto and the GTA reduce stress, restore balance, and enhance overall well-being through curated, immersive sound-based experiences combined with mindfulness and somatic practices.',
     'Unlike many wellness practitioners, I bring over 15 years of experience in Human Resources across recognized private and public-sector organizations and corporations.',
   ],
 } as const;
@@ -266,7 +266,7 @@ export const FAQS = [
 ] as const;
 
 export const FOUNDER_BIO = [
-  'As a Wellness Facilitator with a strong Human Resources background, I help individuals and organizations across Toronto and the GTA reduce stress, restore balance, and enhance overall well-being through curated, immersive sound-based experiences combined with mindfulness wellness experiences.',
+  'As a Wellness Facilitator with a strong Human Resources background, I help individuals and organizations across Toronto and the GTA reduce stress, restore balance, and enhance overall well-being through curated, immersive sound-based experiences combined with mindfulness and somatic practices.',
   'Unlike many wellness practitioners, I bring over 15 years of experience in Human Resources across recognized private and public-sector organizations and corporations. This background has given me a deep understanding of the demands of fast-paced, high-performance environments, including chronic stress, burnout, mental fatigue, workplace disconnection, and the growing need for sustainable well-being support.',
   'Throughout my career, I witnessed organizations investing heavily in productivity while many employees quietly struggled with anxiety, emotional overload, fatigue, and a lack of meaningful support. Over time, this became deeply personal to me. Meditation, mindfulness, nervous system regulation, somatic practices, and sound healing became transformational tools in my own life.',
   'Through years of dedicated practice and training, I experienced firsthand how intentional wellness modalities can restore clarity, balance, resilience, and healthier ways of living and working. My own journey inspired a deeper calling to support others on their path to greater balance. With intention and purpose, I created this offering to share the modalities I have studied, practiced and integrated to help others pause, reset and return to themselves.',

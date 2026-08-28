@@ -294,12 +294,10 @@
    the Guide section's dark treatment on the home page instead of the flat
    beige card language used elsewhere on this page.
 
-   Each column is `display: contents` here, so its cells (header, each
-   item, the closing note) become direct grid items and pair row-for-row
-   with the same row in the other column - a grid row always sizes to its
-   tallest cell, so Teams and Individuals line up exactly at every row
-   regardless of how their copy lengths differ, with the shorter cell just
-   gaining the extra room as breathing space.
+   Each column is its own independent flex column (not row-paired with the
+   other side) - an open item's description pushes the rest of its own
+   column down in normal flow, without stretching or leaving blank space in
+   the opposite column, which a shared-grid-row pairing would otherwise do.
 
    Fully square corners, no radius - kept flat rather than the soft 6px
    used elsewhere on the page. overflow: hidden still lives here (rather
@@ -308,13 +306,8 @@
 .benefitsSplit {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  /* Explicit rows (header, 3 items, closing) so "grid-row: 1 / -1" below
-     has an actual explicit grid to span - without this, -1 only counts
-     against explicit rows (of which there'd be none) and collapses to
-     nothing past row 1. */
-  grid-template-rows: repeat(5, auto);
+  align-items: start;
   column-gap: 2px;
-  row-gap: 0;
   border-radius: 0;
   overflow: hidden;
   padding-left: var(--space-gutter);
@@ -327,23 +320,17 @@
   }
 }
 
-/* One continuous background per column at desktop width, rather than each
-   cell painting its own copy of the gradient - a `display: contents`
-   column has no box of its own to carry a background, so this spans every
-   row behind it instead. Hidden below 760px, where the column itself
-   becomes a normal block and carries its own background directly. */
-.benefitsBg {
-  grid-row: 1 / -1;
+.benefitsCol {
+  display: flex;
+  flex-direction: column;
   transition: box-shadow var(--duration-card) var(--ease-out);
 }
 
-.benefitsBgDark {
-  grid-column: 1;
+.benefitsColDark {
   background: var(--gradient-deep);
 }
 
-.benefitsBgLight {
-  grid-column: 2;
+.benefitsColLight {
   /* Whiter than the section's own beige backdrop (added via the shared
      section--soft class), so the Individuals side still reads as a
      distinct card sitting on that backdrop rather than blending into it. */
@@ -351,57 +338,20 @@
 }
 
 /* A quiet hover glow rather than any movement - hovering anywhere in a
-   panel (the cells sit directly on top of .benefitsBg, so :hover on a cell
-   is what :has() below is watching for) brightens its rim and deepens the
-   shadow slightly. Inset rather than an outer shadow, since .benefitsSplit's
-   own overflow: hidden (needed for the square-corner clip) would cut off
-   anything cast outside the box. */
-.benefitsSplit:has(.benefitsCellDark:hover) .benefitsBgDark {
+   panel brightens its rim and deepens the shadow slightly. Inset rather
+   than an outer shadow, since .benefitsSplit's own overflow: hidden (needed
+   for the square-corner clip) would cut off anything cast outside the box. */
+.benefitsSplit:has(.benefitsColDark:hover) .benefitsColDark {
   box-shadow:
     inset 0 0 0 1px rgba(198, 169, 122, 0.3),
     inset 0 34px 70px -40px rgba(0, 0, 0, 0.6);
 }
 
-.benefitsSplit:has(.benefitsCellLight:hover) .benefitsBgLight {
+.benefitsSplit:has(.benefitsColLight:hover) .benefitsColLight {
   box-shadow:
     inset 0 0 0 1px rgba(198, 169, 122, 0.35),
     inset 0 30px 60px -38px rgba(59, 46, 36, 0.18);
 }
-
-@media (max-width: 760px) {
-  .benefitsBg {
-    display: none;
-  }
-}
-
-.benefitsCol {
-  display: contents;
-}
-
-/* Below 760px each column becomes one continuous block instead of
-   `contents` - its cells stack in normal flow as one piece (Teams
-   entirely, then Individuals entirely) rather than interleaving row by
-   row the way the desktop grid pairs them, and it carries its own
-   background since .benefitsBg is hidden at this width. */
-@media (max-width: 760px) {
-  .benefitsCol {
-    display: block;
-  }
-
-  .benefitsColDark {
-    background: var(--gradient-deep);
-  }
-
-  .benefitsColLight {
-    background: var(--color-cream-raised);
-  }
-}
-
-.benefitsCol > *:nth-child(1) { grid-row: 1; }
-.benefitsCol > *:nth-child(2) { grid-row: 2; }
-.benefitsCol > *:nth-child(3) { grid-row: 3; }
-.benefitsCol > *:nth-child(4) { grid-row: 4; }
-.benefitsCol > *:nth-child(5) { grid-row: 5; }
 
 .benefitsCell {
   padding-left: clamp(24px, 3vw, 44px);
@@ -487,10 +437,8 @@
 }
 
 /* Full-width, unstyled button so the whole row (not just the title text) is
-   the click target, and clicking opens the shared modal (see
-   .componentOverlay/.componentModal, reused from the Experience cards)
-   instead of revealing the body text in place - a short item and a long one
-   never leave uneven blank space behind. */
+   the click target. Opens .benefitsFlyout below instead of revealing the
+   body text in place. */
 .benefitsItemToggle {
   display: flex;
   align-items: center;
@@ -514,7 +462,39 @@
 
 .benefitsItemArrow {
   flex: none;
+  display: inline-flex;
   color: inherit;
+  transition: transform 0.2s ease;
+}
+
+.benefitsItemArrowOpen {
+  transform: rotate(180deg);
+}
+
+/* A small in-place reveal, not the full-screen modal used for the
+   Experience cards/reviews - these one-line benefits are too short to earn
+   a full dialog. Normal flow (not absolute) so it pushes the rest of its
+   own column down rather than overlapping the next item or the closing
+   note - each column is now independent (see .benefitsCol), so this never
+   stretches or leaves blank space in the opposite column. Closes on
+   click-away (click a different item, or leave the row with the mouse -
+   see the item cell's onMouseLeave). */
+.benefitsFlyout {
+  padding: 4px 0 12px;
+}
+
+.benefitsFlyoutBody {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.benefitsCellDark .benefitsFlyoutBody {
+  color: #d7cbb6;
+}
+
+.benefitsCellLight .benefitsFlyoutBody {
+  color: var(--color-ink-body);
 }
 
 .benefitsClosing {

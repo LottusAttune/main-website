@@ -4,7 +4,7 @@ import { Reveal } from '@/components/common/Reveal';
 import { SiteFooter } from '@/components/chrome/SiteFooter';
 import { SiteNav } from '@/components/chrome/SiteNav';
 import { StickyBookBar } from '@/components/chrome/StickyBookBar';
-import { ExperienceComponentCard } from '@/components/experience/ExperienceComponentCard';
+import { ExperienceComponentsGrid } from '@/components/experience/ExperienceComponentsGrid';
 import { Gallery } from '@/components/experience/Gallery';
 import {
   BENEFITS_INDIVIDUAL,
@@ -57,25 +57,22 @@ export default function ExperiencePage() {
 
         {/* ---------- Five components ---------- */}
         <section className={styles.block} aria-label="The five components">
-          <div className={styles.componentGrid}>
-            {COMPONENTS.map((step) => {
+          <ExperienceComponentsGrid
+            cards={COMPONENTS.map((step) => {
               const stepPhoto = STEP_PHOTOS[step.n];
               const photo = asset(stepPhoto.name);
-              return (
-                <ExperienceComponentCard
-                  key={step.n}
-                  n={step.n}
-                  title={step.title}
-                  body={step.body}
-                  photoSrc={photo.src}
-                  photoWidth={photo.width}
-                  photoHeight={photo.height}
-                  photoPosition={stepPhoto.position}
-                  mirror={'mirror' in stepPhoto}
-                />
-              );
+              return {
+                n: step.n,
+                title: step.title,
+                body: step.body,
+                photoSrc: photo.src,
+                photoWidth: photo.width,
+                photoHeight: photo.height,
+                photoPosition: stepPhoto.position,
+                mirror: 'mirror' in stepPhoto,
+              };
             })}
-          </div>
+          />
         </section>
 
         {/* ---------- Benefits ---------- */}

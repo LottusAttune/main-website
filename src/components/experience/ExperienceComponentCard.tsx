@@ -1,7 +1,6 @@
 'use client';
 
 import Image from 'next/image';
-import { useState } from 'react';
 
 import styles from '@/app/v1/experience/experience.module.css';
 
@@ -14,6 +13,8 @@ type Props = {
   photoHeight: number;
   photoPosition: string;
   mirror?: boolean;
+  open: boolean;
+  onToggle: () => void;
 };
 
 export function ExperienceComponentCard({
@@ -25,9 +26,9 @@ export function ExperienceComponentCard({
   photoHeight,
   photoPosition,
   mirror,
+  open,
+  onToggle,
 }: Props) {
-  const [open, setOpen] = useState(false);
-
   return (
     <div className={`card card--lift ${styles.componentCard}`} data-reveal="">
       <div className={styles.componentPhoto}>
@@ -49,7 +50,7 @@ export function ExperienceComponentCard({
         <button
           type="button"
           className={styles.componentToggle}
-          onClick={() => setOpen((v) => !v)}
+          onClick={onToggle}
           aria-expanded={open}
         >
           <span>{open ? 'Less' : 'Details'}</span>

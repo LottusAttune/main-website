@@ -73,9 +73,14 @@
 
 /* ---------- Five components ---------- */
 
+/* align-items: start keeps each card sized to its own content - without it,
+   grid's default stretch makes every card in the row grow to match whichever
+   one has its details open, so the whole row visibly shifts for an unrelated
+   card's toggle. */
 .componentGrid {
   display: grid;
   grid-template-columns: repeat(5, 1fr);
+  align-items: start;
   gap: 16px;
 }
 

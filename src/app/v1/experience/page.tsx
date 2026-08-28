@@ -92,7 +92,10 @@ export default function ExperiencePage() {
         </section>
 
         {/* ---------- Benefits ---------- */}
-        <section className={styles.benefitsSection} aria-label="Benefits">
+        <section
+          className={`section--soft ${styles.benefitsSection}`}
+          aria-label="Benefits"
+        >
           <div className={`shell ${styles.benefitsShell}`}>
             <h2 className={`display ${styles.benefitsHeading}`}>Benefits</h2>
           </div>
@@ -116,7 +119,6 @@ export default function ExperiencePage() {
                 interleaving row by row. */}
             <div className={`${styles.benefitsCol} ${styles.benefitsColDark}`}>
               <div className={`${styles.benefitsCell} ${styles.benefitsCellDark} ${styles.benefitsCellHeader}`}>
-                <span className={styles.benefitsPanelTag}>Corporate</span>
                 <h3 id="teams-heading" className={`display ${styles.benefitsPanelHeading}`}>
                   For Teams &amp; Organizations
                 </h3>
@@ -144,9 +146,6 @@ export default function ExperiencePage() {
 
             <div className={`${styles.benefitsCol} ${styles.benefitsColLight}`}>
               <div className={`${styles.benefitsCell} ${styles.benefitsCellLight} ${styles.benefitsCellHeader}`}>
-                <span className={styles.benefitsPanelTag}>
-                  1 : 1 &nbsp;·&nbsp; Private Groups
-                </span>
                 <h3 id="individuals-heading" className={`display ${styles.benefitsPanelHeading}`}>
                   For Individuals
                 </h3>

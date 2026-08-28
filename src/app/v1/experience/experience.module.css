@@ -220,7 +220,10 @@
 
 .benefitsBgLight {
   grid-column: 2;
-  background: #f9f3e7;
+  /* Whiter than the section's own beige backdrop (added via the shared
+     section--soft class), so the Individuals side still reads as a
+     distinct card sitting on that backdrop rather than blending into it. */
+  background: var(--color-cream-raised);
 }
 
 @media (max-width: 760px) {
@@ -248,7 +251,7 @@
   }
 
   .benefitsColLight {
-    background: #f9f3e7;
+    background: var(--color-cream-raised);
   }
 }
 
@@ -273,38 +276,21 @@
   color: var(--color-ink);
 }
 
+/* More top air than before - now that the tag pill above the heading is
+   gone, this is the only thing separating the heading from the panel's
+   own top edge. */
 .benefitsCellHeader {
-  padding-top: clamp(28px, 3.2vw, 44px);
+  padding-top: clamp(36px, 4vw, 52px);
 }
 
 .benefitsCellClosing {
   padding-bottom: clamp(28px, 3.2vw, 44px);
 }
 
-/* Mirrors between the two sides rather than matching the shared .tag pill
-   used elsewhere - solid cream on dark, solid ink on light, no gold/tan. */
-.benefitsPanelTag {
-  display: inline-block;
-  margin-bottom: 16px;
-  padding: 9px 20px;
-  font-size: 11px;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-  border-radius: 6px;
-}
-
-.benefitsCellDark .benefitsPanelTag {
-  background: var(--color-cream-text);
-  color: var(--color-ink);
-}
-
-.benefitsCellLight .benefitsPanelTag {
-  background: var(--color-ink);
-  color: var(--color-cream-text);
-}
-
 .benefitsPanelHeading {
-  margin: 0 0 12px;
+  /* More room below the heading, before the note - it used to share that
+     gap with the tag pill's own margin, which is gone now. */
+  margin: 0 0 18px;
   font-weight: 300;
   font-size: clamp(24px, 2.6vw, 32px);
   line-height: 1.15;
@@ -378,8 +364,12 @@
 
 /* ---------- Gallery block ---------- */
 
+/* Top padding trimmed well below --space-section-short - Benefits already
+   ends with its own bottom padding immediately above, so the full section
+   gap stacked on top of it read as a much bigger gap than anywhere else
+   between sections on this page. */
 .galleryBlock {
-  padding: var(--space-section-short) var(--space-gutter) clamp(36px, 4vw, 60px);
+  padding: clamp(28px, 3.4vw, 40px) var(--space-gutter) clamp(36px, 4vw, 60px);
   max-width: var(--width-content);
   margin: 0 auto;
 }

@@ -265,8 +265,22 @@
 .modalCaption {
   display: flex;
   align-items: center;
+  flex-wrap: wrap;
   gap: 8px;
   padding-top: 22px;
   border-top: 1px solid var(--hairline-light);
   color: var(--color-gold-text);
+}
+
+/* Pushed to the right of the caption row (margin-left: auto) so it sits
+   opposite the reviewer's name instead of competing with it. Quiet enough
+   not to compete with the review text either - just enough of a nudge that
+   a first-time visitor doesn't feel stuck inside the modal. Solid
+   --color-ink-body (not an alpha blend) clears AA against this modal's
+   background at both ends of its gradient. */
+.modalHint {
+  margin-left: auto;
+  font-size: 12px;
+  letter-spacing: 0.02em;
+  color: var(--color-ink-body);
 }

@@ -207,6 +207,7 @@ export function ReviewsCarousel({ reviews }: Props) {
             <div className={styles.modalCaption}>
               <Wave />
               <span className={styles.name}>{active.name}</span>
+              <span className={styles.modalHint}>Click outside or press Esc to close</span>
             </div>
           </div>
         </div>

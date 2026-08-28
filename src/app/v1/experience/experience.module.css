@@ -60,8 +60,13 @@
   text-align: justify;
 }
 
+/* Bottom padding trimmed well below its old clamp(56,7vw,100) - Benefits
+   right after it now supplies its own clear break via a background color
+   change, so this doesn't need to carry the full section gap by itself
+   too; stacked, the two read as a lot of empty space before any Benefits
+   content appears. */
 .block {
-  padding: 0 var(--space-gutter) clamp(56px, 7vw, 100px);
+  padding: 0 var(--space-gutter) clamp(28px, 3.4vw, 40px);
   max-width: var(--width-content);
   margin: 0 auto;
 }
@@ -152,12 +157,15 @@
 
 /* ---------- Benefits ---------- */
 
+/* Top trimmed well below the bottom value - the background color change
+   at this section's edge already signals the new section on its own, so
+   it doesn't also need a large empty gap before "Benefits" appears. */
 .benefitsSection {
-  padding: clamp(48px, 6vw, 76px) 0;
+  padding: clamp(28px, 3.4vw, 40px) 0 clamp(48px, 6vw, 76px);
 }
 
 .benefitsShell {
-  padding-bottom: clamp(28px, 3.4vw, 40px);
+  padding-bottom: clamp(16px, 2vw, 24px);
 }
 
 /* Matches .title (the "A Journey to Reset, Align and Thrive" heading) -
@@ -181,9 +189,10 @@
    regardless of how their copy lengths differ, with the shorter cell just
    gaining the extra room as breathing space.
 
-   overflow: hidden + radius on this container (rather than on each cell)
-   means the rounded corners land correctly around the whole shape without
-   needing separate corner rules per cell. */
+   Fully square corners, no radius - kept flat rather than the soft 6px
+   used elsewhere on the page. overflow: hidden still lives here (rather
+   than on each cell) so the column-gap seam and column backgrounds stay
+   clipped to one clean rectangle. */
 .benefitsSplit {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -194,7 +203,7 @@
   grid-template-rows: repeat(5, auto);
   column-gap: 2px;
   row-gap: 0;
-  border-radius: 6px;
+  border-radius: 0;
   overflow: hidden;
 }
 

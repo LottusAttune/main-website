@@ -70,17 +70,27 @@
   pointer-events: auto;
 }
 
-/* contain, not cover - the gallery mixes very different native shapes (wide
-   room shots, a tall portrait photo), and no single box ratio can crop
-   toward all of them without losing content from some. contain always
-   shows the complete photo, letterboxed against .stage's own background
-   when a photo's ratio doesn't match the box, rather than ever cropping
-   into it. The one photo that genuinely needed an edit (venue-bar had a
-   bin and a cart at the edge) was fixed at the source image instead, so
-   every photo here can use the same non-cropping rule. */
-.slide img {
-  width: 100%;
-  height: 100%;
+/* Sized to the photo's own aspect ratio (set inline, per photo), capped by
+   .slide's box on both axes, and centered in it via the classic
+   inset: 0 + margin: auto trick - this resolves to exactly the same
+   rectangle object-fit: contain used to paint the photo into, except now
+   .caption (below) anchors to this rectangle instead of to .stage's outer
+   corner, so the label stays on the actual photo instead of floating in
+   the letterboxed margin around any photo that doesn't fill the stage.
+   (Centering this the Grid way - place-items or margin: auto on a grid
+   item - was tried first: both switch the browser's sizing of an
+   aspect-ratio item from "stretch" to "fit-content", which collapsed it to
+   zero since neither child here contributes flow content. Plain absolute
+   positioning with inset: 0 doesn't have that failure mode.) */
+.frame {
+  position: absolute;
+  inset: 0;
+  margin: auto;
+  max-width: 100%;
+  max-height: 100%;
+}
+
+.photo {
   object-fit: contain;
 }
 

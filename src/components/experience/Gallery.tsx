@@ -48,18 +48,23 @@ export function Gallery({ items }: Props) {
                 key={item.img}
                 className={`${styles.slide} ${i === active ? styles.slideActive : ''}`}
               >
-                <Image
-                  src={image.src}
-                  alt={i === active ? item.label : ''}
-                  width={image.width}
-                  height={image.height}
-                  sizes="(max-width: 900px) 100vw, 70vw"
-                  quality={90}
-                />
+                <span
+                  className={styles.frame}
+                  style={{ aspectRatio: `${image.width} / ${image.height}` }}
+                >
+                  <Image
+                    src={image.src}
+                    alt={i === active ? item.label : ''}
+                    fill
+                    sizes="(max-width: 900px) 100vw, 70vw"
+                    quality={90}
+                    className={styles.photo}
+                  />
+                  <span className={styles.caption}>{item.label}</span>
+                </span>
               </span>
             );
           })}
-          <span className={styles.caption}>{current.label}</span>
         </button>
 
         <div className={styles.railCol}>

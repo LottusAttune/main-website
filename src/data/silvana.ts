@@ -124,7 +124,7 @@ export const SILVANA_INCLUDED = {
   items: [
     {
       image: 'venue-signature',
-      body: 'Premium Signature Venue (for 6-24 participants). Features an ample, high-end space with three private gender-inclusive washrooms and kitchen. Venue rental is included in the package price',
+      body: 'Premium Signature Venue (for 7-24 participants). Features an ample, high-end space with three private gender-inclusive washrooms and kitchen. Venue rental is included in the package price',
     },
     {
       image: 'lounge-private',

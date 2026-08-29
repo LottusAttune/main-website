@@ -1,7 +1,14 @@
+/* Narrower than the full section width and centered - the previous full-
+   bleed width, combined with the short height below, stretched the box
+   into an extreme letterbox shape that cropped away most of every photo's
+   vertical content. Inset roughly to where the caption's own text begins,
+   both sides. */
 .layout {
   display: grid;
   grid-template-columns: minmax(0, 3.4fr) minmax(88px, 0.6fr);
   gap: 16px;
+  max-width: 1160px;
+  margin: 0 auto;
 }
 
 /* Quiet nudge so a first-time visitor knows the stage photo opens full size
@@ -14,12 +21,9 @@
   color: var(--color-ink-body);
 }
 
-/* Trimmed well below the old clamp(320,52vw,600) - the aim is to fit the
-   heading, this photo, and a peek of the first "Included" list item all on
-   one laptop screen, not to fill as much height as the photo can take. */
 .stage {
   position: relative;
-  height: clamp(230px, 25vw, 315px);
+  height: clamp(320px, 40vw, 480px);
   background: var(--gradient-beige);
   border-radius: 0;
   overflow: hidden;
@@ -42,10 +46,18 @@
   pointer-events: auto;
 }
 
+/* contain, not cover - the gallery mixes very different native shapes (wide
+   room shots, a tall portrait photo), and no single box ratio can crop
+   toward all of them without losing content from some. contain always
+   shows the complete photo, letterboxed against .stage's own background
+   when a photo's ratio doesn't match the box, rather than ever cropping
+   into it. The one photo that genuinely needed an edit (venue-bar had a
+   bin and a cart at the edge) was fixed at the source image instead, so
+   every photo here can use the same non-cropping rule. */
 .slide img {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain;
 }
 
 .caption {
@@ -66,7 +78,7 @@
   display: flex;
   flex-direction: column;
   gap: 12px;
-  max-height: clamp(230px, 25vw, 315px);
+  max-height: clamp(320px, 40vw, 480px);
   overflow-y: auto;
   padding-right: 4px;
 }

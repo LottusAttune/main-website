@@ -15,22 +15,6 @@ type Props = {
   items: readonly GalleryItem[];
 };
 
-/* The main stage is now a very short, wide box (see .stage) - most source
-   photos are much closer to square, so object-fit: cover already shows
-   their full width and only trims top/bottom; object-position has no
-   horizontal overflow to work with, so it can't crop out unwanted edges (a
-   bin, a cart, a dark sliver) or re-center on the more interesting side of
-   the room. Scaling the already-cover-fitted image up creates that missing
-   overflow, and transformOriginX (0-100, where the zoom "holds still" on
-   the way in) then decides which side survives - higher keeps more of the
-   right, lower keeps more of the left. Only affects the large stage image,
-   not thumbnails. */
-const STAGE_CROP: Partial<Record<string, { zoom: number; transformOriginX: number }>> = {
-  'venue-signature': { zoom: 1.4, transformOriginX: 75 },
-  'venue-bar': { zoom: 1.75, transformOriginX: 25 },
-  'lounge-private': { zoom: 1.15, transformOriginX: 50 },
-};
-
 export function Gallery({ items }: Props) {
   const [active, setActive] = useState(0);
   const [lightbox, setLightbox] = useState(false);
@@ -58,7 +42,6 @@ export function Gallery({ items }: Props) {
         >
           {items.map((item, i) => {
             const image = asset(item.img as AssetName);
-            const crop = STAGE_CROP[item.img];
             return (
               <span
                 key={item.img}
@@ -71,14 +54,6 @@ export function Gallery({ items }: Props) {
                   height={image.height}
                   sizes="(max-width: 900px) 100vw, 70vw"
                   quality={90}
-                  style={
-                    crop
-                      ? {
-                          transform: `scale(${crop.zoom})`,
-                          transformOrigin: `${crop.transformOriginX}% 50%`,
-                        }
-                      : undefined
-                  }
                 />
               </span>
             );

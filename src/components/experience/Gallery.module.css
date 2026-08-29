@@ -108,13 +108,18 @@
    the picture's height exactly - otherwise the hint pushed this column
    taller than .stage and the grid row grew to fit it, leaving dead space
    under the picture on the left. */
+/* Padding on every side, not just the right - the active thumb's outline
+   (2px wide, offset 2px further out) draws outside the thumb's own box, and
+   with no padding here that ring gets clipped by this scrollable
+   container's edge on whichever side has no adjacent gap to absorb it
+   (the top of the first thumb, the left of all of them). */
 .rail {
   display: flex;
   flex-direction: column;
   gap: 12px;
   max-height: calc(clamp(320px, 40vw, 480px) - 34px);
   overflow-y: auto;
-  padding-right: 4px;
+  padding: 4px;
 }
 
 /* Full opacity always - fading the inactive thumbnails read as lower

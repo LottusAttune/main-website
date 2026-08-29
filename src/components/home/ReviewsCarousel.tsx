@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useState } from 'react';
 
+import { Wave } from '@/components/common/Wave';
 import styles from './ReviewsCarousel.module.css';
 
 const GAP = 18;
@@ -33,27 +34,6 @@ function excerptOf(text: string): { excerpt: string; truncated: boolean } {
   };
 }
 
-/** A small signature-like flourish next to each reviewer's name, in place of
-    a circle that was neither a real photo nor adding real information. */
-function Wave() {
-  return (
-    <svg
-      className={styles.wave}
-      width="13"
-      height="8"
-      viewBox="0 0 13 8"
-      aria-hidden="true"
-    >
-      <path
-        d="M1 5 C5 1 8 7 12 3"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="1"
-        strokeLinecap="round"
-      />
-    </svg>
-  );
-}
 
 export function ReviewsCarousel({ reviews }: Props) {
   const [index, setIndex] = useState(0);
@@ -146,7 +126,7 @@ export function ReviewsCarousel({ reviews }: Props) {
                     <span />
                   )}
                   <span className={styles.signature}>
-                    <Wave />
+                    <Wave className={styles.wave} />
                     <span className={styles.name}>{review.name}</span>
                   </span>
                 </figcaption>
@@ -205,7 +185,7 @@ export function ReviewsCarousel({ reviews }: Props) {
             </div>
             <p className={styles.modalText}>{active.text}</p>
             <div className={styles.modalCaption}>
-              <Wave />
+              <Wave className={styles.wave} />
               <span className={styles.name}>{active.name}</span>
               <span className={styles.modalHint}>Click outside or press Esc to close</span>
             </div>

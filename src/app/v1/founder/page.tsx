@@ -4,6 +4,7 @@ import Image from 'next/image';
 import { Accordion } from '@/components/common/Accordion';
 import accordionStyles from '@/components/common/Accordion.module.css';
 import { Reveal } from '@/components/common/Reveal';
+import { Wave } from '@/components/common/Wave';
 import { SiteFooter } from '@/components/chrome/SiteFooter';
 import { SiteNav } from '@/components/chrome/SiteNav';
 import { StickyBookBar } from '@/components/chrome/StickyBookBar';
@@ -49,8 +50,6 @@ export default function FounderPage() {
                   quality={90}
                   priority
                 />
-                <span className={styles.portraitScrim} />
-                <span className={styles.portraitName}>Silvana</span>
               </div>
             </div>
             <div className={styles.bio}>
@@ -64,6 +63,10 @@ export default function FounderPage() {
                 <br />
                 productivity and well-being, and excellence and human connection.”
               </p>
+              <span className={styles.signature}>
+                <Wave className={styles.wave} />
+                <span className={styles.signatureName}>Silvana</span>
+              </span>
             </div>
           </div>
         </section>

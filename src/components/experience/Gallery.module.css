@@ -15,28 +15,9 @@
   margin: 0 auto;
 }
 
-.stageCol {
-  display: flex;
-  flex-direction: column;
-}
-
-/* Now sits under the stage itself (not the thumbnails) - with visible
-   nav arrows and drag/swipe on the photo, the one thing left that isn't
-   obvious just from looking is that clicking it opens a full-size view,
-   so the hint only needs to say that. No arrow icon needed since it's
-   directly under the element it describes. Solid --color-ink-body, not
-   an alpha blend, per the site's text-contrast rule. */
-.hint {
-  margin: 10px 0 0;
-  font-size: 12px;
-  letter-spacing: 0.02em;
-  text-align: center;
-  color: var(--color-ink-body);
-}
-
-/* Same page cream as the lightbox, not the beige gradient this used to
-   carry - a photo whose shape leaves a margin inside this box should blend
-   into the page the same way it does once it's opened full screen. */
+/* Same page cream the surrounding page sits on, not the beige gradient
+   this used to carry - a photo whose shape leaves a margin inside this box
+   blends into the page instead of showing an obvious background. */
 /* touch-action: pan-y lets a vertical touch scroll pass through normally,
    while leaving horizontal movement free for the drag/swipe handlers in
    Gallery.tsx to read - without it the browser's own touch scrolling fights
@@ -159,11 +140,6 @@
   flex-direction: column;
 }
 
-/* Height trimmed below .stage's own clamp by the .hint block's height (now
-   under the stage, not here) so this column still matches the stage
-   column's total height - otherwise this side would be shorter than the
-   stage+hint column and the grid row would grow to fit the taller one,
-   leaving dead space under the thumbnails. */
 /* Padding on every side, not just the right - the active thumb's outline
    (2px wide, offset 2px further out) draws outside the thumb's own box, and
    with no padding here that ring gets clipped by this scrollable
@@ -173,7 +149,7 @@
   display: flex;
   flex-direction: column;
   gap: 12px;
-  max-height: calc(clamp(320px, 40vw, 480px) - 27px);
+  max-height: clamp(320px, 40vw, 480px);
   overflow-y: auto;
   padding: 4px;
 }
@@ -210,36 +186,4 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
-}
-
-/* Cream, not a dark scrim - this is the same var(--color-cream) the page's
-   own body sits on, so a photo whose shape doesn't fill the screen blends
-   into the page rather than announcing a "backdrop" the way a dark overlay
-   would. */
-.lightbox {
-  position: fixed;
-  inset: 0;
-  z-index: 200;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: clamp(24px, 6vw, 64px);
-  background: var(--color-cream);
-  cursor: zoom-out;
-  border: none;
-  width: 100%;
-}
-
-.lightboxInner {
-  position: relative;
-  width: 100%;
-  height: 100%;
-  max-width: 1200px;
-}
-
-.lightboxInner img {
-  width: 100%;
-  height: 100%;
-  /* Natural proportion — the lightbox is where the photo is judged. */
-  object-fit: contain;
 }

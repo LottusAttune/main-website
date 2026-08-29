@@ -109,10 +109,10 @@ export default function ExperiencePage() {
               </div>
             </div>
             <p className={styles.sectionHeadNote}>
-              Private sessions, groups and organizations.
+              Private sessions, groups and organizations
               <br />
-              Venue rental, materials and refreshments are part of the
-              package price
+              Venue rental, comfort provisions, and refreshments are
+              included in the package price
             </p>
           </div>
 

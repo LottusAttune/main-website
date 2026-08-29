@@ -590,12 +590,13 @@
 
 /* Widened from 380px, and the two sentences in the JSX get an explicit
    <br/> between them - relying on width-based wrapping alone put the break
-   randomly mid-sentence ("...materials and" / "refreshments...") depending
-   on viewport width; the explicit break guarantees "Venue rental..." always
-   starts its own line, uncut. */
+   randomly mid-sentence depending on viewport width; the explicit break
+   guarantees "Venue rental..." always starts its own line, uncut. Widened
+   again to 620px so that full second sentence stays on one line instead of
+   wrapping to a third. */
 .sectionHeadNote {
   margin: 0;
-  max-width: 560px;
+  max-width: 620px;
   font-size: 16.5px;
   line-height: 1.8;
   color: var(--color-ink-body);

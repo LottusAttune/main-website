@@ -129,13 +129,12 @@ export const INCLUDED_SHORT = [
 export const INCLUDED_FULL = [
   'Premium Signature Venue (for 6-24 participants). Features an ample, high-end space with three private gender-inclusive washrooms and kitchen. Venue rental is included in the package price',
   'Wellness Lounge (for up to 6 participants). Intimate space that supports a personalized and warm atmosphere. Venue rental is included in the package price and provides exclusive access to both the Arrival Lounge and the Experience Room',
-  'Fully guided somatic and mindfulness practices and a sensory connection exercise',
-  'Immersive sound session layered with multiple professional-grade sound healing instruments — all sourced from the most internationally recognized makers known for their craftsmanship and acoustic quality',
+  'Fully guided somatic and mindfulness practices, a sensory connection exercise, and end-of-session reintegration',
+  'An immersive sound session layered with multiple professional-grade sound healing instruments, all sourced from recognized makers renowned for their exceptional acoustic quality',
   'Educational video about neuroscience and sound benefits',
   'Comfort items and materials: elements are provided for all participants and include custom-branded cushioned wellness mats, memory-foam cervical pillows, cozy blankets, and eye masks',
   'Additional Signature Touches: intention-setting cards and reflection cards',
   'Refreshments, including water, other beverages and healthy snacks',
-  'End-of-session reintegration',
 ] as const;
 
 export const BENEFITS_INDIVIDUAL = {

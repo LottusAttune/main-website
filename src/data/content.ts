@@ -185,7 +185,7 @@ export const GALLERY = [
   { img: 'rainstick', label: 'Rainstick' },
   { img: 'intention-card', label: 'Intention-setting cards' },
   { img: 'signature-cards', label: 'Reflection cards' },
-  { img: 'refreshments', label: 'Refreshments' },
+  { img: 'refreshments', label: 'Snacks and refreshments' },
 ] as const;
 
 /**

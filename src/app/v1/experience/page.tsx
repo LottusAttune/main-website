@@ -98,15 +98,15 @@ export default function ExperiencePage() {
         >
           <div className={styles.galleryHead}>
             <div style={{ minWidth: 0 }}>
-              <div className={`display ${styles.gallerySubtitle}`}>
-                What is Included
-              </div>
               <h2
                 id="gallery-heading"
                 className={`display ${styles.galleryHeading}`}
               >
-                Two-hour transformative journey included in all offerings
+                What is Included
               </h2>
+              <div className={`display ${styles.gallerySubtitle}`}>
+                Two-hour transformative journey included in all offerings
+              </div>
             </div>
             <p className={styles.sectionHeadNote}>
               Private sessions, groups and organizations.

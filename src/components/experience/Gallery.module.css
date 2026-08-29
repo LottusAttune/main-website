@@ -100,11 +100,16 @@
   flex-direction: column;
 }
 
+/* Height trimmed below .stage's own clamp by the hint block's height (its
+   arrow + one line of text + margin-top) so the rail + hint together match
+   the picture's height exactly - otherwise the hint pushed this column
+   taller than .stage and the grid row grew to fit it, leaving dead space
+   under the picture on the left. */
 .rail {
   display: flex;
   flex-direction: column;
   gap: 12px;
-  max-height: clamp(320px, 40vw, 480px);
+  max-height: calc(clamp(320px, 40vw, 480px) - 34px);
   overflow-y: auto;
   padding-right: 4px;
 }
@@ -143,6 +148,10 @@
   object-fit: cover;
 }
 
+/* Cream, not a dark scrim - this is the same var(--color-cream) the page's
+   own body sits on, so a photo whose shape doesn't fill the screen blends
+   into the page rather than announcing a "backdrop" the way a dark overlay
+   would. */
 .lightbox {
   position: fixed;
   inset: 0;
@@ -151,7 +160,7 @@
   align-items: center;
   justify-content: center;
   padding: clamp(24px, 6vw, 64px);
-  background: rgba(30, 23, 17, 0.94);
+  background: var(--color-cream);
   cursor: zoom-out;
   border: none;
   width: 100%;

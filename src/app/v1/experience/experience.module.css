@@ -597,8 +597,8 @@
 .sectionHeadNote {
   margin: 0;
   max-width: 620px;
-  font-size: 16.5px;
-  line-height: 1.8;
+  font-size: 14.5px;
+  line-height: 1.7;
   color: var(--color-ink-body);
 }
 

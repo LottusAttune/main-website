@@ -91,7 +91,7 @@ export function Gallery({ items }: Props) {
             <span className={styles.hintArrow}>
               <ChevronIcon />
             </span>
-            Click a photo to view it full size
+            Click to enlarge
           </p>
         </div>
       </div>

@@ -42,10 +42,13 @@
   transform: rotate(180deg);
 }
 
+/* Same page cream as the lightbox, not the beige gradient this used to
+   carry - a photo whose shape leaves a margin inside this box should blend
+   into the page the same way it does once it's opened full screen. */
 .stage {
   position: relative;
   height: clamp(320px, 40vw, 480px);
-  background: var(--gradient-beige);
+  background: var(--color-cream);
   border-radius: 0;
   overflow: hidden;
   padding: 0;

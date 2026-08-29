@@ -1,7 +1,7 @@
 'use client';
 
 import Image from 'next/image';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import { ChevronIcon } from '@/components/common/ChevronIcon';
 import { asset, type AssetName } from '@/lib/images';
@@ -16,9 +16,13 @@ type Props = {
   items: readonly GalleryItem[];
 };
 
+const SWIPE_THRESHOLD = 50;
+const DRAG_TOLERANCE = 10;
+
 export function Gallery({ items }: Props) {
   const [active, setActive] = useState(0);
   const [lightbox, setLightbox] = useState(false);
+  const drag = useRef({ startX: 0, dragging: false, moved: false, suppressClick: false });
 
   useEffect(() => {
     if (!lightbox) return;
@@ -32,14 +36,59 @@ export function Gallery({ items }: Props) {
   const current = items[active];
   const currentImage = asset(current.img as AssetName);
 
+  const goPrev = () => setActive((i) => (i - 1 + items.length) % items.length);
+  const goNext = () => setActive((i) => (i + 1) % items.length);
+
+  const onStagePointerDown = (e: React.PointerEvent) => {
+    drag.current = { startX: e.clientX, dragging: true, moved: false, suppressClick: false };
+  };
+  const onStagePointerMove = (e: React.PointerEvent) => {
+    if (!drag.current.dragging) return;
+    if (Math.abs(e.clientX - drag.current.startX) > DRAG_TOLERANCE) {
+      drag.current.moved = true;
+    }
+  };
+  const onStagePointerUp = (e: React.PointerEvent) => {
+    if (!drag.current.dragging) return;
+    const dx = e.clientX - drag.current.startX;
+    drag.current.dragging = false;
+    if (Math.abs(dx) > SWIPE_THRESHOLD) {
+      drag.current.suppressClick = true;
+      if (dx < 0) goNext();
+      else goPrev();
+    }
+  };
+  const onStageClick = () => {
+    if (drag.current.suppressClick) {
+      drag.current.suppressClick = false;
+      return;
+    }
+    setLightbox(true);
+  };
+  const onStageKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      setLightbox(true);
+    } else if (e.key === 'ArrowLeft') {
+      goPrev();
+    } else if (e.key === 'ArrowRight') {
+      goNext();
+    }
+  };
+
   return (
     <>
       <div className={styles.layout}>
-        <button
-          type="button"
+        <div
           className={styles.stage}
+          role="button"
+          tabIndex={0}
           aria-label={`Open ${current.label} full size`}
-          onClick={() => setLightbox(true)}
+          onClick={onStageClick}
+          onKeyDown={onStageKeyDown}
+          onPointerDown={onStagePointerDown}
+          onPointerMove={onStagePointerMove}
+          onPointerUp={onStagePointerUp}
         >
           {items.map((item, i) => {
             const image = asset(item.img as AssetName);
@@ -59,13 +108,41 @@ export function Gallery({ items }: Props) {
                     sizes="(max-width: 900px) 100vw, 70vw"
                     quality={90}
                     className={styles.photo}
+                    draggable={false}
                   />
                   <span className={styles.caption}>{item.label}</span>
                 </span>
               </span>
             );
           })}
-        </button>
+
+          <button
+            type="button"
+            className={`${styles.navArrow} ${styles.navPrev}`}
+            aria-label="Previous photo"
+            onClick={(e) => {
+              e.stopPropagation();
+              goPrev();
+            }}
+            onPointerDown={(e) => e.stopPropagation()}
+            onPointerUp={(e) => e.stopPropagation()}
+          >
+            <ChevronIcon className={styles.navIconLeft} />
+          </button>
+          <button
+            type="button"
+            className={`${styles.navArrow} ${styles.navNext}`}
+            aria-label="Next photo"
+            onClick={(e) => {
+              e.stopPropagation();
+              goNext();
+            }}
+            onPointerDown={(e) => e.stopPropagation()}
+            onPointerUp={(e) => e.stopPropagation()}
+          >
+            <ChevronIcon className={styles.navIconRight} />
+          </button>
+        </div>
 
         <div className={styles.railCol}>
           <div className={styles.rail}>

@@ -45,6 +45,10 @@
 /* Same page cream as the lightbox, not the beige gradient this used to
    carry - a photo whose shape leaves a margin inside this box should blend
    into the page the same way it does once it's opened full screen. */
+/* touch-action: pan-y lets a vertical touch scroll pass through normally,
+   while leaving horizontal movement free for the drag/swipe handlers in
+   Gallery.tsx to read - without it the browser's own touch scrolling fights
+   the swipe gesture on this element. */
 .stage {
   position: relative;
   height: clamp(320px, 40vw, 480px);
@@ -54,7 +58,9 @@
   padding: 0;
   border: none;
   width: 100%;
-  cursor: zoom-in;
+  cursor: grab;
+  touch-action: pan-y;
+  user-select: none;
 }
 
 .slide {
@@ -106,6 +112,54 @@
   letter-spacing: 0.22em;
   text-transform: uppercase;
   pointer-events: none;
+}
+
+/* Same translucent-pill treatment as .caption (a solid icon color over an
+   alpha background, not alpha text, so this doesn't trip the site's
+   text-contrast rule) - a visible, discoverable alternative to the drag/
+   swipe gesture on the stage itself. */
+.navArrow {
+  position: absolute;
+  top: 50%;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  background: rgba(46, 36, 28, 0.55);
+  color: var(--color-cream-text);
+  cursor: pointer;
+  transform: translateY(-50%);
+  transition: background-color 0.2s ease;
+}
+
+.navArrow:hover {
+  background: rgba(46, 36, 28, 0.78);
+}
+
+.navArrow svg {
+  width: 12px;
+  height: 12px;
+}
+
+.navPrev {
+  left: 16px;
+}
+
+.navNext {
+  right: 16px;
+}
+
+.navIconLeft {
+  transform: rotate(90deg);
+}
+
+.navIconRight {
+  transform: rotate(-90deg);
 }
 
 .railCol {

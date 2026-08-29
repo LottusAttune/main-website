@@ -24,10 +24,13 @@
    site's photo rule) gets proportionally taller the wider its column is -
    at the old ~50/50 split it alone was too tall to fit one screen. This
    keeps the same whole, uncropped image, just displayed smaller. */
+/* Gap's upper bound widened (28-48px before) so at wider viewports the bio
+   column starts roughly where "Founder" ends in the heading above it,
+   instead of noticeably earlier. */
 .grid {
   display: grid;
   grid-template-columns: minmax(220px, 300px) 1fr;
-  gap: clamp(28px, 3.2vw, 48px);
+  gap: clamp(28px, 3.2vw, 60px);
   align-items: start;
 }
 
@@ -52,14 +55,18 @@
   font-size: 15.5px;
   line-height: 1.48;
   color: var(--color-ink-body);
+  text-align: justify;
   max-width: 780px;
 }
 
 /* The founder-guide line ("I bridge the gap...") - previously a huge
    opening quote above the portrait/bio grid, now sits after the bio text
-   as a small closing line, right-justified, in the same font
-   treatment as "Two-hour transformative journey..." on the Experience
-   page (.gallerySubtitle there): weight 400, gold text, no italics. */
+   as a small closing line, centered, in the same font treatment as
+   "Two-hour transformative journey..." on the Experience page
+   (.gallerySubtitle there): weight 400, gold text, no italics. The <br/>
+   in the JSX splits it at its natural clause break ("...restoration," /
+   "productivity...") rather than leaving it to wrap wherever the width
+   happens to break it. */
 .closingQuote {
   margin: 10px 0 0;
   font-family: var(--font-display);
@@ -67,7 +74,7 @@
   font-size: clamp(18px, 2vw, 22px);
   line-height: 1.4;
   color: var(--color-gold-text);
-  text-align: right;
+  text-align: center;
 }
 
 .groupTitle {

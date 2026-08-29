@@ -11,7 +11,6 @@ import {
   CREDENTIALS,
   FOUNDER_BIO,
   FOUNDER_CLIENTS,
-  GUIDE,
   TRAINING,
 } from '@/data/content';
 import { asset } from '@/lib/images';
@@ -58,7 +57,11 @@ export default function FounderPage() {
                   {paragraph}
                 </p>
               ))}
-              <p className={styles.closingQuote}>{GUIDE.quote}</p>
+              <p className={styles.closingQuote}>
+                ”I bridge the gap between performance and restoration,
+                <br />
+                productivity and well-being, and excellence and human connection.”
+              </p>
             </div>
           </div>
         </section>

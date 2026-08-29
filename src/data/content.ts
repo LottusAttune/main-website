@@ -132,7 +132,7 @@ export const INCLUDED_FULL = [
   'Fully guided somatic and mindfulness practices, a sensory connection exercise, and end-of-session reintegration',
   'An immersive sound session layered with multiple professional-grade sound healing instruments, all sourced from recognized makers renowned for their exceptional acoustic quality',
   'Educational video about neuroscience and sound benefits',
-  'Comfort items and materials: elements are provided for all participants and include custom-branded cushioned wellness mats, memory-foam cervical pillows, cozy blankets, and eye masks',
+  'Comfort items and materials: provided for all participants and include custom-branded cushioned wellness mats, memory-foam cervical pillows, cozy blankets, and eye masks',
   'Additional Signature Touches: intention-setting cards and reflection cards',
   'Refreshments, including water, other beverages and healthy snacks',
 ] as const;

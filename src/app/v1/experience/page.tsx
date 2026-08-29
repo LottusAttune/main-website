@@ -112,7 +112,7 @@ export default function ExperiencePage() {
               Private sessions, groups and organizations.
               <br />
               Venue rental, materials and refreshments are part of the
-              package price.
+              package price
             </p>
           </div>
 

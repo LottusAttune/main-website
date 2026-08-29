@@ -546,8 +546,11 @@
    between sections on this page. */
 /* scroll-margin-top keeps the sticky nav from covering the heading when the
    Offerings page's "#included" link jumps straight to this section. */
+/* Bottom trimmed well below the top - the aim is a small peek of Included
+   item 01 right under the photo, not a big gap that reads as the section
+   ending at the picture. */
 .galleryBlock {
-  padding: clamp(28px, 3.4vw, 40px) var(--space-gutter) clamp(36px, 4vw, 60px);
+  padding: clamp(28px, 3.4vw, 40px) var(--space-gutter) clamp(16px, 2vw, 24px);
   max-width: var(--width-content);
   margin: 0 auto;
   scroll-margin-top: 100px;

@@ -4,6 +4,16 @@
   gap: 16px;
 }
 
+/* Quiet nudge so a first-time visitor knows the stage photo opens full size
+   - the zoom-in cursor alone isn't an obvious enough signal. Solid
+   --color-ink-body, not an alpha blend, per the site's text-contrast rule. */
+.hint {
+  margin: 10px 0 0;
+  font-size: 12px;
+  letter-spacing: 0.02em;
+  color: var(--color-ink-body);
+}
+
 /* Trimmed well below the old clamp(320,52vw,600) - the aim is to fit the
    heading, this photo, and a peek of the first "Included" list item all on
    one laptop screen, not to fill as much height as the photo can take. */
@@ -61,6 +71,9 @@
   padding-right: 4px;
 }
 
+/* Full opacity always - fading the inactive thumbnails read as lower
+   quality rather than "not selected". The gold outline + offset on
+   .thumbActive alone is enough to show which one is active. */
 .thumb {
   position: relative;
   height: clamp(52px, 7vw, 74px);
@@ -72,20 +85,18 @@
   cursor: pointer;
   outline: 1px solid var(--hairline-light);
   outline-offset: 0;
-  opacity: 0.72;
   transition:
-    opacity 0.25s ease,
-    outline-color 0.25s ease;
+    outline-color 0.25s ease,
+    outline-offset 0.25s ease;
 }
 
 .thumb:hover {
-  opacity: 1;
+  outline-color: var(--color-gold-text);
 }
 
 .thumbActive {
-  outline-color: var(--color-gold-text);
+  outline: 2px solid var(--color-gold-text);
   outline-offset: 2px;
-  opacity: 1;
 }
 
 .thumb img {

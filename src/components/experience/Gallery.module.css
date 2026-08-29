@@ -1,13 +1,17 @@
-/* Narrower than the full section width and centered - the previous full-
-   bleed width, combined with the short height below, stretched the box
-   into an extreme letterbox shape that cropped away most of every photo's
-   vertical content. Inset roughly to where the caption's own text begins,
-   both sides. */
+/* Narrower still than the 1160px this first tried - narrowed again to match
+   the stage's own box ratio (width:height) to the typical landscape room
+   photo's ratio (~1.6-1.7), so those photos now fill the frame edge to edge
+   under object-fit: contain with no beige margin and no cropping. The one
+   portrait photo (crystal bowls) and the nearly-square one (venue-bar,
+   cropped tight at the source) still show a small margin on their own -
+   no single frame shape can zero that out for every photo without cropping
+   into whichever one doesn't match, which trades away content instead of
+   margin. */
 .layout {
   display: grid;
   grid-template-columns: minmax(0, 3.4fr) minmax(88px, 0.6fr);
   gap: 16px;
-  max-width: 1160px;
+  max-width: 960px;
   margin: 0 auto;
 }
 

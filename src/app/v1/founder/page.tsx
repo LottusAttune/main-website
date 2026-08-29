@@ -49,8 +49,9 @@ export default function FounderPage() {
                   quality={90}
                   priority
                 />
+                <span className={styles.portraitScrim} />
+                <span className={styles.portraitName}>Silvana</span>
               </div>
-              <div className={`eyebrow ${styles.portraitName}`}>Silvana</div>
             </div>
             <div className={styles.bio}>
               {FOUNDER_BIO.map((paragraph) => (

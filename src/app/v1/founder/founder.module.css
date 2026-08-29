@@ -48,12 +48,32 @@
   display: block;
 }
 
+/* Soft gradient scrim at the base of the photo, purely so the name below
+   has contrast to sit on without a hard-edged box behind it. */
+.portraitScrim {
+  position: absolute;
+  inset: auto 0 0 0;
+  height: 40%;
+  background: linear-gradient(to top, rgba(20, 15, 10, 0.62), transparent);
+  pointer-events: none;
+}
+
 /* First name only, no title - "Facilitator"/"Founder" is already clear
-   from the page itself and she didn't want it re-emphasized. Same small
-   eyebrow treatment used site-wide, just placed under her own portrait. */
+   from the page itself and she didn't want it re-emphasized. A quiet
+   signature treatment (serif, gold, upright - not italic) reading as a
+   credit line rather than a UI label, overlaid on the photo so it adds
+   no extra vertical space to the section. */
 .portraitName {
-  margin-top: 10px;
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 16px;
   text-align: center;
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: 20px;
+  letter-spacing: 0.02em;
+  color: var(--color-gold-light);
 }
 
 .bio {

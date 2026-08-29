@@ -15,14 +15,31 @@
   margin: 0 auto;
 }
 
-/* Quiet nudge so a first-time visitor knows the stage photo opens full size
-   - the zoom-in cursor alone isn't an obvious enough signal. Solid
-   --color-ink-body, not an alpha blend, per the site's text-contrast rule. */
+/* Quiet nudge so a first-time visitor knows the thumbnails are what to
+   click - living under the rail (not the stage) and pointing up at it with
+   the arrow makes clear it's the small photos on the right that switch the
+   view, not the big one. Solid --color-ink-body, not an alpha blend, per
+   the site's text-contrast rule. */
 .hint {
   margin: 10px 0 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
   font-size: 12px;
   letter-spacing: 0.02em;
+  line-height: 1.4;
+  text-align: center;
   color: var(--color-ink-body);
+}
+
+.hintArrow {
+  display: flex;
+  color: var(--color-gold-text);
+}
+
+.hintArrow svg {
+  transform: rotate(180deg);
 }
 
 .stage {
@@ -76,6 +93,11 @@
   letter-spacing: 0.22em;
   text-transform: uppercase;
   pointer-events: none;
+}
+
+.railCol {
+  display: flex;
+  flex-direction: column;
 }
 
 .rail {

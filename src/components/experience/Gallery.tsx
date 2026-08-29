@@ -3,6 +3,7 @@
 import Image from 'next/image';
 import { useEffect, useState } from 'react';
 
+import { ChevronIcon } from '@/components/common/ChevronIcon';
 import { asset, type AssetName } from '@/lib/images';
 import styles from './Gallery.module.css';
 
@@ -61,32 +62,39 @@ export function Gallery({ items }: Props) {
           <span className={styles.caption}>{current.label}</span>
         </button>
 
-        <div className={styles.rail}>
-          {items.map((item, i) => {
-            const image = asset(item.img as AssetName);
-            return (
-              <button
-                key={item.img}
-                type="button"
-                className={`${styles.thumb} ${i === active ? styles.thumbActive : ''}`}
-                aria-label={item.label}
-                aria-current={i === active}
-                onClick={() => setActive(i)}
-              >
-                <Image
-                  src={image.src}
-                  alt=""
-                  width={image.width}
-                  height={image.height}
-                  sizes="90px"
-                />
-              </button>
-            );
-          })}
+        <div className={styles.railCol}>
+          <div className={styles.rail}>
+            {items.map((item, i) => {
+              const image = asset(item.img as AssetName);
+              return (
+                <button
+                  key={item.img}
+                  type="button"
+                  className={`${styles.thumb} ${i === active ? styles.thumbActive : ''}`}
+                  aria-label={item.label}
+                  aria-current={i === active}
+                  onClick={() => setActive(i)}
+                >
+                  <Image
+                    src={image.src}
+                    alt=""
+                    width={image.width}
+                    height={image.height}
+                    sizes="90px"
+                  />
+                </button>
+              );
+            })}
+          </div>
+
+          <p className={styles.hint}>
+            <span className={styles.hintArrow}>
+              <ChevronIcon />
+            </span>
+            Click a photo to view it full size
+          </p>
         </div>
       </div>
-
-      <p className={styles.hint}>Click a photo to view it full size</p>
 
       {lightbox ? (
         <div

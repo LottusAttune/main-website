@@ -48,6 +48,14 @@
   display: block;
 }
 
+/* First name only, no title - "Facilitator"/"Founder" is already clear
+   from the page itself and she didn't want it re-emphasized. Same small
+   eyebrow treatment used site-wide, just placed under her own portrait. */
+.portraitName {
+  margin-top: 10px;
+  text-align: center;
+}
+
 .bio {
   display: flex;
   flex-direction: column;

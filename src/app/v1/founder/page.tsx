@@ -50,6 +50,7 @@ export default function FounderPage() {
                   priority
                 />
               </div>
+              <div className={`eyebrow ${styles.portraitName}`}>Silvana</div>
             </div>
             <div className={styles.bio}>
               {FOUNDER_BIO.map((paragraph) => (

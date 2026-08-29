@@ -15,31 +15,23 @@
   margin: 0 auto;
 }
 
-/* Quiet nudge so a first-time visitor knows the thumbnails are what to
-   click - living under the rail (not the stage) and pointing up at it with
-   the arrow makes clear it's the small photos on the right that switch the
-   view, not the big one. Solid --color-ink-body, not an alpha blend, per
-   the site's text-contrast rule. */
-.hint {
-  margin: 10px 0 0;
+.stageCol {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  gap: 4px;
+}
+
+/* Now sits under the stage itself (not the thumbnails) - with visible
+   nav arrows and drag/swipe on the photo, the one thing left that isn't
+   obvious just from looking is that clicking it opens a full-size view,
+   so the hint only needs to say that. No arrow icon needed since it's
+   directly under the element it describes. Solid --color-ink-body, not
+   an alpha blend, per the site's text-contrast rule. */
+.hint {
+  margin: 10px 0 0;
   font-size: 12px;
   letter-spacing: 0.02em;
-  line-height: 1.4;
   text-align: center;
   color: var(--color-ink-body);
-}
-
-.hintArrow {
-  display: flex;
-  color: var(--color-gold-text);
-}
-
-.hintArrow svg {
-  transform: rotate(180deg);
 }
 
 /* Same page cream as the lightbox, not the beige gradient this used to
@@ -167,11 +159,11 @@
   flex-direction: column;
 }
 
-/* Height trimmed below .stage's own clamp by the hint block's height (its
-   arrow + one line of text + margin-top) so the rail + hint together match
-   the picture's height exactly - otherwise the hint pushed this column
-   taller than .stage and the grid row grew to fit it, leaving dead space
-   under the picture on the left. */
+/* Height trimmed below .stage's own clamp by the .hint block's height (now
+   under the stage, not here) so this column still matches the stage
+   column's total height - otherwise this side would be shorter than the
+   stage+hint column and the grid row would grow to fit the taller one,
+   leaving dead space under the thumbnails. */
 /* Padding on every side, not just the right - the active thumb's outline
    (2px wide, offset 2px further out) draws outside the thumb's own box, and
    with no padding here that ring gets clipped by this scrollable
@@ -181,7 +173,7 @@
   display: flex;
   flex-direction: column;
   gap: 12px;
-  max-height: calc(clamp(320px, 40vw, 480px) - 34px);
+  max-height: calc(clamp(320px, 40vw, 480px) - 27px);
   overflow-y: auto;
   padding: 4px;
 }

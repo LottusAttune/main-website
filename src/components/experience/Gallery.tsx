@@ -79,6 +79,7 @@ export function Gallery({ items }: Props) {
   return (
     <>
       <div className={styles.layout}>
+        <div className={styles.stageCol}>
         <div
           className={styles.stage}
           role="button"
@@ -144,6 +145,9 @@ export function Gallery({ items }: Props) {
           </button>
         </div>
 
+        <p className={styles.hint}>Click to view full size</p>
+        </div>
+
         <div className={styles.railCol}>
           <div className={styles.rail}>
             {items.map((item, i) => {
@@ -168,13 +172,6 @@ export function Gallery({ items }: Props) {
               );
             })}
           </div>
-
-          <p className={styles.hint}>
-            <span className={styles.hintArrow}>
-              <ChevronIcon />
-            </span>
-            Click to enlarge
-          </p>
         </div>
       </div>
 

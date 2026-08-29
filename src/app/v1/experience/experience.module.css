@@ -544,10 +544,13 @@
    ends with its own bottom padding immediately above, so the full section
    gap stacked on top of it read as a much bigger gap than anywhere else
    between sections on this page. */
+/* scroll-margin-top keeps the sticky nav from covering the heading when the
+   Offerings page's "#included" link jumps straight to this section. */
 .galleryBlock {
   padding: clamp(28px, 3.4vw, 40px) var(--space-gutter) clamp(36px, 4vw, 60px);
   max-width: var(--width-content);
   margin: 0 auto;
+  scroll-margin-top: 100px;
 }
 
 .galleryHead {
@@ -559,10 +562,58 @@
   margin-bottom: 34px;
 }
 
+/* Matches .subtitle ("Everything Curated into One Offering") above -
+   same font/size/color treatment, so the two section intros on this page
+   read as one consistent system. */
+.gallerySubtitle {
+  font-weight: 400;
+  font-size: clamp(18px, 2vw, 22px);
+  color: var(--color-gold-text);
+  margin-bottom: 22px;
+}
+
+/* Matches .title ("A Journey to Reset, Align and Thrive") - same font
+   size/line-height, so the two section headings on this page read as one
+   consistent scale rather than this one running larger. max-width keeps it
+   to 2 lines. */
 .galleryHeading {
   margin: 0;
-  font-size: clamp(30px, 3.8vw, 54px);
+  font-size: clamp(26px, 3.4vw, 48px);
   line-height: 1.14;
-  max-width: 20ch;
+  max-width: 22ch;
+}
+
+/* Widened from 380px, and the two sentences in the JSX get an explicit
+   <br/> between them - relying on width-based wrapping alone put the break
+   randomly mid-sentence ("...materials and" / "refreshments...") depending
+   on viewport width; the explicit break guarantees "Venue rental..." always
+   starts its own line, uncut. */
+.sectionHeadNote {
+  margin: 0;
+  max-width: 560px;
+  font-size: 16.5px;
+  line-height: 1.8;
+  color: var(--color-ink-body);
+}
+
+/* ---------- Included list ---------- */
+
+/* Scoped, tighter override of the shared global .numbered-row (also used on
+   /lp, so not changed there) - fits all 9 rows within one laptop screen.
+   Padding and line-height trimmed well below the global defaults (26px/1.75)
+   without going so tight that the longer 2-line entries feel cramped. */
+.includedSection {
+  padding: 0 var(--space-gutter) clamp(28px, 3.4vw, 40px);
+  max-width: var(--width-content);
+  margin: 0 auto;
+}
+
+.includedSection :global(.numbered-row) {
+  padding: 13px 0;
+}
+
+.includedSection :global(.numbered-row__text) {
+  font-size: 15px;
+  line-height: 1.5;
 }
 

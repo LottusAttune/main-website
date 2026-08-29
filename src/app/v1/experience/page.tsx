@@ -98,7 +98,7 @@ export default function ExperiencePage() {
         >
           <div className={styles.galleryHead}>
             <div style={{ minWidth: 0 }}>
-              <div className="eyebrow" style={{ marginBottom: 22 }}>
+              <div className={`display ${styles.gallerySubtitle}`}>
                 What is Included
               </div>
               <h2
@@ -108,9 +108,11 @@ export default function ExperiencePage() {
                 Two-hour transformative journey included in all offerings
               </h2>
             </div>
-            <p className={styles.sectionHeadNote} style={{ maxWidth: 380 }}>
-              Private sessions, groups and organizations. Venue rental,
-              materials and refreshments are part of the package price.
+            <p className={styles.sectionHeadNote}>
+              Private sessions, groups and organizations.
+              <br />
+              Venue rental, materials and refreshments are part of the
+              package price.
             </p>
           </div>
 
@@ -118,14 +120,7 @@ export default function ExperiencePage() {
         </section>
 
         {/* ---------- Included list ---------- */}
-        <section
-          style={{
-            padding: '0 var(--space-gutter) var(--space-section)',
-            maxWidth: 'var(--width-content)',
-            margin: '0 auto',
-          }}
-          aria-label="Everything included"
-        >
+        <section className={styles.includedSection} aria-label="Everything included">
           {INCLUDED_FULL.map((text, i) => (
             <div key={text} className="numbered-row">
               <span className="numbered-row__n">

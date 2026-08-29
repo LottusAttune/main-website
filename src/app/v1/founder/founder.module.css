@@ -1,29 +1,41 @@
+/* Trimmed from --space-section-short (a full section's worth of top/bottom
+   air) so the heading + portrait/bio fit in one screen on both laptop and
+   larger displays, matching the same "everything visible without a
+   pointless scroll" goal used on the Included section. */
 .intro {
-  padding: var(--space-section-short) var(--space-gutter) clamp(52px, 7vw, 100px);
+  padding: clamp(16px, 2vw, 28px) var(--space-gutter) clamp(18px, 2.2vw, 30px);
   max-width: var(--width-content);
   margin: 0 auto;
 }
 
-.quote {
-  margin: 0 0 80px;
-  font-family: var(--font-display);
-  font-weight: 300;
-  font-size: clamp(30px, 3.9vw, 60px);
-  line-height: 1.26;
-  max-width: 1150px;
-  text-wrap: pretty;
+/* Same size/weight as the Experience page's h1 (.title there) - this is
+   now the actual page heading, replacing the small "About the Founder"
+   eyebrow label that used to sit above the (much larger) quote. */
+.title {
+  font-size: clamp(26px, 3.4vw, 48px);
+  line-height: 1.14;
+  margin: 0 0 clamp(12px, 1.5vw, 20px);
+  max-width: 1000px;
 }
 
+/* Narrowed from an even auto-fit split (which gave the portrait roughly
+   half the row's width) to a fixed, much narrower first column. A tall
+   portrait shown "whole, at natural proportion" (never cropped, per the
+   site's photo rule) gets proportionally taller the wider its column is -
+   at the old ~50/50 split it alone was too tall to fit one screen. This
+   keeps the same whole, uncropped image, just displayed smaller. */
 .grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: clamp(40px, 5vw, 76px);
+  grid-template-columns: minmax(220px, 300px) 1fr;
+  gap: clamp(28px, 3.2vw, 48px);
   align-items: start;
 }
 
+/* Straight edges, not the 28px rounding this carried before - matches her
+   preference for a flat, uncurved edge on this photo. */
 .portrait {
   position: relative;
-  border-radius: 28px;
+  border-radius: 0;
   overflow: hidden;
 }
 
@@ -36,11 +48,26 @@
 .bio {
   display: flex;
   flex-direction: column;
-  gap: 24px;
-  font-size: var(--text-body);
-  line-height: 1.9;
+  gap: 10px;
+  font-size: 15.5px;
+  line-height: 1.48;
   color: var(--color-ink-body);
   max-width: 780px;
+}
+
+/* The founder-guide line ("I bridge the gap...") - previously a huge
+   opening quote above the portrait/bio grid, now sits after the bio text
+   as a small closing line, right-justified, in the same font
+   treatment as "Two-hour transformative journey..." on the Experience
+   page (.gallerySubtitle there): weight 400, gold text, no italics. */
+.closingQuote {
+  margin: 10px 0 0;
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: clamp(18px, 2vw, 22px);
+  line-height: 1.4;
+  color: var(--color-gold-text);
+  text-align: right;
 }
 
 .groupTitle {
@@ -52,11 +79,16 @@
   text-transform: none;
 }
 
+/* Solid #a89d92, not an alpha-blended cream (was rgba(239, 230, 218, 0.62))
+   - alpha text reads visibly softer/blurrier than solid, and the site's
+   rule is solid color or token for any text on a background. This is the
+   same color that alpha blend actually rendered against .section--dark's
+   gradient, computed at both ends (contrast 4.9:1 / 6.4:1), not eyeballed. */
 .groupNote {
   margin: 0 0 22px;
   font-size: 16px;
   line-height: 1.4;
-  color: rgba(239, 230, 218, 0.62);
+  color: #a89d92;
   max-width: 60ch;
 }
 
@@ -69,10 +101,11 @@
   max-width: 1000px;
 }
 
+/* Same solid replacement as .groupNote above, same reason. */
 .clients {
   margin: 44px 0 0;
   font-size: var(--text-body-sm);
   line-height: 1.5;
-  color: rgba(239, 230, 218, 0.6);
+  color: #a89d92;
   max-width: 1000px;
 }

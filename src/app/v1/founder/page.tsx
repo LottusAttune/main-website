@@ -34,12 +34,9 @@ export default function FounderPage() {
 
       <main>
         <section className={styles.intro} aria-labelledby="founder-heading">
-          <div className="eyebrow" style={{ marginBottom: 34 }}>
+          <h1 id="founder-heading" className={`display h1 ${styles.title}`}>
             About the Founder
-          </div>
-          <blockquote id="founder-heading" className={styles.quote}>
-            {GUIDE.quote}
-          </blockquote>
+          </h1>
 
           <div className={styles.grid}>
             <div className="sticky-col">
@@ -61,6 +58,7 @@ export default function FounderPage() {
                   {paragraph}
                 </p>
               ))}
+              <p className={styles.closingQuote}>{GUIDE.quote}</p>
             </div>
           </div>
         </section>

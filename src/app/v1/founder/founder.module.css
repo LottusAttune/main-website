@@ -3,7 +3,7 @@
    larger displays, matching the same "everything visible without a
    pointless scroll" goal used on the Included section. */
 .intro {
-  padding: clamp(16px, 2vw, 28px) var(--space-gutter) clamp(18px, 2.2vw, 30px);
+  padding: clamp(10px, 1.4vw, 20px) var(--space-gutter) clamp(12px, 1.6vw, 22px);
   max-width: var(--width-content);
   margin: 0 auto;
 }
@@ -14,7 +14,7 @@
 .title {
   font-size: clamp(26px, 3.4vw, 48px);
   line-height: 1.14;
-  margin: 0 0 clamp(12px, 1.5vw, 20px);
+  margin: 0 0 clamp(8px, 1.2vw, 14px);
   max-width: 1000px;
 }
 
@@ -29,8 +29,8 @@
    instead of noticeably earlier. */
 .grid {
   display: grid;
-  grid-template-columns: minmax(220px, 300px) 1fr;
-  gap: clamp(28px, 3.2vw, 60px);
+  grid-template-columns: minmax(190px, 235px) 1fr;
+  gap: clamp(28px, 3.2vw, 96px);
   align-items: start;
 }
 
@@ -51,12 +51,12 @@
 .bio {
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  font-size: 15.5px;
-  line-height: 1.48;
+  gap: 8px;
+  font-size: 14.5px;
+  line-height: 1.42;
   color: var(--color-ink-body);
   text-align: justify;
-  max-width: 780px;
+  max-width: 860px;
 }
 
 /* The founder-guide line ("I bridge the gap...") - previously a huge
@@ -68,11 +68,11 @@
    "productivity...") rather than leaving it to wrap wherever the width
    happens to break it. */
 .closingQuote {
-  margin: 10px 0 0;
+  margin: 8px 0 0;
   font-family: var(--font-display);
   font-weight: 400;
-  font-size: clamp(18px, 2vw, 22px);
-  line-height: 1.4;
+  font-size: clamp(16px, 1.8vw, 19px);
+  line-height: 1.35;
   color: var(--color-gold-text);
   text-align: center;
 }

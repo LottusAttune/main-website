@@ -198,7 +198,7 @@
 
 .boxPhoto {
   object-fit: cover;
-  object-position: center top;
+  object-position: center 50%;
   pointer-events: none;
 }
 

@@ -86,8 +86,12 @@ export function SessionConfigurator({ pricing }: Props) {
     const flame = flameRef.current;
     if (!container || !flame || isPrivate) return;
 
-    const FLAME_X_FRAC = 0.525;
-    const FLAME_Y_FRAC = 0.589;
+    const FLAME_X_FRAC = 0.521;
+    const FLAME_Y_FRAC = 0.661;
+    // Must match .boxPhoto's own object-position (center 50%) - the flicker
+    // is placed in screen space, not in the image, so it has to reproduce
+    // the same vertical crop the browser applies to the photo.
+    const OBJECT_POSITION_Y_PERCENT = 50;
 
     const sync = () => {
       const { width: cw, height: ch } = container.getBoundingClientRect();
@@ -95,7 +99,7 @@ export function SessionConfigurator({ pricing }: Props) {
       const displayW = 720 * scale;
       const displayH = 940 * scale;
       const offsetX = (cw - displayW) / 2;
-      const offsetY = 0; // object-position: center top
+      const offsetY = (ch - displayH) * (OBJECT_POSITION_Y_PERCENT / 100);
 
       flame.style.left = `${offsetX + FLAME_X_FRAC * displayW}px`;
       flame.style.top = `${offsetY + FLAME_Y_FRAC * displayH}px`;

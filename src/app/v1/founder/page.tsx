@@ -102,6 +102,28 @@ export default function FounderPage() {
               />
             </div>
           </div>
+
+          <div className={`shell ${styles.videoBlock}`}>
+            <div className={styles.videoHeading}>Explore my handpan sounds</div>
+            <div className={styles.videoGrid}>
+              <div className={styles.videoFrame}>
+                <iframe
+                  src="https://player.vimeo.com/video/1221670118?title=0&byline=0&portrait=0"
+                  title="Silvana playing the handpan"
+                  allow="autoplay; fullscreen; picture-in-picture; encrypted-media"
+                  allowFullScreen
+                />
+              </div>
+              <div className={styles.videoFrame}>
+                <iframe
+                  src="https://player.vimeo.com/video/1222498711?title=0&byline=0&portrait=0"
+                  title="Silvana playing the handpan"
+                  allow="autoplay; fullscreen; picture-in-picture; encrypted-media"
+                  allowFullScreen
+                />
+              </div>
+            </div>
+          </div>
         </section>
       </main>
 

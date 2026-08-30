@@ -156,6 +156,48 @@
   border-radius: 6px;
 }
 
+/* Kept deliberately modest (capped width below, not stretched to the full
+   content width) - these are sound samples to click and listen to, not a
+   cinematic hero video, so there's no reason to spend the vertical space
+   a full-width 16:9 pair would need. */
+.videoBlock {
+  margin-top: clamp(24px, 3vw, 36px);
+}
+
+.videoHeading {
+  margin-bottom: 14px;
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: clamp(17px, 1.8vw, 20px);
+  color: var(--color-gold-text);
+  text-align: center;
+}
+
+.videoGrid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: clamp(16px, 2vw, 24px);
+}
+
+.videoFrame {
+  position: relative;
+  width: 100%;
+  max-width: 320px;
+  aspect-ratio: 16 / 9;
+  border-radius: 6px;
+  overflow: hidden;
+  background: var(--color-ink-deep);
+}
+
+.videoFrame iframe {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: none;
+}
+
 .credColDark {
   background: var(--gradient-deep);
 }

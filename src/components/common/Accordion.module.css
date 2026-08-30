@@ -28,6 +28,13 @@
   color: var(--color-ink-deep);
 }
 
+/* Same ink hue, just a shade darker and a touch heavier - not a color
+   change, just a bit more visual weight than the default thin (300) title. */
+.headBold {
+  font-weight: 400;
+  color: var(--color-ink-deep);
+}
+
 .headDark {
   padding: 24px 0;
   font-size: clamp(21px, 2.4vw, 27px);

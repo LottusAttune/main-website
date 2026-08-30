@@ -98,6 +98,7 @@ export default function FounderPage() {
               <Accordion
                 items={[{ title: 'Credentials', items: CREDENTIALS[0].items }]}
                 tone="light"
+                boldHeads
                 compact
               />
             </div>

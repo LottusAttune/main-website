@@ -20,6 +20,10 @@ type Props = {
   showCounts?: boolean;
   /** Smaller type and tighter spacing, for a shorter list sharing space with other content. */
   compact?: boolean;
+  /** Slightly darker + heavier heads, for a lone item that needs to read as
+      more than a faint label (e.g. a single "Credentials" tab standing in
+      for a whole card's worth of content). */
+  boldHeads?: boolean;
 };
 
 /** One panel open at a time. Body height is measured, never capped. */
@@ -29,6 +33,7 @@ export function Accordion({
   defaultOpen = null,
   showCounts = false,
   compact = false,
+  boldHeads = false,
 }: Props) {
   const [open, setOpen] = useState<number | null>(defaultOpen);
   const bodyRefs = useRef<Array<HTMLDivElement | null>>([]);
@@ -64,6 +69,7 @@ export function Accordion({
                 styles.head,
                 dark ? styles.headDark : '',
                 compact ? styles.headCompact : '',
+                boldHeads ? styles.headBold : '',
                 isOpen ? (dark ? styles.headDarkOpen : styles.headOpen) : '',
               ]
                 .filter(Boolean)

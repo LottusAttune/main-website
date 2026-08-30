@@ -31,18 +31,16 @@ export default async function OfferingsPage() {
         <section className={styles.configurator} aria-labelledby="offerings-heading">
           <div className="shell" style={{ position: 'relative' }}>
             <div className={styles.configuratorHead}>
-              <h1
-                id="offerings-heading"
-                className={`display ${styles.pageTitle}`}
-                style={{ marginBottom: 8 }}
-              >
+              <div className="eyebrow" style={{ fontSize: '13.5px', marginBottom: 18 }}>
+                Choose your experience
+              </div>
+              <h1 id="offerings-heading" className={`display ${styles.pageTitle}`}>
                 Offerings
               </h1>
-              <p className="lede" style={{ maxWidth: 900, marginBottom: 16 }}>
+              <p className={`body ${styles.pageLede}`}>
                 For individuals, private gatherings, organizations and teams, all
                 sessions are offered in a two-hour format
               </p>
-              <div className={styles.chooseHeading}>Choose your experience</div>
             </div>
 
             <SessionConfigurator pricing={pricing} />

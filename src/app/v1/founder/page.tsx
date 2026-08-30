@@ -2,7 +2,6 @@ import type { Metadata } from 'next';
 import Image from 'next/image';
 
 import { Accordion } from '@/components/common/Accordion';
-import accordionStyles from '@/components/common/Accordion.module.css';
 import { Reveal } from '@/components/common/Reveal';
 import { Wave } from '@/components/common/Wave';
 import { SiteFooter } from '@/components/chrome/SiteFooter';
@@ -72,43 +71,36 @@ export default function FounderPage() {
         </section>
 
         <section
-          className="section--short section--dark"
+          className="section--short section--soft"
           style={{ padding: 'var(--space-section-short) var(--space-gutter)' }}
           aria-labelledby="credentials-heading"
         >
-          <div className="shell">
-            <div
-              id="credentials-heading"
-              className={`eyebrow eyebrow--dark ${styles.groupTitle}`}
-            >
-              Education &amp; Professional Credentials
-            </div>
-            <div className={styles.group}>
-              <div className={accordionStyles.bullets}>
-                {CREDENTIALS[0].items.map((entry) => (
-                  <div key={entry} className={accordionStyles.bullet}>
-                    <span>{entry}</span>
-                  </div>
-                ))}
+          <h2 id="credentials-heading" className="visually-hidden">
+            Training and education
+          </h2>
+          <div className={`shell ${styles.credSplit}`}>
+            <div className={`${styles.credCol} ${styles.credColDark}`}>
+              <div className={`eyebrow eyebrow--dark ${styles.groupTitle}`}>
+                Training &amp; Development in Restorative Wellness Practices
               </div>
-            </div>
-
-            <div className={`eyebrow eyebrow--dark ${styles.groupTitle}`}>
-              Training &amp; Development in Restorative Wellness Practices
-            </div>
-            <p className={styles.groupNote}>
-              Six areas of study, practice and performance.
-            </p>
-            <div className={styles.groupLast}>
               <Accordion
                 items={TRAINING.map((c) => ({ title: c.title, items: c.items }))}
                 tone="dark"
-                defaultOpen={0}
-                showCounts
+                compact
               />
             </div>
 
-            <p className={styles.clients}>{FOUNDER_CLIENTS}</p>
+            <div className={`${styles.credCol} ${styles.credColLight}`}>
+              <div className={styles.groupTitleLight}>
+                Education &amp; Professional Credentials
+              </div>
+              <p className={styles.credIntro}>{FOUNDER_CLIENTS}</p>
+              <Accordion
+                items={[{ title: 'Credentials', items: CREDENTIALS[0].items }]}
+                tone="light"
+                compact
+              />
+            </div>
           </div>
         </section>
       </main>

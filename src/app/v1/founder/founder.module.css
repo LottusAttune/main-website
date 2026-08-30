@@ -108,38 +108,57 @@
   margin-bottom: 10px;
   font-family: var(--font-display);
   font-weight: 400;
-  font-size: clamp(26px, 3vw, 36px);
+  font-size: clamp(24px, 2.6vw, 32px);
   letter-spacing: 0.01em;
   text-transform: none;
 }
 
-/* Solid #a89d92, not an alpha-blended cream (was rgba(239, 230, 218, 0.62))
-   - alpha text reads visibly softer/blurrier than solid, and the site's
-   rule is solid color or token for any text on a background. This is the
-   same color that alpha blend actually rendered against .section--dark's
-   gradient, computed at both ends (contrast 4.9:1 / 6.4:1), not eyeballed. */
-.groupNote {
-  margin: 0 0 22px;
-  font-size: 16px;
-  line-height: 1.4;
-  color: #a89d92;
+/* Same metrics as .groupTitle, standalone rather than combined with the
+   global eyebrow/eyebrow--dark classes, so it isn't tied to their
+   light-on-dark color - this sits on the light card instead. */
+.groupTitleLight {
+  margin-bottom: 10px;
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: clamp(24px, 2.6vw, 32px);
+  letter-spacing: 0.01em;
+  color: var(--color-ink);
+}
+
+/* Beige backdrop (section--soft) with one dark and one light card, echoing
+   the Benefits section's own palette - beige base, a dark-brown card and
+   a near-white one - rather than the previous single full-width dark
+   section this used to be. */
+.credSplit {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: clamp(20px, 2.4vw, 32px);
+  align-items: start;
+}
+
+@media (max-width: 860px) {
+  .credSplit {
+    grid-template-columns: 1fr;
+  }
+}
+
+.credCol {
+  padding: clamp(26px, 2.8vw, 38px);
+  border-radius: 6px;
+}
+
+.credColDark {
+  background: var(--gradient-deep);
+}
+
+.credColLight {
+  background: var(--color-cream-raised);
+}
+
+.credIntro {
+  margin: 0 0 4px;
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--color-ink-body);
   max-width: 60ch;
-}
-
-.group {
-  max-width: 1000px;
-  margin-bottom: clamp(40px, 5vw, 64px);
-}
-
-.groupLast {
-  max-width: 1000px;
-}
-
-/* Same solid replacement as .groupNote above, same reason. */
-.clients {
-  margin: 44px 0 0;
-  font-size: var(--text-body-sm);
-  line-height: 1.5;
-  color: #a89d92;
-  max-width: 1000px;
 }

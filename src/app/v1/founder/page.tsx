@@ -116,7 +116,7 @@ export default function FounderPage() {
               </div>
               <div className={styles.videoFrame}>
                 <iframe
-                  src="https://player.vimeo.com/video/1222498711?title=0&byline=0&portrait=0"
+                  src="https://player.vimeo.com/video/1221664378?title=0&byline=0&portrait=0"
                   title="Silvana playing the handpan"
                   allow="autoplay; fullscreen; picture-in-picture; encrypted-media"
                   allowFullScreen

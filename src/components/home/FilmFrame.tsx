@@ -8,7 +8,8 @@ import { FILM, FILM_POSTER } from '@/data/content';
 import { asset } from '@/lib/images';
 import styles from './FilmFrame.module.css';
 
-/** Minimal shape of the bits of the Vimeo Player SDK we use. */
+/** Minimal shape of the bits of the Vimeo Player SDK we use - see
+    src/types/vimeo-player.d.ts for the shared Window.Vimeo declaration. */
 type VimeoPlayer = {
   setMuted: (muted: boolean) => Promise<boolean>;
   setVolume: (volume: number) => Promise<number>;
@@ -16,12 +17,6 @@ type VimeoPlayer = {
   play: () => Promise<void>;
   on?: (event: string, handler: () => void) => void;
 };
-
-declare global {
-  interface Window {
-    Vimeo?: { Player: new (el: HTMLIFrameElement) => VimeoPlayer };
-  }
-}
 
 /**
  * `background=1` is deliberately absent — it force-mutes the player and makes

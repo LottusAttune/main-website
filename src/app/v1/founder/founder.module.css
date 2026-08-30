@@ -215,6 +215,31 @@
   border: none;
 }
 
+/* Recreates Vimeo's own neutral pre-play cover (dark scrim + circular play
+   icon), kept showing any time the video isn't actively playing - a plain
+   embed only shows that cover before the very first play, then leaves the
+   full-colour paused frame exposed afterward, which read as too much colour
+   against the site's neutral palette. */
+.videoCover {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  padding: 0;
+  background: rgba(20, 15, 10, 0.55);
+  cursor: pointer;
+}
+
+.videoCover svg {
+  transition: transform 0.2s ease;
+}
+
+.videoCover:hover svg {
+  transform: scale(1.08);
+}
+
 /* Reserved slot for the third video, not live yet - a dashed outline (no
    fill) reads as "this spot is intentional" without adding a second box
    color the way a filled placeholder would. */

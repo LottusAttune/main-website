@@ -125,6 +125,15 @@
   color: var(--color-ink);
 }
 
+/* Trimmed from --space-section-short (56-110px top and bottom) - with the
+   cards themselves already fairly compact, that much air above and below
+   read as excess rather than intentional breathing room, out of step with
+   the tighter rhythm the rest of this page uses. */
+.credSection {
+  padding-top: clamp(36px, 5vw, 64px);
+  padding-bottom: clamp(36px, 5vw, 64px);
+}
+
 /* Beige backdrop (section--soft) with one dark and one light card, echoing
    the Benefits section's own palette - beige base, a dark-brown card and
    a near-white one - rather than the previous single full-width dark

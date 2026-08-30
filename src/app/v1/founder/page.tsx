@@ -71,8 +71,7 @@ export default function FounderPage() {
         </section>
 
         <section
-          className="section--short section--soft"
-          style={{ padding: 'var(--space-section-short) var(--space-gutter)' }}
+          className={`section--short section--soft ${styles.credSection}`}
           aria-labelledby="credentials-heading"
         >
           <h2 id="credentials-heading" className="visually-hidden">

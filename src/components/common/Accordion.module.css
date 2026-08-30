@@ -96,6 +96,13 @@
   line-height: 1.6;
 }
 
+/* Solid ink-body by default (light-background use); .bulletsDark below
+   swaps in a solid cream-ish tone for dark-card use - not the alpha-
+   blended cream (rgba(239, 230, 218, 0.78)) this carried before, which
+   only ever looked right against one specific dark background and would
+   have been unreadable on a light card. That solid replacement is
+   computed against both ends of --gradient-deep (7.1:1 / 8.7:1), not
+   eyeballed. */
 .bullets {
   display: flex;
   flex-direction: column;
@@ -103,8 +110,12 @@
   padding: 6px 0 22px;
   font-size: var(--text-body-sm);
   line-height: 1.4;
-  color: rgba(239, 230, 218, 0.78);
+  color: var(--color-ink-body);
   max-width: 78ch;
+}
+
+.bulletsDark {
+  color: #c8beb2;
 }
 
 .bullet {
@@ -118,6 +129,10 @@
   width: 5px;
   height: 5px;
   border-radius: 50%;
-  background: var(--color-gold-light);
+  background: var(--color-gold-text);
   margin-top: 9px;
+}
+
+.bulletsDark .bullet::before {
+  background: var(--color-gold-light);
 }

@@ -107,7 +107,7 @@ export function Accordion({
                 </p>
               ) : null}
               {item.items ? (
-                <div className={styles.bullets}>
+                <div className={`${styles.bullets} ${dark ? styles.bulletsDark : ''}`}>
                   {item.items.map((entry) => (
                     <div key={entry} className={styles.bullet}>
                       <span>{entry}</span>

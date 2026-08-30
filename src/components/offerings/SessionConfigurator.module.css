@@ -93,6 +93,10 @@
   background-position: right 18px center;
   background-size: 14px;
   padding-right: 46px;
+  /* Squared to match the estimate box, the training/education cards and the
+     video band - the global .select radius stays as-is for the gift and
+     booking forms, this override only touches the participants field here. */
+  border-radius: 0;
 }
 
 .venueNote {
@@ -147,7 +151,7 @@
   flex-direction: column;
   background: linear-gradient(165deg, #302619 0%, #1d1610 100%);
   border: 1px solid transparent;
-  border-radius: var(--radius-card);
+  border-radius: 0;
   overflow: hidden;
   box-shadow: var(--shadow-card-dark);
   color: var(--color-cream-text-soft);

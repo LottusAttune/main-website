@@ -153,7 +153,7 @@
 
 .credCol {
   padding: clamp(26px, 2.8vw, 38px);
-  border-radius: 6px;
+  border-radius: 0;
 }
 
 .videoShell {
@@ -185,7 +185,7 @@
    depending on the two boxes sharing a height. */
 .videoBand {
   background: var(--color-ink-deep);
-  border-radius: 6px;
+  border-radius: 0;
   padding: 0 clamp(16px, 2vw, 24px);
   overflow: hidden;
 }

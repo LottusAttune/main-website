@@ -38,8 +38,8 @@ export default async function OfferingsPage() {
                 Offerings
               </h1>
               <p className={`body ${styles.pageLede}`}>
-                For individuals, private gatherings, organizations and teams, all
-                sessions are offered in a two-hour format
+                For individuals, private gatherings, organizations and teams, in
+                two-hour sessions
               </p>
             </div>
 

@@ -102,7 +102,7 @@
 .venueNote {
   margin-top: 14px;
   padding: 14px 18px;
-  border-radius: var(--radius-input);
+  border-radius: 0;
   background: #f6f0e6;
   font-size: 13.5px;
   line-height: 1.6;

@@ -4,6 +4,7 @@ import {
   CORPORATE_INTRO_MIN_PARTICIPANTS,
   CORPORATE_INTRO_PER_PARTICIPANT,
   groupPriceFor,
+  TEAM_ADDON_MIN_PARTICIPANTS,
 } from '@/lib/site';
 
 /**
@@ -84,8 +85,8 @@ export function quoteFor(
     });
   }
 
-  // Add-ons are group and corporate only.
-  if (people >= MIN_GROUP_SIZE && input.teamAddon) {
+  // The team-building add-on doesn't make sense for a small group.
+  if (people >= TEAM_ADDON_MIN_PARTICIPANTS && input.teamAddon) {
     subtotal += pricing.teamAddon;
     lines.push({
       label: 'Team-building add-on',
@@ -159,7 +160,7 @@ export function giftQuoteFor(
       label: `${people} participants`,
       value: money(subtotal),
     });
-    if (input.addons.team) {
+    if (people >= TEAM_ADDON_MIN_PARTICIPANTS && input.addons.team) {
       subtotal += pricing.teamAddon;
       lines.push({
         label: 'Mindful team-building activity',

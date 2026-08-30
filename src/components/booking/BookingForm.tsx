@@ -7,6 +7,7 @@ import type { DiscountCode, Pricing, Slots } from '@/lib/settings';
 import {
   MAX_PARTICIPANTS,
   SITE,
+  TEAM_ADDON_MIN_PARTICIPANTS,
   TIME_SLOTS,
   TWO_SESSION_THRESHOLD,
   groupPriceFor,
@@ -336,35 +337,37 @@ export function BookingForm({
             Available for group and corporate bookings
           </p>
           <div className={`${styles.addons} ${styles.indent}`}>
-            <button
-              type="button"
-              className="toggle-row"
-              aria-pressed={teamAddon}
-              onClick={() => setTeamAddon((v) => !v)}
-            >
-              <span
-                style={{ display: 'flex', alignItems: 'center', gap: 14, minWidth: 0 }}
+            {party !== null && party >= TEAM_ADDON_MIN_PARTICIPANTS && (
+              <button
+                type="button"
+                className="toggle-row"
+                aria-pressed={teamAddon}
+                onClick={() => setTeamAddon((v) => !v)}
               >
-                <span className="toggle-row__dot" />
-                <span style={{ minWidth: 0, textAlign: 'left' }}>
-                  <span style={{ display: 'block', fontSize: 16.5, marginBottom: 4 }}>
-                    Customized mindful team-building activity
-                  </span>
-                  <span
-                    style={{
-                      display: 'block',
-                      fontSize: 13.5,
-                      lineHeight: 1.65,
-                      color: 'var(--color-muted)',
-                    }}
-                  >
-                    30-minute session extension — for organizations and corporate
-                    teams
+                <span
+                  style={{ display: 'flex', alignItems: 'center', gap: 14, minWidth: 0 }}
+                >
+                  <span className="toggle-row__dot" />
+                  <span style={{ minWidth: 0, textAlign: 'left' }}>
+                    <span style={{ display: 'block', fontSize: 16.5, marginBottom: 4 }}>
+                      Customized mindful team-building activity
+                    </span>
+                    <span
+                      style={{
+                        display: 'block',
+                        fontSize: 13.5,
+                        lineHeight: 1.65,
+                        color: 'var(--color-muted)',
+                      }}
+                    >
+                      30-minute session extension — for organizations and corporate
+                      teams
+                    </span>
                   </span>
                 </span>
-              </span>
-              <span className="toggle-row__price">{money(pricing.teamAddon)}</span>
-            </button>
+                <span className="toggle-row__price">{money(pricing.teamAddon)}</span>
+              </button>
+            )}
 
             <button
               type="button"

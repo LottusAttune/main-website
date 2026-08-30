@@ -8,6 +8,7 @@ import {
   MAX_PARTICIPANTS,
   MIN_PARTICIPANTS,
   SITE,
+  TEAM_ADDON_MIN_PARTICIPANTS,
   groupPriceFor,
   money,
   venueNoteFor,
@@ -53,12 +54,16 @@ export function GiftCalculator({ pricing }: Props) {
         },
       ]
     : [
-        {
-          key: 'team',
-          title: 'Mindful team-building activity',
-          note: '30-minute extension for organizations and corporate teams',
-          amount: pricing.teamAddon,
-        },
+        ...(participants >= TEAM_ADDON_MIN_PARTICIPANTS
+          ? [
+              {
+                key: 'team',
+                title: 'Mindful team-building activity',
+                note: '30-minute extension for organizations and corporate teams',
+                amount: pricing.teamAddon,
+              },
+            ]
+          : []),
         {
           key: 'refresh',
           title: 'Organic tea, snacks and refreshments',

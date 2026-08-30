@@ -15,6 +15,7 @@ import {
   MAX_PARTICIPANTS,
   MIN_PARTICIPANTS,
   money,
+  TEAM_ADDON_MIN_PARTICIPANTS,
   VENUE_NOTE,
   venueNoteFor,
 } from '@/lib/site';
@@ -235,44 +236,46 @@ export function SessionConfigurator({ pricing }: Props) {
               <div className={styles.venueNote}>{venueNoteFor(participants)}</div>
             </div>
 
-            <div>
-              <div className={styles.legend}>Optional corporate add-on</div>
-              <div className={styles.addons}>
-                <button
-                  type="button"
-                  className="toggle-row"
-                  aria-pressed={teamAddon}
-                  onClick={() => setTeamAddon((v) => !v)}
-                >
-                  <span
-                    style={{ display: 'flex', alignItems: 'center', gap: 10, minWidth: 0 }}
+            {participants >= TEAM_ADDON_MIN_PARTICIPANTS && (
+              <div>
+                <div className={styles.legend}>Optional corporate add-on</div>
+                <div className={styles.addons}>
+                  <button
+                    type="button"
+                    className="toggle-row"
+                    aria-pressed={teamAddon}
+                    onClick={() => setTeamAddon((v) => !v)}
                   >
-                    <span className="toggle-row__dot" />
-                    <span style={{ minWidth: 0 }}>
-                      <span style={{ display: 'block', fontSize: 14.5, marginBottom: 2 }}>
-                        Customized mindful team-building activity
-                      </span>
-                      <span
-                        style={{
-                          display: 'block',
-                          fontSize: 12,
-                          lineHeight: 1.5,
-                          color: 'var(--color-muted)',
-                        }}
-                      >
-                        30-minute extension, featuring a facilitated activity
-                        focused on recognition, values alignment, mindful
-                        communication, and team connection — customized to
-                        your team objectives
+                    <span
+                      style={{ display: 'flex', alignItems: 'center', gap: 10, minWidth: 0 }}
+                    >
+                      <span className="toggle-row__dot" />
+                      <span style={{ minWidth: 0 }}>
+                        <span style={{ display: 'block', fontSize: 14.5, marginBottom: 2 }}>
+                          Customized mindful team-building activity
+                        </span>
+                        <span
+                          style={{
+                            display: 'block',
+                            fontSize: 12,
+                            lineHeight: 1.5,
+                            color: 'var(--color-muted)',
+                          }}
+                        >
+                          30-minute extension, featuring a facilitated activity
+                          focused on recognition, values alignment, mindful
+                          communication, and team connection — customized to
+                          your team objectives
+                        </span>
                       </span>
                     </span>
-                  </span>
-                  <span className="toggle-row__price">
-                    {money(pricing.teamAddon)}
-                  </span>
-                </button>
+                    <span className="toggle-row__price">
+                      {money(pricing.teamAddon)}
+                    </span>
+                  </button>
+                </div>
               </div>
-            </div>
+            )}
           </>
         )}
       </div>

@@ -278,11 +278,11 @@ export const CREDENTIALS = [
   {
     title: 'Education & Professional Credentials',
     items: [
-      "Bachelor's Degree in Business Administration, BA – WES",
+      "Bachelor's Degree in Business Administration, BA - WES",
       'Human Resources Management Certificate (Honours) | George Brown College',
       'HR Management Certificate | George Brown College',
       'Practical Management Strategies Certificate | George Brown College',
-      'Certified Human Resources Professional and Leader | CHRP & CHRL - HR Professional Association',
+      'Certified Human Resources Professional and Leader (CHRP & CHRL) | HR Professional Association',
     ],
   },
 ] as const;
@@ -331,7 +331,7 @@ export const TRAINING = [
   {
     title: 'Live Music Performances',
     items: [
-      'Toronto Zen School Ensemble – Handpan musician and performer - 2025',
+      'Toronto Zen School Ensemble - Handpan musician and performer - 2025',
       'BUMI Festival - Handpan Performance - 2026',
       'Drum & Soul in Motion - Handpan-guided meditation',
     ],

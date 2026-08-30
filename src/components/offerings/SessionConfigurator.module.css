@@ -14,7 +14,7 @@
 .panel {
   background: var(--gradient-card);
   border: none;
-  border-radius: var(--radius-card);
+  border-radius: 0;
   box-shadow: var(--shadow-card);
   padding: clamp(20px, 3vw, 30px) clamp(18px, 3vw, 26px);
   min-width: 0;
@@ -37,7 +37,7 @@
 .choices :global(.choice) {
   padding: 15px 18px;
   border: 1.5px solid transparent;
-  border-radius: 6px;
+  border-radius: 0;
   background: #f6f0e6;
 }
 

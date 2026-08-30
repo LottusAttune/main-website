@@ -156,38 +156,51 @@
   border-radius: 6px;
 }
 
-/* Kept deliberately modest (capped width below, not stretched to the full
-   content width) - these are sound samples to click and listen to, not a
-   cinematic hero video, so there's no reason to spend the vertical space
-   a full-width 16:9 pair would need. */
-.videoBlock {
-  margin-top: clamp(24px, 3vw, 36px);
+/* Spans edge to edge with the two cards above (same .shell width), framing
+   the videos as a third card completing the row instead of leaving them to
+   float on the bare beige backdrop underneath. */
+.videoShell {
+  margin-top: clamp(20px, 2.4vw, 32px);
 }
 
-.videoHeading {
-  margin-bottom: 14px;
+.videoCard {
+  background: var(--gradient-deep);
+  border-radius: 6px;
+  padding: clamp(26px, 2.8vw, 38px);
+}
+
+/* Same treatment as .groupTitle's dark/gold-light context, just centered
+   for a full-width card rather than left-aligned like the column titles
+   above it. */
+.videoHeadingDark {
+  margin-bottom: 18px;
   font-family: var(--font-display);
   font-weight: 400;
   font-size: clamp(17px, 1.8vw, 20px);
-  color: var(--color-gold-text);
+  color: var(--color-gold-light);
   text-align: center;
 }
 
 .videoGrid {
-  display: flex;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 280px));
   justify-content: center;
   gap: clamp(16px, 2vw, 24px);
+}
+
+@media (max-width: 720px) {
+  .videoGrid {
+    grid-template-columns: minmax(0, 280px);
+  }
 }
 
 .videoFrame {
   position: relative;
   width: 100%;
-  max-width: 320px;
   aspect-ratio: 16 / 9;
   border-radius: 6px;
   overflow: hidden;
-  background: var(--color-ink-deep);
+  background: rgba(0, 0, 0, 0.2);
 }
 
 .videoFrame iframe {
@@ -196,6 +209,20 @@
   width: 100%;
   height: 100%;
   border: none;
+}
+
+/* Reserved slot for the third video, not live yet - a dashed outline reads
+   as "this spot is intentional" rather than a broken/missing embed. */
+.videoFramePending {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  border: 1px dashed rgba(198, 169, 122, 0.4);
+  text-align: center;
+  font-size: 13px;
+  letter-spacing: 0.02em;
+  color: #c8beb2;
 }
 
 .credColDark {

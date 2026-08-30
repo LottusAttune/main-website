@@ -103,24 +103,29 @@ export default function FounderPage() {
             </div>
           </div>
 
-          <div className={`shell ${styles.videoBlock}`}>
-            <div className={styles.videoHeading}>Explore my handpan sounds</div>
-            <div className={styles.videoGrid}>
-              <div className={styles.videoFrame}>
-                <iframe
-                  src="https://player.vimeo.com/video/1221670118?title=0&byline=0&portrait=0"
-                  title="Silvana playing the handpan"
-                  allow="autoplay; fullscreen; picture-in-picture; encrypted-media"
-                  allowFullScreen
-                />
-              </div>
-              <div className={styles.videoFrame}>
-                <iframe
-                  src="https://player.vimeo.com/video/1221664378?title=0&byline=0&portrait=0"
-                  title="Silvana playing the handpan"
-                  allow="autoplay; fullscreen; picture-in-picture; encrypted-media"
-                  allowFullScreen
-                />
+          <div className={`shell ${styles.videoShell}`}>
+            <div className={styles.videoCard}>
+              <div className={styles.videoHeadingDark}>Explore my handpan sounds</div>
+              <div className={styles.videoGrid}>
+                <div className={styles.videoFrame}>
+                  <iframe
+                    src="https://player.vimeo.com/video/1221670118?title=0&byline=0&portrait=0"
+                    title="Silvana playing the handpan"
+                    allow="autoplay; fullscreen; picture-in-picture; encrypted-media"
+                    allowFullScreen
+                  />
+                </div>
+                <div className={styles.videoFrame}>
+                  <iframe
+                    src="https://player.vimeo.com/video/1221664378?title=0&byline=0&portrait=0"
+                    title="Silvana playing the handpan"
+                    allow="autoplay; fullscreen; picture-in-picture; encrypted-media"
+                    allowFullScreen
+                  />
+                </div>
+                <div className={`${styles.videoFrame} ${styles.videoFramePending}`}>
+                  <span>Video coming soon</span>
+                </div>
               </div>
             </div>
           </div>

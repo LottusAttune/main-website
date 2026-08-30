@@ -58,18 +58,13 @@ export function SessionConfigurator({ pricing }: Props) {
 
     const query = window.matchMedia('(min-width: 861px)');
 
-    // The panel's own height leaves too little room for the photo to show
-    // more than a sliver of the candle, so give the box some extra height
-    // here rather than cropping the photo tighter.
-    const EXTRA_FOR_PHOTO = 100;
-
     const sync = () => {
       if (!query.matches) {
         summary.style.height = '';
         return;
       }
       const height = panel.getBoundingClientRect().bottom - panel.getBoundingClientRect().top;
-      summary.style.height = `${height + EXTRA_FOR_PHOTO}px`;
+      summary.style.height = `${height}px`;
     };
 
     sync();

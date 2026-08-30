@@ -219,7 +219,13 @@
    icon), kept showing any time the video isn't actively playing - a plain
    embed only shows that cover before the very first play, then leaves the
    full-colour paused frame exposed afterward, which read as too much colour
-   against the site's neutral palette. */
+   against the site's neutral palette.
+
+   Fully opaque and the exact same gradient as .videoBand behind it - a
+   semi-transparent scrim (tried first) still let the thumbnail's own
+   colour bleed through underneath, which blended into a visibly different
+   shade than the flat band colour around it instead of one clean dark
+   brown throughout. */
 .videoCover {
   position: absolute;
   inset: 0;
@@ -228,7 +234,7 @@
   justify-content: center;
   border: none;
   padding: 0;
-  background: rgba(20, 15, 10, 0.55);
+  background: var(--gradient-deep);
   cursor: pointer;
 }
 

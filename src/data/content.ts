@@ -333,7 +333,7 @@ export const TRAINING = [
     items: [
       'Toronto Zen School Ensemble – Handpan musician and performer - 2025',
       'BUMI Festival - Handpan Performance - 2026',
-      'Drum & Soul in Motion - Inner-child handpan-guided meditation - 2025',
+      'Drum & Soul in Motion - Handpan-guided meditation',
     ],
   },
 ] as const;

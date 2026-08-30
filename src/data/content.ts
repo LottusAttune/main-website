@@ -317,7 +317,7 @@ export const TRAINING = [
   {
     title: 'Personal Development & Integrative Healing Arts',
     items: [
-      'Inner Growth Identity one-year program - Antonio Laguna, Bali - 2025',
+      'Inner Growth Identity one-year program - Soul Engineering, Bali - 2025',
       'Etnikas Integrative Medicine Retreat - Cusco, Peru - 2019',
     ],
   },

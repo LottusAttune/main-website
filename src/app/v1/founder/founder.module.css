@@ -175,9 +175,16 @@
 /* No top/bottom padding - the band's own top and bottom edges are exactly
    the videos' top and bottom edges, not a padded card around them. Side
    padding stays, both so the outer videos don't sit flush against the
-   band's own rounded corners and for a little breathing room. */
+   band's own rounded corners and for a little breathing room.
+
+   Flat colour, not var(--gradient-deep) - a gradient's stops are always
+   remapped across whichever box renders it, so the identical gradient
+   token looks like a different shade in this short, wide band than it
+   does in the tall Training card. --color-ink-deep is the gradient's own
+   darker stop, so this reads as the same dark brown as the card without
+   depending on the two boxes sharing a height. */
 .videoBand {
-  background: var(--gradient-deep);
+  background: var(--color-ink-deep);
   border-radius: 6px;
   padding: 0 clamp(16px, 2vw, 24px);
   overflow: hidden;
@@ -196,15 +203,15 @@
   }
 }
 
-/* No background of its own - a second, visibly different dark tone sitting
-   inside .videoBand's own dark tone read as two stacked "boxes" instead of
-   one clean band. The video (or, before it loads, the band's own color
-   showing straight through) is the only thing visible here now. */
+/* Same flat colour as .videoBand, so there's no gap or seam where the
+   page's own background could show through around a thumbnail's edge -
+   the video (once it loads) is the only thing visible on top of it. */
 .videoFrame {
   position: relative;
   width: 100%;
   aspect-ratio: 16 / 9;
   overflow: hidden;
+  background: var(--color-ink-deep);
 }
 
 .videoFrame iframe {
@@ -213,37 +220,7 @@
   width: 100%;
   height: 100%;
   border: none;
-}
-
-/* Recreates Vimeo's own neutral pre-play cover (dark scrim + circular play
-   icon), kept showing any time the video isn't actively playing - a plain
-   embed only shows that cover before the very first play, then leaves the
-   full-colour paused frame exposed afterward, which read as too much colour
-   against the site's neutral palette.
-
-   Fully opaque and the exact same gradient as .videoBand behind it - a
-   semi-transparent scrim (tried first) still let the thumbnail's own
-   colour bleed through underneath, which blended into a visibly different
-   shade than the flat band colour around it instead of one clean dark
-   brown throughout. */
-.videoCover {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border: none;
-  padding: 0;
-  background: var(--gradient-deep);
-  cursor: pointer;
-}
-
-.videoCover svg {
-  transition: transform 0.2s ease;
-}
-
-.videoCover:hover svg {
-  transform: scale(1.08);
+  outline: none;
 }
 
 /* Reserved slot for the third video, not live yet - a dashed outline (no

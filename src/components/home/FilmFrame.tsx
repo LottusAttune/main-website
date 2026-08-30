@@ -8,8 +8,15 @@ import { FILM, FILM_POSTER } from '@/data/content';
 import { asset } from '@/lib/images';
 import styles from './FilmFrame.module.css';
 
-/** Minimal shape of the bits of the Vimeo Player SDK we use - see
-    src/types/vimeo-player.d.ts for the shared Window.Vimeo declaration. */
+declare global {
+  interface Window {
+    Vimeo?: {
+      Player: new (el: HTMLIFrameElement) => VimeoPlayer;
+    };
+  }
+}
+
+/** Minimal shape of the bits of the Vimeo Player SDK we use. */
 type VimeoPlayer = {
   setMuted: (muted: boolean) => Promise<boolean>;
   setVolume: (volume: number) => Promise<number>;

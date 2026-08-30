@@ -1,6 +1,5 @@
 import type { Metadata } from 'next';
 import Image from 'next/image';
-import Script from 'next/script';
 
 import { Accordion } from '@/components/common/Accordion';
 import { Reveal } from '@/components/common/Reveal';
@@ -8,7 +7,6 @@ import { Wave } from '@/components/common/Wave';
 import { SiteFooter } from '@/components/chrome/SiteFooter';
 import { SiteNav } from '@/components/chrome/SiteNav';
 import { StickyBookBar } from '@/components/chrome/StickyBookBar';
-import { HandpanVideo } from '@/components/founder/HandpanVideo';
 import {
   CREDENTIALS,
   FOUNDER_BIO,
@@ -105,14 +103,26 @@ export default function FounderPage() {
             </div>
           </div>
 
-          <Script src="https://player.vimeo.com/api/player.js" strategy="afterInteractive" />
-
           <div className={`shell ${styles.videoShell}`}>
             <div className={styles.videoHeading}>Explore my handpan sounds</div>
             <div className={styles.videoBand}>
               <div className={styles.videoGrid}>
-                <HandpanVideo id="1221670118" title="Silvana playing the handpan" />
-                <HandpanVideo id="1221664378" title="Silvana playing the handpan" />
+                <div className={styles.videoFrame}>
+                  <iframe
+                    src="https://player.vimeo.com/video/1221670118?title=0&byline=0&portrait=0"
+                    title="Silvana playing the handpan"
+                    allow="autoplay; fullscreen; picture-in-picture; encrypted-media"
+                    allowFullScreen
+                  />
+                </div>
+                <div className={styles.videoFrame}>
+                  <iframe
+                    src="https://player.vimeo.com/video/1221664378?title=0&byline=0&portrait=0"
+                    title="Silvana playing the handpan"
+                    allow="autoplay; fullscreen; picture-in-picture; encrypted-media"
+                    allowFullScreen
+                  />
+                </div>
                 <div className={`${styles.videoFrame} ${styles.videoFramePending}`}>
                   <span>Video coming soon</span>
                 </div>

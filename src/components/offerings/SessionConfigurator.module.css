@@ -116,16 +116,19 @@
   gap: 8px;
 }
 
+/* No box fill - a plain list row with a hairline divider, matching the
+   Accordion's own flat-row treatment elsewhere on the site, rather than a
+   separate card sitting on top of the panel. */
 .addons :global(.toggle-row) {
-  padding: 13px 16px;
-  border: 1.5px solid transparent;
+  padding: 16px 0;
+  border: none;
+  border-top: 1px solid var(--hairline-light);
   border-radius: 0;
-  background: var(--color-cream-raised);
+  background: none;
 }
 
 .addons :global(.toggle-row[aria-pressed='true']) {
-  border-color: var(--color-gold-deep);
-  background: var(--color-cream-raised);
+  background: none;
 }
 
 .addons :global(.toggle-row__dot) {

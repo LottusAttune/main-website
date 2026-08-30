@@ -104,8 +104,8 @@ export default function FounderPage() {
           </div>
 
           <div className={`shell ${styles.videoShell}`}>
-            <div className={styles.videoCard}>
-              <div className={styles.videoHeadingDark}>Explore my handpan sounds</div>
+            <div className={styles.videoHeading}>Explore my handpan sounds</div>
+            <div className={styles.videoBand}>
               <div className={styles.videoGrid}>
                 <div className={styles.videoFrame}>
                   <iframe

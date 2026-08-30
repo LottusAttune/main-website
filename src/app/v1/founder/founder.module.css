@@ -156,29 +156,31 @@
   border-radius: 6px;
 }
 
-/* Spans edge to edge with the two cards above (same .shell width), framing
-   the videos as a third card completing the row instead of leaving them to
-   float on the bare beige backdrop underneath. */
 .videoShell {
   margin-top: clamp(20px, 2.4vw, 32px);
 }
 
-.videoCard {
-  background: var(--gradient-deep);
-  border-radius: 6px;
-  padding: clamp(26px, 2.8vw, 38px);
-}
-
-/* Same treatment as .groupTitle's dark/gold-light context, just centered
-   for a full-width card rather than left-aligned like the column titles
-   above it. */
-.videoHeadingDark {
-  margin-bottom: 18px;
+/* Heading sits outside the band, on the page's own beige, same as before -
+   the band is a tight backing strip for the videos only, not a padded card
+   that also has to hold a heading. */
+.videoHeading {
+  margin-bottom: 14px;
   font-family: var(--font-display);
   font-weight: 400;
   font-size: clamp(17px, 1.8vw, 20px);
-  color: var(--color-gold-light);
+  color: var(--color-gold-text);
   text-align: center;
+}
+
+/* No top/bottom padding - the band's own top and bottom edges are exactly
+   the videos' top and bottom edges, not a padded card around them. Side
+   padding stays, both so the outer videos don't sit flush against the
+   band's own rounded corners and for a little breathing room. */
+.videoBand {
+  background: var(--gradient-deep);
+  border-radius: 6px;
+  padding: 0 clamp(16px, 2vw, 24px);
+  overflow: hidden;
 }
 
 .videoGrid {
@@ -194,13 +196,15 @@
   }
 }
 
+/* No background of its own - a second, visibly different dark tone sitting
+   inside .videoBand's own dark tone read as two stacked "boxes" instead of
+   one clean band. The video (or, before it loads, the band's own color
+   showing straight through) is the only thing visible here now. */
 .videoFrame {
   position: relative;
   width: 100%;
   aspect-ratio: 16 / 9;
-  border-radius: 6px;
   overflow: hidden;
-  background: rgba(0, 0, 0, 0.2);
 }
 
 .videoFrame iframe {
@@ -211,8 +215,9 @@
   border: none;
 }
 
-/* Reserved slot for the third video, not live yet - a dashed outline reads
-   as "this spot is intentional" rather than a broken/missing embed. */
+/* Reserved slot for the third video, not live yet - a dashed outline (no
+   fill) reads as "this spot is intentional" without adding a second box
+   color the way a filled placeholder would. */
 .videoFramePending {
   display: flex;
   align-items: center;

@@ -66,7 +66,7 @@ export const CORPORATE_INTRO_BASE_PRICE = 1300;
 export const CORPORATE_INTRO_PER_PARTICIPANT = 100;
 
 /** The team-building add-on doesn't make sense for a small group. */
-export const TEAM_ADDON_MIN_PARTICIPANTS = 5;
+export const TEAM_ADDON_MIN_PARTICIPANTS = 7;
 
 /** Group & Corporate: $250/participant up to 10, then $100 per participant beyond. */
 export const GROUP_BASE_RATE = 250;

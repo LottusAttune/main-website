@@ -262,7 +262,7 @@ export function BookingForm({
           </div>
           <p className={styles.stepNote}>
             {needsSecond
-              ? 'Each session runs two hours - groups larger than 12 run across two sessions on the same day, so choose two time slots below.'
+              ? 'Each session runs two hours. Groups larger than 12 run across two sessions on the same day, so choose two time slots below'
               : 'Each session runs two hours'}
           </p>
           <div className={`${styles.times} ${styles.indent}`}>

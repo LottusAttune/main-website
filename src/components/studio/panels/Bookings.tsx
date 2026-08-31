@@ -11,6 +11,7 @@ const COLUMNS = [
   { header: 'Client', value: (b: BookingRow) => b.name },
   { header: 'Email', value: (b: BookingRow) => b.email },
   { header: 'Phone', value: (b: BookingRow) => b.phone ?? '' },
+  { header: 'Company', value: (b: BookingRow) => b.company ?? '' },
   { header: 'Type', value: (b: BookingRow) => b.type },
   { header: 'Participants', value: (b: BookingRow) => b.participants },
   { header: 'Venue', value: (b: BookingRow) => b.venue },

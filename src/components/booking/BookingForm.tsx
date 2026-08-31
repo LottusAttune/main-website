@@ -45,7 +45,6 @@ export function BookingForm({
   const [date2, setDate2] = useState<Date | null>(null);
   const [time2, setTime2] = useState<string | null>(null);
   const [teamAddon, setTeamAddon] = useState(false);
-  const [refreshments, setRefreshments] = useState(false);
   const [codeInput, setCodeInput] = useState('');
   const [code, setCode] = useState<CodeState>({
     applied: null,
@@ -70,7 +69,6 @@ export function BookingForm({
     {
       participants: people,
       teamAddon,
-      refreshments,
       percentOff: code.applied?.percentOff,
       discountLabel: code.applied?.code,
     },
@@ -137,6 +135,7 @@ export function BookingForm({
           name: form.get('name'),
           email: form.get('email'),
           phone: form.get('phone'),
+          company: form.get('company'),
           message: form.get('message'),
           participants: party,
           sessionDate: isoDay(date),
@@ -144,7 +143,6 @@ export function BookingForm({
           sessionDate2: date2 ? isoDay(date2) : null,
           sessionTime2: time2,
           teamAddon,
-          refreshments,
           discountCode: code.applied?.code ?? null,
         }),
       });
@@ -197,7 +195,8 @@ export function BookingForm({
             </h2>
           </div>
           <p className={styles.stepNote}>
-            Sessions are offered for 1 to 24 participants
+            Sessions are offered for 1 to 24 participants. Groups larger than
+            12 are split across two sessions.
           </p>
           <div className={`${styles.partyRow} ${styles.indent}`}>
             {QUICK_PARTY.map((n) => (
@@ -282,6 +281,10 @@ export function BookingForm({
               </button>
             ))}
           </div>
+          <p className={styles.timesNote}>
+            For alternative times, reach us at{' '}
+            <a href={`mailto:${SITE.email}`}>{SITE.email}</a> or {SITE.phone}.
+          </p>
         </div>
 
         {/* ---------- 04 Second session (groups over 12) ---------- */}
@@ -368,45 +371,12 @@ export function BookingForm({
                 <span className="toggle-row__price">{money(pricing.teamAddon)}</span>
               </button>
             )}
-
-            <button
-              type="button"
-              className="toggle-row"
-              aria-pressed={refreshments}
-              onClick={() => setRefreshments((v) => !v)}
-            >
-              <span
-                style={{ display: 'flex', alignItems: 'center', gap: 14, minWidth: 0 }}
-              >
-                <span className="toggle-row__dot" />
-                <span style={{ minWidth: 0, textAlign: 'left' }}>
-                  <span style={{ display: 'block', fontSize: 16.5, marginBottom: 4 }}>
-                    Organic tea, snacks and refreshments
-                  </span>
-                  <span
-                    style={{
-                      display: 'block',
-                      fontSize: 13.5,
-                      lineHeight: 1.65,
-                      color: 'var(--color-muted)',
-                    }}
-                  >
-                    {money(pricing.refreshments)} per participant
-                  </span>
-                </span>
-              </span>
-              <span className="toggle-row__price">
-                {people >= 2
-                  ? money(pricing.refreshments * people)
-                  : `${money(pricing.refreshments)} pp`}
-              </span>
-            </button>
           </div>
         </div>
 
         {/* ---------- Your details ---------- */}
         <div className={`${styles.step} ${styles.stepLast}`}>
-          <div className={styles.stepHead} style={{ marginBottom: 30 }}>
+          <div className={styles.stepHead} style={{ marginBottom: 20 }}>
             <div className={styles.stepNumber}>{detailsStep}</div>
             <h2 className={styles.stepTitle}>Your details</h2>
           </div>
@@ -430,12 +400,20 @@ export function BookingForm({
               autoComplete="email"
             />
             <input
-              className={`field ${styles.detailsWide}`}
+              className="field"
               type="tel"
               name="phone"
               placeholder="Phone | WhatsApp"
               aria-label="Phone or WhatsApp"
               autoComplete="tel"
+            />
+            <input
+              className="field"
+              type="text"
+              name="company"
+              placeholder="Company Name (optional)"
+              aria-label="Company name (optional)"
+              autoComplete="organization"
             />
             <textarea
               className={`field ${styles.detailsWide} ${styles.textarea}`}
@@ -546,11 +524,6 @@ export function BookingForm({
             {submitError}
           </div>
         ) : null}
-
-        <p className={styles.reassurance}>
-          We confirm every booking personally. For alternative times, reach us at{' '}
-          <a href={`mailto:${SITE.email}`}>{SITE.email}</a> or {SITE.phone}.
-        </p>
       </aside>
     </form>
   );

@@ -18,6 +18,7 @@ export const bookingSchema = z
     name: trimmed(120),
     email: z.string().trim().email().max(200),
     phone: z.string().trim().max(60).optional().nullable(),
+    company: z.string().trim().max(160).optional().nullable(),
     message: z.string().trim().max(2000).optional().nullable(),
     participants: z.coerce.number().int().min(1).max(MAX_PARTICIPANTS),
     sessionDate: isoDay,

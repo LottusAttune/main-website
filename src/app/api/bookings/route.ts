@@ -73,11 +73,11 @@ export async function POST(request: Request) {
   try {
     const result = await sql`
       INSERT INTO bookings (
-        name, email, phone, message, participants,
+        name, email, phone, company, message, participants,
         session_date, session_time, session_date_2, session_time_2,
         team_addon, refreshments, discount_code, estimated_total
       ) VALUES (
-        ${input.name}, ${input.email}, ${input.phone ?? null}, ${input.message ?? null},
+        ${input.name}, ${input.email}, ${input.phone ?? null}, ${input.company ?? null}, ${input.message ?? null},
         ${input.participants},
         ${input.sessionDate}, ${input.sessionTime},
         ${input.sessionDate2 ?? null}, ${input.sessionTime2 ?? null},

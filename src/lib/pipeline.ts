@@ -22,6 +22,7 @@ export type Lead = {
   name: string;
   email: string;
   phone: string | null;
+  company: string | null;
   participants: number;
   sessionDate: string | null;
   sessionTime: string | null;

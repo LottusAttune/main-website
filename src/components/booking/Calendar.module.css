@@ -1,7 +1,7 @@
 .calendar {
   max-width: 560px;
   border: 1px solid var(--hairline-light);
-  border-radius: 24px;
+  border-radius: 0;
   background: var(--color-cream-raised);
   overflow: hidden;
 }
@@ -72,7 +72,7 @@
 .day {
   height: 46px;
   border: 1px solid transparent;
-  border-radius: 12px;
+  border-radius: 0;
   background: transparent;
   color: var(--color-ink);
   font-size: 15px;

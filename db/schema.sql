@@ -58,6 +58,7 @@ CREATE TABLE IF NOT EXISTS bookings (
   name            TEXT NOT NULL,
   email           TEXT NOT NULL,
   phone           TEXT,
+  company         TEXT,
   message         TEXT,
   participants    INTEGER NOT NULL,
   session_date    DATE,
@@ -72,6 +73,9 @@ CREATE TABLE IF NOT EXISTS bookings (
   status          TEXT NOT NULL DEFAULT 'new_enquiry',
   created_at      TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
+
+-- Table predates the company field - add it for existing databases.
+ALTER TABLE bookings ADD COLUMN IF NOT EXISTS company TEXT;
 
 CREATE INDEX IF NOT EXISTS bookings_status_idx ON bookings (status);
 CREATE INDEX IF NOT EXISTS bookings_created_idx ON bookings (created_at DESC);

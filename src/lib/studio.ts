@@ -54,6 +54,7 @@ export async function getStudioData(): Promise<StudioData> {
     name: String(row.name),
     email: String(row.email),
     phone: row.phone ? String(row.phone) : null,
+    company: row.company ? String(row.company) : null,
     participants: Number(row.participants),
     sessionDate: toIso(row.session_date),
     sessionTime: row.session_time ? String(row.session_time) : null,

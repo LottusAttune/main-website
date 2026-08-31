@@ -15,6 +15,7 @@ const COLUMNS = [
   { header: 'Name', value: (l: Lead) => l.name },
   { header: 'Email', value: (l: Lead) => l.email },
   { header: 'Phone', value: (l: Lead) => l.phone ?? '' },
+  { header: 'Company', value: (l: Lead) => l.company ?? '' },
   { header: 'Type', value: (l: Lead) => l.type },
   { header: 'Participants', value: (l: Lead) => l.participants },
   { header: 'Session date', value: (l: Lead) => l.sessionDate ?? '' },

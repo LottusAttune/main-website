@@ -67,18 +67,19 @@ export function SessionConfigurator({ pricing }: Props) {
 
     const query = window.matchMedia('(min-width: 861px)');
 
-    // A little taller than the panel - the new candle photo needs this much
-    // extra room for both the flame and the lotus cutouts on the table to
-    // show together, not just a sliver of one or the other.
-    const EXTRA_FOR_PHOTO = 45;
-
     const sync = () => {
       if (!query.matches) {
         summary.style.height = '';
         return;
       }
-      const height = panel.getBoundingClientRect().bottom - panel.getBoundingClientRect().top;
-      summary.style.height = `${height + EXTRA_FOR_PHOTO}px`;
+      // The photo now keeps a fixed aspect ratio (see .photoBleed), so it no
+      // longer stretches to fill whatever height this box is given - never
+      // force the box shorter than its own natural content actually needs,
+      // or the photo would get clipped by the box's overflow: hidden.
+      const panelHeight = panel.getBoundingClientRect().bottom - panel.getBoundingClientRect().top;
+      summary.style.height = '';
+      const naturalHeight = summary.getBoundingClientRect().height;
+      summary.style.height = `${Math.max(panelHeight, naturalHeight)}px`;
     };
 
     sync();
@@ -90,10 +91,10 @@ export function SessionConfigurator({ pricing }: Props) {
     };
   }, [isPrivate, participants, format]);
 
-  // The photo scales with object-fit: cover (top-anchored), so depending on
-  // the container's aspect ratio it may bleed past the sides or crop the
-  // bottom. Position the flame overlay against the photo's actual displayed
-  // rect (not the container's) so it stays on the candle at every size.
+  // .photoBleed's aspect-ratio (720/800) is narrower than the source photo's
+  // own (720/944), so the browser always scales it to the container's width
+  // and crops only the bottom, top-aligned - never the sides. That makes the
+  // flame's position a simple function of the container's width alone.
   useLayoutEffect(() => {
     const container = photoBleedRef.current;
     const flame = flameRef.current;
@@ -101,21 +102,14 @@ export function SessionConfigurator({ pricing }: Props) {
 
     const FLAME_X_FRAC = 0.4;
     const FLAME_Y_FRAC = 0.145;
-    // Must match .boxPhoto's own object-position - the flicker is placed in
-    // screen space, not in the image, so it has to reproduce the same
-    // vertical crop the browser applies to the photo.
-    const OBJECT_POSITION_Y_PERCENT = 34;
 
     const sync = () => {
-      const { width: cw, height: ch } = container.getBoundingClientRect();
-      const scale = Math.max(cw / 720, ch / 944);
-      const displayW = 720 * scale;
+      const { width: cw } = container.getBoundingClientRect();
+      const scale = cw / 720;
       const displayH = 944 * scale;
-      const offsetX = (cw - displayW) / 2;
-      const offsetY = (ch - displayH) * (OBJECT_POSITION_Y_PERCENT / 100);
 
-      flame.style.left = `${offsetX + FLAME_X_FRAC * displayW}px`;
-      flame.style.top = `${offsetY + FLAME_Y_FRAC * displayH}px`;
+      flame.style.left = `${FLAME_X_FRAC * cw}px`;
+      flame.style.top = `${FLAME_Y_FRAC * displayH}px`;
     };
 
     sync();

@@ -187,23 +187,21 @@
   min-width: 0;
 }
 
+/* Fixed to the same width:height ratio as the visible crop we want (the
+   candle with generous headroom for the flame, down through two full rows
+   of coasters, cutting off before the third) - so every screen width shows
+   that exact same slice of the photo instead of drifting with whatever
+   height the flex box happens to have. */
 .photoBleed {
   position: relative;
-  flex: 1;
-  min-height: 0;
+  flex: none;
+  aspect-ratio: 720 / 800;
   margin: 36px clamp(-22px, -2.4vw, -16px) clamp(-20px, -2.2vw, -16px);
-}
-
-@media (max-width: 860px) {
-  .photoBleed {
-    flex: none;
-    min-height: 340px;
-  }
 }
 
 .boxPhoto {
   object-fit: cover;
-  object-position: center 34%;
+  object-position: center top;
   pointer-events: none;
 }
 

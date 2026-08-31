@@ -37,6 +37,7 @@ export function SessionConfigurator({ pricing, footnote }: Props) {
 
   const panelRef = useRef<HTMLDivElement>(null);
   const summaryRef = useRef<HTMLElement>(null);
+  const footnoteRef = useRef<HTMLDivElement>(null);
   const photoBleedRef = useRef<HTMLDivElement>(null);
   const flameRef = useRef<HTMLDivElement>(null);
   const glassGlowRef = useRef<HTMLDivElement>(null);
@@ -60,10 +61,12 @@ export function SessionConfigurator({ pricing, footnote }: Props) {
   useLayoutEffect(() => {
     const panel = panelRef.current;
     const summary = summaryRef.current;
+    const footnote = footnoteRef.current;
     if (!summary) return;
 
     if (isPrivate || !panel) {
       summary.style.height = '';
+      if (footnote) footnote.style.marginTop = '';
       return;
     }
 
@@ -72,16 +75,34 @@ export function SessionConfigurator({ pricing, footnote }: Props) {
     const sync = () => {
       if (!query.matches) {
         summary.style.height = '';
+        if (footnote) footnote.style.marginTop = '';
         return;
       }
       // The photo now keeps a fixed aspect ratio (see .photoBleed), so it no
       // longer stretches to fill whatever height this box is given - never
       // force the box shorter than its own natural content actually needs,
       // or the photo would get clipped by the box's overflow: hidden.
-      const panelHeight = panel.getBoundingClientRect().bottom - panel.getBoundingClientRect().top;
+      const panelBottom = panel.getBoundingClientRect().bottom;
+      const panelHeight = panelBottom - panel.getBoundingClientRect().top;
       summary.style.height = '';
       const naturalHeight = summary.getBoundingClientRect().height;
       summary.style.height = `${Math.max(panelHeight, naturalHeight)}px`;
+
+      // Push the footnote down to line its own bottom up with the (now
+      // resized) summary box's bottom - but only as far as the grid's own
+      // row gap already carries it for free. Panel and summary land at
+      // very different relative heights depending on viewport width (how
+      // much their own text wraps), so whether there's room for this varies
+      // too much to bake into a fixed CSS value: with room, this closes the
+      // gap into one frame; with none, it leaves the grid's own 24px gap
+      // alone rather than forcing a second, smaller gap on top of it.
+      if (footnote) {
+        footnote.style.marginTop = '';
+        const summaryBottom = summary.getBoundingClientRect().bottom;
+        const footnoteHeight = footnote.getBoundingClientRect().height;
+        const extra = summaryBottom - footnoteHeight - panelBottom - 24;
+        footnote.style.marginTop = `${Math.max(0, extra)}px`;
+      }
     };
 
     sync();
@@ -419,7 +440,11 @@ export function SessionConfigurator({ pricing, footnote }: Props) {
           </div>
         )}
       </aside>
-      {footnote && <div className={styles.layoutFootnote}>{footnote}</div>}
+      {footnote && (
+        <div className={styles.layoutFootnote} ref={footnoteRef}>
+          {footnote}
+        </div>
+      )}
     </div>
   );
 }

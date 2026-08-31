@@ -1,8 +1,11 @@
 /* Named areas (not auto-placement) so the footnote can share panel's
    column without fighting over which cell panel and summary land in.
-   summary spans both rows, so it dictates the column's total height - the
-   footnote row is whatever's left under panel, which is what lets
-   align-self: end on .layoutFootnote line its bottom up with summary's. */
+   summary spans both rows and dictates the column's total height. Whether
+   the footnote's own bottom actually reaches summary's is set in JS - the
+   gap between panel and summary bottoms varies enough by viewport width
+   that a pure-CSS row-height trick either overshoots (double gap) or falls
+   short (panel and summary near the same height, nowhere left to push
+   into) rather than reliably landing on either. */
 .layout {
   display: grid;
   grid-template-columns: minmax(340px, 2fr) minmax(240px, 1fr);
@@ -20,7 +23,6 @@
 
 .layoutFootnote {
   grid-area: footnote;
-  align-self: end;
   justify-self: center;
 }
 

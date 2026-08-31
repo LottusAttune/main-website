@@ -101,7 +101,7 @@ export function SessionConfigurator({ pricing }: Props) {
     if (!container || !flame || isPrivate) return;
 
     const FLAME_X_FRAC = 0.4;
-    const FLAME_Y_FRAC = 0.145;
+    const FLAME_Y_FRAC = 0.168;
 
     const sync = () => {
       const { width: cw } = container.getBoundingClientRect();
@@ -372,15 +372,6 @@ export function SessionConfigurator({ pricing }: Props) {
                     <stop offset="100%" stopColor="#fff8e6" stopOpacity="0" />
                   </radialGradient>
                 </defs>
-                <rect
-                  x="18.6"
-                  y="62"
-                  width="2.8"
-                  height="6.5"
-                  rx="1.1"
-                  fill="#5a4530"
-                  opacity="0.55"
-                />
                 <path
                   className={styles.flameOuterPath}
                   d="M20 4C14.5 12.5 7 32 8.5 44C9.5 53 14 60.5 20 63C26 60.5 30.5 53 31.5 44C33 32 25.5 12.5 20 4Z"

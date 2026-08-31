@@ -43,14 +43,17 @@ export default async function OfferingsPage() {
               </p>
             </div>
 
-            <SessionConfigurator pricing={pricing} />
-
-            <p className={styles.discoveryNote}>
-              Still have a question?{' '}
-              <a href={`mailto:${SITE.email}?subject=Discovery call`}>
-                Book a discovery call
-              </a>
-            </p>
+            <SessionConfigurator
+              pricing={pricing}
+              footnote={
+                <p className={styles.discoveryNote}>
+                  Still have a question?{' '}
+                  <a href={`mailto:${SITE.email}?subject=Discovery call`}>
+                    Book a discovery call
+                  </a>
+                </p>
+              }
+            />
           </div>
         </section>
       </main>

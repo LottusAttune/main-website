@@ -2,7 +2,7 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
-import { useEffect, useId, useLayoutEffect, useRef, useState } from 'react';
+import { useEffect, useId, useLayoutEffect, useRef, useState, type ReactNode } from 'react';
 
 import { asset } from '@/lib/images';
 import { quoteFor } from '@/lib/quote';
@@ -25,9 +25,10 @@ type Format = 'private' | 'group' | 'corporateIntro';
 
 type Props = {
   pricing: Pricing;
+  footnote?: ReactNode;
 };
 
-export function SessionConfigurator({ pricing }: Props) {
+export function SessionConfigurator({ pricing, footnote }: Props) {
   const [format, setFormat] = useState<Format>('group');
   const [isPackage, setIsPackage] = useState(false);
   const [participants, setParticipants] = useState(MIN_PARTICIPANTS);
@@ -418,6 +419,7 @@ export function SessionConfigurator({ pricing }: Props) {
           </div>
         )}
       </aside>
+      {footnote && <div className={styles.layoutFootnote}>{footnote}</div>}
     </div>
   );
 }

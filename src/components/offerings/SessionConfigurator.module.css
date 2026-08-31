@@ -133,6 +133,11 @@
   background: none;
 }
 
+.addons :global(.toggle-row:disabled) {
+  opacity: 0.45;
+  cursor: default;
+}
+
 /* Square, not the shared circular dot - a solid filled circle read as a
    punched-out hole against the cream background. A checkmark glyph (added
    below, only once checked) is what actually signals "selected" now, not
@@ -186,7 +191,7 @@
   position: relative;
   flex: 1;
   min-height: 0;
-  margin: 20px clamp(-22px, -2.4vw, -16px) clamp(-20px, -2.2vw, -16px);
+  margin: 36px clamp(-22px, -2.4vw, -16px) clamp(-20px, -2.2vw, -16px);
 }
 
 @media (max-width: 860px) {
@@ -198,7 +203,7 @@
 
 .boxPhoto {
   object-fit: cover;
-  object-position: center 50%;
+  object-position: center 34%;
   pointer-events: none;
 }
 
@@ -312,8 +317,11 @@
   color: var(--color-gold-light);
 }
 
+/* Body font, not the display serif - Cormorant's "1" has no base flag and
+   reads as a capital I at this size, which matters on a price. */
 .totalValue {
-  font-family: var(--font-display);
+  font-family: var(--font-body);
+  font-weight: 500;
   font-size: clamp(20px, 2.2vw, 24px);
   line-height: 1;
   color: var(--color-cream-text);

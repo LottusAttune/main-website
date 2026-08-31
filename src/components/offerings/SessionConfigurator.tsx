@@ -2,7 +2,7 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
-import { useId, useLayoutEffect, useRef, useState } from 'react';
+import { useEffect, useId, useLayoutEffect, useRef, useState } from 'react';
 
 import { asset } from '@/lib/images';
 import { quoteFor } from '@/lib/quote';
@@ -42,6 +42,14 @@ export function SessionConfigurator({ pricing }: Props) {
   const isPrivate = format === 'private';
   const isCorporateIntro = format === 'corporateIntro';
 
+  // Drop the selection once the group is too small for it to apply, rather
+  // than leaving a checked-but-disabled toggle sitting there.
+  useEffect(() => {
+    if (teamAddon && participants < TEAM_ADDON_MIN_PARTICIPANTS) {
+      setTeamAddon(false);
+    }
+  }, [participants, teamAddon]);
+
   // Match the estimate box's bottom to the panel's own bottom (under the
   // add-ons) when a participant count is in play. Only applies once the
   // layout is side-by-side (matches the .layout breakpoint) — below that,
@@ -59,13 +67,18 @@ export function SessionConfigurator({ pricing }: Props) {
 
     const query = window.matchMedia('(min-width: 861px)');
 
+    // A little taller than the panel - the new candle photo needs this much
+    // extra room for both the flame and the lotus cutouts on the table to
+    // show together, not just a sliver of one or the other.
+    const EXTRA_FOR_PHOTO = 45;
+
     const sync = () => {
       if (!query.matches) {
         summary.style.height = '';
         return;
       }
       const height = panel.getBoundingClientRect().bottom - panel.getBoundingClientRect().top;
-      summary.style.height = `${height}px`;
+      summary.style.height = `${height + EXTRA_FOR_PHOTO}px`;
     };
 
     sync();
@@ -86,18 +99,18 @@ export function SessionConfigurator({ pricing }: Props) {
     const flame = flameRef.current;
     if (!container || !flame || isPrivate) return;
 
-    const FLAME_X_FRAC = 0.521;
-    const FLAME_Y_FRAC = 0.661;
-    // Must match .boxPhoto's own object-position (center 50%) - the flicker
-    // is placed in screen space, not in the image, so it has to reproduce
-    // the same vertical crop the browser applies to the photo.
-    const OBJECT_POSITION_Y_PERCENT = 50;
+    const FLAME_X_FRAC = 0.418;
+    const FLAME_Y_FRAC = 0.184;
+    // Must match .boxPhoto's own object-position - the flicker is placed in
+    // screen space, not in the image, so it has to reproduce the same
+    // vertical crop the browser applies to the photo.
+    const OBJECT_POSITION_Y_PERCENT = 34;
 
     const sync = () => {
       const { width: cw, height: ch } = container.getBoundingClientRect();
-      const scale = Math.max(cw / 720, ch / 940);
+      const scale = Math.max(cw / 720, ch / 944);
       const displayW = 720 * scale;
-      const displayH = 940 * scale;
+      const displayH = 944 * scale;
       const offsetX = (cw - displayW) / 2;
       const offsetY = (ch - displayH) * (OBJECT_POSITION_Y_PERCENT / 100);
 
@@ -240,46 +253,50 @@ export function SessionConfigurator({ pricing }: Props) {
               <div className={styles.venueNote}>{venueNoteFor(participants)}</div>
             </div>
 
-            {participants >= TEAM_ADDON_MIN_PARTICIPANTS && (
-              <div>
-                <div className={styles.legend}>Optional corporate add-on</div>
-                <div className={styles.addons}>
-                  <button
-                    type="button"
-                    className="toggle-row"
-                    aria-pressed={teamAddon}
-                    onClick={() => setTeamAddon((v) => !v)}
-                  >
-                    <span
-                      style={{ display: 'flex', alignItems: 'center', gap: 10, minWidth: 0 }}
+            {(() => {
+              const addonAvailable = participants >= TEAM_ADDON_MIN_PARTICIPANTS;
+              return (
+                <div>
+                  <div className={styles.legend}>Optional corporate add-on</div>
+                  <div className={styles.addons}>
+                    <button
+                      type="button"
+                      className="toggle-row"
+                      aria-pressed={addonAvailable && teamAddon}
+                      aria-disabled={!addonAvailable}
+                      disabled={!addonAvailable}
+                      onClick={() => setTeamAddon((v) => !v)}
                     >
-                      <span className="toggle-row__dot" />
-                      <span style={{ minWidth: 0 }}>
-                        <span style={{ display: 'block', fontSize: 14.5, marginBottom: 2 }}>
-                          Customized mindful team-building activity
-                        </span>
-                        <span
-                          style={{
-                            display: 'block',
-                            fontSize: 12,
-                            lineHeight: 1.5,
-                            color: 'var(--color-muted)',
-                          }}
-                        >
-                          30-minute extension, featuring a facilitated activity
-                          focused on recognition, values alignment, mindful
-                          communication, and team connection — customized to
-                          your team objectives
+                      <span
+                        style={{ display: 'flex', alignItems: 'center', gap: 10, minWidth: 0 }}
+                      >
+                        <span className="toggle-row__dot" />
+                        <span style={{ minWidth: 0 }}>
+                          <span style={{ display: 'block', fontSize: 14.5, marginBottom: 2 }}>
+                            Customized mindful team-building activity
+                          </span>
+                          <span
+                            style={{
+                              display: 'block',
+                              fontSize: 12,
+                              lineHeight: 1.5,
+                              color: 'var(--color-muted)',
+                            }}
+                          >
+                            {addonAvailable
+                              ? '30-minute extension, featuring a facilitated activity focused on recognition, values alignment, mindful communication, and team connection — customized to your team objectives'
+                              : `Available for ${TEAM_ADDON_MIN_PARTICIPANTS}+ participants`}
+                          </span>
                         </span>
                       </span>
-                    </span>
-                    <span className="toggle-row__price">
-                      {money(pricing.teamAddon)}
-                    </span>
-                  </button>
+                      <span className="toggle-row__price">
+                        {addonAvailable ? money(pricing.teamAddon) : ''}
+                      </span>
+                    </button>
+                  </div>
                 </div>
-              </div>
-            )}
+              );
+            })()}
           </>
         )}
       </div>

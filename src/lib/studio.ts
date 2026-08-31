@@ -102,6 +102,7 @@ export async function getStudioData(): Promise<StudioData> {
     giftCards: giftRows.rows.map((row) => ({
       id: String(row.id),
       recipientName: String(row.recipient_name),
+      recipientEmail: row.recipient_email ? String(row.recipient_email) : null,
       buyerEmail: String(row.buyer_email),
       format: String(row.format),
       total: Number(row.total),

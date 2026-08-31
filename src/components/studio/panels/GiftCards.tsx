@@ -55,6 +55,7 @@ export function GiftCards({ cards }: { cards: GiftCard[] }) {
           columns={[
             { header: 'Code', value: (c: GiftCard) => reference(c.id) },
             { header: 'Recipient', value: (c: GiftCard) => c.recipientName },
+            { header: "Recipient's email", value: (c: GiftCard) => c.recipientEmail ?? '' },
             { header: 'Purchased by', value: (c: GiftCard) => c.buyerEmail },
             { header: 'Format', value: (c: GiftCard) => c.format },
             { header: 'Value', value: (c: GiftCard) => c.total },
@@ -75,6 +76,7 @@ export function GiftCards({ cards }: { cards: GiftCard[] }) {
               <tr>
                 <th>Code</th>
                 <th>Recipient</th>
+                <th>Recipient&rsquo;s email</th>
                 <th>Purchased by</th>
                 <th>Value</th>
                 <th>Status</th>
@@ -86,6 +88,15 @@ export function GiftCards({ cards }: { cards: GiftCard[] }) {
                 <tr key={card.id}>
                   <td className={styles.codeName}>{reference(card.id)}</td>
                   <td>{card.recipientName}</td>
+                  <td>
+                    {card.recipientEmail ? (
+                      <a href={`mailto:${card.recipientEmail}`}>
+                        {card.recipientEmail}
+                      </a>
+                    ) : (
+                      '—'
+                    )}
+                  </td>
                   <td>
                     <a href={`mailto:${card.buyerEmail}`}>{card.buyerEmail}</a>
                   </td>

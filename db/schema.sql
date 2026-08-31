@@ -84,17 +84,21 @@ CREATE INDEX IF NOT EXISTS bookings_created_idx ON bookings (created_at DESC);
 -- Gift certificate requests.
 -- ---------------------------------------------------------------------------
 CREATE TABLE IF NOT EXISTS gift_requests (
-  id             UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  recipient_name TEXT NOT NULL,
-  buyer_email    TEXT NOT NULL,
-  format         TEXT NOT NULL,
-  sessions       INTEGER,
-  participants   INTEGER,
-  addons         JSONB NOT NULL DEFAULT '{}'::JSONB,
-  total          INTEGER NOT NULL DEFAULT 0,
-  status         TEXT NOT NULL DEFAULT 'requested',
-  created_at     TIMESTAMPTZ NOT NULL DEFAULT NOW()
+  id              UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  recipient_name  TEXT NOT NULL,
+  recipient_email TEXT,
+  buyer_email     TEXT NOT NULL,
+  format          TEXT NOT NULL,
+  sessions        INTEGER,
+  participants    INTEGER,
+  addons          JSONB NOT NULL DEFAULT '{}'::JSONB,
+  total           INTEGER NOT NULL DEFAULT 0,
+  status          TEXT NOT NULL DEFAULT 'requested',
+  created_at      TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
+
+-- Table predates the recipient's own email - add it for existing databases.
+ALTER TABLE gift_requests ADD COLUMN IF NOT EXISTS recipient_email TEXT;
 
 -- ---------------------------------------------------------------------------
 -- Reviews. `is_published` controls whether each shows on the public site.

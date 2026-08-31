@@ -34,6 +34,7 @@ export function GiftCalculator({ pricing }: Props) {
   const [participants, setParticipants] = useState(6);
   const [addons, setAddons] = useState<Record<string, boolean>>({});
   const [recipientName, setRecipientName] = useState('');
+  const [recipientEmail, setRecipientEmail] = useState('');
   const [buyerEmail, setBuyerEmail] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState('');
@@ -75,6 +76,7 @@ export function GiftCalculator({ pricing }: Props) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           recipientName,
+          recipientEmail: recipientEmail.trim() || null,
           buyerEmail,
           format,
           sessions,
@@ -235,9 +237,9 @@ export function GiftCalculator({ pricing }: Props) {
 
         {sent ? (
           <p className={styles.success} role="status">
-            Thank you — your gift certificate request is with Silvana. She
-            prepares each one personally and will email you shortly at{' '}
-            {buyerEmail}.
+            {recipientEmail.trim()
+              ? `Your gift certificate is on its way to ${recipientName} at ${recipientEmail}. A confirmation has also been sent to ${buyerEmail}.`
+              : `Your gift certificate has been sent to ${buyerEmail} — forward it to ${recipientName} whenever you're ready.`}
           </p>
         ) : (
           <>
@@ -267,6 +269,15 @@ export function GiftCalculator({ pricing }: Props) {
                 aria-label="Recipient name"
                 value={recipientName}
                 onChange={(e) => setRecipientName(e.target.value)}
+              />
+              <input
+                className="field field--dark"
+                type="email"
+                placeholder="Recipient's email (optional)"
+                aria-label="Recipient's email (optional)"
+                autoComplete="email"
+                value={recipientEmail}
+                onChange={(e) => setRecipientEmail(e.target.value)}
               />
               <input
                 className="field field--dark"

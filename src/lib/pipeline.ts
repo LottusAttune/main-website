@@ -37,6 +37,7 @@ export type BookingRow = Lead & { venue: string };
 export type GiftCard = {
   id: string;
   recipientName: string;
+  recipientEmail: string | null;
   buyerEmail: string;
   format: string;
   total: number;

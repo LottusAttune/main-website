@@ -42,7 +42,6 @@ export function BookingForm({
   const [party, setParty] = useState<number | null>(null);
   const [date, setDate] = useState<Date | null>(null);
   const [time, setTime] = useState<string | null>(null);
-  const [date2, setDate2] = useState<Date | null>(null);
   const [time2, setTime2] = useState<string | null>(null);
   const [teamAddon, setTeamAddon] = useState(false);
   const [codeInput, setCodeInput] = useState('');
@@ -117,9 +116,9 @@ export function BookingForm({
       setSubmitError('Please choose a date and a time.');
       return;
     }
-    if (needsSecond && (!date2 || !time2)) {
+    if (needsSecond && !time2) {
       setSubmitError(
-        'Groups larger than 12 run across two sessions — please choose the second date and time.'
+        'Groups larger than 12 run across two sessions on the same day — please choose a second time slot.'
       );
       return;
     }
@@ -140,8 +139,9 @@ export function BookingForm({
           participants: party,
           sessionDate: isoDay(date),
           sessionTime: time,
-          sessionDate2: date2 ? isoDay(date2) : null,
-          sessionTime2: time2,
+          // Split sessions run the same day, just at a second time slot.
+          sessionDate2: needsSecond ? isoDay(date) : null,
+          sessionTime2: needsSecond ? time2 : null,
           teamAddon,
           discountCode: code.applied?.code ?? null,
         }),
@@ -179,10 +179,6 @@ export function BookingForm({
     );
   }
 
-  // Step numbers shift when the second-session step appears.
-  const addonStep = needsSecond ? '05' : '04';
-  const detailsStep = needsSecond ? '06' : '05';
-
   return (
     <form className={styles.layout} onSubmit={handleSubmit} noValidate>
       <div>
@@ -207,7 +203,6 @@ export function BookingForm({
                 aria-pressed={party === n}
                 onClick={() => {
                   setParty(n);
-                  setDate2(null);
                   setTime2(null);
                 }}
               >
@@ -220,7 +215,6 @@ export function BookingForm({
               value={party && party >= 7 ? String(party) : ''}
               onChange={(e) => {
                 setParty(e.target.value ? Number(e.target.value) : null);
-                setDate2(null);
                 setTime2(null);
               }}
             >
@@ -266,20 +260,47 @@ export function BookingForm({
             <div className={styles.stepNumber}>03</div>
             <h2 className={styles.stepTitle}>What time of day?</h2>
           </div>
-          <p className={styles.stepNote}>Each session runs two hours</p>
+          <p className={styles.stepNote}>
+            {needsSecond
+              ? 'Each session runs two hours - groups larger than 12 run across two sessions on the same day, so choose two time slots below.'
+              : 'Each session runs two hours'}
+          </p>
           <div className={`${styles.times} ${styles.indent}`}>
-            {openSlots.map((slot) => (
-              <button
-                key={slot.key}
-                type="button"
-                className={`${styles.timeBtn} ${time === slot.label ? styles.timeBtnOn : ''}`}
-                aria-pressed={time === slot.label}
-                onClick={() => setTime(slot.label)}
-              >
-                <span className={styles.timeLabel}>{slot.label}</span>
-                <span className={styles.timeNote}>{slot.note}</span>
-              </button>
-            ))}
+            {openSlots.map((slot) => {
+              const isOn = needsSecond
+                ? time === slot.label || time2 === slot.label
+                : time === slot.label;
+              return (
+                <button
+                  key={slot.key}
+                  type="button"
+                  className={`${styles.timeBtn} ${isOn ? styles.timeBtnOn : ''}`}
+                  aria-pressed={isOn}
+                  onClick={() => {
+                    if (!needsSecond) {
+                      setTime(slot.label);
+                      return;
+                    }
+                    // Toggle in and out of a two-slot selection, same day.
+                    if (time === slot.label) {
+                      setTime(time2);
+                      setTime2(null);
+                    } else if (time2 === slot.label) {
+                      setTime2(null);
+                    } else if (!time) {
+                      setTime(slot.label);
+                    } else if (!time2) {
+                      setTime2(slot.label);
+                    } else {
+                      setTime2(slot.label);
+                    }
+                  }}
+                >
+                  <span className={styles.timeLabel}>{slot.label}</span>
+                  <span className={styles.timeNote}>{slot.note}</span>
+                </button>
+              );
+            })}
           </div>
           <p className={styles.timesNote}>
             For alternative times, reach us at{' '}
@@ -287,53 +308,10 @@ export function BookingForm({
           </p>
         </div>
 
-        {/* ---------- 04 Second session (groups over 12) ---------- */}
-        {needsSecond ? (
-          <div className={styles.step}>
-            <div className={styles.stepHead}>
-              <div className={styles.stepNumber}>04</div>
-              <h2 className={styles.stepTitle}>Your second session</h2>
-            </div>
-            <p className={`${styles.stepNote} ${styles.stepNoteWide}`}>
-              For groups larger than 12 participants, the experience is offered
-              across two sessions. Please select your preferred date and time for
-              the second session.
-            </p>
-            <div className={styles.indent}>
-              <Calendar
-                label="Second session date"
-                earliest={earliest}
-                blocked={blockedDates}
-                selected={date2}
-                onSelect={setDate2}
-              />
-              <div className={`${styles.times} ${styles.timesTight}`}>
-                {openSlots.map((slot) => (
-                  <button
-                    key={slot.key}
-                    type="button"
-                    className={`${styles.timeBtn} ${styles.timeBtnCompact} ${
-                      time2 === slot.label ? styles.timeBtnOn : ''
-                    }`}
-                    aria-pressed={time2 === slot.label}
-                    onClick={() => setTime2(slot.label)}
-                  >
-                    <span
-                      className={`${styles.timeLabel} ${styles.timeLabelOnly}`}
-                    >
-                      {slot.label}
-                    </span>
-                  </button>
-                ))}
-              </div>
-            </div>
-          </div>
-        ) : null}
-
         {/* ---------- Add-ons ---------- */}
         <div className={styles.step}>
           <div className={styles.stepHead}>
-            <div className={styles.stepNumber}>{addonStep}</div>
+            <div className={styles.stepNumber}>04</div>
             <h2 className={styles.stepTitle}>Optional add-ons</h2>
           </div>
           <p className={styles.stepNote}>
@@ -377,7 +355,7 @@ export function BookingForm({
         {/* ---------- Your details ---------- */}
         <div className={`${styles.step} ${styles.stepLast}`}>
           <div className={styles.stepHead} style={{ marginBottom: 20 }}>
-            <div className={styles.stepNumber}>{detailsStep}</div>
+            <div className={styles.stepNumber}>05</div>
             <h2 className={styles.stepTitle}>Your details</h2>
           </div>
           <div className={`${styles.details} ${styles.indent}`}>
@@ -449,10 +427,8 @@ export function BookingForm({
           </div>
           {needsSecond ? (
             <div className="summary-line">
-              <span className="summary-line__label">Second session</span>
-              <span className="summary-line__value">
-                {date2 ? `${formatDay(date2)}${time2 ? ` · ${time2}` : ''}` : '—'}
-              </span>
+              <span className="summary-line__label">Second time</span>
+              <span className="summary-line__value">{time2 ?? '—'}</span>
             </div>
           ) : null}
           {quote.lines

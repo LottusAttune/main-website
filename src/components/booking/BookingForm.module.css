@@ -42,12 +42,6 @@
   color: var(--color-muted);
 }
 
-.stepNoteWide {
-  max-width: 58ch;
-  line-height: 1.7;
-  margin-bottom: 18px;
-}
-
 .indent {
   margin-left: clamp(0px, 4vw, 38px);
 }
@@ -120,12 +114,6 @@
   color: var(--color-muted);
 }
 
-.timesTight {
-  grid-template-columns: repeat(3, 1fr);
-  max-width: 660px;
-  margin-top: 20px;
-}
-
 .timeBtn {
   text-align: left;
   padding: 22px 24px;
@@ -136,10 +124,6 @@
   color: var(--color-ink);
   cursor: pointer;
   transition: all 0.22s ease;
-}
-
-.timeBtnCompact {
-  padding: 18px 22px;
 }
 
 .timeBtn:hover {
@@ -157,11 +141,6 @@
   font-weight: 400;
   font-size: 23px;
   margin-bottom: 6px;
-}
-
-.timeLabelOnly {
-  margin-bottom: 0;
-  font-size: 21px;
 }
 
 .timeNote {

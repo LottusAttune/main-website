@@ -205,6 +205,52 @@
   pointer-events: none;
 }
 
+/* A soft bloom lower in the jar, standing in for the real flame's light
+   bleeding through the frosted glass - pulses and drifts on the same cycle
+   as the flame overlay so it reads as one light source, not two. */
+.glassGlow {
+  position: absolute;
+  width: 76px;
+  height: 100px;
+  transform-origin: 50% 50%;
+  transform: translate3d(-50%, -50%, 0);
+  pointer-events: none;
+  border-radius: 50%;
+  background: radial-gradient(
+    ellipse,
+    rgba(255, 178, 90, 0.9) 0%,
+    rgba(255, 150, 60, 0.5) 50%,
+    rgba(255, 140, 50, 0) 78%
+  );
+  filter: blur(4px);
+  animation: glassGlowPulse 10.5s ease-in-out infinite;
+  will-change: transform, opacity;
+}
+
+@keyframes glassGlowPulse {
+  0%,
+  100% {
+    opacity: 0.3;
+    transform: translate3d(-50%, -50%, 0) scale(1);
+  }
+  18% {
+    opacity: 0.62;
+    transform: translate3d(-47%, -50%, 0) scale(1.08);
+  }
+  38% {
+    opacity: 0.4;
+    transform: translate3d(-53%, -50%, 0) scale(0.94);
+  }
+  58% {
+    opacity: 0.58;
+    transform: translate3d(-48%, -50%, 0) scale(1.07);
+  }
+  78% {
+    opacity: 0.42;
+    transform: translate3d(-52%, -50%, 0) scale(0.95);
+  }
+}
+
 .flameFlicker {
   position: absolute;
   width: 30px;

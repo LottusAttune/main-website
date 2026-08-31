@@ -38,6 +38,7 @@ export function SessionConfigurator({ pricing }: Props) {
   const summaryRef = useRef<HTMLElement>(null);
   const photoBleedRef = useRef<HTMLDivElement>(null);
   const flameRef = useRef<HTMLDivElement>(null);
+  const glassGlowRef = useRef<HTMLDivElement>(null);
 
   const isPrivate = format === 'private';
   const isCorporateIntro = format === 'corporateIntro';
@@ -91,25 +92,34 @@ export function SessionConfigurator({ pricing }: Props) {
     };
   }, [isPrivate, participants, format]);
 
-  // .photoBleed's aspect-ratio (720/800) is narrower than the source photo's
-  // own (720/944), so the browser always scales it to the container's width
+  // .photoBleed's aspect-ratio (720/700) is narrower than the source photo's
+  // own (720/918), so the browser always scales it to the container's width
   // and crops only the bottom, top-aligned - never the sides. That makes the
   // flame's position a simple function of the container's width alone.
   useLayoutEffect(() => {
     const container = photoBleedRef.current;
     const flame = flameRef.current;
-    if (!container || !flame || isPrivate) return;
+    const glow = glassGlowRef.current;
+    if (!container || !flame || !glow || isPrivate) return;
 
     const FLAME_X_FRAC = 0.4;
-    const FLAME_Y_FRAC = 0.168;
+    const FLAME_Y_FRAC = 0.195;
+    // The frosted jar itself shows a soft bloom of light where the real
+    // flame's glow bleeds through the glass - sits lower and a bit wider
+    // than the flame overlay, animated on the same cycle so it reads as the
+    // flame's own light moving behind the glass, not a separate light.
+    const GLOW_X_FRAC = 0.4;
+    const GLOW_Y_FRAC = 0.267;
 
     const sync = () => {
       const { width: cw } = container.getBoundingClientRect();
       const scale = cw / 720;
-      const displayH = 944 * scale;
+      const displayH = 918 * scale;
 
       flame.style.left = `${FLAME_X_FRAC * cw}px`;
       flame.style.top = `${FLAME_Y_FRAC * displayH}px`;
+      glow.style.left = `${GLOW_X_FRAC * cw}px`;
+      glow.style.top = `${GLOW_Y_FRAC * displayH}px`;
     };
 
     sync();
@@ -338,6 +348,7 @@ export function SessionConfigurator({ pricing }: Props) {
               className={styles.boxPhoto}
               unoptimized
             />
+            <div className={styles.glassGlow} ref={glassGlowRef} aria-hidden="true" />
             <div className={styles.flameFlicker} ref={flameRef}>
               <svg
                 className={styles.flameSvg}

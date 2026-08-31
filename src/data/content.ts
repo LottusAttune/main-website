@@ -87,7 +87,7 @@ export const PATHS = [
     tone: 'corp',
     eyebrow: 'Organizations & Teams',
     title: 'Corporate Wellness',
-    body: 'Elevate your company culture through a new generation of team connection',
+    body: 'Elevate your company culture through a new generation of team building and connection',
     price: '$280 per participant',
     subline: 'Two hours · optional team-building add-on',
   },

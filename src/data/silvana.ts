@@ -60,7 +60,7 @@ export const SILVANA_BENEFITS = {
   },
   teams: {
     title: 'For Teams & Organizations',
-    lede: 'Elevate your company culture through a new generation of team connection',
+    lede: 'Elevate your company culture through a new generation of team building and connection',
     image: 'for-teams',
     points: [
       {

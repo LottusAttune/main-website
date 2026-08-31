@@ -103,7 +103,15 @@ export function SessionConfigurator({ pricing }: Props) {
     if (!container || !flame || !glow || isPrivate) return;
 
     const FLAME_X_FRAC = 0.4;
+    // Deep enough that the flame reads as sitting inside the jar, not
+    // hovering above it.
     const FLAME_Y_FRAC = 0.195;
+    // The front rim's own highlight line - the glass wall in front of the
+    // wick from the camera's angle. The flame has to be clipped off right
+    // here, hard, or it paints over that line and looks like it's floating
+    // in front of the glass instead of burning behind it.
+    const RIM_Y_FRAC = 0.155;
+    const FLAME_BOX_HEIGHT = 50;
     // The frosted jar itself shows a soft bloom of light where the real
     // flame's glow bleeds through the glass - sits lower and a bit wider
     // than the flame overlay, animated on the same cycle so it reads as the
@@ -118,6 +126,16 @@ export function SessionConfigurator({ pricing }: Props) {
 
       flame.style.left = `${FLAME_X_FRAC * cw}px`;
       flame.style.top = `${FLAME_Y_FRAC * displayH}px`;
+
+      // The flame's own box is a fixed CSS size while the photo scales
+      // continuously, so the rim line lands at a different fraction of the
+      // box on every screen width - has to be recomputed here rather than
+      // baked into a static CSS mask.
+      const boxTopScreenY = FLAME_Y_FRAC * displayH - 0.97 * FLAME_BOX_HEIGHT;
+      const rimScreenY = RIM_Y_FRAC * displayH;
+      const visiblePx = Math.max(0, Math.min(FLAME_BOX_HEIGHT, rimScreenY - boxTopScreenY));
+      flame.style.clipPath = `inset(0 0 ${FLAME_BOX_HEIGHT - visiblePx}px 0)`;
+
       glow.style.left = `${GLOW_X_FRAC * cw}px`;
       glow.style.top = `${GLOW_Y_FRAC * displayH}px`;
     };
@@ -349,13 +367,14 @@ export function SessionConfigurator({ pricing }: Props) {
               unoptimized
             />
             <div className={styles.glassGlow} ref={glassGlowRef} aria-hidden="true" />
-            <div className={styles.flameFlicker} ref={flameRef}>
-              <svg
-                className={styles.flameSvg}
-                viewBox="0 0 40 70"
-                aria-hidden="true"
-              >
-                <defs>
+            <div className={styles.flameAnchor} ref={flameRef}>
+              <div className={styles.flameFlicker}>
+                <svg
+                  className={styles.flameSvg}
+                  viewBox="0 0 40 70"
+                  aria-hidden="true"
+                >
+                  <defs>
                   <radialGradient
                     id="flameOuterGrad"
                     cx="50%"
@@ -393,7 +412,8 @@ export function SessionConfigurator({ pricing }: Props) {
                   d="M20 24C14.5 33 12.5 41 13.5 48C14.3 54 17 58.5 20 60C23 58.5 25.7 54 26.5 48C27.5 41 25.5 33 20 24Z"
                   fill="url(#flameCoreGrad)"
                 />
-              </svg>
+                </svg>
+              </div>
             </div>
           </div>
         )}

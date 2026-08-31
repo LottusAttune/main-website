@@ -312,10 +312,10 @@ export function BookingForm({
         <div className={styles.step}>
           <div className={styles.stepHead}>
             <div className={styles.stepNumber}>04</div>
-            <h2 className={styles.stepTitle}>Optional add-ons</h2>
+            <h2 className={styles.stepTitle}>Optional add-on</h2>
           </div>
           <p className={styles.stepNote}>
-            Available for group and corporate bookings
+            Available for {TEAM_ADDON_MIN_PARTICIPANTS}+ participants
           </p>
           <div className={`${styles.addons} ${styles.indent}`}>
             {party !== null && party >= TEAM_ADDON_MIN_PARTICIPANTS && (

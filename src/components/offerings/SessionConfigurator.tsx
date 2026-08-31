@@ -308,7 +308,7 @@ export function SessionConfigurator({ pricing, footnote }: Props) {
               const addonAvailable = participants >= TEAM_ADDON_MIN_PARTICIPANTS;
               return (
                 <div className={styles.addonBlock}>
-                  <div className={styles.legend}>Optional corporate add-on</div>
+                  <div className={styles.legend}>Optional add-on</div>
                   <div className={styles.addons}>
                     <button
                       type="button"

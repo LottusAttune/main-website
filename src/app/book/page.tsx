@@ -60,7 +60,7 @@ export default async function BookPage() {
           style={{
             position: 'relative',
             overflow: 'hidden',
-            padding: '0 var(--space-gutter) var(--space-section)',
+            padding: '0 var(--space-gutter) clamp(28px, 4vw, 48px)',
             maxWidth: 'var(--width-content)',
             margin: '0 auto',
           }}

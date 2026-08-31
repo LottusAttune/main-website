@@ -146,13 +146,6 @@ export function giftQuoteFor(
         value: money(pricing.privateSession),
       });
     }
-    if (input.addons.refresh) {
-      subtotal += pricing.refreshments;
-      lines.push({
-        label: 'Organic tea, snacks and refreshments',
-        value: money(pricing.refreshments),
-      });
-    }
   } else {
     const people = Number(input.participants) || 0;
     subtotal = groupPriceFor(people);
@@ -165,14 +158,6 @@ export function giftQuoteFor(
       lines.push({
         label: 'Mindful team-building activity',
         value: money(pricing.teamAddon),
-      });
-    }
-    if (input.addons.refresh) {
-      const amount = pricing.refreshments * people;
-      subtotal += amount;
-      lines.push({
-        label: 'Organic tea, snacks and refreshments',
-        value: money(amount),
       });
     }
   }

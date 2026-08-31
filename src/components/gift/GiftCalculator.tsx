@@ -44,33 +44,17 @@ export function GiftCalculator({ pricing }: Props) {
 
   const isPrivate = format === 'private';
 
-  const addonDefs: AddonDef[] = isPrivate
-    ? [
-        {
-          key: 'refresh',
-          title: 'Organic tea, snacks and refreshments',
-          note: `${money(pricing.refreshments)} per participant`,
-          amount: pricing.refreshments,
-        },
-      ]
-    : [
-        ...(participants >= TEAM_ADDON_MIN_PARTICIPANTS
-          ? [
-              {
-                key: 'team',
-                title: 'Mindful team-building activity',
-                note: '30-minute extension for organizations and corporate teams',
-                amount: pricing.teamAddon,
-              },
-            ]
-          : []),
-        {
-          key: 'refresh',
-          title: 'Organic tea, snacks and refreshments',
-          note: `${money(pricing.refreshments)} per participant`,
-          amount: pricing.refreshments * participants,
-        },
-      ];
+  const addonDefs: AddonDef[] =
+    !isPrivate && participants >= TEAM_ADDON_MIN_PARTICIPANTS
+      ? [
+          {
+            key: 'team',
+            title: 'Mindful team-building activity',
+            note: '30-minute extension, featuring a facilitated activity focused on recognition, values alignment, mindful communication, and team connection — customized to your team objectives',
+            amount: pricing.teamAddon,
+          },
+        ]
+      : [];
 
   const quote = giftQuoteFor(
     { format, sessions, participants, addons },
@@ -201,6 +185,8 @@ export function GiftCalculator({ pricing }: Props) {
           </div>
         )}
 
+        {addonDefs.length > 0 ? (
+          <>
         <div className={styles.legend}>Add-ons</div>
         <div className={styles.addons}>
           {addonDefs.map((addon) => (
@@ -240,6 +226,8 @@ export function GiftCalculator({ pricing }: Props) {
             </button>
           ))}
         </div>
+          </>
+        ) : null}
       </div>
 
       <aside className={styles.aside}>
@@ -307,8 +295,7 @@ export function GiftCalculator({ pricing }: Props) {
             ) : null}
 
             <p className={styles.note}>
-              Certificates are prepared personally. Questions?{' '}
-              <a href={`mailto:${SITE.email}`}>{SITE.email}</a>
+              Questions? <a href={`mailto:${SITE.email}`}>{SITE.email}</a>
             </p>
           </>
         )}

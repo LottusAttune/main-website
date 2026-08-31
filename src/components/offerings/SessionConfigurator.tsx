@@ -99,8 +99,8 @@ export function SessionConfigurator({ pricing }: Props) {
     const flame = flameRef.current;
     if (!container || !flame || isPrivate) return;
 
-    const FLAME_X_FRAC = 0.418;
-    const FLAME_Y_FRAC = 0.184;
+    const FLAME_X_FRAC = 0.4;
+    const FLAME_Y_FRAC = 0.145;
     // Must match .boxPhoto's own object-position - the flicker is placed in
     // screen space, not in the image, so it has to reproduce the same
     // vertical crop the browser applies to the photo.

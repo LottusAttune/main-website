@@ -64,7 +64,7 @@
 }
 
 .fieldBlock {
-  margin-bottom: 20px;
+  margin-bottom: 14px;
 }
 
 .fieldBlock:last-child,
@@ -112,6 +112,17 @@
   color: var(--color-ink-body);
 }
 
+/* More separation from the venue note above (a different block entirely)
+   than the standard field gap gives, but tight to its own legend right
+   below so the label and the row read as one group. */
+.addonBlock {
+  margin-top: 26px;
+}
+
+.addonBlock .legend {
+  margin-bottom: 6px;
+}
+
 .addons {
   display: flex;
   flex-direction: column;
@@ -122,7 +133,7 @@
    Accordion's own flat-row treatment elsewhere on the site, rather than a
    separate card sitting on top of the panel. */
 .addons :global(.toggle-row) {
-  padding: 16px 0;
+  padding: 12px 0;
   border: none;
   border-top: 1px solid var(--hairline-light);
   border-radius: 0;
@@ -346,7 +357,7 @@
 .summaryLines {
   display: flex;
   flex-direction: column;
-  margin-bottom: 28px;
+  margin-bottom: 16px;
 }
 
 .summaryLines :global(.summary-line) {
@@ -399,12 +410,12 @@
 .summaryActions {
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 10px;
 }
 
 .summaryActions :global(.btn--sm) {
-  min-height: 42px;
-  padding: 11px 30px;
+  min-height: 38px;
+  padding: 9px 30px;
 }
 
 .giftBtn {
@@ -427,5 +438,5 @@
 
 .summaryActionsRow :global(.btn--sm) {
   flex: 1;
-  padding: 11px 16px;
+  padding: 9px 16px;
 }

@@ -3,11 +3,11 @@
 .configurator {
   position: relative;
   overflow: hidden;
-  padding: 40px var(--space-gutter) 64px;
+  padding: 28px var(--space-gutter) 64px;
 }
 
 .configuratorHead {
-  margin-bottom: 20px;
+  margin-bottom: 14px;
 }
 
 /* Matches the Home page's "Frequently Asked" heading exactly (size,
@@ -16,11 +16,11 @@
 .pageTitle {
   font-size: clamp(26px, 3.4vw, 44px);
   line-height: 1.14;
-  margin: 0 0 14px;
+  margin: 0 0 10px;
 }
 
 .pageLede {
-  margin: 0 0 20px;
+  margin: 0 0 14px;
   font-size: 15.5px;
   line-height: 1.65;
 }

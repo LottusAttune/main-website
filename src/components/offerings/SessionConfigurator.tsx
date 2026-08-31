@@ -322,7 +322,7 @@ export function SessionConfigurator({ pricing, footnote }: Props) {
                           <span
                             style={{
                               display: 'block',
-                              fontSize: 12,
+                              fontSize: 13,
                               lineHeight: 1.5,
                               color: 'var(--color-muted)',
                             }}

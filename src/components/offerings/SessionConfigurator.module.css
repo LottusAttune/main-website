@@ -188,14 +188,14 @@
 }
 
 /* Fixed to the same width:height ratio as the visible crop we want (the
-   candle with generous headroom for the flame, down through the second row
-   of coasters cut at about its middle) - so every screen width shows that
-   exact same slice of the photo instead of drifting with whatever height
-   the flex box happens to have. */
+   candle with generous headroom for the flame, down through its reflection
+   on the table, cut before the second row of coasters) - so every screen
+   width shows that exact same slice of the photo instead of drifting with
+   whatever height the flex box happens to have. */
 .photoBleed {
   position: relative;
   flex: none;
-  aspect-ratio: 720 / 700;
+  aspect-ratio: 720 / 630;
   margin: 22px clamp(-22px, -2.4vw, -16px) clamp(-20px, -2.2vw, -16px);
 }
 

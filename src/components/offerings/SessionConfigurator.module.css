@@ -12,6 +12,8 @@
   grid-template-areas: 'panel summary' 'footnote summary';
   gap: 24px;
   align-items: start;
+  max-width: 1150px;
+  margin: 0 auto;
 }
 
 @media (max-width: 860px) {

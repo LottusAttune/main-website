@@ -87,22 +87,22 @@ export function SessionConfigurator({ pricing, footnote }: Props) {
       summary.style.height = '';
 
       // Push the footnote down to line its own bottom up with the (now
-      // resized) summary box's bottom - but only when there's real room to
-      // do it. When panel and summary land close to the same height (varies
-      // by viewport width - how much each side's own text wraps), tucking
-      // the footnote under just the panel's narrower column reads as
-      // off-centre once the two boxes look like one unified block instead
-      // of two staggered ones - center it under the whole layout instead.
+      // resized) summary box's bottom, whenever summary is taller at all -
+      // that's the rule: brown longer than beige means the footnote lives
+      // in beige's own gap. Only when they're the same height (or beige
+      // is taller, which the other effect above tries never to let happen)
+      // does tucking it under just the panel's column stop making sense -
+      // then it centers under the whole layout instead.
       if (footnote) {
         footnote.style.marginTop = '';
         footnote.style.gridColumn = '';
         const summaryBottom = summary.getBoundingClientRect().bottom;
         const footnoteHeight = footnote.getBoundingClientRect().height;
         const extra = summaryBottom - footnoteHeight - panelBottom - 24;
-        const WIDE_THRESHOLD = 16;
+        const boxDiff = summaryBottom - panelBottom;
 
-        if (extra >= WIDE_THRESHOLD) {
-          footnote.style.marginTop = `${extra}px`;
+        if (boxDiff > 0) {
+          footnote.style.marginTop = `${Math.max(0, extra)}px`;
         } else {
           footnote.style.gridColumn = '1 / -1';
           const naturalTop = footnote.getBoundingClientRect().top;

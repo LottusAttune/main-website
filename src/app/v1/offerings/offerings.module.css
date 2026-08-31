@@ -3,7 +3,7 @@
 .configurator {
   position: relative;
   overflow: hidden;
-  padding: 28px var(--space-gutter) 64px;
+  padding: 28px var(--space-gutter) 40px;
 }
 
 .configuratorHead {

@@ -78,30 +78,37 @@ export function SessionConfigurator({ pricing, footnote }: Props) {
         if (footnote) footnote.style.marginTop = '';
         return;
       }
-      // The photo now keeps a fixed aspect ratio (see .photoBleed), so it no
-      // longer stretches to fill whatever height this box is given - never
-      // force the box shorter than its own natural content actually needs,
-      // or the photo would get clipped by the box's overflow: hidden.
+      // The photo keeps a fixed aspect ratio (see .photoBleed) and nothing
+      // else in the box can stretch to absorb extra height, so forcing this
+      // box to match a taller panel just opens a blank gap below the photo
+      // instead of filling it - leave the box at its own natural height and
+      // let the footnote (below) handle closing the two off visually.
       const panelBottom = panel.getBoundingClientRect().bottom;
-      const panelHeight = panelBottom - panel.getBoundingClientRect().top;
       summary.style.height = '';
-      const naturalHeight = summary.getBoundingClientRect().height;
-      summary.style.height = `${Math.max(panelHeight, naturalHeight)}px`;
 
       // Push the footnote down to line its own bottom up with the (now
-      // resized) summary box's bottom - but only as far as the grid's own
-      // row gap already carries it for free. Panel and summary land at
-      // very different relative heights depending on viewport width (how
-      // much their own text wraps), so whether there's room for this varies
-      // too much to bake into a fixed CSS value: with room, this closes the
-      // gap into one frame; with none, it leaves the grid's own 24px gap
-      // alone rather than forcing a second, smaller gap on top of it.
+      // resized) summary box's bottom - but only when there's real room to
+      // do it. When panel and summary land close to the same height (varies
+      // by viewport width - how much each side's own text wraps), tucking
+      // the footnote under just the panel's narrower column reads as
+      // off-centre once the two boxes look like one unified block instead
+      // of two staggered ones - center it under the whole layout instead.
       if (footnote) {
         footnote.style.marginTop = '';
+        footnote.style.gridColumn = '';
         const summaryBottom = summary.getBoundingClientRect().bottom;
         const footnoteHeight = footnote.getBoundingClientRect().height;
         const extra = summaryBottom - footnoteHeight - panelBottom - 24;
-        footnote.style.marginTop = `${Math.max(0, extra)}px`;
+        const WIDE_THRESHOLD = 16;
+
+        if (extra >= WIDE_THRESHOLD) {
+          footnote.style.marginTop = `${extra}px`;
+        } else {
+          footnote.style.gridColumn = '1 / -1';
+          const naturalTop = footnote.getBoundingClientRect().top;
+          const targetTop = Math.max(panelBottom, summaryBottom) + 24;
+          footnote.style.marginTop = `${Math.max(24, targetTop - naturalTop)}px`;
+        }
       }
     };
 
@@ -222,7 +229,7 @@ export function SessionConfigurator({ pricing, footnote }: Props) {
               );
             }}
           >
-            <span className="choice__title">Corporate Introductory Experience</span>
+            <span className="choice__title">Corporate Introductory</span>
             <span className="choice__note">
               Available for first-time organizational clients (minimum 7
               participants)

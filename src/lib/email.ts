@@ -13,7 +13,11 @@ import { SITE } from '@/lib/site';
 const DISCOVERY_CALL_MEET_LINK = 'https://meet.google.com/eyu-jxag-asc';
 
 const FROM = 'Lotus Attune <info@lotusattune.com>';
-const LOGO_URL = `${SITE.url}/assets/footer-lockup-combo.webp`;
+// PNG, not the site's usual WebP - many email clients (older Outlook among
+// them) don't render WebP at all, showing a broken image where the logo
+// should be. Derived once from footer-lockup-combo.webp, not a fresh photo,
+// so it doesn't go through the normal source-assets pipeline.
+const LOGO_URL = `${SITE.url}/assets/email-logo.png`;
 
 const resend = process.env.RESEND_API_KEY
   ? new Resend(process.env.RESEND_API_KEY)
@@ -40,7 +44,7 @@ function wrapperHtml(bodyHtml: string): string {
     <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:560px;margin:0 auto;background:#fffdfa;border:1px solid rgba(59,46,36,0.14);">
       <tr>
         <td style="padding:26px 40px 18px;text-align:center;border-bottom:1px solid rgba(59,46,36,0.14);">
-          <img src="${LOGO_URL}" width="220" alt="Lotus Attune" style="display:block;margin:0 auto;" />
+          <img src="${LOGO_URL}" width="220" height="171" alt="Lotus Attune" style="display:block;margin:0 auto;border:0;" />
         </td>
       </tr>
       <tr>

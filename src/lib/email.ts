@@ -14,9 +14,11 @@ const DISCOVERY_CALL_MEET_LINK = 'https://meet.google.com/eyu-jxag-asc';
 
 const FROM = 'Lotus Attune <info@lotusattune.com>';
 // PNG, not the site's usual WebP - many email clients (older Outlook among
-// them) don't render WebP at all, showing a broken image where the logo
-// should be. Derived once from footer-lockup-combo.webp, not a fresh photo,
-// so it doesn't go through the normal source-assets pipeline.
+// them) don't render WebP at all. Flattened onto the same cream background
+// as the email itself (no transparency) since Gmail's dark-mode processing
+// mangles anti-aliased edges on a transparent logo into a blurry mess.
+// Derived once from footer-lockup-combo.webp, not a fresh photo, so it
+// doesn't go through the normal source-assets pipeline.
 const LOGO_URL = `${SITE.url}/assets/email-logo.png`;
 
 const resend = process.env.RESEND_API_KEY
@@ -43,8 +45,8 @@ function wrapperHtml(bodyHtml: string): string {
   <body style="margin:0;padding:32px 16px;background:#eae6df;font-family:Georgia,'Times New Roman',serif;">
     <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:560px;margin:0 auto;background:#fffdfa;border:1px solid rgba(59,46,36,0.14);">
       <tr>
-        <td style="padding:26px 40px 18px;text-align:center;border-bottom:1px solid rgba(59,46,36,0.14);">
-          <img src="${LOGO_URL}" width="220" height="171" alt="Lotus Attune" style="display:block;margin:0 auto;border:0;" />
+        <td style="padding:16px 40px 8px;text-align:center;border-bottom:1px solid rgba(59,46,36,0.14);">
+          <img src="${LOGO_URL}" width="280" height="218" alt="Lotus Attune" style="display:block;margin:0 auto;border:0;" />
         </td>
       </tr>
       <tr>

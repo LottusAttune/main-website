@@ -21,7 +21,7 @@ export async function POST(request: Request) {
   if (!parsed.success) {
     return NextResponse.json(
       {
-        error: 'Please fill the highlighted fields.',
+        error: 'Please check the highlighted fields.',
         issues: parsed.error.flatten().fieldErrors,
       },
       { status: 400 }

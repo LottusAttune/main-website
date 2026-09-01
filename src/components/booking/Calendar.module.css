@@ -91,14 +91,13 @@
   background: transparent;
 }
 
+/* Every unavailable reason (too soon, closed by the owner, a closed
+   weekday, a day with an event already booked) reads the same way -
+   muted colour only, no strikethrough - so the calendar looks consistent
+   no matter why a date can't be picked. */
 .dayClosed {
   color: var(--color-disabled);
   cursor: default;
-}
-
-/* Dates Silvana has closed from the dashboard. */
-.dayBlocked {
-  text-decoration: line-through;
 }
 
 /* Smaller version for pages with no summary aside to fill the extra height. */

@@ -4,7 +4,7 @@ import { useState } from 'react';
 
 import styles from './Calendar.module.css';
 
-const WEEKDAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+const WEEKDAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 
 /** Local `YYYY-MM-DD`. Never use toISOString here — it shifts across timezones. */
 export function isoDay(date: Date): string {
@@ -51,7 +51,8 @@ export function Calendar({
 
   const blockedSet = new Set(blocked);
   const first = new Date(view.year, view.month, 1);
-  const lead = first.getDay();
+  // Monday-first week: shift Sunday (0) to the end of the row.
+  const lead = (first.getDay() + 6) % 7;
   const daysInMonth = new Date(view.year, view.month + 1, 0).getDate();
 
   // Never let the owner page back before the earliest bookable month.

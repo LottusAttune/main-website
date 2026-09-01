@@ -19,7 +19,7 @@ const PRICE_FIELDS: Array<{
   { key: 'deposit', label: 'Security deposit', note: 'Groups over 6, refundable' },
 ];
 
-const WEEKDAYS = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
+const WEEKDAYS = ['M', 'T', 'W', 'T', 'F', 'S', 'S'];
 
 function isoDay(year: number, month: number, day: number): string {
   return `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
@@ -42,7 +42,8 @@ export function PricingAvailability({ settings }: { settings: SiteSettings }) {
 
   const blockedSet = new Set(settings.blockedDates);
   const first = new Date(view.year, view.month, 1);
-  const lead = first.getDay();
+  // Monday-first week: shift Sunday (0) to the end of the row.
+  const lead = (first.getDay() + 6) % 7;
   const daysInMonth = new Date(view.year, view.month + 1, 0).getDate();
 
   const todayIso = isoDay(now.getFullYear(), now.getMonth(), now.getDate());

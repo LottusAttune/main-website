@@ -417,20 +417,25 @@
   color: var(--color-cream-text);
 }
 
-/* A gold edge, same rim tokens .giftBtn already uses on this page - this
-   is the one thing in the box that must not get missed (people shouldn't
-   book without seeing what's included), so it gets a border that reads as
-   distinct from the plain cream .btn--outline-dark default. Doubled to
-   outrank .btn--outline-dark's own border-color regardless of stylesheet
-   order. */
+/* Solid black fill, not just an outline - this is the one thing in the box
+   that must not get missed (people shouldn't book without seeing what's
+   included), so it needs the same filled weight as "Book this session"
+   rather than reading as the quieter, secondary option. The gold edge and
+   cream text keep it distinct from the aside's own near-black background.
+   Doubled to outrank .btn--outline-dark's own background/border-color
+   regardless of stylesheet order. */
 .includedBtn.includedBtn {
+  background: var(--color-ink-deepest);
   border-width: 1.5px;
   border-color: var(--color-gold-light);
+  color: var(--color-cream-text);
+  box-shadow: var(--shadow-pill-dark);
 }
 
 .includedBtn.includedBtn:hover {
   border-color: var(--color-gold-light);
-  background: rgba(255, 255, 255, 0.08);
+  background: var(--color-ink-deep);
+  color: var(--color-cream-text);
 }
 
 .summaryActions {

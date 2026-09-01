@@ -30,7 +30,14 @@ export async function POST(request: Request) {
   const { pricing } = await getSettings();
 
   // Recomputed server-side; the browser's figure is never trusted.
-  const { total } = giftQuoteFor(input, pricing);
+  const { total, gratuity } = giftQuoteFor(
+    {
+      ...input,
+      gratuityPercent: input.gratuityPercent ?? undefined,
+      gratuityAmount: input.gratuityAmount ?? undefined,
+    },
+    pricing
+  );
 
   if (!isDatabaseConfigured()) {
     console.error('[gifts] rejected: no Postgres store is linked');
@@ -46,13 +53,14 @@ export async function POST(request: Request) {
   try {
     const result = await sql`
       INSERT INTO gift_requests (
-        recipient_name, recipient_email, buyer_email, format, sessions, participants, addons, total
+        recipient_name, recipient_email, buyer_email, format, sessions, participants, addons, total, gratuity
       ) VALUES (
         ${input.recipientName}, ${input.recipientEmail ?? null}, ${input.buyerEmail}, ${input.format},
         ${input.format === 'private' ? input.sessions : null},
         ${input.format === 'group' ? input.participants : null},
         ${JSON.stringify(input.addons)}::jsonb,
-        ${total}
+        ${total},
+        ${gratuity}
       )
       RETURNING id
     `;

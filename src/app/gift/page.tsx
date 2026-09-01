@@ -26,7 +26,7 @@ export default async function GiftPage() {
       <main>
         <section
           style={{
-            padding: 'clamp(28px, 4vw, 40px) var(--space-gutter) 24px',
+            padding: 'clamp(20px, 3vw, 28px) var(--space-gutter) 16px',
             maxWidth: 'var(--width-content)',
             margin: '0 auto',
           }}
@@ -58,7 +58,7 @@ export default async function GiftPage() {
 
         <section
           style={{
-            padding: '0 var(--space-gutter) clamp(28px, 4vw, 48px)',
+            padding: '0 var(--space-gutter) clamp(20px, 3vw, 32px)',
             maxWidth: 'var(--width-content)',
             margin: '0 auto',
           }}

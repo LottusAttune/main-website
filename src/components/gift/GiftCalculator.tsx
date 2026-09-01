@@ -15,6 +15,9 @@ import {
 } from '@/lib/site';
 import styles from './GiftCalculator.module.css';
 
+const GRATUITY_PERCENTS = [0, 10, 15, 18, 20] as const;
+type GratuityChoice = (typeof GRATUITY_PERCENTS)[number] | 'custom';
+
 type Format = 'private' | 'group';
 
 type AddonDef = {
@@ -33,12 +36,23 @@ export function GiftCalculator({ pricing }: Props) {
   const [sessions, setSessions] = useState(1);
   const [participants, setParticipants] = useState(6);
   const [addons, setAddons] = useState<Record<string, boolean>>({});
+  // null = nothing chosen yet - no gratuity button starts highlighted, and
+  // none is added to the total until the person actually clicks a choice.
+  const [gratuityChoice, setGratuityChoice] = useState<GratuityChoice | null>(
+    null
+  );
+  const [customGratuity, setCustomGratuity] = useState('');
   const [recipientName, setRecipientName] = useState('');
   const [recipientEmail, setRecipientEmail] = useState('');
   const [buyerEmail, setBuyerEmail] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState('');
+  const [fieldErrors, setFieldErrors] = useState<
+    Record<string, string[] | undefined>
+  >({});
   const [sent, setSent] = useState(false);
+
+  const invalid = (field: string) => Boolean(fieldErrors[field]?.length);
 
   const sessionsId = useId();
   const participantsId = useId();
@@ -57,13 +71,21 @@ export function GiftCalculator({ pricing }: Props) {
         ]
       : [];
 
+  const gratuityAmount =
+    gratuityChoice === 'custom' ? Number(customGratuity) || 0 : undefined;
+  const gratuityPercent =
+    gratuityChoice === 'custom' || gratuityChoice === null
+      ? undefined
+      : gratuityChoice;
+
   const quote = giftQuoteFor(
-    { format, sessions, participants, addons },
+    { format, sessions, participants, addons, gratuityPercent, gratuityAmount },
     pricing
   );
 
   const submit = async () => {
     setError('');
+    setFieldErrors({});
     if (!recipientName.trim() || !buyerEmail.trim()) {
       setError('Please add the recipient name and your email.');
       return;
@@ -82,12 +104,16 @@ export function GiftCalculator({ pricing }: Props) {
           sessions,
           participants,
           addons,
+          gratuityPercent: gratuityPercent ?? null,
+          gratuityAmount: gratuityAmount ?? null,
         }),
       });
       if (!response.ok) {
         const body = (await response.json().catch(() => null)) as {
           error?: string;
+          issues?: Record<string, string[] | undefined>;
         } | null;
+        setFieldErrors(body?.issues ?? {});
         throw new Error(body?.error ?? 'We could not send your request.');
       }
       setSent(true);
@@ -230,6 +256,45 @@ export function GiftCalculator({ pricing }: Props) {
         </div>
           </>
         ) : null}
+
+        <div className={styles.legend}>Gratuity</div>
+        <div className={styles.gratuityRow}>
+          {GRATUITY_PERCENTS.map((pct) => (
+            <button
+              key={pct}
+              type="button"
+              className={`${styles.gratuityBtn} ${gratuityChoice === pct ? styles.gratuityBtnOn : ''}`}
+              aria-pressed={gratuityChoice === pct}
+              onClick={() => setGratuityChoice(pct)}
+            >
+              {pct}%
+            </button>
+          ))}
+          <button
+            type="button"
+            className={`${styles.gratuityBtn} ${gratuityChoice === 'custom' ? styles.gratuityBtnOn : ''}`}
+            aria-pressed={gratuityChoice === 'custom'}
+            onClick={() => setGratuityChoice('custom')}
+          >
+            Amount
+          </button>
+        </div>
+        {gratuityChoice === 'custom' ? (
+          <div style={{ marginTop: 10 }}>
+            <input
+              className="field"
+              type="number"
+              inputMode="decimal"
+              min={0}
+              step="1"
+              placeholder="Enter an amount ($)"
+              aria-label="Gratuity amount"
+              value={customGratuity}
+              onChange={(e) => setCustomGratuity(e.target.value)}
+              style={{ maxWidth: 220 }}
+            />
+          </div>
+        ) : null}
       </div>
 
       <aside className={styles.aside}>
@@ -263,28 +328,31 @@ export function GiftCalculator({ pricing }: Props) {
 
             <div className={styles.fields}>
               <input
-                className="field field--dark"
+                className={`field field--dark ${invalid('recipientName') ? 'field--invalid' : ''}`}
                 type="text"
                 placeholder="Recipient name"
                 aria-label="Recipient name"
+                aria-invalid={invalid('recipientName') || undefined}
                 value={recipientName}
                 onChange={(e) => setRecipientName(e.target.value)}
               />
               <input
-                className="field field--dark"
+                className={`field field--dark ${invalid('recipientEmail') ? 'field--invalid' : ''}`}
                 type="email"
                 placeholder="Recipient's email (optional)"
                 aria-label="Recipient's email (optional)"
                 autoComplete="email"
+                aria-invalid={invalid('recipientEmail') || undefined}
                 value={recipientEmail}
                 onChange={(e) => setRecipientEmail(e.target.value)}
               />
               <input
-                className="field field--dark"
+                className={`field field--dark ${invalid('buyerEmail') ? 'field--invalid' : ''}`}
                 type="email"
                 placeholder="Your email"
                 aria-label="Your email"
                 autoComplete="email"
+                aria-invalid={invalid('buyerEmail') || undefined}
                 value={buyerEmail}
                 onChange={(e) => setBuyerEmail(e.target.value)}
               />

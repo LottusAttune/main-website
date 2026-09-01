@@ -8,7 +8,7 @@
 
 .panel {
   border-radius: 0;
-  padding: clamp(22px, 3.2vw, 36px) clamp(20px, 3vw, 32px);
+  padding: clamp(18px, 2.4vw, 26px) clamp(18px, 2.6vw, 28px);
   min-width: 0;
 }
 
@@ -17,7 +17,7 @@
   letter-spacing: 0.32em;
   text-transform: uppercase;
   color: var(--color-gold-text);
-  margin-bottom: 14px;
+  margin-bottom: 10px;
   display: block;
 }
 
@@ -25,7 +25,7 @@
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   gap: 12px;
-  margin-bottom: 24px;
+  margin-bottom: 16px;
 }
 
 .formats :global(.choice) {
@@ -38,12 +38,12 @@
 }
 
 .field {
-  margin-bottom: 24px;
+  margin-bottom: 16px;
 }
 
 .venueNote {
-  margin-top: 14px;
-  padding: 14px 18px;
+  margin-top: 10px;
+  padding: 12px 16px;
   border-radius: 0;
   background: rgba(198, 169, 122, 0.14);
   font-size: 14.5px;
@@ -54,7 +54,38 @@
 .addons {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 10px;
+}
+
+.gratuityRow {
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 6px;
+}
+
+.gratuityBtn {
+  flex: 1 1 0;
+  padding: 10px 8px;
+  min-width: 0;
+  min-height: 42px;
+  border-radius: var(--radius-thumb);
+  border: 1px solid rgba(59, 46, 36, 0.22);
+  background: var(--color-cream-raised);
+  color: var(--color-ink);
+  font-size: 12.5px;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: all 0.22s ease;
+}
+
+.gratuityBtn:hover {
+  border-color: var(--gold-rim);
+}
+
+.gratuityBtnOn {
+  border-color: var(--color-ink);
+  background: var(--gradient-button-dark);
+  color: var(--color-cream-text);
 }
 
 .addons :global(.toggle-row) {
@@ -98,7 +129,7 @@
   overflow: hidden;
   box-shadow: var(--shadow-card-dark);
   color: var(--color-cream-text-soft);
-  padding: clamp(22px, 3.2vw, 36px) clamp(20px, 3vw, 32px);
+  padding: clamp(18px, 2.4vw, 26px) clamp(18px, 2.6vw, 28px);
   min-width: 0;
 }
 
@@ -112,13 +143,13 @@
   letter-spacing: 0.32em;
   text-transform: uppercase;
   color: var(--color-gold-light);
-  margin-bottom: 16px;
+  margin-bottom: 12px;
 }
 
 .lines {
   display: flex;
   flex-direction: column;
-  margin-bottom: 16px;
+  margin-bottom: 12px;
 }
 
 .totalRow {
@@ -126,7 +157,7 @@
   align-items: center;
   justify-content: space-between;
   gap: 18px;
-  padding: 16px 0 0;
+  padding: 12px 0 0;
   border-top: 1px solid rgba(239, 230, 218, 0.35);
   margin-top: 4px;
 }
@@ -148,8 +179,8 @@
 .fields {
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  margin-bottom: 18px;
+  gap: 10px;
+  margin-bottom: 14px;
 }
 
 .fields :global(.field) {
@@ -157,7 +188,7 @@
 }
 
 .note {
-  margin: 14px 0 0;
+  margin: 10px 0 0;
   font-size: 13.5px;
   line-height: 1.75;
   color: rgba(239, 230, 218, 0.6);

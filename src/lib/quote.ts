@@ -147,6 +147,10 @@ export type GiftInput = {
   sessions: number;
   participants: number;
   addons: Record<string, boolean>;
+  /** One of the quick-pick percentages (0/10/15/18/20). A flat dollar
+   *  amount in `gratuityAmount` takes priority when both are set. */
+  gratuityPercent?: number;
+  gratuityAmount?: number;
 };
 
 export function giftQuoteFor(
@@ -186,5 +190,24 @@ export function giftQuoteFor(
     }
   }
 
-  return { lines, subtotal, total: subtotal, discountApplied: 0, gratuity: 0 };
+  let total = subtotal;
+
+  // Gratuity is optional and calculated on top of everything above - a flat
+  // amount always wins over a percentage when both happen to be present.
+  let gratuity = 0;
+  if (typeof input.gratuityAmount === 'number' && input.gratuityAmount > 0) {
+    gratuity = Math.round(input.gratuityAmount);
+    lines.push({ label: 'Gratuity', value: money(gratuity) });
+  } else if (input.gratuityPercent) {
+    gratuity = Math.round((total * input.gratuityPercent) / 100);
+    if (gratuity > 0) {
+      lines.push({
+        label: `Gratuity — ${input.gratuityPercent}%`,
+        value: money(gratuity),
+      });
+    }
+  }
+  total += gratuity;
+
+  return { lines, subtotal, total, discountApplied: 0, gratuity };
 }

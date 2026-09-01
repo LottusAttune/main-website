@@ -77,7 +77,15 @@ export function DiscoveryCallForm({
           issues?: Record<string, string[] | undefined>;
         } | null;
         setFieldErrors(body?.issues ?? {});
-        throw new Error(body?.error ?? 'We could not send your request.');
+        const message = body?.error ?? 'We could not send your request.';
+        // A validation error is self-explanatory once the field is
+        // highlighted - only a real failure needs "contact us instead".
+        setSubmitError(
+          body?.issues
+            ? message
+            : `${message} Please email ${SITE.email} or call ${SITE.phone}.`
+        );
+        return;
       }
 
       setSubmitted(true);

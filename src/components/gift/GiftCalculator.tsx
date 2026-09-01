@@ -114,7 +114,11 @@ export function GiftCalculator({ pricing }: Props) {
           issues?: Record<string, string[] | undefined>;
         } | null;
         setFieldErrors(body?.issues ?? {});
-        throw new Error(body?.error ?? 'We could not send your request.');
+        const message = body?.error ?? 'We could not send your request.';
+        // A validation error is self-explanatory once the field is
+        // highlighted - only a real failure needs "contact us instead".
+        setError(body?.issues ? message : `${message} Please email ${SITE.email}.`);
+        return;
       }
       setSent(true);
     } catch (err) {

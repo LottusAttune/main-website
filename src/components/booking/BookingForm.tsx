@@ -46,7 +46,12 @@ export function BookingForm({
   const [time, setTime] = useState<string | null>(null);
   const [time2, setTime2] = useState<string | null>(null);
   const [teamAddon, setTeamAddon] = useState(false);
-  const [gratuityChoice, setGratuityChoice] = useState<GratuityChoice>(15);
+  // null = nothing chosen yet - the 15% pill shows only a subtle suggested
+  // tint, and no gratuity is added to the total until the person actually
+  // clicks a choice.
+  const [gratuityChoice, setGratuityChoice] = useState<GratuityChoice | null>(
+    null
+  );
   const [customGratuity, setCustomGratuity] = useState('');
   const [codeInput, setCodeInput] = useState('');
   const [code, setCode] = useState<CodeState>({
@@ -56,7 +61,12 @@ export function BookingForm({
   });
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState('');
+  const [fieldErrors, setFieldErrors] = useState<
+    Record<string, string[] | undefined>
+  >({});
   const [submitted, setSubmitted] = useState(false);
+
+  const invalid = (field: string) => Boolean(fieldErrors[field]?.length);
 
   const earliest = useMemo(() => {
     const now = new Date();
@@ -71,7 +81,9 @@ export function BookingForm({
   const gratuityAmount =
     gratuityChoice === 'custom' ? Number(customGratuity) || 0 : undefined;
   const gratuityPercent =
-    gratuityChoice === 'custom' ? undefined : gratuityChoice;
+    gratuityChoice === 'custom' || gratuityChoice === null
+      ? undefined
+      : gratuityChoice;
 
   const quote = quoteFor(
     {
@@ -118,6 +130,7 @@ export function BookingForm({
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setSubmitError('');
+    setFieldErrors({});
 
     if (!party) {
       setSubmitError('Please choose how many people will join.');
@@ -163,7 +176,9 @@ export function BookingForm({
       if (!response.ok) {
         const body = (await response.json().catch(() => null)) as {
           error?: string;
+          issues?: Record<string, string[] | undefined>;
         } | null;
+        setFieldErrors(body?.issues ?? {});
         throw new Error(body?.error ?? 'We could not send your request.');
       }
 
@@ -419,41 +434,45 @@ export function BookingForm({
           </div>
           <div className={`${styles.details} ${styles.indent}`}>
             <input
-              className="field"
+              className={`field ${invalid('name') ? 'field--invalid' : ''}`}
               type="text"
               name="name"
               required
               placeholder="Full name"
               aria-label="Full name"
+              aria-invalid={invalid('name') || undefined}
               autoComplete="name"
             />
             <input
-              className="field"
+              className={`field ${invalid('email') ? 'field--invalid' : ''}`}
               type="email"
               name="email"
               required
               placeholder="Email"
               aria-label="Email"
+              aria-invalid={invalid('email') || undefined}
               autoComplete="email"
             />
             <input
-              className="field"
+              className={`field ${invalid('phone') ? 'field--invalid' : ''}`}
               type="tel"
               name="phone"
               placeholder="Phone | WhatsApp"
               aria-label="Phone or WhatsApp"
+              aria-invalid={invalid('phone') || undefined}
               autoComplete="tel"
             />
             <input
-              className="field"
+              className={`field ${invalid('company') ? 'field--invalid' : ''}`}
               type="text"
               name="company"
               placeholder="Company Name (optional)"
               aria-label="Company name (optional)"
+              aria-invalid={invalid('company') || undefined}
               autoComplete="organization"
             />
             <textarea
-              className={`field ${styles.detailsWide} ${styles.textarea}`}
+              className={`field ${styles.detailsWide} ${styles.textarea} ${invalid('message') ? 'field--invalid' : ''}`}
               name="message"
               rows={4}
               placeholder="Anything you would like us to know — occasion, accessibility needs, questions"

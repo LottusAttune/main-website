@@ -7,7 +7,7 @@
 }
 
 .step {
-  padding: 32px 0;
+  padding: 22px 0;
   border-top: 1px solid rgba(59, 46, 36, 0.16);
 }
 
@@ -37,7 +37,7 @@
 }
 
 .stepNote {
-  margin: 0 0 20px clamp(0px, 4vw, 38px);
+  margin: 0 0 14px clamp(0px, 4vw, 38px);
   font-size: var(--text-body-sm);
   color: var(--color-muted);
 }
@@ -125,7 +125,7 @@
 }
 
 .calendarNote {
-  margin: 16px 0 0 clamp(0px, 4vw, 38px);
+  margin: 12px 0 0 clamp(0px, 4vw, 38px);
   font-size: 13.5px;
   color: var(--color-faint);
 }
@@ -139,7 +139,7 @@
 }
 
 .timesNote {
-  margin: 16px 0 0;
+  margin: 12px 0 0;
   font-size: 13.5px;
   line-height: 1.7;
   color: var(--color-muted);

@@ -27,13 +27,13 @@ export default async function BookPage() {
       <main>
         <section
           style={{
-            padding: 'clamp(28px, 4vw, 40px) var(--space-gutter) 24px',
+            padding: 'clamp(20px, 3vw, 28px) var(--space-gutter) 16px',
             maxWidth: 'var(--width-content)',
             margin: '0 auto',
           }}
           aria-labelledby="book-heading"
         >
-          <div className="eyebrow" style={{ marginBottom: 12 }}>
+          <div className="eyebrow" style={{ fontSize: 15, marginBottom: 12 }}>
             Book
           </div>
           <h1
@@ -61,7 +61,7 @@ export default async function BookPage() {
           style={{
             position: 'relative',
             overflow: 'hidden',
-            padding: '0 var(--space-gutter) clamp(28px, 4vw, 48px)',
+            padding: '0 var(--space-gutter) clamp(20px, 3vw, 32px)',
             maxWidth: 'var(--width-content)',
             margin: '0 auto',
           }}

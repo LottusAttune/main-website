@@ -32,7 +32,7 @@ export default async function GiftPage() {
           }}
           aria-labelledby="gift-heading"
         >
-          <div className="eyebrow" style={{ marginBottom: 12 }}>
+          <div className="eyebrow" style={{ fontSize: 15, marginBottom: 12 }}>
             Gift
           </div>
           <h1

@@ -22,7 +22,12 @@ export function DiscoveryCallForm({
   const [time, setTime] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState('');
+  const [fieldErrors, setFieldErrors] = useState<
+    Record<string, string[] | undefined>
+  >({});
   const [submitted, setSubmitted] = useState(false);
+
+  const invalid = (field: string) => Boolean(fieldErrors[field]?.length);
 
   const earliest = useMemo(() => {
     const now = new Date();
@@ -41,6 +46,7 @@ export function DiscoveryCallForm({
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setSubmitError('');
+    setFieldErrors({});
 
     if (!date || !time) {
       setSubmitError('Please choose a date and a time.');
@@ -68,7 +74,9 @@ export function DiscoveryCallForm({
       if (!response.ok) {
         const body = (await response.json().catch(() => null)) as {
           error?: string;
+          issues?: Record<string, string[] | undefined>;
         } | null;
+        setFieldErrors(body?.issues ?? {});
         throw new Error(body?.error ?? 'We could not send your request.');
       }
 
@@ -169,41 +177,45 @@ export function DiscoveryCallForm({
         </div>
         <div className={`${styles.details} ${styles.indent}`}>
           <input
-            className="field"
+            className={`field ${invalid('name') ? 'field--invalid' : ''}`}
             type="text"
             name="name"
             required
             placeholder="Full name"
             aria-label="Full name"
+            aria-invalid={invalid('name') || undefined}
             autoComplete="name"
           />
           <input
-            className="field"
+            className={`field ${invalid('email') ? 'field--invalid' : ''}`}
             type="email"
             name="email"
             required
             placeholder="Email"
             aria-label="Email"
+            aria-invalid={invalid('email') || undefined}
             autoComplete="email"
           />
           <input
-            className="field"
+            className={`field ${invalid('phone') ? 'field--invalid' : ''}`}
             type="tel"
             name="phone"
             placeholder="Phone (optional)"
             aria-label="Phone (optional)"
+            aria-invalid={invalid('phone') || undefined}
             autoComplete="tel"
           />
           <input
-            className="field"
+            className={`field ${invalid('company') ? 'field--invalid' : ''}`}
             type="text"
             name="company"
             placeholder="Company Name (optional)"
             aria-label="Company name (optional)"
+            aria-invalid={invalid('company') || undefined}
             autoComplete="organization"
           />
           <textarea
-            className={`field ${styles.detailsWide} ${styles.textarea}`}
+            className={`field ${styles.detailsWide} ${styles.textarea} ${invalid('message') ? 'field--invalid' : ''}`}
             name="message"
             rows={3}
             placeholder="Anything you would like us to know (optional)"

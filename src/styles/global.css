@@ -526,6 +526,12 @@ p {
   color: rgba(239, 230, 218, 0.45);
 }
 
+/* Marks a field the server rejected, so "check the highlighted fields"
+   actually has something to point at. */
+.field--invalid {
+  border-color: var(--status-alert);
+}
+
 .select {
   cursor: pointer;
   padding: 17px 20px;

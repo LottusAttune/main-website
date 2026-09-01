@@ -17,9 +17,12 @@ const FROM = 'Lotus Attune <info@lotusattune.com>';
 // them) don't render WebP at all. Flattened onto the same cream background
 // as the email itself (no transparency) since Gmail's dark-mode processing
 // mangles anti-aliased edges on a transparent logo into a blurry mess.
-// Derived once from footer-lockup-combo.webp, not a fresh photo, so it
-// doesn't go through the normal source-assets pipeline.
-const LOGO_URL = `${SITE.url}/assets/email-logo.png`;
+// Cropped straight from the original source-assets/footer-lockup-combo.png
+// (not the site's lossy .webp derivative, and not a fresh photo) so the fine
+// gold linework survives Gmail's own image recompression without blurring.
+// Cache-busted so Gmail's own image proxy - which caches by URL - can't
+// keep serving a stale, pre-fix copy of this file to past recipients.
+const LOGO_URL = `${SITE.url}/assets/email-logo.png?v=2`;
 // Small monochrome glyphs so the footer's two contact methods are visually
 // distinguishable at a glance - same flatten-to-cream treatment as the logo.
 const MAIL_ICON_URL = `${SITE.url}/assets/email-icon-mail.png`;

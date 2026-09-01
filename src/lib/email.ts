@@ -51,7 +51,7 @@ function wrapperHtml(bodyHtml: string): string {
       <tr>
         <td style="padding:16px 40px 12px;text-align:center;">
           <img src="${LOGO_URL}" width="208" height="105" alt="Lotus Attune" style="display:block;margin:0 auto;border:0;" />
-          <div style="font-family:Arial,Helvetica,sans-serif;font-size:10.5px;letter-spacing:0.18em;text-transform:uppercase;color:#8a6a45;margin-top:6px;">Immersive Soma Sound Experience</div>
+          <div style="font-family:Arial,Helvetica,sans-serif;font-size:10.5px;letter-spacing:0.18em;text-transform:uppercase;color:#8b6d31;margin-top:6px;">Immersive Soma Sound Experience</div>
         </td>
       </tr>
       <tr>

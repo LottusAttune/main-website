@@ -52,9 +52,9 @@ export default async function DiscoveryCallPage() {
             className="lede"
             style={{ maxWidth: 740, fontSize: 15.5, lineHeight: 1.65 }}
           >
-            Most of what you need to know is already on the website. If a
-            question remains, book a short video call with Silvana — no
-            cost, no obligation.
+            The website covers most of what people ask. If there's still
+            something you'd like to ask, Silvana welcomes a short call —
+            no cost, no obligation.
           </p>
         </section>
 

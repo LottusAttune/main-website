@@ -61,10 +61,23 @@ export type Client = {
   lastSession: string | null;
 };
 
+export type DiscoveryCallRow = {
+  id: string;
+  name: string;
+  email: string;
+  phone: string | null;
+  callDate: string;
+  callTime: string;
+  message: string | null;
+  status: string;
+  createdAt: string;
+};
+
 export type StudioData = {
   leads: Lead[];
   bookings: BookingRow[];
   giftCards: GiftCard[];
   reviews: ReviewRow[];
   clients: Client[];
+  discoveryCalls: DiscoveryCallRow[];
 };

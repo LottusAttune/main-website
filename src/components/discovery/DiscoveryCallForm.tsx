@@ -1,0 +1,187 @@
+'use client';
+
+import { useMemo, useState } from 'react';
+
+import { Calendar, formatDay, isoDay } from '@/components/booking/Calendar';
+import { DISCOVERY_CALL_TIMES, SITE } from '@/lib/site';
+import styles from './DiscoveryCallForm.module.css';
+
+type Props = {
+  blockedDates: string[];
+  leadDays: number;
+};
+
+export function DiscoveryCallForm({ blockedDates, leadDays }: Props) {
+  const [date, setDate] = useState<Date | null>(null);
+  const [time, setTime] = useState<string | null>(null);
+  const [submitting, setSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState('');
+  const [submitted, setSubmitted] = useState(false);
+
+  const earliest = useMemo(() => {
+    const now = new Date();
+    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    return new Date(today.getTime() + leadDays * 86_400_000);
+  }, [leadDays]);
+
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    setSubmitError('');
+
+    if (!date || !time) {
+      setSubmitError('Please choose a date and a time.');
+      return;
+    }
+
+    const form = new FormData(event.currentTarget);
+    setSubmitting(true);
+
+    try {
+      const response = await fetch('/api/discovery-calls', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: form.get('name'),
+          email: form.get('email'),
+          phone: form.get('phone'),
+          message: form.get('message'),
+          callDate: isoDay(date),
+          callTime: time,
+        }),
+      });
+
+      if (!response.ok) {
+        const body = (await response.json().catch(() => null)) as {
+          error?: string;
+        } | null;
+        throw new Error(body?.error ?? 'We could not send your request.');
+      }
+
+      setSubmitted(true);
+    } catch (error) {
+      setSubmitError(
+        error instanceof Error
+          ? `${error.message} Please email ${SITE.email} or call ${SITE.phone}.`
+          : 'Something went wrong.'
+      );
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  if (submitted) {
+    return (
+      <div className={`card ${styles.success}`} role="status">
+        <h2 className={styles.successTitle}>Your call is booked</h2>
+        <p className={styles.successBody}>
+          A confirmation with the video link is on its way to your email. If
+          you need to reschedule, just reply to that email, or reach us at{' '}
+          <a href={`mailto:${SITE.email}`}>{SITE.email}</a> or {SITE.phone}.
+        </p>
+      </div>
+    );
+  }
+
+  return (
+    <form className={styles.layout} onSubmit={handleSubmit} noValidate>
+      {/* ---------- 01 Date ---------- */}
+      <div className={styles.step}>
+        <div className={styles.stepHead}>
+          <div className={styles.stepNumber}>01</div>
+          <h2 className={styles.stepTitle}>When works for you?</h2>
+        </div>
+        <p className={styles.stepNote}>A 15-20 minute call, over video</p>
+        <div className={styles.indent}>
+          <Calendar
+            label="Call date"
+            earliest={earliest}
+            blocked={blockedDates}
+            selected={date}
+            onSelect={setDate}
+          />
+        </div>
+        <p className={styles.calendarNote}>
+          Available from {formatDay(earliest)} onward
+        </p>
+      </div>
+
+      {/* ---------- 02 Time ---------- */}
+      <div className={styles.step}>
+        <div className={styles.stepHead}>
+          <div className={styles.stepNumber}>02</div>
+          <h2 className={styles.stepTitle}>What time?</h2>
+        </div>
+        <div className={`${styles.times} ${styles.indent}`}>
+          {DISCOVERY_CALL_TIMES.map((slot) => (
+            <button
+              key={slot}
+              type="button"
+              className={`${styles.timeBtn} ${time === slot ? styles.timeBtnOn : ''}`}
+              aria-pressed={time === slot}
+              onClick={() => setTime(slot)}
+            >
+              {slot}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* ---------- 03 Details ---------- */}
+      <div className={`${styles.step} ${styles.stepLast}`}>
+        <div className={styles.stepHead}>
+          <div className={styles.stepNumber}>03</div>
+          <h2 className={styles.stepTitle}>Your details</h2>
+        </div>
+        <div className={`${styles.details} ${styles.indent}`}>
+          <input
+            className="field"
+            type="text"
+            name="name"
+            required
+            placeholder="Full name"
+            aria-label="Full name"
+            autoComplete="name"
+          />
+          <input
+            className="field"
+            type="email"
+            name="email"
+            required
+            placeholder="Email"
+            aria-label="Email"
+            autoComplete="email"
+          />
+          <input
+            className="field"
+            type="tel"
+            name="phone"
+            placeholder="Phone (optional)"
+            aria-label="Phone (optional)"
+            autoComplete="tel"
+          />
+          <textarea
+            className={`field ${styles.detailsWide} ${styles.textarea}`}
+            name="message"
+            rows={3}
+            placeholder="Anything you would like us to know (optional)"
+            aria-label="Anything you would like us to know"
+          />
+        </div>
+
+        <button
+          type="submit"
+          className={`btn btn--dark btn--wide ${styles.submit}`}
+          disabled={submitting}
+        >
+          {submitting ? 'Sending…' : 'Book discovery call'}
+        </button>
+
+        {submitError ? (
+          <div className={styles.formError} role="alert">
+            {submitError}
+          </div>
+        ) : null}
+      </div>
+    </form>
+  );
+}

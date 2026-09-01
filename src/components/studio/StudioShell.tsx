@@ -10,6 +10,7 @@ import { SITE } from '@/lib/site';
 import type { StudioData } from '@/lib/pipeline';
 import { Bookings } from './panels/Bookings';
 import { Clients } from './panels/Clients';
+import { DiscoveryCalls } from './panels/DiscoveryCalls';
 import { GiftCards } from './panels/GiftCards';
 import { Leads } from './panels/Leads';
 import { Overview } from './panels/Overview';
@@ -23,6 +24,7 @@ type ViewKey =
   | 'bookings'
   | 'pricing'
   | 'gifts'
+  | 'calls'
   | 'reviews'
   | 'clients';
 
@@ -46,6 +48,7 @@ export function StudioShell({ data, settings, databaseReady }: Props) {
     { key: 'bookings', label: 'Bookings', count: data.bookings.length },
     { key: 'pricing', label: 'Pricing & availability' },
     { key: 'gifts', label: 'Gift cards', count: data.giftCards.length },
+    { key: 'calls', label: 'Discovery calls', count: data.discoveryCalls.length },
     { key: 'reviews', label: 'Reviews', count: data.reviews.length },
     { key: 'clients', label: 'Clients', count: data.clients.length },
   ];
@@ -65,6 +68,10 @@ export function StudioShell({ data, settings, databaseReady }: Props) {
       context: 'Publishes to the website',
     },
     gifts: { title: 'Gift cards', context: `${data.giftCards.length} issued` },
+    calls: {
+      title: 'Discovery calls',
+      context: `${data.discoveryCalls.length} booked`,
+    },
     reviews: {
       title: 'Reviews',
       context: `${data.reviews.filter((r) => r.isPublished).length} showing`,
@@ -147,6 +154,9 @@ export function StudioShell({ data, settings, databaseReady }: Props) {
           <PricingAvailability settings={settings} />
         ) : null}
         {view === 'gifts' ? <GiftCards cards={data.giftCards} /> : null}
+        {view === 'calls' ? (
+          <DiscoveryCalls calls={data.discoveryCalls} />
+        ) : null}
         {view === 'reviews' ? <Reviews reviews={data.reviews} /> : null}
         {view === 'clients' ? <Clients clients={data.clients} /> : null}
       </main>

@@ -80,6 +80,21 @@ export function groupPriceFor(participants: number): number {
   return base + extra;
 }
 
+/** Calendar days between today and the earliest bookable discovery call. */
+export const DISCOVERY_CALL_LEAD_DAYS = 1;
+
+/** Fixed times offered for a discovery call - shorter and more specific than
+ *  the two-hour session windows above, since a call only runs 15-20 minutes. */
+export const DISCOVERY_CALL_TIMES = [
+  '9:00 am',
+  '10:00 am',
+  '11:00 am',
+  '1:00 pm',
+  '2:00 pm',
+  '3:00 pm',
+  '4:00 pm',
+] as const;
+
 export const TIME_SLOTS = [
   { key: 'morning', label: '8 – 10 am', note: 'Morning reset' },
   { key: 'midday', label: '12 – 2 pm', note: 'Midday pause' },

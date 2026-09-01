@@ -16,6 +16,7 @@ const EMPTY: StudioData = {
   giftCards: [],
   reviews: [],
   clients: [],
+  discoveryCalls: [],
 };
 
 function typeFor(participants: number): string {
@@ -43,10 +44,11 @@ function toIso(value: unknown): string | null {
 export async function getStudioData(): Promise<StudioData> {
   if (!isDatabaseConfigured()) return EMPTY;
 
-  const [bookingRows, giftRows, reviewRows] = await Promise.all([
+  const [bookingRows, giftRows, reviewRows, discoveryCallRows] = await Promise.all([
     sql`SELECT * FROM bookings ORDER BY created_at DESC LIMIT 500`,
     sql`SELECT * FROM gift_requests ORDER BY created_at DESC LIMIT 200`,
     sql`SELECT * FROM reviews ORDER BY sort_order, created_at LIMIT 200`,
+    sql`SELECT * FROM discovery_calls ORDER BY call_date, call_time LIMIT 200`,
   ]);
 
   const leads: Lead[] = bookingRows.rows.map((row) => ({
@@ -119,5 +121,16 @@ export async function getStudioData(): Promise<StudioData> {
     clients: [...byEmail.values()].sort(
       (a, b) => b.lifetimeValue - a.lifetimeValue
     ),
+    discoveryCalls: discoveryCallRows.rows.map((row) => ({
+      id: String(row.id),
+      name: String(row.name),
+      email: String(row.email),
+      phone: row.phone ? String(row.phone) : null,
+      callDate: toIso(row.call_date) ?? '',
+      callTime: String(row.call_time),
+      message: row.message ? String(row.message) : null,
+      status: String(row.status),
+      createdAt: new Date(String(row.created_at)).toISOString(),
+    })),
   };
 }

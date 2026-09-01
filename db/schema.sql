@@ -101,6 +101,22 @@ CREATE TABLE IF NOT EXISTS gift_requests (
 ALTER TABLE gift_requests ADD COLUMN IF NOT EXISTS recipient_email TEXT;
 
 -- ---------------------------------------------------------------------------
+-- Discovery call requests. A fixed video link is sent by email, not stored
+-- per row - see src/lib/email.ts.
+-- ---------------------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS discovery_calls (
+  id         UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  name       TEXT NOT NULL,
+  email      TEXT NOT NULL,
+  phone      TEXT,
+  call_date  DATE NOT NULL,
+  call_time  TEXT NOT NULL,
+  message    TEXT,
+  status     TEXT NOT NULL DEFAULT 'scheduled',
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+-- ---------------------------------------------------------------------------
 -- Reviews. `is_published` controls whether each shows on the public site.
 -- ---------------------------------------------------------------------------
 CREATE TABLE IF NOT EXISTS reviews (

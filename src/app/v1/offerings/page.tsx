@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import Link from 'next/link';
 
 import { Reveal } from '@/components/common/Reveal';
 import { SiteFooter } from '@/components/chrome/SiteFooter';
@@ -6,7 +7,6 @@ import { SiteNav } from '@/components/chrome/SiteNav';
 import { StickyBookBar } from '@/components/chrome/StickyBookBar';
 import { SessionConfigurator } from '@/components/offerings/SessionConfigurator';
 import { getSettings } from '@/lib/settings';
-import { SITE } from '@/lib/site';
 import styles from './offerings.module.css';
 
 export const metadata: Metadata = {
@@ -48,9 +48,7 @@ export default async function OfferingsPage() {
               footnote={
                 <p className={styles.discoveryNote}>
                   Still have a question?{' '}
-                  <a href={`mailto:${SITE.email}?subject=Discovery call`}>
-                    Book a discovery call
-                  </a>
+                  <Link href="/discovery-call">Book a discovery call</Link>
                 </p>
               }
             />

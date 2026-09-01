@@ -3,6 +3,11 @@ import { revalidatePath } from 'next/cache';
 import { z } from 'zod';
 
 import { isSignedIn } from '@/lib/auth';
+import {
+  deleteCalendarEvent,
+  discoveryCallWindow,
+  updateCalendarEventTime,
+} from '@/lib/calendar';
 import { isDatabaseConfigured, sql } from '@/lib/db';
 import { STAGE_KEYS } from '@/lib/pipeline';
 
@@ -178,28 +183,54 @@ export async function POST(request: Request) {
         break;
 
       case 'cancelDiscoveryCall':
-        await sql`
-          UPDATE discovery_calls
-          SET status = ${input.cancelled ? 'cancelled' : 'scheduled'}
-          WHERE id = ${input.id}
-        `;
+        if (input.cancelled) {
+          const existing = await sql`
+            SELECT calendar_event_id FROM discovery_calls WHERE id = ${input.id}
+          `;
+          const eventId = existing.rows[0]?.calendar_event_id;
+          if (eventId) await deleteCalendarEvent(String(eventId));
+          await sql`
+            UPDATE discovery_calls
+            SET status = 'cancelled', calendar_event_id = NULL
+            WHERE id = ${input.id}
+          `;
+        } else {
+          await sql`UPDATE discovery_calls SET status = 'scheduled' WHERE id = ${input.id}`;
+        }
         revalidatePath('/discovery-call');
         revalidatePath('/v1/discovery-call');
         break;
 
-      case 'deleteDiscoveryCall':
+      case 'deleteDiscoveryCall': {
+        const existing = await sql`
+          SELECT calendar_event_id FROM discovery_calls WHERE id = ${input.id}
+        `;
+        const eventId = existing.rows[0]?.calendar_event_id;
+        if (eventId) await deleteCalendarEvent(String(eventId));
         await sql`DELETE FROM discovery_calls WHERE id = ${input.id}`;
         revalidatePath('/discovery-call');
         revalidatePath('/v1/discovery-call');
         break;
+      }
 
       case 'editDiscoveryCall':
         try {
+          const existing = await sql`
+            SELECT calendar_event_id FROM discovery_calls WHERE id = ${input.id}
+          `;
           await sql`
             UPDATE discovery_calls
             SET call_date = ${input.callDate}, call_time = ${input.callTime}
             WHERE id = ${input.id}
           `;
+          const eventId = existing.rows[0]?.calendar_event_id;
+          if (eventId) {
+            const { startISO, endISO } = discoveryCallWindow(
+              input.callDate,
+              input.callTime
+            );
+            await updateCalendarEventTime(String(eventId), startISO, endISO);
+          }
         } catch (error) {
           if (
             error &&

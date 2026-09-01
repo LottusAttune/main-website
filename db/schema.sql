@@ -126,6 +126,9 @@ CREATE TABLE IF NOT EXISTS discovery_calls (
   -- Lets a client reschedule their own call from a link in the
   -- confirmation email, without any login - the token is the credential.
   reschedule_token  UUID NOT NULL DEFAULT gen_random_uuid(),
+  -- Google Calendar event id, so a reschedule/cancel/delete can update or
+  -- remove the matching event instead of leaving a stale one behind.
+  calendar_event_id TEXT,
   created_at        TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
@@ -135,6 +138,9 @@ ALTER TABLE discovery_calls ADD COLUMN IF NOT EXISTS company TEXT;
 -- Table predates self-serve reschedule - add it for existing databases.
 ALTER TABLE discovery_calls ADD COLUMN IF NOT EXISTS reschedule_token UUID DEFAULT gen_random_uuid();
 CREATE UNIQUE INDEX IF NOT EXISTS discovery_calls_reschedule_token_idx ON discovery_calls (reschedule_token);
+
+-- Table predates Google Calendar sync - add it for existing databases.
+ALTER TABLE discovery_calls ADD COLUMN IF NOT EXISTS calendar_event_id TEXT;
 
 -- Belt-and-suspenders against two people booking the same slot at nearly
 -- the same instant - the application checks first, this catches the race.

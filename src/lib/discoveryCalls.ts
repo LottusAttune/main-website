@@ -10,6 +10,7 @@ export type DiscoveryCallByToken = {
   company: string | null;
   callDate: string;
   callTime: string;
+  calendarEventId: string | null;
 } | null;
 
 function toIsoDay(value: unknown): string {
@@ -25,7 +26,7 @@ export async function getDiscoveryCallByToken(
   if (!isDatabaseConfigured()) return null;
 
   const result = await sql`
-    SELECT id, name, email, company, call_date, call_time
+    SELECT id, name, email, company, call_date, call_time, calendar_event_id
     FROM discovery_calls
     WHERE reschedule_token = ${token}
   `.catch(() => null);
@@ -40,6 +41,7 @@ export async function getDiscoveryCallByToken(
     company: row.company ? String(row.company) : null,
     callDate: toIsoDay(row.call_date),
     callTime: String(row.call_time),
+    calendarEventId: row.calendar_event_id ? String(row.calendar_event_id) : null,
   };
 }
 

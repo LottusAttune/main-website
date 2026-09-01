@@ -10,7 +10,7 @@ import { SITE } from '@/lib/site';
  * ever changes - it deliberately lives server-side only, never in a file a
  * client component imports, so it is never shipped in the browser bundle.
  */
-const DISCOVERY_CALL_MEET_LINK = 'https://meet.google.com/eyu-jxag-asc';
+export const DISCOVERY_CALL_MEET_LINK = 'https://meet.google.com/eyu-jxag-asc';
 
 const FROM = 'Lotus Attune <info@lotusattune.com>';
 // PNG, not the site's usual WebP - many email clients (older Outlook among

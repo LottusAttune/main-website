@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 
+import { discoveryCallWindow, updateCalendarEventTime } from '@/lib/calendar';
 import { isDatabaseConfigured, sql } from '@/lib/db';
 import {
   findDiscoveryCallSlotError,
@@ -72,6 +73,12 @@ export async function POST(request: Request) {
       rescheduleToken: input.token,
       rescheduled: true,
     });
+
+    // Best-effort - same reasoning as the email above.
+    if (existing.calendarEventId) {
+      const { startISO, endISO } = discoveryCallWindow(input.callDate, input.callTime);
+      await updateCalendarEventTime(existing.calendarEventId, startISO, endISO);
+    }
 
     return NextResponse.json({ ok: true });
   } catch (error) {

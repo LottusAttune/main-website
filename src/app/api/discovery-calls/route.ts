@@ -1,8 +1,9 @@
 import { NextResponse } from 'next/server';
 
+import { createCalendarEvent, discoveryCallWindow } from '@/lib/calendar';
 import { isDatabaseConfigured, sql } from '@/lib/db';
 import { findDiscoveryCallSlotError } from '@/lib/discoveryCalls';
-import { sendDiscoveryCallEmails } from '@/lib/email';
+import { DISCOVERY_CALL_MEET_LINK, sendDiscoveryCallEmails } from '@/lib/email';
 import { getSettings } from '@/lib/settings';
 import { discoveryCallSchema } from '@/lib/validation';
 
@@ -72,6 +73,27 @@ export async function POST(request: Request) {
       callTime: input.callTime,
       rescheduleToken: String(result.rows[0]?.reschedule_token),
     });
+
+    // Best-effort - same reasoning as the email above.
+    const { startISO, endISO } = discoveryCallWindow(input.callDate, input.callTime);
+    const eventId = await createCalendarEvent({
+      summary: `Discovery Call — ${input.name}`,
+      description: [
+        `Email: ${input.email}`,
+        input.phone ? `Phone: ${input.phone}` : null,
+        input.company ? `Company: ${input.company}` : null,
+        input.message ? `Message: ${input.message}` : null,
+        `Join: ${DISCOVERY_CALL_MEET_LINK}`,
+      ]
+        .filter(Boolean)
+        .join('\n'),
+      location: DISCOVERY_CALL_MEET_LINK,
+      startISO,
+      endISO,
+    });
+    if (eventId) {
+      await sql`UPDATE discovery_calls SET calendar_event_id = ${eventId} WHERE id = ${result.rows[0]?.id}`;
+    }
 
     return NextResponse.json({ id: result.rows[0]?.id }, { status: 201 });
   } catch (error) {

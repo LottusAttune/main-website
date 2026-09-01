@@ -1,9 +1,17 @@
 import { NextResponse } from 'next/server';
 
+import { createCalendarEvent, sessionSlotWindow } from '@/lib/calendar';
 import { isDatabaseConfigured, sql } from '@/lib/db';
 import { quoteFor } from '@/lib/quote';
 import { getSettings } from '@/lib/settings';
+import { LOUNGE_MAX } from '@/lib/site';
 import { bookingSchema } from '@/lib/validation';
+
+function venueFor(participants: number): string {
+  return participants <= LOUNGE_MAX
+    ? 'Private Wellness Lounge'
+    : 'Premium Signature Venue';
+}
 
 export const runtime = 'nodejs';
 
@@ -86,6 +94,39 @@ export async function POST(request: Request) {
       )
       RETURNING id
     `;
+
+    // Best-effort - the row above is already saved regardless of this.
+    const venue = venueFor(input.participants);
+    const description = [
+      `Email: ${input.email}`,
+      input.phone ? `Phone: ${input.phone}` : null,
+      input.company ? `Company: ${input.company}` : null,
+      `Participants: ${input.participants}`,
+      input.teamAddon ? 'Team-building add-on: yes' : null,
+      input.message ? `Message: ${input.message}` : null,
+    ]
+      .filter(Boolean)
+      .join('\n');
+
+    const firstWindow = sessionSlotWindow(input.sessionDate, input.sessionTime);
+    await createCalendarEvent({
+      summary: `Lotus Attune Session — ${input.name}`,
+      description,
+      location: venue,
+      startISO: firstWindow.startISO,
+      endISO: firstWindow.endISO,
+    });
+
+    if (input.sessionDate2 && input.sessionTime2) {
+      const secondWindow = sessionSlotWindow(input.sessionDate2, input.sessionTime2);
+      await createCalendarEvent({
+        summary: `Lotus Attune Session (session 2) — ${input.name}`,
+        description,
+        location: venue,
+        startISO: secondWindow.startISO,
+        endISO: secondWindow.endISO,
+      });
+    }
 
     return NextResponse.json(
       { id: result.rows[0]?.id, total },

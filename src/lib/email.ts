@@ -122,7 +122,7 @@ export async function sendDiscoveryCallEmails(input: {
       Join with this link when it's time: <a href="${DISCOVERY_CALL_MEET_LINK}" style="color:#7c5b3b;">${DISCOVERY_CALL_MEET_LINK}</a>
     </p>
     <p style="margin:18px 0 0;">
-      Need a different time? <a href="${rescheduleUrl}" style="color:#7c5b3b;">Reschedule your call</a> — no need to email us.
+      Need a different time? <a href="${rescheduleUrl}" style="color:#7c5b3b;">Reschedule your call</a>
     </p>
   `);
 

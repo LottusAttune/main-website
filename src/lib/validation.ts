@@ -71,6 +71,14 @@ export const discoveryCallSchema = z.object({
 
 export type DiscoveryCallRequest = z.infer<typeof discoveryCallSchema>;
 
+export const rescheduleCallSchema = z.object({
+  token: z.string().uuid(),
+  callDate: isoDay,
+  callTime: trimmed(40),
+});
+
+export type RescheduleCallRequest = z.infer<typeof rescheduleCallSchema>;
+
 export const contactSchema = z.object({
   name: trimmed(120),
   email: z.string().trim().email().max(200),

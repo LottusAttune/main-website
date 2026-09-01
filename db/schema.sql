@@ -114,20 +114,27 @@ ALTER TABLE gift_requests ADD COLUMN IF NOT EXISTS recipient_email TEXT;
 -- per row - see src/lib/email.ts.
 -- ---------------------------------------------------------------------------
 CREATE TABLE IF NOT EXISTS discovery_calls (
-  id         UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  name       TEXT NOT NULL,
-  email      TEXT NOT NULL,
-  phone      TEXT,
-  company    TEXT,
-  call_date  DATE NOT NULL,
-  call_time  TEXT NOT NULL,
-  message    TEXT,
-  status     TEXT NOT NULL DEFAULT 'scheduled',
-  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+  id                UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  name              TEXT NOT NULL,
+  email             TEXT NOT NULL,
+  phone             TEXT,
+  company           TEXT,
+  call_date         DATE NOT NULL,
+  call_time         TEXT NOT NULL,
+  message           TEXT,
+  status            TEXT NOT NULL DEFAULT 'scheduled',
+  -- Lets a client reschedule their own call from a link in the
+  -- confirmation email, without any login - the token is the credential.
+  reschedule_token  UUID NOT NULL DEFAULT gen_random_uuid(),
+  created_at        TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
 -- Table predates the company field - add it for existing databases.
 ALTER TABLE discovery_calls ADD COLUMN IF NOT EXISTS company TEXT;
+
+-- Table predates self-serve reschedule - add it for existing databases.
+ALTER TABLE discovery_calls ADD COLUMN IF NOT EXISTS reschedule_token UUID DEFAULT gen_random_uuid();
+CREATE UNIQUE INDEX IF NOT EXISTS discovery_calls_reschedule_token_idx ON discovery_calls (reschedule_token);
 
 -- ---------------------------------------------------------------------------
 -- Reviews. `is_published` controls whether each shows on the public site.

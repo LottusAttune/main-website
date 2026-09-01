@@ -97,6 +97,9 @@ export async function sendDiscoveryCallEmails(input: {
   company?: string | null;
   callDate: string;
   callTime: string;
+  rescheduleToken: string;
+  /** True when this is a client-initiated change to an existing call. */
+  rescheduled?: boolean;
 }): Promise<void> {
   if (!resend) {
     console.error('[email] RESEND_API_KEY is not set - skipping send');
@@ -104,19 +107,23 @@ export async function sendDiscoveryCallEmails(input: {
   }
 
   const dayLabel = formatCallDay(input.callDate);
+  const verb = input.rescheduled ? 'rescheduled' : 'confirmed';
+  const rescheduleUrl = `${SITE.url}/v1/discovery-call/reschedule?token=${input.rescheduleToken}`;
 
   const clientHtml = wrapperHtml(`
     <p style="margin:0 0 10px;">Hi ${input.name},</p>
-    <p style="margin:0 0 10px;">Your discovery call with Lotus Attune is confirmed. We'll meet over Google Meet at the time below.</p>
+    <p style="margin:0 0 10px;">Your discovery call with Lotus Attune is ${verb}. We'll meet over Google Meet at the time below.</p>
     ${callDetailsHtml(input.name, dayLabel, input.callTime)}
     <p style="margin:18px 0 0;">
       Join with this link when it's time: <a href="${DISCOVERY_CALL_MEET_LINK}" style="color:#7c5b3b;">${DISCOVERY_CALL_MEET_LINK}</a>
     </p>
-    <p style="margin:18px 0 0;">Need to reschedule? Just reply to this email.</p>
+    <p style="margin:18px 0 0;">
+      Need a different time? <a href="${rescheduleUrl}" style="color:#7c5b3b;">Reschedule your call</a> — no need to email us.
+    </p>
   `);
 
   const teamHtml = wrapperHtml(`
-    <p style="margin:0 0 10px;">A new discovery call was booked.</p>
+    <p style="margin:0 0 10px;">A discovery call was ${verb}.</p>
     ${callDetailsHtml(input.name, dayLabel, input.callTime)}
     <p style="margin:18px 0 0;">
       Client email: <a href="mailto:${input.email}" style="color:#7c5b3b;">${input.email}</a>
@@ -131,13 +138,13 @@ export async function sendDiscoveryCallEmails(input: {
     resend.emails.send({
       from: FROM,
       to: input.email,
-      subject: `Your discovery call - ${dayLabel} at ${input.callTime}`,
+      subject: `Your discovery call is ${verb} - ${dayLabel} at ${input.callTime}`,
       html: clientHtml,
     }),
     resend.emails.send({
       from: FROM,
       to: SITE.email,
-      subject: `New discovery call: ${input.name} - ${dayLabel} at ${input.callTime}`,
+      subject: `Discovery call ${verb}: ${input.name} - ${dayLabel} at ${input.callTime}`,
       html: teamHtml,
     }),
   ]);

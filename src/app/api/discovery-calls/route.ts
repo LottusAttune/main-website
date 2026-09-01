@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 
 import { isDatabaseConfigured, sql } from '@/lib/db';
+import { findDiscoveryCallSlotError } from '@/lib/discoveryCalls';
 import { sendDiscoveryCallEmails } from '@/lib/email';
 import { getSettings } from '@/lib/settings';
 import { discoveryCallSchema } from '@/lib/validation';
@@ -27,33 +28,17 @@ export async function POST(request: Request) {
   }
 
   const input = parsed.data;
-  const { blockedDates, blockedCallTimes, bookedEventDates } =
-    await getSettings();
+  const settings = await getSettings();
 
-  // Reject dates or specific times the owner has closed, even if the client
-  // somehow posted one. Sundays are never open, and a day with a confirmed
-  // session already booked is closed to discovery calls entirely.
-  const [y, m, d] = input.callDate.split('-').map(Number);
-  const isSunday = new Date(y, m - 1, d).getDay() === 0;
-  if (
-    isSunday ||
-    blockedDates.includes(input.callDate) ||
-    bookedEventDates.includes(input.callDate)
-  ) {
-    return NextResponse.json(
-      { error: 'That date is no longer available.' },
-      { status: 409 }
-    );
-  }
-  if (
-    blockedCallTimes.some(
-      (entry) => entry.date === input.callDate && entry.time === input.callTime
-    )
-  ) {
-    return NextResponse.json(
-      { error: 'That time is no longer available.' },
-      { status: 409 }
-    );
+  // Reject a date or time the owner has closed, even if the client somehow
+  // posted one.
+  const slotError = findDiscoveryCallSlotError(
+    input.callDate,
+    input.callTime,
+    settings
+  );
+  if (slotError) {
+    return NextResponse.json({ error: slotError }, { status: 409 });
   }
 
   if (!isDatabaseConfigured()) {
@@ -75,7 +60,7 @@ export async function POST(request: Request) {
         ${input.name}, ${input.email}, ${input.phone ?? null}, ${input.company ?? null},
         ${input.callDate}, ${input.callTime}, ${input.message ?? null}
       )
-      RETURNING id
+      RETURNING id, reschedule_token
     `;
 
     // Best-effort - the row above is already saved regardless of the email.
@@ -85,6 +70,7 @@ export async function POST(request: Request) {
       company: input.company,
       callDate: input.callDate,
       callTime: input.callTime,
+      rescheduleToken: String(result.rows[0]?.reschedule_token),
     });
 
     return NextResponse.json({ id: result.rows[0]?.id }, { status: 201 });

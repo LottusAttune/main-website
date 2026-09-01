@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import { formatStudioDate, type DiscoveryCallRow } from '@/lib/pipeline';
 import { DISCOVERY_CALL_TIMES } from '@/lib/site';
@@ -24,6 +24,19 @@ export function DiscoveryCalls({ calls }: { calls: DiscoveryCallRow[] }) {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editDate, setEditDate] = useState('');
   const [editTime, setEditTime] = useState('');
+  const [menuOpenId, setMenuOpenId] = useState<string | null>(null);
+  const menuRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!menuOpenId) return;
+    const onClick = (event: MouseEvent) => {
+      if (!menuRef.current?.contains(event.target as Node)) {
+        setMenuOpenId(null);
+      }
+    };
+    document.addEventListener('mousedown', onClick);
+    return () => document.removeEventListener('mousedown', onClick);
+  }, [menuOpenId]);
 
   if (calls.length === 0) {
     return (
@@ -35,6 +48,7 @@ export function DiscoveryCalls({ calls }: { calls: DiscoveryCallRow[] }) {
   }
 
   const startEdit = (call: DiscoveryCallRow) => {
+    setMenuOpenId(null);
     setEditingId(call.id);
     setEditDate(call.callDate);
     setEditTime(call.callTime);
@@ -80,6 +94,7 @@ export function DiscoveryCalls({ calls }: { calls: DiscoveryCallRow[] }) {
             {calls.map((call) => {
               const cancelled = call.status === 'cancelled';
               const isEditing = editingId === call.id;
+              const isMenuOpen = menuOpenId === call.id;
 
               return (
                 <tr key={call.id}>
@@ -144,42 +159,68 @@ export function DiscoveryCalls({ calls }: { calls: DiscoveryCallRow[] }) {
                         </button>
                       </div>
                     ) : (
-                      <div className={styles.rowActions}>
+                      <div
+                        className={styles.menuWrap}
+                        ref={isMenuOpen ? menuRef : undefined}
+                      >
                         <button
                           type="button"
-                          className={`btn btn--outline ${styles.smallBtn}`}
-                          onClick={() => startEdit(call)}
-                        >
-                          Edit
-                        </button>
-                        <button
-                          type="button"
-                          className={`btn btn--outline ${styles.smallBtn}`}
+                          className={styles.menuTrigger}
+                          aria-label="Row actions"
+                          aria-expanded={isMenuOpen}
                           onClick={() =>
-                            void run({
-                              action: 'cancelDiscoveryCall',
-                              id: call.id,
-                              cancelled: !cancelled,
-                            })
+                            setMenuOpenId(isMenuOpen ? null : call.id)
                           }
                         >
-                          {cancelled ? 'Restore' : 'Cancel'}
+                          ⋮
                         </button>
-                        <button
-                          type="button"
-                          className={`btn btn--outline ${styles.smallBtn}`}
-                          onClick={() => {
-                            if (
-                              window.confirm(
-                                `Delete the discovery call with ${call.name} permanently? This cannot be undone.`
-                              )
-                            ) {
-                              void run({ action: 'deleteDiscoveryCall', id: call.id });
-                            }
-                          }}
-                        >
-                          Delete
-                        </button>
+                        {isMenuOpen ? (
+                          <div className={styles.menu} role="menu">
+                            <button
+                              type="button"
+                              className={styles.menuItem}
+                              role="menuitem"
+                              onClick={() => startEdit(call)}
+                            >
+                              Edit
+                            </button>
+                            <button
+                              type="button"
+                              className={styles.menuItem}
+                              role="menuitem"
+                              onClick={() => {
+                                setMenuOpenId(null);
+                                void run({
+                                  action: 'cancelDiscoveryCall',
+                                  id: call.id,
+                                  cancelled: !cancelled,
+                                });
+                              }}
+                            >
+                              {cancelled ? 'Restore' : 'Cancel'}
+                            </button>
+                            <button
+                              type="button"
+                              className={`${styles.menuItem} ${styles.menuItemAlert}`}
+                              role="menuitem"
+                              onClick={() => {
+                                setMenuOpenId(null);
+                                if (
+                                  window.confirm(
+                                    `Delete the discovery call with ${call.name} permanently? This cannot be undone.`
+                                  )
+                                ) {
+                                  void run({
+                                    action: 'deleteDiscoveryCall',
+                                    id: call.id,
+                                  });
+                                }
+                              }}
+                            >
+                              Delete
+                            </button>
+                          </div>
+                        ) : null}
                       </div>
                     )}
                   </td>

@@ -159,14 +159,15 @@ function pad(n: number): string {
   return String(n).padStart(2, '0');
 }
 
-/** A discovery call's fixed 20-minute slot, as local (no-offset) datetimes
- *  paired with the `timeZone` field above. */
+/** Blocks a full hour on the calendar for a discovery call, even though the
+ *  call itself runs 15-20 minutes - a 20-minute block reads as too small
+ *  next to other events, and Silvana allocates the full hour anyway. */
 export function discoveryCallWindow(
   callDate: string,
   callTime: string
 ): { startISO: string; endISO: string } {
   const { hour, minute } = parseClockTime(callTime);
-  const endTotal = hour * 60 + minute + 20;
+  const endTotal = hour * 60 + minute + 60;
   const endHour = Math.floor(endTotal / 60) % 24;
   const endMinute = endTotal % 60;
   return {

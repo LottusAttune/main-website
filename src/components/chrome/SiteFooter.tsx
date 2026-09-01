@@ -42,7 +42,7 @@ export function SiteFooter() {
             <div className={styles.motto}>{SITE.motto}</div>
           </div>
           <p className={styles.body}>
-            Create space to recharge, renew and reconnect from within.
+            Create space to recharge, renew and reconnect from within
           </p>
         </div>
       </div>

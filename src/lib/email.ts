@@ -20,6 +20,10 @@ const FROM = 'Lotus Attune <info@lotusattune.com>';
 // Derived once from footer-lockup-combo.webp, not a fresh photo, so it
 // doesn't go through the normal source-assets pipeline.
 const LOGO_URL = `${SITE.url}/assets/email-logo.png`;
+// Small monochrome glyphs so the footer's two contact methods are visually
+// distinguishable at a glance - same flatten-to-cream treatment as the logo.
+const MAIL_ICON_URL = `${SITE.url}/assets/email-icon-mail.png`;
+const WHATSAPP_ICON_URL = `${SITE.url}/assets/email-icon-whatsapp.png`;
 
 const resend = process.env.RESEND_API_KEY
   ? new Resend(process.env.RESEND_API_KEY)
@@ -61,8 +65,12 @@ function wrapperHtml(bodyHtml: string): string {
       </tr>
       <tr>
         <td style="padding:18px 40px 26px;border-top:1px solid rgba(59,46,36,0.14);font-family:Arial,Helvetica,sans-serif;font-size:12.5px;line-height:1.8;color:#5c4c40;text-align:center;">
-          Questions? <a href="mailto:${SITE.email}" style="color:#7c5b3b;">${SITE.email}</a>
-          &nbsp;&middot;&nbsp; ${SITE.phone}<br />
+          Questions?
+          <img src="${MAIL_ICON_URL}" width="13" height="13" alt="" style="vertical-align:middle;margin:0 3px 2px 6px;border:0;" />
+          <a href="mailto:${SITE.email}" style="color:#7c5b3b;">${SITE.email}</a>
+          &nbsp;&middot;&nbsp;
+          <img src="${WHATSAPP_ICON_URL}" width="13" height="13" alt="" style="vertical-align:middle;margin:0 3px 2px 0;border:0;" />
+          <a href="${SITE.whatsappHref}" style="color:#7c5b3b;">${SITE.phone}</a><br />
           Toronto Downtown
         </td>
       </tr>
@@ -115,7 +123,7 @@ function mottoHtml(): string {
         <td style="padding:24px 28px;text-align:center;">
           <div style="font-family:Arial,Helvetica,sans-serif;font-size:10px;letter-spacing:0.28em;text-transform:uppercase;color:#c6a97a;margin-bottom:10px;">Lotus Attune</div>
           <div style="font-family:Georgia,'Times New Roman',serif;font-size:24px;color:#f6efe5;margin-bottom:8px;">Reset. Align. Thrive</div>
-          <div style="font-family:Arial,Helvetica,sans-serif;font-size:12.5px;line-height:1.6;color:rgba(239,230,218,0.75);">Create space to recharge, renew and reconnect from within.</div>
+          <div style="font-family:Arial,Helvetica,sans-serif;font-size:12.5px;line-height:1.6;color:rgba(239,230,218,0.75);">Create space to recharge, renew and reconnect from within</div>
         </td>
       </tr>
     </table>`;

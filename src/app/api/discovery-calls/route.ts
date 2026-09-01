@@ -75,6 +75,18 @@ export async function POST(request: Request) {
 
     return NextResponse.json({ id: result.rows[0]?.id }, { status: 201 });
   } catch (error) {
+    // 23505: unique_violation - someone else booked this exact slot a
+    // moment ago, after the check above but before this insert.
+    if (
+      error instanceof Error &&
+      'code' in error &&
+      error.code === '23505'
+    ) {
+      return NextResponse.json(
+        { error: 'That time is already booked - please choose another.' },
+        { status: 409 }
+      );
+    }
     console.error('[discovery-calls] insert failed:', error);
     return NextResponse.json(
       { error: 'We could not save your request.' },

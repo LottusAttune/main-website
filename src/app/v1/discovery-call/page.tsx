@@ -18,9 +18,13 @@ export const metadata: Metadata = {
 export const dynamic = 'force-dynamic';
 
 export default async function DiscoveryCallPage() {
-  const { blockedDates, blockedCallTimes, bookedEventDates } =
+  const { blockedDates, blockedCallTimes, bookedEventDates, bookedCallSlots } =
     await getSettings();
   const closedDates = [...new Set([...blockedDates, ...bookedEventDates])];
+  const closedTimes = [
+    ...blockedCallTimes,
+    ...bookedCallSlots.map(({ date, time }) => ({ date, time })),
+  ];
 
   return (
     <>
@@ -71,7 +75,7 @@ export default async function DiscoveryCallPage() {
         >
           <DiscoveryCallForm
             blockedDates={closedDates}
-            blockedCallTimes={blockedCallTimes}
+            blockedCallTimes={closedTimes}
             leadDays={DISCOVERY_CALL_LEAD_DAYS}
           />
         </section>

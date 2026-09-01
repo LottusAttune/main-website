@@ -30,6 +30,12 @@ export type BlockedCallTime = {
   time: string;
 };
 
+export type BookedCallSlot = {
+  id: string;
+  date: string;
+  time: string;
+};
+
 export type SiteSettings = {
   pricing: Pricing;
   slots: Slots;
@@ -41,6 +47,9 @@ export type SiteSettings = {
   blockedCallTimes: BlockedCallTime[];
   /** Dates with a confirmed session booked - closed for discovery calls too. */
   bookedEventDates: string[];
+  /** Discovery call slots another client already holds - keeps two people
+   *  from booking the exact same date and time. */
+  bookedCallSlots: BookedCallSlot[];
 };
 
 const FALLBACK: SiteSettings = {
@@ -50,6 +59,7 @@ const FALLBACK: SiteSettings = {
   blockedDates: [],
   blockedCallTimes: [],
   bookedEventDates: [],
+  bookedCallSlots: [],
   codes: [
     { code: 'WELCOME20', percentOff: 20, isActive: true },
     { code: 'WELCOME30', percentOff: 30, isActive: true },
@@ -73,20 +83,30 @@ export async function getSettings(): Promise<SiteSettings> {
   if (!isDatabaseConfigured()) return FALLBACK;
 
   try {
-    const [settingsResult, blockedResult, codesResult, blockedCallResult, eventDatesResult] =
-      await Promise.all([
-        sql`SELECT * FROM settings WHERE id = TRUE`,
-        sql`SELECT day FROM blocked_dates ORDER BY day`,
-        sql`SELECT code, percent_off, is_active FROM discount_codes ORDER BY code`,
-        sql`SELECT call_date, call_time FROM blocked_call_times ORDER BY call_date, call_time`,
-        sql`
-          SELECT DISTINCT session_date AS day FROM bookings
-          WHERE status IN ('booked', 'complete') AND session_date IS NOT NULL
-          UNION
-          SELECT DISTINCT session_date_2 AS day FROM bookings
-          WHERE status IN ('booked', 'complete') AND session_date_2 IS NOT NULL
-        `,
-      ]);
+    const [
+      settingsResult,
+      blockedResult,
+      codesResult,
+      blockedCallResult,
+      eventDatesResult,
+      bookedCallResult,
+    ] = await Promise.all([
+      sql`SELECT * FROM settings WHERE id = TRUE`,
+      sql`SELECT day FROM blocked_dates ORDER BY day`,
+      sql`SELECT code, percent_off, is_active FROM discount_codes ORDER BY code`,
+      sql`SELECT call_date, call_time FROM blocked_call_times ORDER BY call_date, call_time`,
+      sql`
+        SELECT DISTINCT session_date AS day FROM bookings
+        WHERE status IN ('booked', 'complete') AND session_date IS NOT NULL
+        UNION
+        SELECT DISTINCT session_date_2 AS day FROM bookings
+        WHERE status IN ('booked', 'complete') AND session_date_2 IS NOT NULL
+      `,
+      sql`
+        SELECT id, call_date, call_time FROM discovery_calls
+        WHERE status != 'cancelled'
+      `,
+    ]);
 
     const row = settingsResult.rows[0];
     if (!row) return FALLBACK;
@@ -117,6 +137,11 @@ export async function getSettings(): Promise<SiteSettings> {
         time: String(r.call_time),
       })),
       bookedEventDates: eventDatesResult.rows.map((r) => toIsoDay(r.day)),
+      bookedCallSlots: bookedCallResult.rows.map((r) => ({
+        id: String(r.id),
+        date: toIsoDay(r.call_date),
+        time: String(r.call_time),
+      })),
     };
   } catch (error) {
     // A misconfigured or unreachable database must not take the site down —

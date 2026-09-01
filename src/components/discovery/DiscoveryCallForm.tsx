@@ -92,8 +92,8 @@ export function DiscoveryCallForm({
         <p className={styles.successBody}>
           A confirmation with the video link is on its way to your email —
           if it doesn't show up in a few minutes, check your spam or
-          promotions folder. If you need to reschedule, just reply to that
-          email, or reach us at{' '}
+          promotions folder. Need a different time? Use the reschedule
+          link in that email, or reach us at{' '}
           <a href={`mailto:${SITE.email}`}>{SITE.email}</a> or {SITE.phone}.
         </p>
       </div>

@@ -46,14 +46,18 @@ export async function getDiscoveryCallByToken(
 /**
  * Shared between the initial booking and a reschedule - same rules either
  * way. Returns a user-facing error, or null when the slot is open.
+ *
+ * `excludeCallId` is the row being rescheduled, if any - it holds its own
+ * current slot, which must not count as "already taken" against itself.
  */
 export function findDiscoveryCallSlotError(
   callDate: string,
   callTime: string,
   settings: Pick<
     SiteSettings,
-    'blockedDates' | 'blockedCallTimes' | 'bookedEventDates'
-  >
+    'blockedDates' | 'blockedCallTimes' | 'bookedEventDates' | 'bookedCallSlots'
+  >,
+  excludeCallId?: string
 ): string | null {
   const [year, month, day] = callDate.split('-').map(Number);
   const isSunday = new Date(year, month - 1, day).getDay() === 0;
@@ -72,6 +76,17 @@ export function findDiscoveryCallSlotError(
     )
   ) {
     return 'That time is no longer available.';
+  }
+
+  if (
+    settings.bookedCallSlots.some(
+      (slot) =>
+        slot.date === callDate &&
+        slot.time === callTime &&
+        slot.id !== excludeCallId
+    )
+  ) {
+    return 'That time is already booked - please choose another.';
   }
 
   return null;

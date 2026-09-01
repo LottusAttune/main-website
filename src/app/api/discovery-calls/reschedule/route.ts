@@ -48,7 +48,8 @@ export async function POST(request: Request) {
   const slotError = findDiscoveryCallSlotError(
     input.callDate,
     input.callTime,
-    settings
+    settings,
+    existing.id
   );
   if (slotError) {
     return NextResponse.json({ error: slotError }, { status: 409 });
@@ -74,6 +75,18 @@ export async function POST(request: Request) {
 
     return NextResponse.json({ ok: true });
   } catch (error) {
+    // 23505: unique_violation - someone else booked this exact slot a
+    // moment ago, after the check above but before this update.
+    if (
+      error instanceof Error &&
+      'code' in error &&
+      error.code === '23505'
+    ) {
+      return NextResponse.json(
+        { error: 'That time is already booked - please choose another.' },
+        { status: 409 }
+      );
+    }
     console.error('[discovery-calls] reschedule failed:', error);
     return NextResponse.json(
       { error: 'We could not save your new time.' },

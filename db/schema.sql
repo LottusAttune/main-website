@@ -136,6 +136,10 @@ ALTER TABLE discovery_calls ADD COLUMN IF NOT EXISTS company TEXT;
 ALTER TABLE discovery_calls ADD COLUMN IF NOT EXISTS reschedule_token UUID DEFAULT gen_random_uuid();
 CREATE UNIQUE INDEX IF NOT EXISTS discovery_calls_reschedule_token_idx ON discovery_calls (reschedule_token);
 
+-- Belt-and-suspenders against two people booking the same slot at nearly
+-- the same instant - the application checks first, this catches the race.
+CREATE UNIQUE INDEX IF NOT EXISTS discovery_calls_slot_idx ON discovery_calls (call_date, call_time) WHERE status != 'cancelled';
+
 -- ---------------------------------------------------------------------------
 -- Reviews. `is_published` controls whether each shows on the public site.
 -- ---------------------------------------------------------------------------

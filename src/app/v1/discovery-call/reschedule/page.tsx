@@ -25,10 +25,23 @@ export default async function ReschedulePage({
   const { token } = await searchParams;
   const existing = token ? await getDiscoveryCallByToken(token) : null;
 
-  const { blockedDates, blockedCallTimes, bookedEventDates } = existing
-    ? await getSettings()
-    : { blockedDates: [], blockedCallTimes: [], bookedEventDates: [] };
+  const { blockedDates, blockedCallTimes, bookedEventDates, bookedCallSlots } =
+    existing
+      ? await getSettings()
+      : {
+          blockedDates: [],
+          blockedCallTimes: [],
+          bookedEventDates: [],
+          bookedCallSlots: [],
+        };
   const closedDates = [...new Set([...blockedDates, ...bookedEventDates])];
+  // Exclude this booking's own current slot - it isn't "someone else's".
+  const closedTimes = [
+    ...blockedCallTimes,
+    ...bookedCallSlots
+      .filter((slot) => slot.id !== existing?.id)
+      .map(({ date, time }) => ({ date, time })),
+  ];
 
   return (
     <>
@@ -84,7 +97,7 @@ export default async function ReschedulePage({
               currentDate={existing.callDate}
               currentTime={existing.callTime}
               blockedDates={closedDates}
-              blockedCallTimes={blockedCallTimes}
+              blockedCallTimes={closedTimes}
               leadDays={DISCOVERY_CALL_LEAD_DAYS}
             />
           </section>

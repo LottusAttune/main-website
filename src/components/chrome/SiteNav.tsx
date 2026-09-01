@@ -35,8 +35,8 @@ export function SiteNav({ basePath = '' }: Props) {
   const logo = asset('logo-circle');
 
   return (
-    <header className={`${styles.wrap} ${basePath ? styles.wrapPlain : ''}`}>
-      <div className={`${styles.pill} ${basePath ? styles.pillNoOutline : ''}`}>
+    <header className={styles.wrap}>
+      <div className={styles.pill}>
         <Link
           href={basePath || '/'}
           className={styles.brand}
@@ -56,10 +56,7 @@ export function SiteNav({ basePath = '' }: Props) {
           </span>
         </Link>
 
-        <nav
-          className={`${styles.links} ${basePath ? styles.linksCloser : ''}`}
-          aria-label="Main navigation"
-        >
+        <nav className={styles.links} aria-label="Main navigation">
           {NAV_LINKS.map((link) => {
             const href = link.href === '/' ? basePath || '/' : `${basePath}${link.href}`;
             const active = pathname === href;
@@ -78,14 +75,14 @@ export function SiteNav({ basePath = '' }: Props) {
 
         <div className={styles.actions}>
           <Link
-            href={basePath ? `${basePath}/offerings` : '/book'}
-            className={`btn btn--dark ${styles.actionPill} ${basePath ? `${styles.actionPillDark} ${styles.actionPillSquared}` : ''}`}
+            href="/book"
+            className={`btn btn--dark ${styles.actionPill} ${styles.actionPillDark}`}
           >
             Book
           </Link>
           <Link
-            href={`${basePath}/gift`}
-            className={`btn btn--outline ${styles.actionPill} ${basePath ? `${styles.actionPillSquared} ${styles.actionPillNeutral}` : ''}`}
+            href="/gift"
+            className={`btn btn--outline ${styles.actionPill} ${styles.actionPillNeutral}`}
           >
             Gift
           </Link>

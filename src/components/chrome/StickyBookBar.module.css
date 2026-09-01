@@ -76,6 +76,7 @@
   min-height: 42px;
   font-size: 11px;
   letter-spacing: 0.22em;
+  border-radius: var(--radius-thumb);
 }
 
 /* /v1's replacement for the two buttons above - plain text, not a pill, so it

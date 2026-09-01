@@ -442,6 +442,7 @@
 .summaryActions :global(.btn--sm) {
   min-height: 38px;
   padding: 9px 30px;
+  border-radius: var(--radius-thumb);
 }
 
 .giftBtn {

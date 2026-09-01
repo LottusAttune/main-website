@@ -2,25 +2,8 @@
   position: sticky;
   top: 0;
   z-index: 60;
-  /* Trimmed from 10px - this bar sits on every page, so its own height
-     comes out of every section's room below it. Keeps the same thick,
-     pill look, just a touch less outer air around it. */
   padding: 6px clamp(12px, 3vw, 28px);
-  background: linear-gradient(
-    180deg,
-    rgba(251, 247, 241, 0.96) 0%,
-    rgba(251, 247, 241, 0.72) 100%
-  );
-  backdrop-filter: blur(18px);
-}
-
-/* A hairline on this edge only (not the pill's old all-round outline, which
-   is stripped by .pillNoOutline below) - without it the bar can read as the
-   same flat cream as whatever section is scrolled underneath it. Neutral ink,
-   not gold - ties to the black Book button instead of adding a third color. */
-.wrapPlain {
   background: var(--color-cream-raised);
-  backdrop-filter: none;
   border-bottom: 1px solid var(--hairline-light-strong);
 }
 
@@ -32,21 +15,6 @@
   max-width: 1500px;
   margin: 0 auto;
   padding: 6px clamp(12px, 2.4vw, 22px);
-  background: linear-gradient(
-    135deg,
-    rgba(255, 253, 250, 0.9) 0%,
-    rgba(244, 236, 225, 0.82) 100%
-  );
-  border: 1px solid rgba(198, 169, 122, 0.36);
-  border-radius: var(--radius-pill);
-  box-shadow: 0 20px 46px -34px rgba(59, 46, 36, 0.7);
-}
-
-.pillNoOutline {
-  background: none;
-  border-color: transparent;
-  border-radius: 0;
-  box-shadow: none;
 }
 
 .brand {
@@ -103,16 +71,10 @@
   padding: 0 clamp(12px, 1.6vw, 24px);
   /* Room before the Book/Gift buttons - roughly an inch, so the links read
      as grouped with the logo rather than centered dead in the middle. */
-  padding-right: clamp(48px, 6vw, 84px);
+  padding-right: clamp(16px, 2vw, 28px);
   font-size: 12px;
   letter-spacing: 0.13em;
   text-transform: uppercase;
-}
-
-/* Pulled in much closer to Book/Gift - the wide gap above left the links
-   looking centered in dead space rather than grouped with either side. */
-.linksCloser {
-  padding-right: clamp(16px, 2vw, 28px);
 }
 
 .link {
@@ -138,11 +100,17 @@
   flex: 0 0 auto;
 }
 
+/* --radius-input (16px) is a big radius on this button's short 44px height -
+   the curve ate most of each side and read as a diagonal cut rather than a
+   soft rounding. 6px keeps the same "not a full pill" intent at a scale that
+   actually suits this button's size - matches the minimal roundness of the
+   path cards elsewhere on the site. */
 .actionPill {
   padding: 11px clamp(16px, 2vw, 26px);
   min-height: 44px;
   font-size: 11px;
   letter-spacing: 0.2em;
+  border-radius: 6px;
 }
 
 /* Matches the sticky bar's black - this Book button and that bar are the two
@@ -150,16 +118,6 @@
    consistent dark accent rather than two different browns. */
 .actionPillDark {
   background: linear-gradient(135deg, var(--color-ink-deep) 0%, var(--color-ink-deepest) 100%);
-}
-
-/* --radius-input (16px) is a big radius on this button's short 44px height -
-   the curve ate most of each side and read as a diagonal cut rather than a
-   soft rounding. 8px keeps the same "not a full pill" intent at a scale that
-   actually suits this button's size. */
-.actionPillSquared {
-  /* Matches the minimal roundness of the path cards - 8px looked too curved
-     (almost triangular) on a button this short. */
-  border-radius: 6px;
 }
 
 /* Same gold as the active nav link's underline (e.g. "Home"), not the

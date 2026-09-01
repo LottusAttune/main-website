@@ -389,7 +389,7 @@ export default async function LandingPage({
         </section>
       </main>
 
-      <StickyBookBar />
+      <StickyBookBar twoButtons />
 
       <footer className={styles.footer}>
         <div className={styles.social}>

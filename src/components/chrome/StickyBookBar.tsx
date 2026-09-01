@@ -13,17 +13,18 @@ import styles from './StickyBookBar.module.css';
  * So it stays out of the way until the reader has scrolled past roughly the
  * first screen, then slides up. On /lp it carries the site's only Book/Gift
  * buttons at the very bottom of a page, since the footer's closing block is
- * text-only to avoid repeating them. On /v1 the top nav's own Book/Gift
- * buttons are already visible at every scroll position, so this bar trades
- * its two buttons for a single quiet text link instead of repeating them.
+ * text-only to avoid repeating them. Everywhere else, the top nav's own
+ * Book/Gift buttons are already visible at every scroll position, so this
+ * bar trades its two buttons for a single quiet text link instead of
+ * repeating them.
  */
 type Props = {
-  /** Prefix for the Book/Gift links. The /v1 backup passes "/v1" so it stays
-   *  inside itself rather than sending the reader to the live site. */
-  basePath?: string;
+  /** /lp's own footer is text-only, so it opts into the two-button form
+   *  here instead of the quiet link every other page uses. */
+  twoButtons?: boolean;
 };
 
-export function StickyBookBar({ basePath = '' }: Props) {
+export function StickyBookBar({ twoButtons = false }: Props) {
   const [shown, setShown] = useState(false);
 
   useEffect(() => {
@@ -45,11 +46,10 @@ export function StickyBookBar({ basePath = '' }: Props) {
     };
   }, []);
 
-  if (basePath) {
-    // On /v1 the top nav already carries the site's real Book/Gift buttons at
-    // every scroll position - repeating them here as a second pair of pills
-    // read as redundant. This version keeps the same slide-up reveal but
-    // trades the two buttons for one quiet text link.
+  if (!twoButtons) {
+    // The top nav already carries the site's real Book/Gift buttons at every
+    // scroll position - repeating them here as a second pair of pills reads
+    // as redundant. This trades the two buttons for one quiet text link.
     return (
       <div
         className={`${styles.bar} ${shown ? styles.barShown : ''} ${styles.barDark}`}
@@ -59,7 +59,7 @@ export function StickyBookBar({ basePath = '' }: Props) {
           Two-hour sessions &nbsp;·&nbsp; 1 to 24 people &nbsp;·&nbsp; downtown Toronto
         </span>
         <Link
-          href={`${basePath}/offerings`}
+          href="/offerings"
           className={styles.quietLink}
           tabIndex={shown ? undefined : -1}
         >

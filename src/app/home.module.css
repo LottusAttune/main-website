@@ -497,6 +497,7 @@
   min-height: 44px;
   font-size: 11px;
   letter-spacing: 0.22em;
+  border-radius: var(--radius-thumb);
 }
 
 /* ---------- Mobile guards ----------

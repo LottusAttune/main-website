@@ -140,6 +140,7 @@
   min-height: 48px;
   font-size: var(--text-button);
   letter-spacing: 0.28em;
+  border-radius: var(--radius-thumb);
 }
 
 .heroBtnSolid {

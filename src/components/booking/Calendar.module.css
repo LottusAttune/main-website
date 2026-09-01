@@ -76,6 +76,7 @@
   background: transparent;
   color: var(--color-ink);
   font-size: 14px;
+  font-weight: 600;
   cursor: pointer;
   transition: all 0.2s ease;
 }
@@ -97,6 +98,7 @@
    no matter why a date can't be picked. */
 .dayClosed {
   color: var(--color-disabled);
+  font-weight: 400;
   cursor: default;
 }
 

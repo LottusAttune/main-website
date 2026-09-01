@@ -532,6 +532,29 @@ p {
   border-color: var(--status-alert);
 }
 
+/* Browsers paint their own autofill background (Chrome's pale yellow,
+   Safari's pale blue) over ours the moment a saved email/password fills a
+   field, ignoring `background` entirely - the long transition delay is the
+   standard trick to stop Chrome flashing that color in before this wins. */
+.field:-webkit-autofill,
+.field:-webkit-autofill:hover,
+.field:-webkit-autofill:focus,
+.field:autofill {
+  -webkit-text-fill-color: var(--color-ink);
+  -webkit-box-shadow: 0 0 0 1000px var(--color-cream-raised) inset;
+  box-shadow: 0 0 0 1000px var(--color-cream-raised) inset;
+  transition: background-color 600000s ease-in-out 0s;
+}
+
+.field--dark:-webkit-autofill,
+.field--dark:-webkit-autofill:hover,
+.field--dark:-webkit-autofill:focus,
+.field--dark:autofill {
+  -webkit-text-fill-color: var(--color-cream-text);
+  -webkit-box-shadow: 0 0 0 1000px var(--color-ink-deep) inset;
+  box-shadow: 0 0 0 1000px var(--color-ink-deep) inset;
+}
+
 .select {
   cursor: pointer;
   padding: 17px 20px;

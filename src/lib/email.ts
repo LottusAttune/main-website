@@ -39,12 +39,12 @@ function wrapperHtml(bodyHtml: string): string {
   <body style="margin:0;padding:32px 16px;background:#eae6df;font-family:Georgia,'Times New Roman',serif;">
     <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:560px;margin:0 auto;background:#fffdfa;border:1px solid rgba(59,46,36,0.14);">
       <tr>
-        <td style="padding:36px 40px 26px;text-align:center;border-bottom:1px solid rgba(59,46,36,0.14);">
-          <img src="${LOGO_URL}" width="160" alt="Lotus Attune" style="display:block;margin:0 auto;" />
+        <td style="padding:26px 40px 18px;text-align:center;border-bottom:1px solid rgba(59,46,36,0.14);">
+          <img src="${LOGO_URL}" width="220" alt="Lotus Attune" style="display:block;margin:0 auto;" />
         </td>
       </tr>
       <tr>
-        <td style="padding:34px 40px 8px;font-family:Arial,Helvetica,sans-serif;font-size:15px;line-height:1.7;color:#5c4c40;">
+        <td style="padding:22px 40px 8px;font-family:Arial,Helvetica,sans-serif;font-size:15px;line-height:1.7;color:#5c4c40;">
           ${bodyHtml}
         </td>
       </tr>
@@ -63,10 +63,10 @@ function wrapperHtml(bodyHtml: string): string {
 
 function callDetailsHtml(name: string, dayLabel: string, callTime: string): string {
   return `
-    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#241b14;margin:22px 0;">
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#241b14;margin:14px 0;">
       <tr>
-        <td style="padding:28px 30px;font-family:Arial,Helvetica,sans-serif;color:#efe6da;">
-          <div style="font-size:10.5px;letter-spacing:0.28em;text-transform:uppercase;color:#c6a97a;margin-bottom:16px;">Discovery Call</div>
+        <td style="padding:22px 26px;font-family:Arial,Helvetica,sans-serif;color:#efe6da;">
+          <div style="font-size:10.5px;letter-spacing:0.28em;text-transform:uppercase;color:#c6a97a;margin-bottom:12px;">Discovery Call</div>
           <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
             <tr>
               <td style="font-size:10px;letter-spacing:0.2em;text-transform:uppercase;color:rgba(239,230,218,0.55);padding-bottom:4px;">With</td>
@@ -105,8 +105,8 @@ export async function sendDiscoveryCallEmails(input: {
   const dayLabel = formatCallDay(input.callDate);
 
   const clientHtml = wrapperHtml(`
-    <p style="margin:0 0 18px;">Hi ${input.name},</p>
-    <p style="margin:0 0 18px;">Your discovery call with Lotus Attune is confirmed. We'll meet over Google Meet at the time below.</p>
+    <p style="margin:0 0 10px;">Hi ${input.name},</p>
+    <p style="margin:0 0 10px;">Your discovery call with Lotus Attune is confirmed. We'll meet over Google Meet at the time below.</p>
     ${callDetailsHtml(input.name, dayLabel, input.callTime)}
     <p style="margin:18px 0 0;">
       Join with this link when it's time: <a href="${DISCOVERY_CALL_MEET_LINK}" style="color:#7c5b3b;">${DISCOVERY_CALL_MEET_LINK}</a>

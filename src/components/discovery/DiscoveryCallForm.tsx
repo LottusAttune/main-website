@@ -73,6 +73,7 @@ export function DiscoveryCallForm({
       }
 
       setSubmitted(true);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     } catch (error) {
       setSubmitError(
         error instanceof Error
@@ -89,8 +90,10 @@ export function DiscoveryCallForm({
       <div className={`card ${styles.success}`} role="status">
         <h2 className={styles.successTitle}>Your call is booked</h2>
         <p className={styles.successBody}>
-          A confirmation with the video link is on its way to your email. If
-          you need to reschedule, just reply to that email, or reach us at{' '}
+          A confirmation with the video link is on its way to your email —
+          if it doesn't show up in a few minutes, check your spam or
+          promotions folder. If you need to reschedule, just reply to that
+          email, or reach us at{' '}
           <a href={`mailto:${SITE.email}`}>{SITE.email}</a> or {SITE.phone}.
         </p>
       </div>

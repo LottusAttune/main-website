@@ -5,7 +5,9 @@ export const SITE = {
   tagline: 'Immersive Soma Sound',
   motto: 'Reset. Align. Thrive',
   email: 'info@LotusAttune.com',
-  phone: '416-871-5610',
+  // Non-breaking hyphens (‑, not -) so the number never splits across a
+  // line break - it can otherwise wrap mid-number on a narrow container.
+  phone: '416‑871‑5610',
   phoneHref: 'tel:4168715610',
   whatsappHref: 'https://wa.me/14168715610',
   area: 'Toronto & the GTA',

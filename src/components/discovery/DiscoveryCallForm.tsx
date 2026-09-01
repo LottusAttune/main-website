@@ -152,6 +152,11 @@ export function DiscoveryCallForm({
             );
           })}
         </div>
+        <p className={styles.timesNote}>
+          Prefer not to book a call? Email us at{' '}
+          <a href={`mailto:${SITE.email}`}>{SITE.email}</a> or WhatsApp{' '}
+          {SITE.phone}.
+        </p>
       </div>
 
       {/* ---------- 03 Details ---------- */}

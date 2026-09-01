@@ -54,6 +54,13 @@
   gap: 10px;
 }
 
+.timesNote {
+  margin: 16px 0 0;
+  font-size: 13.5px;
+  line-height: 1.7;
+  color: var(--color-muted);
+}
+
 .timeBtn {
   padding: 14px 10px;
   min-height: 46px;

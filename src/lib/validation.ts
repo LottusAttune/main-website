@@ -27,6 +27,8 @@ export const bookingSchema = z
     sessionTime2: z.enum(TIME_LABELS).optional().nullable(),
     teamAddon: z.boolean().default(false),
     refreshments: z.boolean().default(false),
+    isPackage: z.boolean().default(false),
+    isCorporateIntro: z.boolean().default(false),
     discountCode: z.string().trim().max(40).optional().nullable(),
     gratuityPercent: z.coerce.number().int().min(0).max(100).optional().nullable(),
     gratuityAmount: z.coerce.number().min(0).max(100_000).optional().nullable(),

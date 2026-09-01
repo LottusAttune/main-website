@@ -50,6 +50,8 @@ export async function POST(request: Request) {
   const { total, gratuity } = quoteFor(
     {
       participants: input.participants,
+      isPackage: input.isPackage,
+      isCorporateIntro: input.isCorporateIntro,
       teamAddon: input.teamAddon,
       refreshments: input.refreshments,
       percentOff: eligibleDiscount?.percentOff,
@@ -85,13 +87,14 @@ export async function POST(request: Request) {
       INSERT INTO bookings (
         name, email, phone, company, message, participants,
         session_date, session_time, session_date_2, session_time_2,
-        team_addon, refreshments, discount_code, gratuity, estimated_total
+        team_addon, refreshments, is_package, is_corporate_intro,
+        discount_code, gratuity, estimated_total
       ) VALUES (
         ${input.name}, ${input.email}, ${input.phone ?? null}, ${input.company ?? null}, ${input.message ?? null},
         ${input.participants},
         ${input.sessionDate}, ${input.sessionTime},
         ${input.sessionDate2 ?? null}, ${input.sessionTime2 ?? null},
-        ${input.teamAddon}, ${input.refreshments},
+        ${input.teamAddon}, ${input.refreshments}, ${input.isPackage}, ${input.isCorporateIntro},
         ${eligibleDiscount?.code ?? null}, ${gratuity}, ${total}
       )
       RETURNING id
@@ -104,6 +107,8 @@ export async function POST(request: Request) {
       input.phone ? `Phone: ${input.phone}` : null,
       input.company ? `Company: ${input.company}` : null,
       `Participants: ${input.participants}`,
+      input.isPackage ? 'Package of four sessions' : null,
+      input.isCorporateIntro ? 'Corporate introductory session' : null,
       input.teamAddon ? 'Team-building add-on: yes' : null,
       gratuity > 0 ? `Gratuity: $${gratuity}` : null,
       input.message ? `Message: ${input.message}` : null,

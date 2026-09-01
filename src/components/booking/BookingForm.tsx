@@ -1,10 +1,11 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 import { quoteFor } from '@/lib/quote';
 import type { DiscountCode, Pricing, Slots } from '@/lib/settings';
 import {
+  CORPORATE_INTRO_MIN_PARTICIPANTS,
   MAX_PARTICIPANTS,
   SITE,
   TEAM_ADDON_MIN_PARTICIPANTS,
@@ -46,6 +47,8 @@ export function BookingForm({
   const [time, setTime] = useState<string | null>(null);
   const [time2, setTime2] = useState<string | null>(null);
   const [teamAddon, setTeamAddon] = useState(false);
+  const [isPackage, setIsPackage] = useState(false);
+  const [isCorporateIntro, setIsCorporateIntro] = useState(false);
   // null = nothing chosen yet - the 15% pill shows only a subtle suggested
   // tint, and no gratuity is added to the total until the person actually
   // clicks a choice.
@@ -78,6 +81,18 @@ export function BookingForm({
   const needsSecond = people > TWO_SESSION_THRESHOLD;
   const openSlots = TIME_SLOTS.filter((slot) => slots[slot.key] !== false);
 
+  // Drop these once the headcount no longer qualifies, rather than leaving a
+  // checked-but-no-longer-applicable choice sitting there.
+  useEffect(() => {
+    if (isPackage && people !== 1) setIsPackage(false);
+  }, [people, isPackage]);
+
+  useEffect(() => {
+    if (isCorporateIntro && people < CORPORATE_INTRO_MIN_PARTICIPANTS) {
+      setIsCorporateIntro(false);
+    }
+  }, [people, isCorporateIntro]);
+
   const gratuityAmount =
     gratuityChoice === 'custom' ? Number(customGratuity) || 0 : undefined;
   const gratuityPercent =
@@ -88,6 +103,8 @@ export function BookingForm({
   const quote = quoteFor(
     {
       participants: people,
+      isPackage,
+      isCorporateIntro,
       teamAddon,
       percentOff: code.applied?.percentOff,
       discountLabel: code.applied?.code,
@@ -167,6 +184,8 @@ export function BookingForm({
           sessionDate2: needsSecond ? isoDay(date) : null,
           sessionTime2: needsSecond ? time2 : null,
           teamAddon,
+          isPackage,
+          isCorporateIntro,
           discountCode: code.applied?.code ?? null,
           gratuityPercent: gratuityPercent ?? null,
           gratuityAmount: gratuityAmount ?? null,
@@ -179,7 +198,15 @@ export function BookingForm({
           issues?: Record<string, string[] | undefined>;
         } | null;
         setFieldErrors(body?.issues ?? {});
-        throw new Error(body?.error ?? 'We could not send your request.');
+        const message = body?.error ?? 'We could not send your request.';
+        // A validation error is self-explanatory once the field is
+        // highlighted - only a real failure needs "contact us instead".
+        setSubmitError(
+          body?.issues
+            ? message
+            : `${message} Please email ${SITE.email} or call ${SITE.phone}.`
+        );
+        return;
       }
 
       setSubmitted(true);
@@ -257,6 +284,59 @@ export function BookingForm({
               })}
             </select>
           </div>
+
+          {people === 1 && (
+            <div className={`${styles.tierChoice} ${styles.indent}`}>
+              <button
+                type="button"
+                className={`${styles.timeBtn} ${!isPackage ? styles.timeBtnOn : ''}`}
+                aria-pressed={!isPackage}
+                onClick={() => setIsPackage(false)}
+              >
+                <span className={styles.timeLabel}>1 session</span>
+                <span className={styles.timeNote}>
+                  {money(pricing.privateSession)}
+                </span>
+              </button>
+              <button
+                type="button"
+                className={`${styles.timeBtn} ${isPackage ? styles.timeBtnOn : ''}`}
+                aria-pressed={isPackage}
+                onClick={() => setIsPackage(true)}
+              >
+                <span className={styles.timeLabel}>Package of four</span>
+                <span className={styles.timeNote}>
+                  {money(pricing.privatePackage)} — save{' '}
+                  {money(pricing.privateSession * 4 - pricing.privatePackage)}
+                </span>
+              </button>
+            </div>
+          )}
+
+          {people >= CORPORATE_INTRO_MIN_PARTICIPANTS && (
+            <div className={`${styles.tierChoice} ${styles.indent}`}>
+              <button
+                type="button"
+                className={`${styles.timeBtn} ${!isCorporateIntro ? styles.timeBtnOn : ''}`}
+                aria-pressed={!isCorporateIntro}
+                onClick={() => setIsCorporateIntro(false)}
+              >
+                <span className={styles.timeLabel}>Standard group</span>
+                <span className={styles.timeNote}>Per-participant group rate</span>
+              </button>
+              <button
+                type="button"
+                className={`${styles.timeBtn} ${isCorporateIntro ? styles.timeBtnOn : ''}`}
+                aria-pressed={isCorporateIntro}
+                onClick={() => setIsCorporateIntro(true)}
+              >
+                <span className={styles.timeLabel}>Corporate Introductory</span>
+                <span className={styles.timeNote}>
+                  First-time organizational clients
+                </span>
+              </button>
+            </div>
+          )}
         </div>
 
         {/* ---------- 02 Date ---------- */}

@@ -138,6 +138,15 @@
   gap: 12px;
 }
 
+/* The package/corporate-intro pricing-tier choice under step 01 - reuses
+   .timeBtn's two-line card, just in a 2-column grid instead of 3. */
+.tierChoice {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  margin-top: 12px;
+}
+
 .timesNote {
   margin: 12px 0 0;
   font-size: 13.5px;

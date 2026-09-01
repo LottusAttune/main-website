@@ -77,6 +77,11 @@ CREATE TABLE IF NOT EXISTS bookings (
   session_time_2  TEXT,
   team_addon      BOOLEAN NOT NULL DEFAULT FALSE,
   refreshments    BOOLEAN NOT NULL DEFAULT FALSE,
+  -- Private bookings only: a package of four rather than a single session.
+  is_package         BOOLEAN NOT NULL DEFAULT FALSE,
+  -- First-time organizational clients only, minimum 7 participants - a
+  -- different price formula from the regular per-participant group rate.
+  is_corporate_intro BOOLEAN NOT NULL DEFAULT FALSE,
   discount_code   TEXT,
   gratuity        INTEGER NOT NULL DEFAULT 0,
   estimated_total INTEGER NOT NULL DEFAULT 0,
@@ -88,6 +93,11 @@ CREATE TABLE IF NOT EXISTS bookings (
   calendar_event_id_2 TEXT,
   created_at      TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
+
+-- Table predates the package/corporate-introductory pricing tiers - add
+-- them for existing databases.
+ALTER TABLE bookings ADD COLUMN IF NOT EXISTS is_package BOOLEAN NOT NULL DEFAULT FALSE;
+ALTER TABLE bookings ADD COLUMN IF NOT EXISTS is_corporate_intro BOOLEAN NOT NULL DEFAULT FALSE;
 
 -- Table predates the company field - add it for existing databases.
 ALTER TABLE bookings ADD COLUMN IF NOT EXISTS company TEXT;

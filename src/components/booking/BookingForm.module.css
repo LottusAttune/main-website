@@ -75,6 +75,37 @@
   color: var(--color-cream-text);
 }
 
+.gratuityRow {
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 6px;
+}
+
+.gratuityBtn {
+  flex: 1 1 0;
+  padding: 10px 8px;
+  min-width: 0;
+  min-height: 42px;
+  border-radius: var(--radius-pill);
+  border: 1px solid rgba(59, 46, 36, 0.22);
+  background: var(--color-cream-raised);
+  color: var(--color-ink);
+  font-size: 12.5px;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: all 0.22s ease;
+}
+
+.gratuityBtn:hover {
+  border-color: var(--gold-rim);
+}
+
+.gratuityBtnOn {
+  border-color: var(--color-ink);
+  background: var(--gradient-button-dark);
+  color: var(--color-cream-text);
+}
+
 .partySelect {
   min-width: 190px;
   width: auto;

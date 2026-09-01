@@ -46,7 +46,7 @@ export function BookingForm({
   const [time, setTime] = useState<string | null>(null);
   const [time2, setTime2] = useState<string | null>(null);
   const [teamAddon, setTeamAddon] = useState(false);
-  const [gratuityChoice, setGratuityChoice] = useState<GratuityChoice>(0);
+  const [gratuityChoice, setGratuityChoice] = useState<GratuityChoice>(15);
   const [customGratuity, setCustomGratuity] = useState('');
   const [codeInput, setCodeInput] = useState('');
   const [code, setCode] = useState<CodeState>({
@@ -372,12 +372,12 @@ export function BookingForm({
             <h2 className={styles.stepTitle}>Would you like to include gratuity?</h2>
           </div>
           <p className={styles.stepNote}>Entirely optional</p>
-          <div className={`${styles.partyRow} ${styles.indent}`}>
+          <div className={`${styles.gratuityRow} ${styles.indent}`}>
             {GRATUITY_PERCENTS.map((pct) => (
               <button
                 key={pct}
                 type="button"
-                className={`${styles.partyBtn} ${gratuityChoice === pct ? styles.partyBtnOn : ''}`}
+                className={`${styles.gratuityBtn} ${gratuityChoice === pct ? styles.gratuityBtnOn : ''}`}
                 aria-pressed={gratuityChoice === pct}
                 onClick={() => setGratuityChoice(pct)}
               >
@@ -386,11 +386,11 @@ export function BookingForm({
             ))}
             <button
               type="button"
-              className={`${styles.partyBtn} ${gratuityChoice === 'custom' ? styles.partyBtnOn : ''}`}
+              className={`${styles.gratuityBtn} ${gratuityChoice === 'custom' ? styles.gratuityBtnOn : ''}`}
               aria-pressed={gratuityChoice === 'custom'}
               onClick={() => setGratuityChoice('custom')}
             >
-              Other amount
+              Amount
             </button>
           </div>
           {gratuityChoice === 'custom' ? (

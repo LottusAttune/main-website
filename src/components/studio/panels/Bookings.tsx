@@ -1,19 +1,24 @@
 'use client';
 
 import { money } from '@/lib/site';
-import type { BookingRow } from '@/lib/pipeline';
+import { formatStudioDate, type BookingRow } from '@/lib/pipeline';
 import { ExportButton } from '../ExportButton';
 import styles from '../studio.module.css';
 
 const COLUMNS = [
   { header: 'Date', value: (b: BookingRow) => b.sessionDate ?? '' },
   { header: 'Time', value: (b: BookingRow) => b.sessionTime ?? '' },
+  { header: 'Second time', value: (b: BookingRow) => b.sessionTime2 ?? '' },
   { header: 'Client', value: (b: BookingRow) => b.name },
   { header: 'Email', value: (b: BookingRow) => b.email },
   { header: 'Phone', value: (b: BookingRow) => b.phone ?? '' },
   { header: 'Company', value: (b: BookingRow) => b.company ?? '' },
   { header: 'Type', value: (b: BookingRow) => b.type },
   { header: 'Participants', value: (b: BookingRow) => b.participants },
+  {
+    header: 'Team-building add-on',
+    value: (b: BookingRow) => (b.teamAddon ? 'Yes' : 'No'),
+  },
   { header: 'Venue', value: (b: BookingRow) => b.venue },
   { header: 'Value', value: (b: BookingRow) => b.total },
   { header: 'Status', value: (b: BookingRow) => b.status },
@@ -43,9 +48,12 @@ export function Bookings({ bookings }: { bookings: BookingRow[] }) {
       <table className={styles.table}>
         <thead>
           <tr>
-            <th>Date &amp; time</th>
+            <th>Date</th>
+            <th>Time</th>
             <th>Client</th>
+            <th>Company</th>
             <th>Format</th>
+            <th>Add-on</th>
             <th>Venue</th>
             <th>Value</th>
             <th>Status</th>
@@ -54,16 +62,31 @@ export function Bookings({ bookings }: { bookings: BookingRow[] }) {
         <tbody>
           {bookings.map((booking) => (
             <tr key={booking.id}>
+              <td>{formatStudioDate(booking.sessionDate)}</td>
               <td>
-                {booking.sessionDate ?? '—'}
-                {booking.sessionTime ? ` · ${booking.sessionTime}` : ''}
+                <div>{booking.sessionTime ?? '—'}</div>
+                {booking.sessionTime2 ? (
+                  <div className={styles.priceNote}>
+                    + {booking.sessionTime2}
+                  </div>
+                ) : null}
               </td>
               <td>{booking.name}</td>
+              <td>{booking.company ?? '—'}</td>
               <td>
                 {booking.type} ·{' '}
                 {booking.participants === 1
                   ? 'One-on-one'
                   : `${booking.participants} participants`}
+              </td>
+              <td>
+                {booking.teamAddon ? (
+                  <span className={`${styles.pill} ${styles.pillSuccess}`}>
+                    Team-building
+                  </span>
+                ) : (
+                  '—'
+                )}
               </td>
               <td>{booking.venue}</td>
               <td className={styles.numeric}>{money(booking.total)}</td>

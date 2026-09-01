@@ -39,6 +39,8 @@ export type SiteSettings = {
   codes: DiscountCode[];
   /** Specific discovery-call time slots closed for a specific date. */
   blockedCallTimes: BlockedCallTime[];
+  /** Dates with a confirmed session booked - closed for discovery calls too. */
+  bookedEventDates: string[];
 };
 
 const FALLBACK: SiteSettings = {
@@ -47,6 +49,7 @@ const FALLBACK: SiteSettings = {
   leadTimeDays: DEFAULT_LEAD_TIME,
   blockedDates: [],
   blockedCallTimes: [],
+  bookedEventDates: [],
   codes: [
     { code: 'WELCOME20', percentOff: 20, isActive: true },
     { code: 'WELCOME30', percentOff: 30, isActive: true },
@@ -70,12 +73,19 @@ export async function getSettings(): Promise<SiteSettings> {
   if (!isDatabaseConfigured()) return FALLBACK;
 
   try {
-    const [settingsResult, blockedResult, codesResult, blockedCallResult] =
+    const [settingsResult, blockedResult, codesResult, blockedCallResult, eventDatesResult] =
       await Promise.all([
         sql`SELECT * FROM settings WHERE id = TRUE`,
         sql`SELECT day FROM blocked_dates ORDER BY day`,
         sql`SELECT code, percent_off, is_active FROM discount_codes ORDER BY code`,
         sql`SELECT call_date, call_time FROM blocked_call_times ORDER BY call_date, call_time`,
+        sql`
+          SELECT DISTINCT session_date AS day FROM bookings
+          WHERE status IN ('booked', 'complete') AND session_date IS NOT NULL
+          UNION
+          SELECT DISTINCT session_date_2 AS day FROM bookings
+          WHERE status IN ('booked', 'complete') AND session_date_2 IS NOT NULL
+        `,
       ]);
 
     const row = settingsResult.rows[0];
@@ -106,6 +116,7 @@ export async function getSettings(): Promise<SiteSettings> {
         date: toIsoDay(r.call_date),
         time: String(r.call_time),
       })),
+      bookedEventDates: eventDatesResult.rows.map((r) => toIsoDay(r.day)),
     };
   } catch (error) {
     // A misconfigured or unreachable database must not take the site down —

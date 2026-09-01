@@ -27,11 +27,19 @@ export async function POST(request: Request) {
   }
 
   const input = parsed.data;
-  const { blockedDates, blockedCallTimes } = await getSettings();
+  const { blockedDates, blockedCallTimes, bookedEventDates } =
+    await getSettings();
 
   // Reject dates or specific times the owner has closed, even if the client
-  // somehow posted one.
-  if (blockedDates.includes(input.callDate)) {
+  // somehow posted one. Sundays are never open, and a day with a confirmed
+  // session already booked is closed to discovery calls entirely.
+  const [y, m, d] = input.callDate.split('-').map(Number);
+  const isSunday = new Date(y, m - 1, d).getDay() === 0;
+  if (
+    isSunday ||
+    blockedDates.includes(input.callDate) ||
+    bookedEventDates.includes(input.callDate)
+  ) {
     return NextResponse.json(
       { error: 'That date is no longer available.' },
       { status: 409 }

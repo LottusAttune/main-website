@@ -31,6 +31,8 @@ type Props = {
   label: string;
   /** Smaller version for a page with only a date + time to pick, no summary aside. */
   compact?: boolean;
+  /** Days of the week (0 = Sunday) always closed, every week. */
+  closedWeekdays?: readonly number[];
 };
 
 export function Calendar({
@@ -40,6 +42,7 @@ export function Calendar({
   onSelect,
   label,
   compact,
+  closedWeekdays,
 }: Props) {
   const [view, setView] = useState({
     year: earliest.getFullYear(),
@@ -107,7 +110,9 @@ export function Calendar({
         {Array.from({ length: daysInMonth }, (_, i) => {
           const n = i + 1;
           const date = new Date(view.year, view.month, n);
-          const isBlocked = blockedSet.has(isoDay(date));
+          const isBlocked =
+            blockedSet.has(isoDay(date)) ||
+            (closedWeekdays?.includes(date.getDay()) ?? false);
           const tooSoon = date < earliest;
           const open = !isBlocked && !tooSoon;
           const isSelected =

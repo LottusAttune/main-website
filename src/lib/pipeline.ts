@@ -26,6 +26,10 @@ export type Lead = {
   participants: number;
   sessionDate: string | null;
   sessionTime: string | null;
+  /** Split sessions (groups over 12) run a second time slot the same day. */
+  sessionDate2: string | null;
+  sessionTime2: string | null;
+  teamAddon: boolean;
   total: number;
   status: StageKey;
   createdAt: string;
@@ -73,6 +77,23 @@ export type DiscoveryCallRow = {
   status: string;
   createdAt: string;
 };
+
+const MONTHS_SHORT = [
+  'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+  'Jul', 'Aug', 'Sept', 'Oct', 'Nov', 'Dec',
+];
+
+/**
+ * "Sept 05, 2026 (Monday)" instead of a raw ISO string - unambiguous for a
+ * reader, unlike 2026-09-05 which can read as day-first at a glance.
+ */
+export function formatStudioDate(iso: string | null): string {
+  if (!iso) return '—';
+  const [year, month, day] = iso.split('-').map(Number);
+  const date = new Date(year, month - 1, day);
+  const weekday = date.toLocaleDateString('en-US', { weekday: 'long' });
+  return `${MONTHS_SHORT[month - 1]} ${String(day).padStart(2, '0')}, ${year} (${weekday})`;
+}
 
 export type StudioData = {
   leads: Lead[];

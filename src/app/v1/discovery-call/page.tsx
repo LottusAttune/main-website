@@ -18,7 +18,9 @@ export const metadata: Metadata = {
 export const dynamic = 'force-dynamic';
 
 export default async function DiscoveryCallPage() {
-  const { blockedDates, blockedCallTimes } = await getSettings();
+  const { blockedDates, blockedCallTimes, bookedEventDates } =
+    await getSettings();
+  const closedDates = [...new Set([...blockedDates, ...bookedEventDates])];
 
   return (
     <>
@@ -68,7 +70,7 @@ export default async function DiscoveryCallPage() {
           aria-label="Discovery call request"
         >
           <DiscoveryCallForm
-            blockedDates={blockedDates}
+            blockedDates={closedDates}
             blockedCallTimes={blockedCallTimes}
             leadDays={DISCOVERY_CALL_LEAD_DAYS}
           />

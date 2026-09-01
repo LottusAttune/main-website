@@ -60,6 +60,9 @@ export async function getStudioData(): Promise<StudioData> {
     participants: Number(row.participants),
     sessionDate: toIso(row.session_date),
     sessionTime: row.session_time ? String(row.session_time) : null,
+    sessionDate2: toIso(row.session_date_2),
+    sessionTime2: row.session_time_2 ? String(row.session_time_2) : null,
+    teamAddon: Boolean(row.team_addon),
     total: Number(row.estimated_total),
     status: (STAGE_KEYS as string[]).includes(String(row.status))
       ? (String(row.status) as StageKey)

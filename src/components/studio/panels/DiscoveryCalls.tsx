@@ -1,6 +1,6 @@
 'use client';
 
-import type { DiscoveryCallRow } from '@/lib/pipeline';
+import { formatStudioDate, type DiscoveryCallRow } from '@/lib/pipeline';
 import { ExportButton } from '../ExportButton';
 import styles from '../studio.module.css';
 
@@ -38,7 +38,8 @@ export function DiscoveryCalls({ calls }: { calls: DiscoveryCallRow[] }) {
         <table className={styles.table}>
           <thead>
             <tr>
-              <th>Date &amp; time</th>
+              <th>Date</th>
+              <th>Time</th>
               <th>Name</th>
               <th>Email</th>
               <th>Phone</th>
@@ -49,9 +50,8 @@ export function DiscoveryCalls({ calls }: { calls: DiscoveryCallRow[] }) {
           <tbody>
             {calls.map((call) => (
               <tr key={call.id}>
-                <td>
-                  {call.callDate} &middot; {call.callTime}
-                </td>
+                <td>{formatStudioDate(call.callDate)}</td>
+                <td>{call.callTime}</td>
                 <td>{call.name}</td>
                 <td>
                   <a href={`mailto:${call.email}`}>{call.email}</a>

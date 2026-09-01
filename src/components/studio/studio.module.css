@@ -813,11 +813,6 @@
   flex-wrap: wrap;
 }
 
-.menuWrap {
-  position: relative;
-  display: inline-block;
-}
-
 .menuTrigger {
   width: 32px;
   height: 32px;
@@ -838,11 +833,10 @@
   border-color: var(--gold-rim);
 }
 
+/* Positioned inline via JS (fixed, against the trigger's own bounding rect)
+   since it portals to document.body - this only carries its look. */
 .menu {
-  position: absolute;
-  right: 0;
-  top: calc(100% + 6px);
-  z-index: 10;
+  z-index: 100;
   min-width: 140px;
   background: var(--color-cream-raised);
   border: 1px solid var(--hairline-light);

@@ -234,9 +234,6 @@ export function SessionConfigurator({ pricing, footnote }: Props) {
               Available for first-time organizational clients (minimum 7
               participants)
             </span>
-            <span className="choice__note">
-              Starting at {money(CORPORATE_INTRO_BASE_PRICE)}
-            </span>
           </button>
         </div>
 
@@ -255,9 +252,6 @@ export function SessionConfigurator({ pricing, footnote }: Props) {
               <span className="choice__note">
                 One-on-one, customizable based on individual preferences
               </span>
-              <span className="choice__note">
-                {money(pricing.privateSession)} per session
-              </span>
             </button>
             <button
               type="button"
@@ -270,8 +264,7 @@ export function SessionConfigurator({ pricing, footnote }: Props) {
             >
               <span className="choice__title">Package of four</span>
               <span className="choice__note">
-                {money(pricing.privatePackage)} – save{' '}
-                {money(pricing.privateSession * 4 - pricing.privatePackage)}
+                Save {money(pricing.privateSession * 4 - pricing.privatePackage)}
               </span>
             </button>
           </div>

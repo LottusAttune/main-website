@@ -154,7 +154,7 @@ export async function sendDiscoveryCallEmails(input: {
 
   const dayLabel = formatCallDay(input.callDate);
   const verb = input.rescheduled ? 'rescheduled' : 'confirmed';
-  const rescheduleUrl = `${SITE.url}/v1/discovery-call/reschedule?token=${input.rescheduleToken}`;
+  const rescheduleUrl = `${SITE.url}/discovery-call/reschedule?token=${input.rescheduleToken}`;
 
   const clientHtml = wrapperHtml(`
     <p style="margin:0 0 10px;">Hi ${input.name},</p>

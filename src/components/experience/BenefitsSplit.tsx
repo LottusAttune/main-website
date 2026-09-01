@@ -3,7 +3,7 @@
 import { useState } from 'react';
 
 import { ChevronIcon } from '@/components/common/ChevronIcon';
-import styles from '@/app/v1/experience/experience.module.css';
+import styles from '@/app/experience/experience.module.css';
 
 type BenefitsGroup = {
   items: readonly { title: string; body: string }[];

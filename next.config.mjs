@@ -8,6 +8,17 @@ const nextConfig = {
     // hero and gallery photography is served at a high quality.
     qualities: [75, 90],
   },
+  async redirects() {
+    return [
+      // /v1 was promoted to be the site itself - anyone with an old /v1/...
+      // bookmark lands on the same page at its new, clean URL.
+      { source: '/v1', destination: '/', permanent: true },
+      { source: '/v1/:path*', destination: '/:path*', permanent: true },
+      // Benefits and What's Included are now sections within /experience.
+      { source: '/benefits', destination: '/experience', permanent: true },
+      { source: '/included', destination: '/experience#included', permanent: true },
+    ];
+  },
   async headers() {
     return [
       {

@@ -2,7 +2,7 @@
 
 import Image from 'next/image';
 
-import styles from '@/app/v1/experience/experience.module.css';
+import styles from '@/app/experience/experience.module.css';
 
 type Props = {
   n: string;

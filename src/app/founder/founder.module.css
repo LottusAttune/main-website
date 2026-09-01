@@ -1,29 +1,44 @@
+/* Trimmed from --space-section-short (a full section's worth of top/bottom
+   air) so the heading + portrait/bio fit in one screen on both laptop and
+   larger displays, matching the same "everything visible without a
+   pointless scroll" goal used on the Included section. */
 .intro {
-  padding: var(--space-section-short) var(--space-gutter) clamp(52px, 7vw, 100px);
+  padding: clamp(10px, 1.4vw, 20px) var(--space-gutter) clamp(12px, 1.6vw, 22px);
   max-width: var(--width-content);
   margin: 0 auto;
 }
 
-.quote {
-  margin: 0 0 80px;
-  font-family: var(--font-display);
-  font-weight: 300;
-  font-size: clamp(30px, 3.9vw, 60px);
-  line-height: 1.26;
-  max-width: 1150px;
-  text-wrap: pretty;
+/* Same size/weight as the Experience page's h1 (.title there) - this is
+   now the actual page heading, replacing the small "About the Founder"
+   eyebrow label that used to sit above the (much larger) quote. */
+.title {
+  font-size: clamp(26px, 3.4vw, 48px);
+  line-height: 1.14;
+  margin: 0 0 clamp(8px, 1.2vw, 14px);
+  max-width: 1000px;
 }
 
+/* Narrowed from an even auto-fit split (which gave the portrait roughly
+   half the row's width) to a fixed, much narrower first column. A tall
+   portrait shown "whole, at natural proportion" (never cropped, per the
+   site's photo rule) gets proportionally taller the wider its column is -
+   at the old ~50/50 split it alone was too tall to fit one screen. This
+   keeps the same whole, uncropped image, just displayed smaller. */
+/* Gap's upper bound widened (28-48px before) so at wider viewports the bio
+   column starts roughly where "Founder" ends in the heading above it,
+   instead of noticeably earlier. */
 .grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: clamp(40px, 5vw, 76px);
+  grid-template-columns: minmax(190px, 235px) 1fr;
+  gap: clamp(28px, 3.2vw, 96px);
   align-items: start;
 }
 
+/* Straight edges, not the 28px rounding this carried before - matches her
+   preference for a flat, uncurved edge on this photo. */
 .portrait {
   position: relative;
-  border-radius: 28px;
+  border-radius: 0;
   overflow: hidden;
 }
 
@@ -36,38 +51,205 @@
 .bio {
   display: flex;
   flex-direction: column;
-  gap: 24px;
-  font-size: var(--text-body);
-  line-height: 1.9;
+  gap: 8px;
+  font-size: 14.5px;
+  line-height: 1.42;
   color: var(--color-ink-body);
-  max-width: 780px;
+  text-align: justify;
+  max-width: 860px;
+}
+
+/* The founder-guide line ("I bridge the gap...") - previously a huge
+   opening quote above the portrait/bio grid, now sits after the bio text
+   as a small closing line, centered, in the same font treatment as
+   "Two-hour transformative journey..." on the Experience page
+   (.gallerySubtitle there): weight 400, gold text, no italics. The <br/>
+   in the JSX splits it at its natural clause break ("...restoration," /
+   "productivity...") rather than leaving it to wrap wherever the width
+   happens to break it. */
+.closingQuote {
+  margin: 8px 0 0;
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: clamp(16px, 1.8vw, 19px);
+  line-height: 1.35;
+  color: var(--color-gold-text);
+  text-align: center;
+}
+
+/* First name only, no title - "Facilitator"/"Founder" is already clear
+   from the page itself and she didn't want it re-emphasized. Same
+   signature treatment (small flourish + letter-spaced name) already used
+   for reviewer names elsewhere on the site, reused here rather than
+   invented fresh - reads as a signature under the closing quote instead
+   of a caption on the photo. */
+.signature {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin: 18px 0 0;
+  color: var(--color-gold-text);
+}
+
+.wave {
+  flex: none;
+  color: inherit;
+}
+
+.signatureName {
+  font-size: 11.5px;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--color-gold-text);
 }
 
 .groupTitle {
+  margin-bottom: 10px;
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: clamp(24px, 2.6vw, 32px);
+  letter-spacing: 0.01em;
+  text-transform: none;
+}
+
+/* Same metrics as .groupTitle, standalone rather than combined with the
+   global eyebrow/eyebrow--dark classes, so it isn't tied to their
+   light-on-dark color - this sits on the light card instead. */
+.groupTitleLight {
+  margin-bottom: 10px;
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: clamp(24px, 2.6vw, 32px);
+  letter-spacing: 0.01em;
+  color: var(--color-ink);
+}
+
+/* Trimmed from --space-section-short (56-110px top and bottom) - with the
+   cards themselves already fairly compact, that much air above and below
+   read as excess rather than intentional breathing room, out of step with
+   the tighter rhythm the rest of this page uses. */
+.credSection {
+  padding-top: clamp(36px, 5vw, 64px);
+  padding-bottom: clamp(36px, 5vw, 64px);
+}
+
+/* Beige backdrop (section--soft) with one dark and one light card, echoing
+   the Benefits section's own palette - beige base, a dark-brown card and
+   a near-white one - rather than the previous single full-width dark
+   section this used to be. */
+.credSplit {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: clamp(20px, 2.4vw, 32px);
+  align-items: start;
+}
+
+@media (max-width: 860px) {
+  .credSplit {
+    grid-template-columns: 1fr;
+  }
+}
+
+.credCol {
+  padding: clamp(26px, 2.8vw, 38px);
+  border-radius: 0;
+}
+
+.videoShell {
+  margin-top: clamp(20px, 2.4vw, 32px);
+}
+
+/* Heading sits outside the band, on the page's own beige, same as before -
+   the band is a tight backing strip for the videos only, not a padded card
+   that also has to hold a heading. */
+.videoHeading {
   margin-bottom: 14px;
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: clamp(17px, 1.8vw, 20px);
+  color: var(--color-gold-text);
+  text-align: center;
 }
 
-.groupNote {
-  margin: 0 0 34px;
-  font-size: 16px;
-  line-height: 1.8;
-  color: rgba(239, 230, 218, 0.62);
+/* No top/bottom padding - the band's own top and bottom edges are exactly
+   the videos' top and bottom edges, not a padded card around them. Side
+   padding stays, both so the outer videos don't sit flush against the
+   band's own rounded corners and for a little breathing room.
+
+   Flat colour, not var(--gradient-deep) - a gradient's stops are always
+   remapped across whichever box renders it, so the identical gradient
+   token looks like a different shade in this short, wide band than it
+   does in the tall Training card. --color-ink-deep is the gradient's own
+   darker stop, so this reads as the same dark brown as the card without
+   depending on the two boxes sharing a height. */
+.videoBand {
+  background: var(--color-ink-deep);
+  border-radius: 0;
+  padding: 0 clamp(16px, 2vw, 24px);
+  overflow: hidden;
+}
+
+.videoGrid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 280px));
+  justify-content: center;
+  gap: clamp(16px, 2vw, 24px);
+}
+
+@media (max-width: 720px) {
+  .videoGrid {
+    grid-template-columns: minmax(0, 280px);
+  }
+}
+
+/* Same flat colour as .videoBand, so there's no gap or seam where the
+   page's own background could show through around a thumbnail's edge -
+   the video (once it loads) is the only thing visible on top of it. */
+.videoFrame {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  background: var(--color-ink-deep);
+}
+
+.videoFrame iframe {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: none;
+  outline: none;
+}
+
+/* Reserved slot for the third video, not live yet - a dashed outline (no
+   fill) reads as "this spot is intentional" without adding a second box
+   color the way a filled placeholder would. */
+.videoFramePending {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  border: 1px dashed rgba(198, 169, 122, 0.4);
+  text-align: center;
+  font-size: 13px;
+  letter-spacing: 0.02em;
+  color: #c8beb2;
+}
+
+.credColDark {
+  background: var(--gradient-deep);
+}
+
+.credColLight {
+  background: var(--color-cream-raised);
+}
+
+.credIntro {
+  margin: 0 0 4px;
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--color-ink-body);
   max-width: 60ch;
-}
-
-.group {
-  max-width: 1000px;
-  margin-bottom: clamp(56px, 7vw, 90px);
-}
-
-.groupLast {
-  max-width: 1000px;
-}
-
-.clients {
-  margin: 70px 0 0;
-  font-size: var(--text-body-sm);
-  line-height: 1.85;
-  color: rgba(239, 230, 218, 0.6);
-  max-width: 1000px;
 }

@@ -371,16 +371,16 @@ export function SessionConfigurator({ pricing, footnote }: Props) {
         </div>
         <div className={styles.summaryActions}>
           <Link
-            href="/v1/experience#included"
+            href="/experience#included"
             className={`btn btn--sm btn--outline-dark btn--wide ${styles.includedBtn}`}
           >
             See What&apos;s Included
           </Link>
           <div className={styles.summaryActionsRow}>
-            <Link href="/v1/book" className="btn btn--sm btn--cream btn--wide">
+            <Link href="/book" className="btn btn--sm btn--cream btn--wide">
               Book this session
             </Link>
-            <Link href="/v1/gift" className={`btn btn--sm btn--wide ${styles.giftBtn}`}>
+            <Link href="/gift" className={`btn btn--sm btn--wide ${styles.giftBtn}`}>
               Gift it
             </Link>
           </div>

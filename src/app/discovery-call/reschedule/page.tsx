@@ -10,7 +10,7 @@ import { DISCOVERY_CALL_LEAD_DAYS, SITE } from '@/lib/site';
 
 export const metadata: Metadata = {
   robots: { index: false, follow: false },
-  title: 'Reschedule Your Call (v1)',
+  title: 'Reschedule Your Call',
   description: 'Change the date or time of your Lotus Attune discovery call.',
 };
 
@@ -45,7 +45,7 @@ export default async function ReschedulePage({
 
   return (
     <>
-      <SiteNav basePath="/v1" />
+      <SiteNav />
       <Reveal />
 
       <main>

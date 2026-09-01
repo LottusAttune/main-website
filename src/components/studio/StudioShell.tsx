@@ -114,7 +114,7 @@ export function StudioShell({ data, settings, databaseReady }: Props) {
         </div>
 
         <div className={styles.sidebarFoot}>
-          <Link href="/v1" className={`btn btn--outline ${styles.footLink}`}>
+          <Link href="/" className={`btn btn--outline ${styles.footLink}`}>
             View website
           </Link>
           <form action="/api/studio/logout" method="post">

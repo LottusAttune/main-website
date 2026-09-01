@@ -1,48 +1,139 @@
 import type { Metadata } from 'next';
 
-import { BookGift, SilvanaFooter, SilvanaNav } from '@/components/silvana/Chrome';
-import { SILVANA_EXPERIENCE } from '@/data/silvana';
-import { assetUrl } from '@/lib/images';
-import styles from '@/components/silvana/silvana.module.css';
+import { Reveal } from '@/components/common/Reveal';
+import { SiteFooter } from '@/components/chrome/SiteFooter';
+import { SiteNav } from '@/components/chrome/SiteNav';
+import { StickyBookBar } from '@/components/chrome/StickyBookBar';
+import { BenefitsSplit } from '@/components/experience/BenefitsSplit';
+import { ExperienceComponentsGrid } from '@/components/experience/ExperienceComponentsGrid';
+import { Gallery } from '@/components/experience/Gallery';
+import {
+  BENEFITS_INDIVIDUAL,
+  BENEFITS_TEAMS,
+  COMPONENTS,
+  GALLERY,
+  INCLUDED_FULL,
+  JOURNEY_INTRO,
+} from '@/data/content';
+import { asset } from '@/lib/images';
+import styles from './experience.module.css';
 
 export const metadata: Metadata = {
   title: 'The Experience',
-  description: SILVANA_EXPERIENCE.intro,
+  description:
+    'A two-hour guided journey combining neuroscience education, intention setting, somatic and mindfulness practice, immersive live sound, and reintegration.',
 };
 
+const STEP_PHOTOS = {
+  '01': { name: 'photo-education', position: 'center 20%' },
+  '02': { name: 'photo-intention', position: 'center 55%' },
+  '03': { name: 'journey-intention', position: 'center 18%' },
+  '04': { name: 'crystal-bowls-sil', position: 'center 74%' },
+  '05': { name: 'photo-reintegration-alt2', position: 'center 45%', mirror: true },
+} as const;
+
 export default function ExperiencePage() {
+
   return (
-    <div className={styles.page}>
-      <SilvanaNav />
-      <main className={styles.section}>
-        <div className={styles.shell}>
-          <h1 className={styles.pageTitle}>{SILVANA_EXPERIENCE.heading}</h1>
-          <p className={styles.pageIntro}>{SILVANA_EXPERIENCE.intro}</p>
+    <>
+      <SiteNav />
+      <Reveal />
 
-          <div style={{ marginTop: 'clamp(30px, 4vw, 50px)' }}>
-            {SILVANA_EXPERIENCE.components.map((component) => (
-              <div key={component.title} className={styles.componentRow}>
-                <span
-                  className={styles.componentIcon}
-                  style={{ backgroundImage: assetUrl(component.icon) }}
-                  aria-hidden="true"
-                />
-                <p className={styles.componentBody}>
-                  <strong>{component.title}:</strong> {component.body}
-                </p>
+      <main>
+        {/* ---------- Intro ---------- */}
+        <section className={styles.intro} aria-labelledby="experience-heading">
+          <h1
+            id="experience-heading"
+            className={`display h1 ${styles.title}`}
+          >
+            {JOURNEY_INTRO.heading}
+          </h1>
+          <div className={styles.subtitle}>{JOURNEY_INTRO.subtitle}</div>
+          <div className={styles.introGrid}>
+            <p className="body">{JOURNEY_INTRO.longIntro}</p>
+            <p className="body">{JOURNEY_INTRO.lede}</p>
+          </div>
+        </section>
+
+        {/* ---------- Five components ---------- */}
+        <section className={styles.block} aria-label="The five components">
+          <ExperienceComponentsGrid
+            cards={COMPONENTS.map((step) => {
+              const stepPhoto = STEP_PHOTOS[step.n];
+              const photo = asset(stepPhoto.name);
+              return {
+                n: step.n,
+                title: step.title,
+                body: step.body,
+                photoSrc: photo.src,
+                photoWidth: photo.width,
+                photoHeight: photo.height,
+                photoPosition: stepPhoto.position,
+                mirror: 'mirror' in stepPhoto,
+              };
+            })}
+          />
+        </section>
+
+        {/* ---------- Benefits ---------- */}
+        <section
+          className={`section--soft ${styles.benefitsSection}`}
+          aria-label="Benefits"
+        >
+          <div className={`shell ${styles.benefitsShell}`}>
+            <h2 className={`display ${styles.benefitsHeading}`}>Benefits</h2>
+          </div>
+
+          <div className="shell">
+            <BenefitsSplit teams={BENEFITS_TEAMS} individual={BENEFITS_INDIVIDUAL} />
+          </div>
+        </section>
+
+        {/* ---------- Gallery ---------- */}
+        <section
+          id="included"
+          className={styles.galleryBlock}
+          aria-labelledby="gallery-heading"
+        >
+          <div className={styles.galleryHead}>
+            <div style={{ minWidth: 0 }}>
+              <h2
+                id="gallery-heading"
+                className={`display ${styles.galleryHeading}`}
+              >
+                What is Included
+              </h2>
+              <div className={`display ${styles.gallerySubtitle}`}>
+                Two-hour transformative journey included in all offerings
               </div>
-            ))}
+            </div>
+            <p className={styles.sectionHeadNote}>
+              Private sessions, groups and organizations
+              <br />
+              Venue rental, comfort provisions, and refreshments are
+              included in the package price
+            </p>
           </div>
 
-          <div className={styles.sandPanel}>
-            <p className={styles.sandPanelTitle}>{SILVANA_EXPERIENCE.panelTitle}</p>
-            <p className={styles.sandPanelBody}>{SILVANA_EXPERIENCE.panelBody}</p>
-          </div>
+          <Gallery items={GALLERY} />
+        </section>
 
-          <BookGift />
-        </div>
+        {/* ---------- Included list ---------- */}
+        <section className={styles.includedSection} aria-label="Everything included">
+          {INCLUDED_FULL.map((text, i) => (
+            <div key={text} className="numbered-row">
+              <span className="numbered-row__n">
+                {String(i + 1).padStart(2, '0')}
+              </span>
+              <span className="numbered-row__text">{text}</span>
+            </div>
+          ))}
+          <div className="rule-end" />
+        </section>
       </main>
-      <SilvanaFooter />
-    </div>
+
+      <SiteFooter />
+      <StickyBookBar />
+    </>
   );
 }

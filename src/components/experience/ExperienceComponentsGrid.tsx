@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useState } from 'react';
 
-import styles from '@/app/v1/experience/experience.module.css';
+import styles from '@/app/experience/experience.module.css';
 import { ExperienceComponentCard } from './ExperienceComponentCard';
 
 export type ExperienceComponentCardData = {

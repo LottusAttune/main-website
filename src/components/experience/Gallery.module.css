@@ -163,7 +163,7 @@
   flex: none;
   padding: 0;
   border: none;
-  border-radius: var(--radius-thumb);
+  border-radius: 0;
   overflow: hidden;
   cursor: pointer;
   outline: 1px solid var(--hairline-light);

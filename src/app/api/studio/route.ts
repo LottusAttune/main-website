@@ -175,7 +175,6 @@ export async function POST(request: Request) {
           await sql`DELETE FROM blocked_call_times WHERE call_date = ${input.day} AND call_time = ${input.time}`;
         }
         revalidatePath('/discovery-call');
-        revalidatePath('/v1/discovery-call');
         break;
 
       case 'toggleCode':
@@ -213,7 +212,6 @@ export async function POST(request: Request) {
           await sql`UPDATE discovery_calls SET status = 'scheduled' WHERE id = ${input.id}`;
         }
         revalidatePath('/discovery-call');
-        revalidatePath('/v1/discovery-call');
         break;
 
       case 'deleteDiscoveryCall': {
@@ -224,7 +222,6 @@ export async function POST(request: Request) {
         if (eventId) await deleteCalendarEvent(String(eventId));
         await sql`DELETE FROM discovery_calls WHERE id = ${input.id}`;
         revalidatePath('/discovery-call');
-        revalidatePath('/v1/discovery-call');
         break;
       }
 
@@ -261,7 +258,6 @@ export async function POST(request: Request) {
           throw error;
         }
         revalidatePath('/discovery-call');
-        revalidatePath('/v1/discovery-call');
         break;
 
       case 'cancelBooking':

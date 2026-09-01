@@ -1,5 +1,9 @@
+/* Trimmed well below the shared .section padding - reads in one screen
+   rather than needing a scroll. Top padding is smaller than the bottom -
+   without the eyebrow that used to sit here, the old symmetric padding left
+   an empty gap above the heading. */
 .intro {
-  padding: var(--space-section-short) var(--space-gutter) clamp(40px, 5vw, 72px);
+  padding: clamp(12px, 1.6vw, 20px) var(--space-gutter) clamp(24px, 3vw, 36px);
   max-width: var(--width-content);
   margin: 0 auto;
 }
@@ -8,180 +12,548 @@
   margin-bottom: 30px;
 }
 
+/* A notch below --text-h2 (the size used for section headings on the home
+   page, e.g. "In their words") - at laptop widths the full text-h2 clamp
+   wrapped this heading to 2 lines, eating into the room needed for the
+   photo cards below. */
 .title {
-  margin: 0 0 18px;
+  font-size: clamp(26px, 3.4vw, 48px);
+  line-height: 1.14;
+  margin: 0 0 14px;
   max-width: 1000px;
 }
 
 .subtitle {
   font-family: var(--font-display);
   font-weight: 400;
-  font-size: clamp(20px, 2.4vw, 26px);
+  font-size: clamp(18px, 2vw, 22px);
   color: var(--color-gold-text);
-  margin-bottom: 46px;
+  margin-bottom: 30px;
 }
 
+/* No max-width of its own - matches the full width of the photo row below
+   (both sit inside .intro/.block, which share the same --width-content
+   container), so the right edge of the second column lines up with the
+   right edge of the Reintegration photo instead of stopping short. */
 .introGrid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
-  gap: clamp(28px, 4vw, 52px);
-  max-width: var(--width-prose);
+  grid-template-columns: 1fr;
+  gap: clamp(20px, 3vw, 36px);
+  align-items: start;
 }
 
+/* Two equal-width columns - the paragraphs are different lengths on
+   purpose (two separate thoughts), so they naturally end at different
+   points, but both start at the same top line with generous space between
+   them. */
+@media (min-width: 760px) {
+  .introGrid {
+    grid-template-columns: 1fr 1fr;
+    gap: clamp(24px, 3vw, 40px);
+  }
+}
+
+.introGrid p {
+  /* A touch below --text-body-sm (15.5px) - small enough that the longer
+     paragraph wraps to 4 lines instead of 5 even at laptop widths. */
+  font-size: 15px;
+  text-align: justify;
+}
+
+/* The modal (see .componentOverlay below) never overlaps Benefits, so this
+   doesn't need to reserve clearance for an open card the way an in-place
+   reveal would - just a bit of normal breathing room before the section
+   below. */
 .block {
-  padding: 0 var(--space-gutter) clamp(56px, 7vw, 100px);
+  padding: 0 var(--space-gutter) clamp(20px, 2.6vw, 32px);
   max-width: var(--width-content);
   margin: 0 auto;
 }
 
 /* ---------- Five components ---------- */
 
-.componentRow {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 16px clamp(20px, 3vw, 40px);
-  padding: clamp(26px, 3vw, 38px) 0;
-  border-top: 1px solid rgba(59, 46, 36, 0.16);
+/* align-items: start keeps each card sized to its own content - without it,
+   grid's default stretch makes every card in the row grow to match whichever
+   one has its details open, so the whole row visibly shifts for an unrelated
+   card's toggle. */
+.componentGrid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  align-items: start;
+  gap: 16px;
 }
 
-.componentIcon {
-  display: block;
-  flex: none;
-  width: 92px;
-  height: 92px;
-  background-repeat: no-repeat;
-  background-position: center;
-  background-size: contain;
-  mix-blend-mode: multiply;
+@media (max-width: 1024px) {
+  .componentGrid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 760px) {
+  .componentGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 480px) {
+  .componentGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* The shared .card class sets a 26px radius and a hairline border on all
+   four corners - square corners here instead (photo flush square at the
+   top, matching the home page's path cards), and no border line. Not
+   card--lift: the hover lift/translate read as unwanted motion across a row
+   of five - hovering keeps the shadow/border change below without the
+   movement. */
+.componentCard {
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+  overflow: hidden;
+  border: none;
+  border-radius: 0 0 6px 6px;
+}
+
+.componentCard:hover {
+  border-color: var(--gold-rim-strong);
+  box-shadow: var(--shadow-card-hover);
+}
+
+.componentPhoto {
+  position: relative;
+  aspect-ratio: 4 / 5;
+  overflow: hidden;
+  min-height: 0;
+}
+
+.componentPhoto img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.componentCardBody {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  gap: 10px;
+  /* Bottom trimmed smaller than the top - the leftover white space below the
+     text read as too much empty margin. */
+  padding: clamp(18px, 2vw, 22px) clamp(18px, 2vw, 20px) clamp(12px, 1.4vw, 16px);
+}
+
+/* Reserves room for a wrapped 2-line title - so every card's title block is
+   the same height regardless of whether this particular title wraps to 1 or
+   2 lines, keeping all five cards' toggles (and their bottom edges) level
+   with each other. */
+.componentHead {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-height: 74px;
 }
 
 .componentNumber {
-  flex: none;
-  width: 32px;
   font-family: var(--font-display);
   font-weight: 400;
-  font-size: 19px;
+  font-size: 15px;
   color: var(--color-gold-text);
 }
 
 .componentTitle {
   font-family: var(--font-display);
   font-weight: 300;
-  font-size: var(--text-h3);
+  font-size: 19px;
   margin: 0;
-  flex: 1 1 240px;
-  min-width: 0;
+  line-height: 1.25;
 }
 
-.componentBody {
-  margin: 0;
-  font-size: 16.5px;
-  line-height: 1.85;
-  color: var(--color-ink-body);
-  flex: 2 1 340px;
-  min-width: 0;
+/* Opens .componentOverlay on click instead of showing all five descriptions
+   at once - keeps the row reading as five photos and titles, not a wall of
+   text, while the full wording stays one tap away. */
+.componentToggle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0;
+  background: none;
+  border: none;
+  font-size: 12.5px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--color-gold-text);
+  cursor: pointer;
 }
 
-.featurePair {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 20px;
-  margin-top: clamp(40px, 5vw, 70px);
+/* ---------- Component detail modal ---------- */
+
+/* Same centered-dialog pattern as the review cards' "Read full review" -
+   every card looks identical when open (same size, same position), so a
+   short description and a long one never read as uneven, and it can never
+   overlap the Benefits panel below. */
+.componentOverlay {
+  position: fixed;
+  inset: 0;
+  z-index: 210;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: clamp(20px, 5vw, 60px);
+  background: rgba(30, 23, 17, 0.86);
+  backdrop-filter: blur(6px);
+  border: none;
 }
 
-/* 16:9 matches the wide session photo exactly, so it is never cropped. */
-.featureImage {
+.componentModal {
   position: relative;
-  aspect-ratio: 16 / 9;
-  border-radius: var(--radius-card);
-  overflow: hidden;
+  width: 100%;
+  max-width: 560px;
+  max-height: 86vh;
+  overflow: auto;
+  text-align: left;
+  background: var(--gradient-card);
+  border: 1px solid rgba(168, 135, 90, 0.45);
+  border-radius: var(--radius-lg);
+  box-shadow: 0 60px 120px -50px rgba(0, 0, 0, 0.85);
+  padding: clamp(32px, 4vw, 48px);
 }
 
-.featureImage img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: center 40%;
+.componentModalNumber {
+  display: block;
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: 15px;
+  color: var(--color-gold-text);
+  margin-bottom: 6px;
+}
+
+/* The title stays visible at the top of the modal (rather than disappearing
+   along with the photo/toggle) so it's always clear which of the five
+   topics is being read. */
+.componentModalTitle {
+  font-family: var(--font-display);
+  font-weight: 300;
+  font-size: clamp(24px, 2.6vw, 30px);
+  line-height: 1.2;
+  margin: 0 0 20px;
+}
+
+.componentModalBody {
+  margin: 0;
+  font-size: var(--text-body);
+  line-height: 1.8;
+  color: var(--color-ink-strong);
+}
+
+/* Quiet enough not to compete with the description above it - just enough
+   of a nudge that a first-time visitor doesn't feel stuck inside the modal.
+   Solid --color-ink-body (not an alpha blend) - still clears 7:1 against
+   this modal's background at both ends of its gradient. */
+.componentModalHint {
+  margin: 22px 0 0;
+  font-size: 12px;
+  letter-spacing: 0.02em;
+  color: var(--color-ink-body);
 }
 
 /* ---------- Benefits ---------- */
 
-.sectionHead {
+/* Trimmed further on both ends - between this and the panel's own internal
+   padding below, the section was running taller than a laptop screen could
+   show in one view. The background color change at this section's edge
+   already signals the new section on its own, so it doesn't need a large
+   empty gap on top of that to do the same job. */
+.benefitsSection {
+  padding: clamp(16px, 2vw, 24px) 0 clamp(32px, 4vw, 48px);
+}
+
+/* The shared .shell class only caps max-width, with no side gutter of its
+   own - every other section on this page (.intro, .block, .galleryBlock)
+   pairs that same max-width with its own var(--space-gutter) padding, so
+   without it here the Benefits panels ran wider than everything else on
+   the page instead of lining up with it. */
+.benefitsShell {
+  padding-bottom: clamp(10px, 1.4vw, 16px);
+  padding-left: var(--space-gutter);
+  padding-right: var(--space-gutter);
+}
+
+/* Matches .title (the "A Journey to Reset, Align and Thrive" heading) -
+   this was on its own bigger scale, which read as an inconsistent jump in
+   heading sizes on the same page. */
+.benefitsHeading {
+  margin: 0;
+  font-weight: 300;
+  font-size: clamp(26px, 3.4vw, 48px);
+  line-height: 1.14;
+}
+
+/* Two columns, one dark (Corporate) and one light (Individuals) - echoes
+   the Guide section's dark treatment on the home page instead of the flat
+   beige card language used elsewhere on this page.
+
+   Each column is its own independent flex column (not row-paired with the
+   other side) - an open item's description pushes the rest of its own
+   column down in normal flow, without stretching or leaving blank space in
+   the opposite column, which a shared-grid-row pairing would otherwise do.
+
+   Fully square corners, no radius - kept flat rather than the soft 6px
+   used elsewhere on the page. overflow: hidden still lives here (rather
+   than on each cell) so the column-gap seam and column backgrounds stay
+   clipped to one clean rectangle. */
+.benefitsSplit {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-items: start;
+  column-gap: 2px;
+  border-radius: 0;
+  overflow: hidden;
+  padding-left: var(--space-gutter);
+  padding-right: var(--space-gutter);
+}
+
+@media (max-width: 760px) {
+  .benefitsSplit {
+    grid-template-columns: 1fr;
+  }
+}
+
+.benefitsCol {
   display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
-  gap: 32px;
-  flex-wrap: wrap;
-  padding-bottom: 26px;
-  border-bottom: 1px solid rgba(59, 46, 36, 0.18);
-  margin-bottom: 34px;
+  flex-direction: column;
+  transition: box-shadow var(--duration-card) var(--ease-out);
 }
 
-.sectionHeadDark {
-  border-bottom-color: var(--hairline-dark-strong);
+.benefitsColDark {
+  background: var(--gradient-deep);
 }
 
-.sectionHeadTitle {
+.benefitsColLight {
+  /* Whiter than the section's own beige backdrop (added via the shared
+     section--soft class), so the Individuals side still reads as a
+     distinct card sitting on that backdrop rather than blending into it. */
+  background: var(--color-cream-raised);
+}
+
+/* A quiet hover glow rather than any movement - hovering anywhere in a
+   panel brightens its rim and deepens the shadow slightly. Inset rather
+   than an outer shadow, since .benefitsSplit's own overflow: hidden (needed
+   for the square-corner clip) would cut off anything cast outside the box. */
+.benefitsSplit:has(.benefitsColDark:hover) .benefitsColDark {
+  box-shadow:
+    inset 0 0 0 1px rgba(198, 169, 122, 0.3),
+    inset 0 34px 70px -40px rgba(0, 0, 0, 0.6);
+}
+
+.benefitsSplit:has(.benefitsColLight:hover) .benefitsColLight {
+  box-shadow:
+    inset 0 0 0 1px rgba(198, 169, 122, 0.35),
+    inset 0 30px 60px -38px rgba(59, 46, 36, 0.18);
+}
+
+.benefitsCell {
+  padding-left: clamp(24px, 3vw, 44px);
+  padding-right: clamp(24px, 3vw, 44px);
+}
+
+.benefitsCellDark {
+  grid-column: 1;
+  color: var(--color-cream-text-soft);
+}
+
+.benefitsCellLight {
+  grid-column: 2;
+  color: var(--color-ink);
+}
+
+/* Still more top air than the tag pill used to leave, just trimmed back
+   from its first pass - that version plus everything else on the page
+   added up to more than a laptop screen could show at once. */
+.benefitsCellHeader {
+  padding-top: clamp(24px, 2.8vw, 34px);
+}
+
+.benefitsCellClosing {
+  padding-bottom: clamp(18px, 2.2vw, 28px);
+}
+
+.benefitsPanelHeading {
+  margin: 0 0 12px;
+  font-weight: 300;
+  font-size: clamp(22px, 2.4vw, 28px);
+  line-height: 1.15;
+}
+
+/* Same font/size/style as .benefitsClosing below - a deliberate echo of
+   the closing note's serif treatment for a bit of texture against the
+   sans-serif item titles/body, rather than reading as plain body copy. */
+.benefitsPanelNote {
   margin: 0;
-  font-size: clamp(30px, 3.8vw, 54px);
-  line-height: 1.1;
+  max-width: 490px;
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-style: normal;
+  font-size: 15px;
+  line-height: 1.6;
 }
 
-.sectionHeadNote {
-  margin: 0;
-  max-width: 460px;
-  font-size: 16.5px;
-  line-height: 1.8;
+/* A solid color rather than a semi-transparent rgba blend - the partial
+   opacity was rendering noticeably softer/hazier than the fully-opaque ink
+   text on the Individuals side, not just more muted.
+
+   Deliberately dimmer than the heading's cream-text-soft, and a one-off
+   rather than an existing cream token: the Individuals side has a real
+   tonal hierarchy (headings in --color-ink, body copy in the softer
+   --color-ink-body) with body text measuring ~8:1 contrast against its
+   background. Using the same cream-text-soft here for both headings and
+   body copy gave the whole panel one uniform brightness (~10.5-13.7:1),
+   which read as bolder/brighter overall than the Individuals side - this
+   value mirrors that same hierarchy and lands close to the same ~8:1. */
+.benefitsCellDark .benefitsPanelNote {
+  color: #d7cbb6;
+}
+
+/* Matches .benefitsClosing's color on this side too (gold-text), not just
+   its font/size/style - "Create space to reset..." now reads exactly like
+   "Ideal for birthdays..." below it. */
+.benefitsCellLight .benefitsPanelNote {
+  color: var(--color-gold-text);
+}
+
+/* Wraps all 3 item titles plus the single "See details" toggle for this
+   side. */
+.benefitsCellItems {
+  padding-top: 12px;
+  padding-bottom: 16px;
+  border-top: 1px solid;
+}
+
+.benefitsCellDark.benefitsCellItems {
+  border-color: var(--hairline-dark);
+}
+
+.benefitsCellLight.benefitsCellItems {
+  border-color: var(--hairline-light);
+}
+
+.benefitsItemRow {
+  padding: 8px 0;
+}
+
+.benefitsItemRow + .benefitsItemRow {
+  border-top: 1px solid;
+}
+
+.benefitsCellDark .benefitsItemRow + .benefitsItemRow {
+  border-color: var(--hairline-dark);
+}
+
+.benefitsCellLight .benefitsItemRow + .benefitsItemRow {
+  border-color: var(--hairline-light);
+}
+
+.benefitsItemTitle {
+  display: block;
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: 18px;
+}
+
+/* One toggle per side reveals all 3 descriptions at once (see
+   .benefitsItemRow above) instead of opening each individually - unstyled
+   button, small and understated since it's a secondary action below the
+   titles it controls. */
+.benefitsItemToggle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 10px;
+  padding: 0;
+  background: none;
+  border: none;
+  color: inherit;
+  font-size: 13px;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.benefitsItemArrow {
+  flex: none;
+  display: inline-flex;
+  color: inherit;
+  transition: transform 0.2s ease;
+}
+
+.benefitsItemArrowOpen {
+  transform: rotate(180deg);
+}
+
+/* Sits inline right under each title once "See details" is clicked - not
+   the full-screen modal used for the Experience cards/reviews (these
+   one-line benefits are too short to earn a full dialog), and not an
+   absolutely-positioned overlay either, so it just pushes the rest of this
+   side down in normal flow with no leftover blank space when closed. */
+.benefitsFlyoutBody {
+  margin: 6px 0 0;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.benefitsCellDark .benefitsFlyoutBody {
+  color: #d7cbb6;
+}
+
+.benefitsCellLight .benefitsFlyoutBody {
   color: var(--color-ink-body);
 }
 
-.sectionHeadNoteDark {
-  color: rgba(239, 230, 218, 0.76);
-}
-
-.benefitTag {
-  margin-bottom: 18px;
-}
-
-.benefitCard {
+.benefitsClosing {
   margin: 0;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: 15px;
 }
 
-.benefitPhoto {
-  position: relative;
-  aspect-ratio: 4 / 5;
+/* Upright on both sides now - the italic read as too "cursive" on the
+   Corporate side, and leaving Individuals italic while Corporate went
+   upright was its own inconsistency between the two mirrored panels.
+
+   Color: none of the existing gold tokens land right against this specific
+   dark gradient at this text weight: gold-light reads too yellow, and the
+   darker gold tokens (gold, gold-deep) drop under 4.5:1 contrast here
+   (checked against both ends of --gradient-deep) - failing the site's own
+   "every text colour passes WCAG AA" rule. This is a one-off, deliberately
+   desaturated toward champagne/pewter rather than straight yellow-gold,
+   picked to clear 4.5:1 at both ends of the gradient. */
+.benefitsCellDark .benefitsClosing {
+  font-style: normal;
+  color: #baa287;
 }
 
-.benefitPhoto img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  /* Faces sit above centre in the people photos. */
-  object-position: center 35%;
-}
-
-.benefitCaption {
-  padding: 26px 24px 30px;
-  font-size: 16px;
-  line-height: 1.75;
-  color: var(--color-ink-strong);
-  text-wrap: pretty;
-}
-
-.benefitCaptionDark {
-  color: rgba(239, 230, 218, 0.88);
+.benefitsCellLight .benefitsClosing {
+  font-style: normal;
+  color: var(--color-gold-text);
 }
 
 /* ---------- Gallery block ---------- */
 
+/* Top padding trimmed well below --space-section-short - Benefits already
+   ends with its own bottom padding immediately above, so the full section
+   gap stacked on top of it read as a much bigger gap than anywhere else
+   between sections on this page. */
+/* scroll-margin-top keeps the sticky nav from covering the heading when the
+   Offerings page's "#included" link jumps straight to this section. */
+/* Bottom trimmed well below the top - the aim is a small peek of Included
+   item 01 right under the photo, not a big gap that reads as the section
+   ending at the picture. */
 .galleryBlock {
-  padding: var(--space-section-short) var(--space-gutter) clamp(36px, 4vw, 60px);
+  padding: clamp(28px, 3.4vw, 40px) var(--space-gutter) clamp(16px, 2vw, 24px);
   max-width: var(--width-content);
   margin: 0 auto;
+  scroll-margin-top: 100px;
 }
 
 .galleryHead {
@@ -193,37 +565,61 @@
   margin-bottom: 34px;
 }
 
+/* Matches .title ("A Journey to Reset, Align and Thrive") - same font
+   size/line-height, so "What is Included" stands out at the same scale as
+   the page's own heading, with "Two-hour transformative..." now the
+   smaller clarifying line beneath it (see .gallerySubtitle). Never wraps
+   past 2 lines - only 3 words, well short of the max-width that would
+   force a wrap. */
 .galleryHeading {
-  margin: 0;
-  font-size: clamp(30px, 3.8vw, 54px);
+  margin: 0 0 12px;
+  font-size: clamp(26px, 3.4vw, 48px);
   line-height: 1.14;
-  max-width: 20ch;
+  max-width: 22ch;
 }
 
-/* ---------- Closer ---------- */
-
-.closer {
-  text-align: center;
+/* Matches .subtitle ("Everything Curated into One Offering") - same
+   font/size/color treatment, now the smaller clarifying line under the
+   bigger "What is Included" heading above it. */
+.gallerySubtitle {
+  font-weight: 400;
+  font-size: clamp(18px, 2vw, 22px);
+  color: var(--color-gold-text);
+  margin: 0;
 }
 
-.closerInner {
-  max-width: 840px;
+/* Widened from 380px, and the two sentences in the JSX get an explicit
+   <br/> between them - relying on width-based wrapping alone put the break
+   randomly mid-sentence depending on viewport width; the explicit break
+   guarantees "Venue rental..." always starts its own line, uncut. Widened
+   again to 620px so that full second sentence stays on one line instead of
+   wrapping to a third. */
+.sectionHeadNote {
+  margin: 0;
+  max-width: 620px;
+  font-size: 14.5px;
+  line-height: 1.7;
+  color: var(--color-ink-body);
+}
+
+/* ---------- Included list ---------- */
+
+/* Scoped, tighter override of the shared global .numbered-row (also used on
+   /lp, so not changed there) - fits all 9 rows within one laptop screen.
+   Padding and line-height trimmed well below the global defaults (26px/1.75)
+   without going so tight that the longer 2-line entries feel cramped. */
+.includedSection {
+  padding: 0 var(--space-gutter) clamp(28px, 3.4vw, 40px);
+  max-width: var(--width-content);
   margin: 0 auto;
 }
 
-.closerHeading {
-  font-family: var(--font-display);
-  font-weight: 300;
-  font-size: clamp(30px, 4vw, 58px);
-  line-height: 1.14;
-  margin: 0 0 22px;
-  color: var(--color-cream-text);
+.includedSection :global(.numbered-row) {
+  padding: 13px 0;
 }
 
-.closerBody {
-  margin: 0 auto 36px;
-  max-width: 560px;
-  font-size: var(--text-body);
-  line-height: 1.8;
-  color: rgba(239, 230, 218, 0.76);
+.includedSection :global(.numbered-row__text) {
+  font-size: 14.2px;
+  line-height: 1.5;
 }
+

@@ -37,7 +37,6 @@
   flex-direction: column;
   gap: 7px;
   padding-left: 16px;
-  border-left: 1px solid rgba(59, 46, 36, 0.16);
   min-width: 0;
 }
 

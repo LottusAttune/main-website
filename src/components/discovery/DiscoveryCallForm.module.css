@@ -76,6 +76,16 @@
   background: rgba(198, 169, 122, 0.2);
 }
 
+.timeBtnOff {
+  color: var(--color-disabled);
+  text-decoration: line-through;
+  cursor: default;
+}
+
+.timeBtnOff:hover {
+  border-color: rgba(59, 46, 36, 0.22);
+}
+
 .details {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));

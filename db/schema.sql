@@ -34,6 +34,15 @@ CREATE TABLE IF NOT EXISTS blocked_dates (
   day DATE PRIMARY KEY
 );
 
+-- Individual discovery-call time slots Silvana has closed for a specific
+-- date (e.g. she already has something else on at that time), distinct
+-- from blocked_dates which closes a whole day for session bookings.
+CREATE TABLE IF NOT EXISTS blocked_call_times (
+  call_date DATE NOT NULL,
+  call_time TEXT NOT NULL,
+  PRIMARY KEY (call_date, call_time)
+);
+
 -- ---------------------------------------------------------------------------
 -- Discount codes. Group bookings (2+) only.
 -- ---------------------------------------------------------------------------
@@ -109,12 +118,16 @@ CREATE TABLE IF NOT EXISTS discovery_calls (
   name       TEXT NOT NULL,
   email      TEXT NOT NULL,
   phone      TEXT,
+  company    TEXT,
   call_date  DATE NOT NULL,
   call_time  TEXT NOT NULL,
   message    TEXT,
   status     TEXT NOT NULL DEFAULT 'scheduled',
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
+
+-- Table predates the company field - add it for existing databases.
+ALTER TABLE discovery_calls ADD COLUMN IF NOT EXISTS company TEXT;
 
 -- ---------------------------------------------------------------------------
 -- Reviews. `is_published` controls whether each shows on the public site.

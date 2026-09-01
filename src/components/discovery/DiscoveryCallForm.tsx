@@ -3,15 +3,21 @@
 import { useMemo, useState } from 'react';
 
 import { Calendar, formatDay, isoDay } from '@/components/booking/Calendar';
+import type { BlockedCallTime } from '@/lib/settings';
 import { DISCOVERY_CALL_TIMES, SITE } from '@/lib/site';
 import styles from './DiscoveryCallForm.module.css';
 
 type Props = {
   blockedDates: string[];
+  blockedCallTimes: BlockedCallTime[];
   leadDays: number;
 };
 
-export function DiscoveryCallForm({ blockedDates, leadDays }: Props) {
+export function DiscoveryCallForm({
+  blockedDates,
+  blockedCallTimes,
+  leadDays,
+}: Props) {
   const [date, setDate] = useState<Date | null>(null);
   const [time, setTime] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
@@ -23,6 +29,14 @@ export function DiscoveryCallForm({ blockedDates, leadDays }: Props) {
     const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
     return new Date(today.getTime() + leadDays * 86_400_000);
   }, [leadDays]);
+
+  const blockedTimesForDate = date
+    ? new Set(
+        blockedCallTimes
+          .filter((entry) => entry.date === isoDay(date))
+          .map((entry) => entry.time)
+      )
+    : new Set<string>();
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -44,6 +58,7 @@ export function DiscoveryCallForm({ blockedDates, leadDays }: Props) {
           name: form.get('name'),
           email: form.get('email'),
           phone: form.get('phone'),
+          company: form.get('company'),
           message: form.get('message'),
           callDate: isoDay(date),
           callTime: time,
@@ -97,7 +112,14 @@ export function DiscoveryCallForm({ blockedDates, leadDays }: Props) {
             earliest={earliest}
             blocked={blockedDates}
             selected={date}
-            onSelect={setDate}
+            onSelect={(next) => {
+              setDate(next);
+              // A time that was fine on the old date may be blocked on the new one.
+              if (time && blockedCallTimes.some((entry) => entry.date === isoDay(next) && entry.time === time)) {
+                setTime(null);
+              }
+            }}
+            compact
           />
         </div>
         <p className={styles.calendarNote}>
@@ -112,17 +134,22 @@ export function DiscoveryCallForm({ blockedDates, leadDays }: Props) {
           <h2 className={styles.stepTitle}>What time?</h2>
         </div>
         <div className={`${styles.times} ${styles.indent}`}>
-          {DISCOVERY_CALL_TIMES.map((slot) => (
+          {DISCOVERY_CALL_TIMES.map((slot) => {
+            const isBlocked = blockedTimesForDate.has(slot);
+            return (
             <button
               key={slot}
               type="button"
-              className={`${styles.timeBtn} ${time === slot ? styles.timeBtnOn : ''}`}
+              disabled={isBlocked}
+              className={`${styles.timeBtn} ${time === slot ? styles.timeBtnOn : ''} ${isBlocked ? styles.timeBtnOff : ''}`}
               aria-pressed={time === slot}
+              aria-label={isBlocked ? `${slot} — unavailable` : slot}
               onClick={() => setTime(slot)}
             >
               {slot}
             </button>
-          ))}
+            );
+          })}
         </div>
       </div>
 
@@ -158,6 +185,14 @@ export function DiscoveryCallForm({ blockedDates, leadDays }: Props) {
             placeholder="Phone (optional)"
             aria-label="Phone (optional)"
             autoComplete="tel"
+          />
+          <input
+            className="field"
+            type="text"
+            name="company"
+            placeholder="Company Name (optional)"
+            aria-label="Company name (optional)"
+            autoComplete="organization"
           />
           <textarea
             className={`field ${styles.detailsWide} ${styles.textarea}`}

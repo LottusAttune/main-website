@@ -42,6 +42,12 @@ const action = z.discriminatedUnion('action', [
   }),
   z.object({ action: z.literal('clearBlockedDates') }),
   z.object({
+    action: z.literal('toggleBlockedCallTime'),
+    day: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
+    time: z.string().max(40),
+    blocked: z.boolean(),
+  }),
+  z.object({
     action: z.literal('toggleCode'),
     code: z.string().max(40),
     isActive: z.boolean(),
@@ -128,6 +134,16 @@ export async function POST(request: Request) {
       case 'clearBlockedDates':
         await sql`DELETE FROM blocked_dates`;
         revalidatePath('/book');
+        break;
+
+      case 'toggleBlockedCallTime':
+        if (input.blocked) {
+          await sql`INSERT INTO blocked_call_times (call_date, call_time) VALUES (${input.day}, ${input.time}) ON CONFLICT DO NOTHING`;
+        } else {
+          await sql`DELETE FROM blocked_call_times WHERE call_date = ${input.day} AND call_time = ${input.time}`;
+        }
+        revalidatePath('/discovery-call');
+        revalidatePath('/v1/discovery-call');
         break;
 
       case 'toggleCode':

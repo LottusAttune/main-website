@@ -66,6 +66,7 @@ export type DiscoveryCallRow = {
   name: string;
   email: string;
   phone: string | null;
+  company: string | null;
   callDate: string;
   callTime: string;
   message: string | null;

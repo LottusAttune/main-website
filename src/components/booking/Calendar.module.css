@@ -101,6 +101,36 @@
   text-decoration: line-through;
 }
 
+/* Smaller version for pages with no summary aside to fill the extra height. */
+.compact .head {
+  padding: 12px 16px;
+}
+
+.compact .month {
+  font-size: 16px;
+}
+
+.compact .nav {
+  width: 28px;
+  height: 28px;
+  font-size: 14px;
+}
+
+.compact .weekdays {
+  padding: 10px 14px 6px;
+  font-size: 9.5px;
+}
+
+.compact .days {
+  padding: 0 14px 14px;
+}
+
+.compact .day,
+.compact .dayPad {
+  height: 30px;
+  font-size: 13px;
+}
+
 .daySelected {
   border-color: var(--color-ink);
   background: var(--gradient-button-dark);

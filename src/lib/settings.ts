@@ -25,6 +25,11 @@ export type DiscountCode = {
   isActive: boolean;
 };
 
+export type BlockedCallTime = {
+  date: string;
+  time: string;
+};
+
 export type SiteSettings = {
   pricing: Pricing;
   slots: Slots;
@@ -32,6 +37,8 @@ export type SiteSettings = {
   /** ISO `YYYY-MM-DD` strings. */
   blockedDates: string[];
   codes: DiscountCode[];
+  /** Specific discovery-call time slots closed for a specific date. */
+  blockedCallTimes: BlockedCallTime[];
 };
 
 const FALLBACK: SiteSettings = {
@@ -39,6 +46,7 @@ const FALLBACK: SiteSettings = {
   slots: { ...DEFAULT_SLOTS },
   leadTimeDays: DEFAULT_LEAD_TIME,
   blockedDates: [],
+  blockedCallTimes: [],
   codes: [
     { code: 'WELCOME20', percentOff: 20, isActive: true },
     { code: 'WELCOME30', percentOff: 30, isActive: true },
@@ -62,11 +70,13 @@ export async function getSettings(): Promise<SiteSettings> {
   if (!isDatabaseConfigured()) return FALLBACK;
 
   try {
-    const [settingsResult, blockedResult, codesResult] = await Promise.all([
-      sql`SELECT * FROM settings WHERE id = TRUE`,
-      sql`SELECT day FROM blocked_dates ORDER BY day`,
-      sql`SELECT code, percent_off, is_active FROM discount_codes ORDER BY code`,
-    ]);
+    const [settingsResult, blockedResult, codesResult, blockedCallResult] =
+      await Promise.all([
+        sql`SELECT * FROM settings WHERE id = TRUE`,
+        sql`SELECT day FROM blocked_dates ORDER BY day`,
+        sql`SELECT code, percent_off, is_active FROM discount_codes ORDER BY code`,
+        sql`SELECT call_date, call_time FROM blocked_call_times ORDER BY call_date, call_time`,
+      ]);
 
     const row = settingsResult.rows[0];
     if (!row) return FALLBACK;
@@ -91,6 +101,10 @@ export async function getSettings(): Promise<SiteSettings> {
         code: String(r.code),
         percentOff: Number(r.percent_off),
         isActive: Boolean(r.is_active),
+      })),
+      blockedCallTimes: blockedCallResult.rows.map((r) => ({
+        date: toIsoDay(r.call_date),
+        time: String(r.call_time),
       })),
     };
   } catch (error) {

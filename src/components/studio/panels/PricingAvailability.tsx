@@ -3,7 +3,7 @@
 import { useState } from 'react';
 
 import type { Pricing, SiteSettings, Slots } from '@/lib/settings';
-import { TIME_SLOTS } from '@/lib/site';
+import { DISCOVERY_CALL_TIMES, TIME_SLOTS } from '@/lib/site';
 import { useStudioAction } from '../useStudioAction';
 import styles from '../studio.module.css';
 
@@ -44,6 +44,17 @@ export function PricingAvailability({ settings }: { settings: SiteSettings }) {
   const first = new Date(view.year, view.month, 1);
   const lead = first.getDay();
   const daysInMonth = new Date(view.year, view.month + 1, 0).getDate();
+
+  const todayIso = isoDay(now.getFullYear(), now.getMonth(), now.getDate());
+  const [callDay, setCallDay] = useState(todayIso);
+  const blockedCallTimeSet = new Set(
+    settings.blockedCallTimes
+      .filter((entry) => entry.date === callDay)
+      .map((entry) => entry.time)
+  );
+  const sortedBlockedCallTimes = [...settings.blockedCallTimes].sort(
+    (a, b) => a.date.localeCompare(b.date) || a.time.localeCompare(b.time)
+  );
 
   const change = <K extends keyof Pricing>(key: K, value: number) => {
     setPricing((current) => ({ ...current, [key]: value }));
@@ -259,6 +270,80 @@ export function PricingAvailability({ settings }: { settings: SiteSettings }) {
               Clear all
             </button>
           </div>
+        </div>
+
+        <div className={`card ${styles.settingsCard}`}>
+          <h3 className={styles.settingsTitle}>Discovery call times</h3>
+          <p className={styles.priceNote} style={{ marginBottom: 14 }}>
+            Pick a date, then click a time to close just that slot for
+            discovery calls. Saved immediately.
+          </p>
+
+          <label className={styles.priceField} style={{ marginBottom: 14 }}>
+            <span className={styles.priceLabel}>Date</span>
+            <input
+              className="field"
+              type="date"
+              min={todayIso}
+              value={callDay}
+              onChange={(e) => setCallDay(e.target.value)}
+            />
+          </label>
+
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+            {DISCOVERY_CALL_TIMES.map((slot) => {
+              const off = blockedCallTimeSet.has(slot);
+              return (
+                <button
+                  key={slot}
+                  type="button"
+                  aria-pressed={off}
+                  aria-label={`${slot}${off ? ' — closed' : ''}`}
+                  className={`${styles.blockDay} ${off ? styles.blockDayOff : ''}`}
+                  style={{ width: 'auto', padding: '0 14px' }}
+                  onClick={() =>
+                    void run({
+                      action: 'toggleBlockedCallTime',
+                      day: callDay,
+                      time: slot,
+                      blocked: !off,
+                    })
+                  }
+                >
+                  {slot}
+                </button>
+              );
+            })}
+          </div>
+
+          {sortedBlockedCallTimes.length > 0 ? (
+            <div style={{ marginTop: 20 }}>
+              <span className={styles.priceLabel}>Currently closed</span>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 6, marginTop: 8 }}>
+                {sortedBlockedCallTimes.map((entry) => (
+                  <div key={`${entry.date}-${entry.time}`} className={styles.codeRow}>
+                    <span className={styles.priceNote}>
+                      {entry.date} &middot; {entry.time}
+                    </span>
+                    <button
+                      type="button"
+                      className={`btn btn--outline ${styles.smallBtn}`}
+                      onClick={() =>
+                        void run({
+                          action: 'toggleBlockedCallTime',
+                          day: entry.date,
+                          time: entry.time,
+                          blocked: false,
+                        })
+                      }
+                    >
+                      Unblock
+                    </button>
+                  </div>
+                ))}
+              </div>
+            </div>
+          ) : null}
         </div>
 
         <div className={`card ${styles.settingsCard}`}>

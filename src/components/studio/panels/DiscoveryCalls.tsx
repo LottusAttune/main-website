@@ -10,6 +10,7 @@ const COLUMNS = [
   { header: 'Name', value: (c: DiscoveryCallRow) => c.name },
   { header: 'Email', value: (c: DiscoveryCallRow) => c.email },
   { header: 'Phone', value: (c: DiscoveryCallRow) => c.phone ?? '' },
+  { header: 'Company', value: (c: DiscoveryCallRow) => c.company ?? '' },
   { header: 'Message', value: (c: DiscoveryCallRow) => c.message ?? '' },
   { header: 'Status', value: (c: DiscoveryCallRow) => c.status },
 ];
@@ -41,6 +42,7 @@ export function DiscoveryCalls({ calls }: { calls: DiscoveryCallRow[] }) {
               <th>Name</th>
               <th>Email</th>
               <th>Phone</th>
+              <th>Company</th>
               <th>Message</th>
             </tr>
           </thead>
@@ -55,6 +57,7 @@ export function DiscoveryCalls({ calls }: { calls: DiscoveryCallRow[] }) {
                   <a href={`mailto:${call.email}`}>{call.email}</a>
                 </td>
                 <td>{call.phone ?? '—'}</td>
+                <td>{call.company ?? '—'}</td>
                 <td>{call.message ?? '—'}</td>
               </tr>
             ))}

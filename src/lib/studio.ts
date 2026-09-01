@@ -126,6 +126,7 @@ export async function getStudioData(): Promise<StudioData> {
       name: String(row.name),
       email: String(row.email),
       phone: row.phone ? String(row.phone) : null,
+      company: row.company ? String(row.company) : null,
       callDate: toIso(row.call_date) ?? '',
       callTime: String(row.call_time),
       message: row.message ? String(row.message) : null,

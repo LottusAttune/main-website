@@ -18,7 +18,7 @@ export const metadata: Metadata = {
 export const dynamic = 'force-dynamic';
 
 export default async function DiscoveryCallPage() {
-  const { blockedDates } = await getSettings();
+  const { blockedDates, blockedCallTimes } = await getSettings();
 
   return (
     <>
@@ -53,8 +53,9 @@ export default async function DiscoveryCallPage() {
             className="lede"
             style={{ maxWidth: 740, fontSize: 15.5, lineHeight: 1.65 }}
           >
-            Book a short video call with Silvana — no cost, no obligation,
-            just a chance to ask what you'd like to know.
+            Most of what you need to know is already on the website. If a
+            question remains, book a short video call with Silvana — no
+            cost, no obligation.
           </p>
         </section>
 
@@ -68,6 +69,7 @@ export default async function DiscoveryCallPage() {
         >
           <DiscoveryCallForm
             blockedDates={blockedDates}
+            blockedCallTimes={blockedCallTimes}
             leadDays={DISCOVERY_CALL_LEAD_DAYS}
           />
         </section>

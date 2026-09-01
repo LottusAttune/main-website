@@ -63,6 +63,7 @@ export const discoveryCallSchema = z.object({
   name: trimmed(120),
   email: z.string().trim().email().max(200),
   phone: z.string().trim().max(60).optional().nullable(),
+  company: z.string().trim().max(160).optional().nullable(),
   callDate: isoDay,
   callTime: trimmed(40),
   message: z.string().trim().max(1000).optional().nullable(),

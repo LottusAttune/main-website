@@ -27,12 +27,23 @@ export async function POST(request: Request) {
   }
 
   const input = parsed.data;
-  const { blockedDates } = await getSettings();
+  const { blockedDates, blockedCallTimes } = await getSettings();
 
-  // Reject dates the owner has closed, even if the client somehow posted one.
+  // Reject dates or specific times the owner has closed, even if the client
+  // somehow posted one.
   if (blockedDates.includes(input.callDate)) {
     return NextResponse.json(
       { error: 'That date is no longer available.' },
+      { status: 409 }
+    );
+  }
+  if (
+    blockedCallTimes.some(
+      (entry) => entry.date === input.callDate && entry.time === input.callTime
+    )
+  ) {
+    return NextResponse.json(
+      { error: 'That time is no longer available.' },
       { status: 409 }
     );
   }
@@ -51,9 +62,9 @@ export async function POST(request: Request) {
   try {
     const result = await sql`
       INSERT INTO discovery_calls (
-        name, email, phone, call_date, call_time, message
+        name, email, phone, company, call_date, call_time, message
       ) VALUES (
-        ${input.name}, ${input.email}, ${input.phone ?? null},
+        ${input.name}, ${input.email}, ${input.phone ?? null}, ${input.company ?? null},
         ${input.callDate}, ${input.callTime}, ${input.message ?? null}
       )
       RETURNING id

@@ -29,6 +29,8 @@ type Props = {
   selected: Date | null;
   onSelect: (date: Date) => void;
   label: string;
+  /** Smaller version for a page with only a date + time to pick, no summary aside. */
+  compact?: boolean;
 };
 
 export function Calendar({
@@ -37,6 +39,7 @@ export function Calendar({
   selected,
   onSelect,
   label,
+  compact,
 }: Props) {
   const [view, setView] = useState({
     year: earliest.getFullYear(),
@@ -59,7 +62,11 @@ export function Calendar({
     });
 
   return (
-    <div className={styles.calendar} role="group" aria-label={label}>
+    <div
+      className={`${styles.calendar} ${compact ? styles.compact : ''}`}
+      role="group"
+      aria-label={label}
+    >
       <div className={styles.head}>
         <button
           type="button"

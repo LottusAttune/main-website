@@ -6,6 +6,7 @@ import { isSignedIn } from '@/lib/auth';
 import {
   deleteCalendarEvent,
   discoveryCallWindow,
+  sessionSlotWindow,
   updateCalendarEventTime,
 } from '@/lib/calendar';
 import { isDatabaseConfigured, sql } from '@/lib/db';
@@ -79,6 +80,20 @@ const action = z.discriminatedUnion('action', [
     id: z.string().uuid(),
     callDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
     callTime: z.string().max(40),
+  }),
+  z.object({
+    action: z.literal('cancelBooking'),
+    id: z.string().uuid(),
+    cancelled: z.boolean(),
+  }),
+  z.object({ action: z.literal('deleteBooking'), id: z.string().uuid() }),
+  z.object({
+    action: z.literal('editBooking'),
+    id: z.string().uuid(),
+    sessionDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
+    sessionTime: z.string().max(40),
+    sessionDate2: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).nullable(),
+    sessionTime2: z.string().max(40).nullable(),
   }),
 ]);
 
@@ -248,6 +263,74 @@ export async function POST(request: Request) {
         revalidatePath('/discovery-call');
         revalidatePath('/v1/discovery-call');
         break;
+
+      case 'cancelBooking':
+        if (input.cancelled) {
+          const existing = await sql`
+            SELECT calendar_event_id, calendar_event_id_2
+            FROM bookings WHERE id = ${input.id}
+          `;
+          const row = existing.rows[0];
+          if (row?.calendar_event_id) {
+            await deleteCalendarEvent(String(row.calendar_event_id));
+          }
+          if (row?.calendar_event_id_2) {
+            await deleteCalendarEvent(String(row.calendar_event_id_2));
+          }
+          await sql`
+            UPDATE bookings
+            SET status = 'cancelled', calendar_event_id = NULL, calendar_event_id_2 = NULL
+            WHERE id = ${input.id}
+          `;
+        } else {
+          await sql`UPDATE bookings SET status = 'booked' WHERE id = ${input.id}`;
+        }
+        break;
+
+      case 'deleteBooking': {
+        const existing = await sql`
+          SELECT calendar_event_id, calendar_event_id_2
+          FROM bookings WHERE id = ${input.id}
+        `;
+        const row = existing.rows[0];
+        if (row?.calendar_event_id) {
+          await deleteCalendarEvent(String(row.calendar_event_id));
+        }
+        if (row?.calendar_event_id_2) {
+          await deleteCalendarEvent(String(row.calendar_event_id_2));
+        }
+        await sql`DELETE FROM bookings WHERE id = ${input.id}`;
+        break;
+      }
+
+      case 'editBooking': {
+        const existing = await sql`
+          SELECT calendar_event_id, calendar_event_id_2
+          FROM bookings WHERE id = ${input.id}
+        `;
+        await sql`
+          UPDATE bookings
+          SET session_date = ${input.sessionDate}, session_time = ${input.sessionTime},
+              session_date_2 = ${input.sessionDate2}, session_time_2 = ${input.sessionTime2}
+          WHERE id = ${input.id}
+        `;
+        const row = existing.rows[0];
+        if (row?.calendar_event_id) {
+          const { startISO, endISO } = sessionSlotWindow(
+            input.sessionDate,
+            input.sessionTime
+          );
+          await updateCalendarEventTime(String(row.calendar_event_id), startISO, endISO);
+        }
+        if (row?.calendar_event_id_2 && input.sessionDate2 && input.sessionTime2) {
+          const { startISO, endISO } = sessionSlotWindow(
+            input.sessionDate2,
+            input.sessionTime2
+          );
+          await updateCalendarEventTime(String(row.calendar_event_id_2), startISO, endISO);
+        }
+        break;
+      }
     }
 
     revalidatePath('/studio');

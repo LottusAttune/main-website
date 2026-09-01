@@ -80,11 +80,20 @@ CREATE TABLE IF NOT EXISTS bookings (
   discount_code   TEXT,
   estimated_total INTEGER NOT NULL DEFAULT 0,
   status          TEXT NOT NULL DEFAULT 'new_enquiry',
+  -- Google Calendar event ids, one per session - lets a cancel/delete/edit
+  -- from the studio keep Silvana's calendar in sync instead of leaving a
+  -- stale or duplicate event behind.
+  calendar_event_id   TEXT,
+  calendar_event_id_2 TEXT,
   created_at      TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
 -- Table predates the company field - add it for existing databases.
 ALTER TABLE bookings ADD COLUMN IF NOT EXISTS company TEXT;
+
+-- Table predates Google Calendar sync - add it for existing databases.
+ALTER TABLE bookings ADD COLUMN IF NOT EXISTS calendar_event_id TEXT;
+ALTER TABLE bookings ADD COLUMN IF NOT EXISTS calendar_event_id_2 TEXT;
 
 CREATE INDEX IF NOT EXISTS bookings_status_idx ON bookings (status);
 CREATE INDEX IF NOT EXISTS bookings_created_idx ON bookings (created_at DESC);

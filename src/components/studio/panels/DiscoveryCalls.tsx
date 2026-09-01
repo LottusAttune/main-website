@@ -1,10 +1,10 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
-import { createPortal } from 'react-dom';
+import { useState } from 'react';
 
 import { formatStudioDate, type DiscoveryCallRow } from '@/lib/pipeline';
 import { DISCOVERY_CALL_TIMES } from '@/lib/site';
+import { RowActionsMenu } from '../RowActionsMenu';
 import { useStudioAction } from '../useStudioAction';
 import { ExportButton } from '../ExportButton';
 import styles from '../studio.module.css';
@@ -20,32 +20,11 @@ const COLUMNS = [
   { header: 'Status', value: (c: DiscoveryCallRow) => c.status },
 ];
 
-type MenuPos = { top: number; left: number };
-
 export function DiscoveryCalls({ calls }: { calls: DiscoveryCallRow[] }) {
   const { run, error } = useStudioAction();
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editDate, setEditDate] = useState('');
   const [editTime, setEditTime] = useState('');
-  const [menuOpenId, setMenuOpenId] = useState<string | null>(null);
-  const [menuPos, setMenuPos] = useState<MenuPos | null>(null);
-  const triggerRef = useRef<HTMLButtonElement | null>(null);
-  const menuRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    if (!menuOpenId) return;
-    const onClick = (event: MouseEvent) => {
-      const target = event.target as Node;
-      if (
-        !menuRef.current?.contains(target) &&
-        !triggerRef.current?.contains(target)
-      ) {
-        setMenuOpenId(null);
-      }
-    };
-    document.addEventListener('mousedown', onClick);
-    return () => document.removeEventListener('mousedown', onClick);
-  }, [menuOpenId]);
 
   if (calls.length === 0) {
     return (
@@ -56,19 +35,7 @@ export function DiscoveryCalls({ calls }: { calls: DiscoveryCallRow[] }) {
     );
   }
 
-  const toggleMenu = (id: string, button: HTMLButtonElement) => {
-    if (menuOpenId === id) {
-      setMenuOpenId(null);
-      return;
-    }
-    const rect = button.getBoundingClientRect();
-    setMenuPos({ top: rect.bottom + 6, left: rect.right - 140 });
-    triggerRef.current = button;
-    setMenuOpenId(id);
-  };
-
   const startEdit = (call: DiscoveryCallRow) => {
-    setMenuOpenId(null);
     setEditingId(call.id);
     setEditDate(call.callDate);
     setEditTime(call.callTime);
@@ -83,8 +50,6 @@ export function DiscoveryCalls({ calls }: { calls: DiscoveryCallRow[] }) {
     });
     if (ok) setEditingId(null);
   };
-
-  const menuCall = calls.find((c) => c.id === menuOpenId);
 
   return (
     <>
@@ -116,7 +81,6 @@ export function DiscoveryCalls({ calls }: { calls: DiscoveryCallRow[] }) {
             {calls.map((call) => {
               const cancelled = call.status === 'cancelled';
               const isEditing = editingId === call.id;
-              const isMenuOpen = menuOpenId === call.id;
 
               return (
                 <tr key={call.id}>
@@ -181,15 +145,36 @@ export function DiscoveryCalls({ calls }: { calls: DiscoveryCallRow[] }) {
                         </button>
                       </div>
                     ) : (
-                      <button
-                        type="button"
-                        className={styles.menuTrigger}
-                        aria-label="Row actions"
-                        aria-expanded={isMenuOpen}
-                        onClick={(e) => toggleMenu(call.id, e.currentTarget)}
-                      >
-                        ⋮
-                      </button>
+                      <RowActionsMenu
+                        items={[
+                          { label: 'Edit', onClick: () => startEdit(call) },
+                          {
+                            label: cancelled ? 'Restore' : 'Cancel',
+                            onClick: () =>
+                              void run({
+                                action: 'cancelDiscoveryCall',
+                                id: call.id,
+                                cancelled: !cancelled,
+                              }),
+                          },
+                          {
+                            label: 'Delete',
+                            alert: true,
+                            onClick: () => {
+                              if (
+                                window.confirm(
+                                  `Delete the discovery call with ${call.name} permanently? This cannot be undone.`
+                                )
+                              ) {
+                                void run({
+                                  action: 'deleteDiscoveryCall',
+                                  id: call.id,
+                                });
+                              }
+                            },
+                          },
+                        ]}
+                      />
                     )}
                   </td>
                 </tr>
@@ -198,59 +183,6 @@ export function DiscoveryCalls({ calls }: { calls: DiscoveryCallRow[] }) {
           </tbody>
         </table>
       </div>
-
-      {menuCall && menuPos
-        ? createPortal(
-            <div
-              ref={menuRef}
-              className={styles.menu}
-              role="menu"
-              style={{ position: 'fixed', top: menuPos.top, left: menuPos.left }}
-            >
-              <button
-                type="button"
-                className={styles.menuItem}
-                role="menuitem"
-                onClick={() => startEdit(menuCall)}
-              >
-                Edit
-              </button>
-              <button
-                type="button"
-                className={styles.menuItem}
-                role="menuitem"
-                onClick={() => {
-                  setMenuOpenId(null);
-                  void run({
-                    action: 'cancelDiscoveryCall',
-                    id: menuCall.id,
-                    cancelled: menuCall.status !== 'cancelled',
-                  });
-                }}
-              >
-                {menuCall.status === 'cancelled' ? 'Restore' : 'Cancel'}
-              </button>
-              <button
-                type="button"
-                className={`${styles.menuItem} ${styles.menuItemAlert}`}
-                role="menuitem"
-                onClick={() => {
-                  setMenuOpenId(null);
-                  if (
-                    window.confirm(
-                      `Delete the discovery call with ${menuCall.name} permanently? This cannot be undone.`
-                    )
-                  ) {
-                    void run({ action: 'deleteDiscoveryCall', id: menuCall.id });
-                  }
-                }}
-              >
-                Delete
-              </button>
-            </div>,
-            document.body
-          )
-        : null}
     </>
   );
 }

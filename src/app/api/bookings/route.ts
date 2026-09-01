@@ -109,7 +109,7 @@ export async function POST(request: Request) {
       .join('\n');
 
     const firstWindow = sessionSlotWindow(input.sessionDate, input.sessionTime);
-    await createCalendarEvent({
+    const eventId = await createCalendarEvent({
       summary: `Lotus Attune Session — ${input.name}`,
       description,
       location: venue,
@@ -117,15 +117,24 @@ export async function POST(request: Request) {
       endISO: firstWindow.endISO,
     });
 
+    let eventId2: string | null = null;
     if (input.sessionDate2 && input.sessionTime2) {
       const secondWindow = sessionSlotWindow(input.sessionDate2, input.sessionTime2);
-      await createCalendarEvent({
+      eventId2 = await createCalendarEvent({
         summary: `Lotus Attune Session (session 2) — ${input.name}`,
         description,
         location: venue,
         startISO: secondWindow.startISO,
         endISO: secondWindow.endISO,
       });
+    }
+
+    if (eventId || eventId2) {
+      await sql`
+        UPDATE bookings
+        SET calendar_event_id = ${eventId}, calendar_event_id_2 = ${eventId2}
+        WHERE id = ${result.rows[0]?.id}
+      `;
     }
 
     return NextResponse.json(

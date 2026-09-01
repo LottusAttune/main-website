@@ -64,15 +64,27 @@ export async function getStudioData(): Promise<StudioData> {
     sessionTime2: row.session_time_2 ? String(row.session_time_2) : null,
     teamAddon: Boolean(row.team_addon),
     total: Number(row.estimated_total),
-    status: (STAGE_KEYS as string[]).includes(String(row.status))
-      ? (String(row.status) as StageKey)
-      : 'new_enquiry',
+    status:
+      String(row.status) === 'cancelled'
+        ? 'cancelled'
+        : (STAGE_KEYS as string[]).includes(String(row.status))
+          ? (String(row.status) as StageKey)
+          : 'new_enquiry',
     createdAt: new Date(String(row.created_at)).toISOString(),
     type: typeFor(Number(row.participants)),
+    calendarEventId: row.calendar_event_id ? String(row.calendar_event_id) : null,
+    calendarEventId2: row.calendar_event_id_2
+      ? String(row.calendar_event_id_2)
+      : null,
   }));
 
   const bookings: BookingRow[] = leads
-    .filter((lead) => lead.status === 'booked' || lead.status === 'complete')
+    .filter(
+      (lead) =>
+        lead.status === 'booked' ||
+        lead.status === 'complete' ||
+        lead.status === 'cancelled'
+    )
     .map((lead) => ({ ...lead, venue: venueFor(lead.participants) }))
     .sort((a, b) => (a.sessionDate ?? '').localeCompare(b.sessionDate ?? ''));
 

@@ -31,9 +31,13 @@ export type Lead = {
   sessionTime2: string | null;
   teamAddon: boolean;
   total: number;
-  status: StageKey;
+  /** A cancelled booking keeps its record but drops off the Kanban board -
+   *  it is not one of the pipeline `STAGES`. */
+  status: StageKey | 'cancelled';
   createdAt: string;
   type: string;
+  calendarEventId: string | null;
+  calendarEventId2: string | null;
 };
 
 export type BookingRow = Lead & { venue: string };

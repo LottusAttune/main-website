@@ -63,6 +63,18 @@ const action = z.discriminatedUnion('action', [
     isPublished: z.boolean(),
   }),
   z.object({ action: z.literal('removeReview'), id: z.string().uuid() }),
+  z.object({
+    action: z.literal('cancelDiscoveryCall'),
+    id: z.string().uuid(),
+    cancelled: z.boolean(),
+  }),
+  z.object({ action: z.literal('deleteDiscoveryCall'), id: z.string().uuid() }),
+  z.object({
+    action: z.literal('editDiscoveryCall'),
+    id: z.string().uuid(),
+    callDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
+    callTime: z.string().max(40),
+  }),
 ]);
 
 export async function POST(request: Request) {
@@ -163,6 +175,47 @@ export async function POST(request: Request) {
       case 'removeReview':
         await sql`DELETE FROM reviews WHERE id = ${input.id}`;
         revalidatePath('/');
+        break;
+
+      case 'cancelDiscoveryCall':
+        await sql`
+          UPDATE discovery_calls
+          SET status = ${input.cancelled ? 'cancelled' : 'scheduled'}
+          WHERE id = ${input.id}
+        `;
+        revalidatePath('/discovery-call');
+        revalidatePath('/v1/discovery-call');
+        break;
+
+      case 'deleteDiscoveryCall':
+        await sql`DELETE FROM discovery_calls WHERE id = ${input.id}`;
+        revalidatePath('/discovery-call');
+        revalidatePath('/v1/discovery-call');
+        break;
+
+      case 'editDiscoveryCall':
+        try {
+          await sql`
+            UPDATE discovery_calls
+            SET call_date = ${input.callDate}, call_time = ${input.callTime}
+            WHERE id = ${input.id}
+          `;
+        } catch (error) {
+          if (
+            error &&
+            typeof error === 'object' &&
+            'code' in error &&
+            error.code === '23505'
+          ) {
+            return NextResponse.json(
+              { error: 'That time is already booked.' },
+              { status: 409 }
+            );
+          }
+          throw error;
+        }
+        revalidatePath('/discovery-call');
+        revalidatePath('/v1/discovery-call');
         break;
     }
 

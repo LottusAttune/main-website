@@ -807,6 +807,25 @@
   letter-spacing: 0.16em;
 }
 
+.rowActions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.editRow {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.editInput {
+  padding: 8px 10px;
+  min-height: 34px;
+  font-size: 13px;
+}
+
 .reviewCount {
   font-size: 14px;
   color: var(--color-muted);

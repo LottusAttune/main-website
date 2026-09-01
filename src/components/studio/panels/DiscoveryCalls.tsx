@@ -1,6 +1,10 @@
 'use client';
 
+import { useState } from 'react';
+
 import { formatStudioDate, type DiscoveryCallRow } from '@/lib/pipeline';
+import { DISCOVERY_CALL_TIMES } from '@/lib/site';
+import { useStudioAction } from '../useStudioAction';
 import { ExportButton } from '../ExportButton';
 import styles from '../studio.module.css';
 
@@ -16,6 +20,11 @@ const COLUMNS = [
 ];
 
 export function DiscoveryCalls({ calls }: { calls: DiscoveryCallRow[] }) {
+  const { run, error } = useStudioAction();
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [editDate, setEditDate] = useState('');
+  const [editTime, setEditTime] = useState('');
+
   if (calls.length === 0) {
     return (
       <div className={styles.empty}>
@@ -25,8 +34,26 @@ export function DiscoveryCalls({ calls }: { calls: DiscoveryCallRow[] }) {
     );
   }
 
+  const startEdit = (call: DiscoveryCallRow) => {
+    setEditingId(call.id);
+    setEditDate(call.callDate);
+    setEditTime(call.callTime);
+  };
+
+  const saveEdit = async (id: string) => {
+    const ok = await run({
+      action: 'editDiscoveryCall',
+      id,
+      callDate: editDate,
+      callTime: editTime,
+    });
+    if (ok) setEditingId(null);
+  };
+
   return (
     <>
+      {error ? <div className={styles.notice}>{error}</div> : null}
+
       <div className={styles.publishRow} style={{ marginTop: 0, borderTop: 'none' }}>
         <ExportButton
           filename="lotus-discovery-calls"
@@ -45,22 +72,120 @@ export function DiscoveryCalls({ calls }: { calls: DiscoveryCallRow[] }) {
               <th>Phone</th>
               <th>Company</th>
               <th>Message</th>
+              <th>Status</th>
+              <th>Actions</th>
             </tr>
           </thead>
           <tbody>
-            {calls.map((call) => (
-              <tr key={call.id}>
-                <td>{formatStudioDate(call.callDate)}</td>
-                <td>{call.callTime}</td>
-                <td>{call.name}</td>
-                <td>
-                  <a href={`mailto:${call.email}`}>{call.email}</a>
-                </td>
-                <td>{call.phone ?? '—'}</td>
-                <td>{call.company ?? '—'}</td>
-                <td>{call.message ?? '—'}</td>
-              </tr>
-            ))}
+            {calls.map((call) => {
+              const cancelled = call.status === 'cancelled';
+              const isEditing = editingId === call.id;
+
+              return (
+                <tr key={call.id}>
+                  {isEditing ? (
+                    <td colSpan={2}>
+                      <div className={styles.editRow}>
+                        <input
+                          type="date"
+                          className={`field ${styles.editInput}`}
+                          value={editDate}
+                          onChange={(e) => setEditDate(e.target.value)}
+                        />
+                        <select
+                          className={`field ${styles.editInput}`}
+                          value={editTime}
+                          onChange={(e) => setEditTime(e.target.value)}
+                        >
+                          {DISCOVERY_CALL_TIMES.map((slot) => (
+                            <option key={slot} value={slot}>
+                              {slot}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                    </td>
+                  ) : (
+                    <>
+                      <td>{formatStudioDate(call.callDate)}</td>
+                      <td>{call.callTime}</td>
+                    </>
+                  )}
+                  <td>{call.name}</td>
+                  <td>
+                    <a href={`mailto:${call.email}`}>{call.email}</a>
+                  </td>
+                  <td>{call.phone ?? '—'}</td>
+                  <td>{call.company ?? '—'}</td>
+                  <td>{call.message ?? '—'}</td>
+                  <td>
+                    <span
+                      className={`${styles.pill} ${cancelled ? styles.pillAlert : styles.pillSuccess}`}
+                    >
+                      {cancelled ? 'Cancelled' : 'Booked'}
+                    </span>
+                  </td>
+                  <td>
+                    {isEditing ? (
+                      <div className={styles.rowActions}>
+                        <button
+                          type="button"
+                          className={`btn btn--outline ${styles.smallBtn}`}
+                          onClick={() => void saveEdit(call.id)}
+                        >
+                          Save
+                        </button>
+                        <button
+                          type="button"
+                          className={`btn btn--outline ${styles.smallBtn}`}
+                          onClick={() => setEditingId(null)}
+                        >
+                          Cancel
+                        </button>
+                      </div>
+                    ) : (
+                      <div className={styles.rowActions}>
+                        <button
+                          type="button"
+                          className={`btn btn--outline ${styles.smallBtn}`}
+                          onClick={() => startEdit(call)}
+                        >
+                          Edit
+                        </button>
+                        <button
+                          type="button"
+                          className={`btn btn--outline ${styles.smallBtn}`}
+                          onClick={() =>
+                            void run({
+                              action: 'cancelDiscoveryCall',
+                              id: call.id,
+                              cancelled: !cancelled,
+                            })
+                          }
+                        >
+                          {cancelled ? 'Restore' : 'Cancel'}
+                        </button>
+                        <button
+                          type="button"
+                          className={`btn btn--outline ${styles.smallBtn}`}
+                          onClick={() => {
+                            if (
+                              window.confirm(
+                                `Delete the discovery call with ${call.name} permanently? This cannot be undone.`
+                              )
+                            ) {
+                              void run({ action: 'deleteDiscoveryCall', id: call.id });
+                            }
+                          }}
+                        >
+                          Delete
+                        </button>
+                      </div>
+                    )}
+                  </td>
+                </tr>
+              );
+            })}
           </tbody>
         </table>
       </div>

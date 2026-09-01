@@ -94,6 +94,7 @@ function callDetailsHtml(name: string, dayLabel: string, callTime: string): stri
 export async function sendDiscoveryCallEmails(input: {
   name: string;
   email: string;
+  company?: string | null;
   callDate: string;
   callTime: string;
 }): Promise<void> {
@@ -115,10 +116,14 @@ export async function sendDiscoveryCallEmails(input: {
   `);
 
   const teamHtml = wrapperHtml(`
-    <p style="margin:0 0 18px;">A new discovery call was booked.</p>
+    <p style="margin:0 0 10px;">A new discovery call was booked.</p>
     ${callDetailsHtml(input.name, dayLabel, input.callTime)}
     <p style="margin:18px 0 0;">
       Client email: <a href="mailto:${input.email}" style="color:#7c5b3b;">${input.email}</a>
+      ${input.company ? `<br />Company: ${input.company}` : ''}
+    </p>
+    <p style="margin:18px 0 0;">
+      Join with this link when it's time: <a href="${DISCOVERY_CALL_MEET_LINK}" style="color:#7c5b3b;">${DISCOVERY_CALL_MEET_LINK}</a>
     </p>
   `);
 

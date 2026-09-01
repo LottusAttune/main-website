@@ -82,6 +82,7 @@ export async function POST(request: Request) {
     await sendDiscoveryCallEmails({
       name: input.name,
       email: input.email,
+      company: input.company,
       callDate: input.callDate,
       callTime: input.callTime,
     });

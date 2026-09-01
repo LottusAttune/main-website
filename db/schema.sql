@@ -78,6 +78,7 @@ CREATE TABLE IF NOT EXISTS bookings (
   team_addon      BOOLEAN NOT NULL DEFAULT FALSE,
   refreshments    BOOLEAN NOT NULL DEFAULT FALSE,
   discount_code   TEXT,
+  gratuity        INTEGER NOT NULL DEFAULT 0,
   estimated_total INTEGER NOT NULL DEFAULT 0,
   status          TEXT NOT NULL DEFAULT 'new_enquiry',
   -- Google Calendar event ids, one per session - lets a cancel/delete/edit
@@ -90,6 +91,9 @@ CREATE TABLE IF NOT EXISTS bookings (
 
 -- Table predates the company field - add it for existing databases.
 ALTER TABLE bookings ADD COLUMN IF NOT EXISTS company TEXT;
+
+-- Table predates the gratuity option - add it for existing databases.
+ALTER TABLE bookings ADD COLUMN IF NOT EXISTS gratuity INTEGER NOT NULL DEFAULT 0;
 
 -- Table predates Google Calendar sync - add it for existing databases.
 ALTER TABLE bookings ADD COLUMN IF NOT EXISTS calendar_event_id TEXT;

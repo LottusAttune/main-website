@@ -24,6 +24,7 @@ const COLUMNS = [
     value: (b: BookingRow) => (b.teamAddon ? 'Yes' : 'No'),
   },
   { header: 'Venue', value: (b: BookingRow) => b.venue },
+  { header: 'Gratuity', value: (b: BookingRow) => b.gratuity },
   { header: 'Value', value: (b: BookingRow) => b.total },
   { header: 'Status', value: (b: BookingRow) => b.status },
 ];
@@ -95,6 +96,7 @@ export function Bookings({ bookings }: { bookings: BookingRow[] }) {
             <th>Format</th>
             <th>Add-on</th>
             <th>Venue</th>
+            <th>Gratuity</th>
             <th>Value</th>
             <th>Status</th>
             <th>Actions</th>
@@ -182,6 +184,9 @@ export function Bookings({ bookings }: { bookings: BookingRow[] }) {
                   )}
                 </td>
                 <td>{booking.venue}</td>
+                <td className={styles.numeric}>
+                  {booking.gratuity > 0 ? money(booking.gratuity) : '—'}
+                </td>
                 <td className={styles.numeric}>{money(booking.total)}</td>
                 <td>
                   <span className={`${styles.pill} ${statusPill(booking.status)}`}>

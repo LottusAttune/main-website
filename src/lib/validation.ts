@@ -28,6 +28,8 @@ export const bookingSchema = z
     teamAddon: z.boolean().default(false),
     refreshments: z.boolean().default(false),
     discountCode: z.string().trim().max(40).optional().nullable(),
+    gratuityPercent: z.coerce.number().int().min(0).max(100).optional().nullable(),
+    gratuityAmount: z.coerce.number().min(0).max(100_000).optional().nullable(),
   })
   .refine(
     (value) =>

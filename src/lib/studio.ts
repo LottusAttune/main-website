@@ -63,6 +63,7 @@ export async function getStudioData(): Promise<StudioData> {
     sessionDate2: toIso(row.session_date_2),
     sessionTime2: row.session_time_2 ? String(row.session_time_2) : null,
     teamAddon: Boolean(row.team_addon),
+    gratuity: Number(row.gratuity ?? 0),
     total: Number(row.estimated_total),
     status:
       String(row.status) === 'cancelled'

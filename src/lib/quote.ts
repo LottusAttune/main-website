@@ -23,6 +23,7 @@ export type BookingQuote = {
   subtotal: number;
   total: number;
   discountApplied: number;
+  gratuity: number;
 };
 
 export type BookingInput = {
@@ -36,6 +37,10 @@ export type BookingInput = {
   /** Percentage off, already validated as active and group-eligible. */
   percentOff?: number;
   discountLabel?: string;
+  /** One of the quick-pick percentages (0/10/15/18/20). A flat dollar
+   *  amount in `gratuityAmount` takes priority when both are set. */
+  gratuityPercent?: number;
+  gratuityAmount?: number;
 };
 
 export const MIN_GROUP_SIZE = 2;
@@ -115,7 +120,26 @@ export function quoteFor(
     });
   }
 
-  return { lines, subtotal, total, discountApplied };
+  // Gratuity is optional and calculated on top of everything above - a flat
+  // amount always wins over a percentage when both happen to be present.
+  let gratuity = 0;
+  if (people >= 1) {
+    if (typeof input.gratuityAmount === 'number' && input.gratuityAmount > 0) {
+      gratuity = Math.round(input.gratuityAmount);
+      lines.push({ label: 'Gratuity', value: money(gratuity) });
+    } else if (input.gratuityPercent) {
+      gratuity = Math.round((total * input.gratuityPercent) / 100);
+      if (gratuity > 0) {
+        lines.push({
+          label: `Gratuity — ${input.gratuityPercent}%`,
+          value: money(gratuity),
+        });
+      }
+    }
+  }
+  total += gratuity;
+
+  return { lines, subtotal, total, discountApplied, gratuity };
 }
 
 export type GiftInput = {
@@ -162,5 +186,5 @@ export function giftQuoteFor(
     }
   }
 
-  return { lines, subtotal, total: subtotal, discountApplied: 0 };
+  return { lines, subtotal, total: subtotal, discountApplied: 0, gratuity: 0 };
 }

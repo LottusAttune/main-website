@@ -30,6 +30,7 @@ export type Lead = {
   sessionDate2: string | null;
   sessionTime2: string | null;
   teamAddon: boolean;
+  gratuity: number;
   total: number;
   /** A cancelled booking keeps its record but drops off the Kanban board -
    *  it is not one of the pipeline `STAGES`. */

@@ -31,6 +31,8 @@ type CodeState = {
 };
 
 const QUICK_PARTY = [1, 2, 3, 4, 5, 6];
+const GRATUITY_PERCENTS = [0, 10, 15, 18, 20] as const;
+type GratuityChoice = (typeof GRATUITY_PERCENTS)[number] | 'custom';
 
 export function BookingForm({
   pricing,
@@ -44,6 +46,8 @@ export function BookingForm({
   const [time, setTime] = useState<string | null>(null);
   const [time2, setTime2] = useState<string | null>(null);
   const [teamAddon, setTeamAddon] = useState(false);
+  const [gratuityChoice, setGratuityChoice] = useState<GratuityChoice>(0);
+  const [customGratuity, setCustomGratuity] = useState('');
   const [codeInput, setCodeInput] = useState('');
   const [code, setCode] = useState<CodeState>({
     applied: null,
@@ -64,12 +68,19 @@ export function BookingForm({
   const needsSecond = people > TWO_SESSION_THRESHOLD;
   const openSlots = TIME_SLOTS.filter((slot) => slots[slot.key] !== false);
 
+  const gratuityAmount =
+    gratuityChoice === 'custom' ? Number(customGratuity) || 0 : undefined;
+  const gratuityPercent =
+    gratuityChoice === 'custom' ? undefined : gratuityChoice;
+
   const quote = quoteFor(
     {
       participants: people,
       teamAddon,
       percentOff: code.applied?.percentOff,
       discountLabel: code.applied?.code,
+      gratuityPercent,
+      gratuityAmount,
     },
     pricing
   );
@@ -144,6 +155,8 @@ export function BookingForm({
           sessionTime2: needsSecond ? time2 : null,
           teamAddon,
           discountCode: code.applied?.code ?? null,
+          gratuityPercent: gratuityPercent ?? null,
+          gratuityAmount: gratuityAmount ?? null,
         }),
       });
 
@@ -352,10 +365,56 @@ export function BookingForm({
           </div>
         </div>
 
+        {/* ---------- Gratuity ---------- */}
+        <div className={styles.step}>
+          <div className={styles.stepHead}>
+            <div className={styles.stepNumber}>05</div>
+            <h2 className={styles.stepTitle}>Would you like to include gratuity?</h2>
+          </div>
+          <p className={styles.stepNote}>Entirely optional</p>
+          <div className={`${styles.partyRow} ${styles.indent}`}>
+            {GRATUITY_PERCENTS.map((pct) => (
+              <button
+                key={pct}
+                type="button"
+                className={`${styles.partyBtn} ${gratuityChoice === pct ? styles.partyBtnOn : ''}`}
+                aria-pressed={gratuityChoice === pct}
+                onClick={() => setGratuityChoice(pct)}
+              >
+                {pct}%
+              </button>
+            ))}
+            <button
+              type="button"
+              className={`${styles.partyBtn} ${gratuityChoice === 'custom' ? styles.partyBtnOn : ''}`}
+              aria-pressed={gratuityChoice === 'custom'}
+              onClick={() => setGratuityChoice('custom')}
+            >
+              Other amount
+            </button>
+          </div>
+          {gratuityChoice === 'custom' ? (
+            <div className={styles.indent} style={{ marginTop: 12 }}>
+              <input
+                className="field"
+                type="number"
+                inputMode="decimal"
+                min={0}
+                step="1"
+                placeholder="Enter an amount ($)"
+                aria-label="Gratuity amount"
+                value={customGratuity}
+                onChange={(e) => setCustomGratuity(e.target.value)}
+                style={{ maxWidth: 220 }}
+              />
+            </div>
+          ) : null}
+        </div>
+
         {/* ---------- Your details ---------- */}
         <div className={`${styles.step} ${styles.stepLast}`}>
           <div className={styles.stepHead} style={{ marginBottom: 20 }}>
-            <div className={styles.stepNumber}>05</div>
+            <div className={styles.stepNumber}>06</div>
             <h2 className={styles.stepTitle}>Your details</h2>
           </div>
           <div className={`${styles.details} ${styles.indent}`}>

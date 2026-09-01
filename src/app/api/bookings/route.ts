@@ -47,13 +47,15 @@ export async function POST(request: Request) {
 
   const eligibleDiscount = discount && input.participants >= 2 ? discount : undefined;
 
-  const { total } = quoteFor(
+  const { total, gratuity } = quoteFor(
     {
       participants: input.participants,
       teamAddon: input.teamAddon,
       refreshments: input.refreshments,
       percentOff: eligibleDiscount?.percentOff,
       discountLabel: eligibleDiscount?.code,
+      gratuityPercent: input.gratuityPercent ?? undefined,
+      gratuityAmount: input.gratuityAmount ?? undefined,
     },
     settings.pricing
   );
@@ -83,14 +85,14 @@ export async function POST(request: Request) {
       INSERT INTO bookings (
         name, email, phone, company, message, participants,
         session_date, session_time, session_date_2, session_time_2,
-        team_addon, refreshments, discount_code, estimated_total
+        team_addon, refreshments, discount_code, gratuity, estimated_total
       ) VALUES (
         ${input.name}, ${input.email}, ${input.phone ?? null}, ${input.company ?? null}, ${input.message ?? null},
         ${input.participants},
         ${input.sessionDate}, ${input.sessionTime},
         ${input.sessionDate2 ?? null}, ${input.sessionTime2 ?? null},
         ${input.teamAddon}, ${input.refreshments},
-        ${eligibleDiscount?.code ?? null}, ${total}
+        ${eligibleDiscount?.code ?? null}, ${gratuity}, ${total}
       )
       RETURNING id
     `;
@@ -103,6 +105,7 @@ export async function POST(request: Request) {
       input.company ? `Company: ${input.company}` : null,
       `Participants: ${input.participants}`,
       input.teamAddon ? 'Team-building add-on: yes' : null,
+      gratuity > 0 ? `Gratuity: $${gratuity}` : null,
       input.message ? `Message: ${input.message}` : null,
     ]
       .filter(Boolean)

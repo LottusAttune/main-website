@@ -45,20 +45,21 @@ function wrapperHtml(bodyHtml: string): string {
   <body style="margin:0;padding:32px 16px;background:#eae6df;font-family:Georgia,'Times New Roman',serif;">
     <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:560px;margin:0 auto;background:#fffdfa;border:1px solid rgba(59,46,36,0.14);">
       <tr>
-        <td style="padding:16px 40px 8px;text-align:center;border-bottom:1px solid rgba(59,46,36,0.14);">
+        <td style="padding:8px 40px 6px;text-align:center;">
           <img src="${LOGO_URL}" width="280" height="218" alt="Lotus Attune" style="display:block;margin:0 auto;border:0;" />
-          <div style="font-family:Arial,Helvetica,sans-serif;font-size:10.5px;letter-spacing:0.18em;text-transform:uppercase;color:#7c5b3b;margin-top:6px;">Immersive Soma Sound Experience</div>
+          <div style="font-family:Arial,Helvetica,sans-serif;font-size:10.5px;letter-spacing:0.18em;text-transform:uppercase;color:#7c5b3b;margin-top:2px;">Immersive Soma Sound Experience</div>
         </td>
       </tr>
       <tr>
-        <td style="padding:22px 40px 8px;font-family:Arial,Helvetica,sans-serif;font-size:15px;line-height:1.7;color:#5c4c40;">
+        <td style="padding:14px 40px 8px;border-top:1px solid rgba(59,46,36,0.14);font-family:Arial,Helvetica,sans-serif;font-size:15px;line-height:1.7;color:#5c4c40;">
           ${bodyHtml}
         </td>
       </tr>
       <tr>
-        <td style="padding:22px 40px;border-top:1px solid rgba(59,46,36,0.14);text-align:center;">
-          <div style="font-family:Georgia,'Times New Roman',serif;font-size:20px;color:#3b2e24;margin-bottom:6px;">Reset. Align. Thrive</div>
-          <div style="font-family:Arial,Helvetica,sans-serif;font-size:12.5px;line-height:1.6;color:#5c4c40;">Create space to recharge, renew and reconnect from within.</div>
+        <td style="padding:28px 40px;background:#241b14;text-align:center;">
+          <div style="font-family:Arial,Helvetica,sans-serif;font-size:10px;letter-spacing:0.28em;text-transform:uppercase;color:#c6a97a;margin-bottom:10px;">Ready When You Are</div>
+          <div style="font-family:Georgia,'Times New Roman',serif;font-size:24px;color:#f6efe5;margin-bottom:8px;">Reset. Align. Thrive</div>
+          <div style="font-family:Arial,Helvetica,sans-serif;font-size:12.5px;line-height:1.6;color:rgba(239,230,218,0.75);">Create space to recharge, renew and reconnect from within.</div>
         </td>
       </tr>
       <tr>
@@ -66,7 +67,7 @@ function wrapperHtml(bodyHtml: string): string {
           <div style="font-family:Georgia,'Times New Roman',serif;font-size:15px;color:#3b2e24;margin-bottom:6px;">Lotus Attune</div>
           Questions? <a href="mailto:${SITE.email}" style="color:#7c5b3b;">${SITE.email}</a>
           &nbsp;&middot;&nbsp; ${SITE.phone}<br />
-          ${SITE.area}
+          Toronto Downtown
         </td>
       </tr>
     </table>

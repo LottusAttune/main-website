@@ -84,6 +84,10 @@ export async function getStudioData(): Promise<StudioData> {
     if (existing) {
       existing.sessions += 1;
       existing.lifetimeValue += lead.total;
+      existing.totalParticipants += lead.participants;
+      if (lead.teamAddon) existing.teamAddon = true;
+      if (lead.phone) existing.phone = lead.phone;
+      if (lead.company) existing.company = lead.company;
       if (
         lead.sessionDate &&
         (!existing.lastSession || lead.sessionDate > existing.lastSession)
@@ -94,7 +98,11 @@ export async function getStudioData(): Promise<StudioData> {
       byEmail.set(lead.email, {
         name: lead.name,
         email: lead.email,
+        phone: lead.phone,
+        company: lead.company,
         sessions: 1,
+        totalParticipants: lead.participants,
+        teamAddon: lead.teamAddon,
         lifetimeValue: lead.total,
         lastSession: lead.sessionDate,
       });

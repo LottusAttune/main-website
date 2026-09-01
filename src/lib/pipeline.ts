@@ -60,7 +60,12 @@ export type ReviewRow = {
 export type Client = {
   name: string;
   email: string;
+  phone: string | null;
+  company: string | null;
   sessions: number;
+  totalParticipants: number;
+  /** Ever booked the team-building add-on, across any of their sessions. */
+  teamAddon: boolean;
   lifetimeValue: number;
   lastSession: string | null;
 };

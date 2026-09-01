@@ -85,7 +85,6 @@
 
 .timeBtnOff {
   color: var(--color-disabled);
-  text-decoration: line-through;
   cursor: default;
 }
 

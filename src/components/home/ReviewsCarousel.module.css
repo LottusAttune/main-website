@@ -63,6 +63,9 @@
      against this section's own warmer background instead of blending into
      a similar tan. */
   background: linear-gradient(170deg, #ffffff 0%, #fdfbf7 100%);
+  /* The shared .card's 26px radius read as too rounded here - the site's
+     other soft-square elements (nav, footer) use 6px instead. */
+  border-radius: 6px;
 }
 
 .cardActive {

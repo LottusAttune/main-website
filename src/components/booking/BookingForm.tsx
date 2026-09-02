@@ -262,7 +262,8 @@ export function BookingForm({
           </div>
           <p className={styles.stepNote}>
             Sessions are offered for 1 to 24 participants. Groups larger than
-            12 are split across two sessions.
+            12 are split across two sessions. Corporate Introductory pricing
+            is available from 7 participants.
           </p>
           <div className={`${styles.partyRow} ${styles.indent}`}>
             {QUICK_PARTY.map((n) => (
@@ -308,7 +309,7 @@ export function BookingForm({
                 aria-pressed={!isPackage}
                 onClick={() => setIsPackage(false)}
               >
-                <span className={styles.timeLabel}>1 session</span>
+                <span className={styles.tierLabel}>1 session</span>
                 <span className={styles.timeNote}>
                   {money(pricing.privateSession)}
                 </span>
@@ -319,7 +320,7 @@ export function BookingForm({
                 aria-pressed={isPackage}
                 onClick={() => setIsPackage(true)}
               >
-                <span className={styles.timeLabel}>Package of four</span>
+                <span className={styles.tierLabel}>Package of four</span>
                 <span className={styles.timeNote}>
                   {money(pricing.privatePackage)} — save{' '}
                   {money(pricing.privateSession * 4 - pricing.privatePackage)}
@@ -336,7 +337,7 @@ export function BookingForm({
                 aria-pressed={!isCorporateIntro}
                 onClick={() => setIsCorporateIntro(false)}
               >
-                <span className={styles.timeLabel}>Standard group</span>
+                <span className={styles.tierLabel}>Standard group</span>
                 <span className={styles.timeNote}>Per-participant group rate</span>
               </button>
               <button
@@ -345,7 +346,7 @@ export function BookingForm({
                 aria-pressed={isCorporateIntro}
                 onClick={() => setIsCorporateIntro(true)}
               >
-                <span className={styles.timeLabel}>Corporate Introductory</span>
+                <span className={styles.tierLabel}>Corporate Introductory</span>
                 <span className={styles.timeNote}>
                   First-time organizational clients
                 </span>

@@ -169,8 +169,11 @@
   color: var(--color-gold-light);
 }
 
+/* Body font, not the display serif - Cormorant's "1" has no base flag and
+   reads as a capital I at this size, which matters on a price. */
 .totalValue {
-  font-family: var(--font-display);
+  font-family: var(--font-body);
+  font-weight: 500;
   font-size: clamp(34px, 4vw, 46px);
   line-height: 1;
   color: var(--color-cream-text);

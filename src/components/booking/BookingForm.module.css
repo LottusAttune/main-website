@@ -183,6 +183,17 @@
   margin-bottom: 3px;
 }
 
+/* Same card, but body font - the tier-choice labels can start with "1"
+   (as in "1 session"), and Cormorant's "1" has no base flag at this size,
+   reading as a capital I. */
+.tierLabel {
+  display: block;
+  font-family: var(--font-body);
+  font-weight: 500;
+  font-size: 16.5px;
+  margin-bottom: 3px;
+}
+
 .timeNote {
   display: block;
   font-size: 12.5px;
@@ -343,8 +354,11 @@
   margin: 20px 0;
 }
 
+/* Body font, not the display serif - Cormorant's "1" has no base flag and
+   reads as a capital I at this size, which matters on a price. */
 .estimateValue {
-  font-family: var(--font-display);
+  font-family: var(--font-body);
+  font-weight: 500;
   font-size: 42px;
   line-height: 1;
 }

@@ -36,9 +36,9 @@ export const NAV_LINKS = [
  * published from the studio dashboard — see `lib/pricing.ts`.
  */
 export const DEFAULT_PRICING = {
-  privateSession: 340,
+  privateSession: 350,
   privatePackage: 1200,
-  perParticipant: 280,
+  perParticipant: 250,
   teamAddon: 500,
   refreshments: 20,
   deposit: 500,

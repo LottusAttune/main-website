@@ -163,6 +163,11 @@ export function BookingForm({
     });
   };
 
+  const removeCode = () => {
+    setCodeInput('');
+    setCode({ applied: null, message: '', ok: false });
+  };
+
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setSubmitError('');
@@ -631,14 +636,15 @@ export function BookingForm({
               type="text"
               placeholder="Enter code"
               value={codeInput}
+              disabled={Boolean(code.applied)}
               onChange={(e) => setCodeInput(e.target.value)}
             />
             <button
               type="button"
               className={styles.codeApply}
-              onClick={applyCode}
+              onClick={code.applied ? removeCode : applyCode}
             >
-              APPLY
+              {code.applied ? 'REMOVE' : 'APPLY'}
             </button>
           </div>
           {code.message ? (

@@ -342,8 +342,10 @@
   line-height: 1.6;
 }
 
+/* Not the studio's status-green - that token is for the dashboard, and
+   reads as an off-brand traffic-light color on a customer-facing page. */
 .codeOk {
-  color: var(--status-success);
+  color: var(--color-gold-text);
 }
 
 .codeBad {

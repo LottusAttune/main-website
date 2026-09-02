@@ -71,6 +71,21 @@ export function BookingForm({
 
   const invalid = (field: string) => Boolean(fieldErrors[field]?.length);
 
+  // Arriving from the Offerings estimator's "Book this session" link -
+  // pre-fill step 01 with what was already chosen there instead of asking
+  // again. Still shown and still editable, just not blank.
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const requested = Number(params.get('participants'));
+    if (Number.isInteger(requested) && requested >= 1 && requested <= MAX_PARTICIPANTS) {
+      setParty(requested);
+    }
+    if (params.get('isPackage') === '1') setIsPackage(true);
+    if (params.get('isCorporateIntro') === '1') setIsCorporateIntro(true);
+    if (params.get('teamAddon') === '1') setTeamAddon(true);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const earliest = useMemo(() => {
     const now = new Date();
     const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());

@@ -1,6 +1,6 @@
 'use client';
 
-import { useId, useState } from 'react';
+import { useEffect, useId, useState } from 'react';
 
 import { giftQuoteFor } from '@/lib/quote';
 import type { Pricing } from '@/lib/settings';
@@ -53,6 +53,33 @@ export function GiftCalculator({ pricing }: Props) {
   const [sent, setSent] = useState(false);
 
   const invalid = (field: string) => Boolean(fieldErrors[field]?.length);
+
+  // Arriving from the Offerings estimator's "Gift it" link - pre-fill with
+  // what was already chosen there instead of asking again. Still shown and
+  // still editable, just not reset back to the defaults.
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const requestedFormat = params.get('format');
+    if (requestedFormat === 'private' || requestedFormat === 'group') {
+      setFormat(requestedFormat);
+    }
+    const requestedSessions = Number(params.get('sessions'));
+    if (requestedSessions === 1 || requestedSessions === 4) {
+      setSessions(requestedSessions);
+    }
+    const requestedParticipants = Number(params.get('participants'));
+    if (
+      Number.isInteger(requestedParticipants) &&
+      requestedParticipants >= MIN_PARTICIPANTS &&
+      requestedParticipants <= MAX_PARTICIPANTS
+    ) {
+      setParticipants(requestedParticipants);
+    }
+    if (params.get('teamAddon') === '1') {
+      setAddons((current) => ({ ...current, team: true }));
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const sessionsId = useId();
   const participantsId = useId();

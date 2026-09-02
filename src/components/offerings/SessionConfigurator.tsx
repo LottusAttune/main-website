@@ -184,6 +184,25 @@ export function SessionConfigurator({ pricing, footnote }: Props) {
     pricing
   );
 
+  // Carries the choice already made here through to the booking/gift forms,
+  // so they can start pre-filled on step 01 instead of asking again.
+  const bookParams = new URLSearchParams();
+  bookParams.set('participants', String(isPrivate ? 1 : participants));
+  if (isPrivate && isPackage) bookParams.set('isPackage', '1');
+  if (isCorporateIntro) bookParams.set('isCorporateIntro', '1');
+  if (!isPrivate && teamAddon) bookParams.set('teamAddon', '1');
+  const bookHref = `/book?${bookParams.toString()}`;
+
+  const giftParams = new URLSearchParams();
+  giftParams.set('format', isPrivate ? 'private' : 'group');
+  if (isPrivate) {
+    giftParams.set('sessions', isPackage ? '4' : '1');
+  } else {
+    giftParams.set('participants', String(participants));
+    if (teamAddon) giftParams.set('teamAddon', '1');
+  }
+  const giftHref = `/gift?${giftParams.toString()}`;
+
   const participantsMin = isCorporateIntro
     ? CORPORATE_INTRO_MIN_PARTICIPANTS
     : MIN_PARTICIPANTS;
@@ -370,10 +389,10 @@ export function SessionConfigurator({ pricing, footnote }: Props) {
             See What&apos;s Included
           </Link>
           <div className={styles.summaryActionsRow}>
-            <Link href="/book" className="btn btn--sm btn--cream btn--wide">
+            <Link href={bookHref} className="btn btn--sm btn--cream btn--wide">
               Book this session
             </Link>
-            <Link href="/gift" className={`btn btn--sm btn--wide ${styles.giftBtn}`}>
+            <Link href={giftHref} className={`btn btn--sm btn--wide ${styles.giftBtn}`}>
               Gift it
             </Link>
           </div>

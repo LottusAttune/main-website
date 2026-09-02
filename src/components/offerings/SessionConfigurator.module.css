@@ -169,9 +169,15 @@
   background: none;
 }
 
+/* Dim only the dot, not the whole row - fading the "Available for 7+
+   participants" text along with it read as the control being broken
+   rather than simply not applicable yet at this headcount. */
 .addons :global(.toggle-row:disabled) {
-  opacity: 0.45;
   cursor: default;
+}
+
+.addons :global(.toggle-row:disabled .toggle-row__dot) {
+  opacity: 0.4;
 }
 
 /* Square, not the shared circular dot - a solid filled circle read as a

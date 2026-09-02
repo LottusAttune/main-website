@@ -343,7 +343,10 @@ export function SessionConfigurator({ pricing, footnote }: Props) {
                               display: 'block',
                               fontSize: 13,
                               lineHeight: 1.5,
-                              color: 'var(--color-muted)',
+                              fontWeight: addonAvailable ? 400 : 500,
+                              color: addonAvailable
+                                ? 'var(--color-muted)'
+                                : 'var(--color-gold-text)',
                             }}
                           >
                             {addonAvailable

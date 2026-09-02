@@ -92,7 +92,7 @@ export function GiftCalculator({ pricing }: Props) {
           {
             key: 'team',
             title: 'Mindful team-building activity',
-            note: '30-minute extension, featuring a facilitated activity focused on recognition, values alignment, mindful communication, and team connection — customized to your team objectives',
+            note: '45-minute extension, featuring a facilitated activity focused on recognition, values alignment, mindful communication, and team connection — customized to your team objectives',
             amount: pricing.teamAddon,
           },
         ]

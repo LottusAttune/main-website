@@ -200,7 +200,7 @@ export const SILVANA_OFFERINGS = {
     ],
     addonLabel: 'Optional Corporate Add-on:',
     addonBody:
-      'customized mindful team-building activity Includes a 30-minute extension featuring a facilitated activity focused on recognition, values alignment, mindful communication, and team connection—customized to your team’s objectives. Additional $500 per event.',
+      'customized mindful team-building activity Includes a 45-minute extension featuring a facilitated activity focused on recognition, values alignment, mindful communication, and team connection—customized to your team’s objectives. Additional $500 per event.',
     price: '$280 per participant',
   },
   private: {

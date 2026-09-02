@@ -474,7 +474,7 @@ export function BookingForm({
                         color: 'var(--color-muted)',
                       }}
                     >
-                      30-minute session extension — for organizations and corporate
+                      45-minute session extension — for organizations and corporate
                       teams
                     </span>
                   </span>

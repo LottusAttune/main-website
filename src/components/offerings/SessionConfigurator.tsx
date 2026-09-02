@@ -350,7 +350,7 @@ export function SessionConfigurator({ pricing, footnote }: Props) {
                             }}
                           >
                             {addonAvailable
-                              ? '30-minute extension, featuring a facilitated activity focused on recognition, values alignment, mindful communication, and team connection — customized to your team objectives'
+                              ? '45-minute extension, featuring a facilitated activity focused on recognition, values alignment, mindful communication, and team connection — customized to your team objectives'
                               : `Available for ${TEAM_ADDON_MIN_PARTICIPANTS}+ participants`}
                           </span>
                         </span>

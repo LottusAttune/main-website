@@ -64,10 +64,8 @@ const FALLBACK: SiteSettings = {
   bookedEventDates: [],
   bookedCallSlots: [],
   codes: [
-    { code: 'WELCOME20', percentOff: 20, minParticipants: 2, isActive: true },
-    { code: 'WELCOME30', percentOff: 30, minParticipants: 2, isActive: true },
-    { code: 'LOTUS20', percentOff: 20, minParticipants: 2, isActive: true },
-    { code: 'LOTUS30', percentOff: 30, minParticipants: 2, isActive: true },
+    { code: 'WELCOME10', percentOff: 10, minParticipants: 2, isActive: true },
+    { code: 'LOTUS10', percentOff: 10, minParticipants: 2, isActive: true },
     { code: 'GROUP4', amountOff: 100, minParticipants: 4, isActive: true },
   ],
 };

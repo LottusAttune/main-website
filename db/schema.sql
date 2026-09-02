@@ -60,10 +60,8 @@ CREATE TABLE IF NOT EXISTS discount_codes (
 );
 
 INSERT INTO discount_codes (code, percent_off) VALUES
-  ('WELCOME20', 20),
-  ('WELCOME30', 30),
-  ('LOTUS20',   20),
-  ('LOTUS30',   30)
+  ('WELCOME10', 10),
+  ('LOTUS10',   10)
 ON CONFLICT (code) DO NOTHING;
 
 -- Table predates amount_off/min_participants - add them for existing
@@ -88,6 +86,12 @@ END $$;
 INSERT INTO discount_codes (code, amount_off, min_participants) VALUES
   ('GROUP4', 100, 4)
 ON CONFLICT (code) DO NOTHING;
+
+-- 30%-off codes were never used and 20% was too steep - scaled both down
+-- to 10% and renamed to match, for any database still on the old set.
+UPDATE discount_codes SET code = 'WELCOME10', percent_off = 10 WHERE code = 'WELCOME20';
+UPDATE discount_codes SET code = 'LOTUS10', percent_off = 10 WHERE code = 'LOTUS20';
+DELETE FROM discount_codes WHERE code IN ('WELCOME30', 'LOTUS30');
 
 -- ---------------------------------------------------------------------------
 -- Booking requests. Both Book and the landing page write here.

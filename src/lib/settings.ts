@@ -21,7 +21,10 @@ export type Slots = Record<SlotKey, boolean>;
 
 export type DiscountCode = {
   code: string;
-  percentOff: number;
+  /** Exactly one of percentOff/amountOff is set. */
+  percentOff?: number;
+  amountOff?: number;
+  minParticipants: number;
   isActive: boolean;
 };
 
@@ -61,10 +64,11 @@ const FALLBACK: SiteSettings = {
   bookedEventDates: [],
   bookedCallSlots: [],
   codes: [
-    { code: 'WELCOME20', percentOff: 20, isActive: true },
-    { code: 'WELCOME30', percentOff: 30, isActive: true },
-    { code: 'LOTUS20', percentOff: 20, isActive: true },
-    { code: 'LOTUS30', percentOff: 30, isActive: true },
+    { code: 'WELCOME20', percentOff: 20, minParticipants: 2, isActive: true },
+    { code: 'WELCOME30', percentOff: 30, minParticipants: 2, isActive: true },
+    { code: 'LOTUS20', percentOff: 20, minParticipants: 2, isActive: true },
+    { code: 'LOTUS30', percentOff: 30, minParticipants: 2, isActive: true },
+    { code: 'GROUP4', amountOff: 100, minParticipants: 4, isActive: true },
   ],
 };
 
@@ -93,7 +97,7 @@ export async function getSettings(): Promise<SiteSettings> {
     ] = await Promise.all([
       sql`SELECT * FROM settings WHERE id = TRUE`,
       sql`SELECT day FROM blocked_dates ORDER BY day`,
-      sql`SELECT code, percent_off, is_active FROM discount_codes ORDER BY code`,
+      sql`SELECT code, percent_off, amount_off, min_participants, is_active FROM discount_codes ORDER BY code`,
       sql`SELECT call_date, call_time FROM blocked_call_times ORDER BY call_date, call_time`,
       sql`
         SELECT DISTINCT session_date AS day FROM bookings
@@ -129,7 +133,9 @@ export async function getSettings(): Promise<SiteSettings> {
       blockedDates: blockedResult.rows.map((r) => toIsoDay(r.day)),
       codes: codesResult.rows.map((r) => ({
         code: String(r.code),
-        percentOff: Number(r.percent_off),
+        percentOff: r.percent_off == null ? undefined : Number(r.percent_off),
+        amountOff: r.amount_off == null ? undefined : Number(r.amount_off),
+        minParticipants: Number(r.min_participants),
         isActive: Boolean(r.is_active),
       })),
       blockedCallTimes: blockedCallResult.rows.map((r) => ({

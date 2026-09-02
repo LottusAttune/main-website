@@ -122,7 +122,9 @@ export function BookingForm({
       isCorporateIntro,
       teamAddon,
       percentOff: code.applied?.percentOff,
+      amountOff: code.applied?.amountOff,
       discountLabel: code.applied?.code,
+      discountMinParticipants: code.applied?.minParticipants,
       gratuityPercent,
       gratuityAmount,
     },
@@ -144,17 +146,19 @@ export function BookingForm({
       });
       return;
     }
-    if (people < 2) {
+    if (people < match.minParticipants) {
       setCode({
         applied: null,
-        message: 'Codes apply to group bookings of two or more.',
+        message: `${match.code} applies to bookings of ${match.minParticipants} or more.`,
         ok: false,
       });
       return;
     }
     setCode({
       applied: match,
-      message: `${match.code} applied — ${match.percentOff}% off.`,
+      message: `${match.code} applied — ${
+        match.amountOff ? `${money(match.amountOff)} off` : `${match.percentOff}% off`
+      }.`,
       ok: true,
     });
   };

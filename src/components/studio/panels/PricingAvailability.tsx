@@ -3,7 +3,7 @@
 import { useState } from 'react';
 
 import type { Pricing, SiteSettings, Slots } from '@/lib/settings';
-import { DISCOVERY_CALL_TIMES, TIME_SLOTS } from '@/lib/site';
+import { DISCOVERY_CALL_TIMES, TIME_SLOTS, money } from '@/lib/site';
 import { useStudioAction } from '../useStudioAction';
 import styles from '../studio.module.css';
 
@@ -350,13 +350,16 @@ export function PricingAvailability({ settings }: { settings: SiteSettings }) {
         <div className={`card ${styles.settingsCard}`}>
           <h3 className={styles.settingsTitle}>Discount codes</h3>
           <p className={styles.priceNote} style={{ marginBottom: 8 }}>
-            Group bookings of two or more only. Saved immediately.
+            Saved immediately.
           </p>
           {settings.codes.map((code) => (
             <div key={code.code} className={styles.codeRow}>
               <span>
                 <span className={styles.codeName}>{code.code}</span>
-                <span className={styles.codePercent}>{code.percentOff}% off</span>
+                <span className={styles.codePercent}>
+                  {code.amountOff ? `${money(code.amountOff)} off` : `${code.percentOff}% off`}
+                  {code.minParticipants !== 2 ? ` · ${code.minParticipants}+ participants` : ''}
+                </span>
               </span>
               <button
                 type="button"

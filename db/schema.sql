@@ -44,12 +44,19 @@ CREATE TABLE IF NOT EXISTS blocked_call_times (
 );
 
 -- ---------------------------------------------------------------------------
--- Discount codes. Group bookings (2+) only.
+-- Discount codes. A code is either percent-off or a flat amount-off, never
+-- both, and applies from its own participant minimum (2+ by default).
 -- ---------------------------------------------------------------------------
 CREATE TABLE IF NOT EXISTS discount_codes (
-  code        TEXT PRIMARY KEY,
-  percent_off INTEGER NOT NULL CHECK (percent_off BETWEEN 1 AND 100),
-  is_active   BOOLEAN NOT NULL DEFAULT TRUE
+  code             TEXT PRIMARY KEY,
+  percent_off      INTEGER CHECK (percent_off BETWEEN 1 AND 100),
+  amount_off       INTEGER CHECK (amount_off > 0),
+  min_participants INTEGER NOT NULL DEFAULT 2,
+  is_active        BOOLEAN NOT NULL DEFAULT TRUE,
+  CHECK (
+    (percent_off IS NOT NULL AND amount_off IS NULL) OR
+    (percent_off IS NULL AND amount_off IS NOT NULL)
+  )
 );
 
 INSERT INTO discount_codes (code, percent_off) VALUES
@@ -57,6 +64,29 @@ INSERT INTO discount_codes (code, percent_off) VALUES
   ('WELCOME30', 30),
   ('LOTUS20',   20),
   ('LOTUS30',   30)
+ON CONFLICT (code) DO NOTHING;
+
+-- Table predates amount_off/min_participants - add them for existing
+-- databases, then allow a NULL percent_off so a flat-amount code can omit it.
+ALTER TABLE discount_codes ADD COLUMN IF NOT EXISTS amount_off INTEGER CHECK (amount_off > 0);
+ALTER TABLE discount_codes ADD COLUMN IF NOT EXISTS min_participants INTEGER NOT NULL DEFAULT 2;
+ALTER TABLE discount_codes ALTER COLUMN percent_off DROP NOT NULL;
+
+DO $$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_constraint WHERE conname = 'discount_codes_one_kind'
+  ) THEN
+    ALTER TABLE discount_codes ADD CONSTRAINT discount_codes_one_kind CHECK (
+      (percent_off IS NOT NULL AND amount_off IS NULL) OR
+      (percent_off IS NULL AND amount_off IS NOT NULL)
+    );
+  END IF;
+END $$;
+
+-- $100 off for groups of 4+, printed on the business card.
+INSERT INTO discount_codes (code, amount_off, min_participants) VALUES
+  ('GROUP4', 100, 4)
 ON CONFLICT (code) DO NOTHING;
 
 -- ---------------------------------------------------------------------------

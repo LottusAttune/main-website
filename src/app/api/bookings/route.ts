@@ -45,7 +45,8 @@ export async function POST(request: Request) {
       )
     : undefined;
 
-  const eligibleDiscount = discount && input.participants >= 2 ? discount : undefined;
+  const eligibleDiscount =
+    discount && input.participants >= discount.minParticipants ? discount : undefined;
 
   const { total, gratuity } = quoteFor(
     {
@@ -55,7 +56,9 @@ export async function POST(request: Request) {
       teamAddon: input.teamAddon,
       refreshments: input.refreshments,
       percentOff: eligibleDiscount?.percentOff,
+      amountOff: eligibleDiscount?.amountOff,
       discountLabel: eligibleDiscount?.code,
+      discountMinParticipants: eligibleDiscount?.minParticipants,
       gratuityPercent: input.gratuityPercent ?? undefined,
       gratuityAmount: input.gratuityAmount ?? undefined,
     },

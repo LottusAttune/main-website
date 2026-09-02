@@ -59,7 +59,7 @@ export function StickyBookBar({ twoButtons = false }: Props) {
           Two-hour sessions &nbsp;·&nbsp; 1 to 24 people &nbsp;·&nbsp; downtown Toronto
         </span>
         <Link
-          href="/offerings"
+          href="/book"
           className={styles.quietLink}
           tabIndex={shown ? undefined : -1}
         >

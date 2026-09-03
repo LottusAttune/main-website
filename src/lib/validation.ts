@@ -49,6 +49,7 @@ export type BookingRequest = z.infer<typeof bookingSchema>;
 export const giftSchema = z.object({
   recipientName: trimmed(120),
   recipientEmail: z.string().trim().email().max(200).optional().nullable(),
+  buyerName: trimmed(120),
   buyerEmail: z.string().trim().email().max(200),
   format: z.enum(['private', 'group']),
   sessions: z.coerce.number().int().min(1).max(4).default(1),

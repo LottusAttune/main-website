@@ -66,10 +66,10 @@ export async function POST(request: Request) {
   try {
     const result = await sql`
       INSERT INTO gift_requests (
-        recipient_name, recipient_email, buyer_email, format, sessions, participants, addons,
+        recipient_name, recipient_email, buyer_name, buyer_email, format, sessions, participants, addons,
         discount_code, total, gratuity
       ) VALUES (
-        ${input.recipientName}, ${input.recipientEmail ?? null}, ${input.buyerEmail}, ${input.format},
+        ${input.recipientName}, ${input.recipientEmail ?? null}, ${input.buyerName}, ${input.buyerEmail}, ${input.format},
         ${input.format === 'private' ? input.sessions : null},
         ${input.format === 'group' ? input.participants : null},
         ${JSON.stringify(input.addons)}::jsonb,

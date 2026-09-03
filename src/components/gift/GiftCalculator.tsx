@@ -58,6 +58,7 @@ export function GiftCalculator({ pricing, codes }: Props) {
   });
   const [recipientName, setRecipientName] = useState('');
   const [recipientEmail, setRecipientEmail] = useState('');
+  const [buyerName, setBuyerName] = useState('');
   const [buyerEmail, setBuyerEmail] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState('');
@@ -189,8 +190,8 @@ export function GiftCalculator({ pricing, codes }: Props) {
   const submit = async () => {
     setError('');
     setFieldErrors({});
-    if (!recipientName.trim() || !buyerEmail.trim()) {
-      setError('Please add the recipient name and your email.');
+    if (!recipientName.trim() || !buyerName.trim() || !buyerEmail.trim()) {
+      setError('Please add the recipient name, your name and your email.');
       return;
     }
 
@@ -202,6 +203,7 @@ export function GiftCalculator({ pricing, codes }: Props) {
         body: JSON.stringify({
           recipientName,
           recipientEmail: recipientEmail.trim() || null,
+          buyerName,
           buyerEmail,
           format,
           sessions,
@@ -511,6 +513,16 @@ export function GiftCalculator({ pricing, codes }: Props) {
                 onChange={(e) => setRecipientEmail(e.target.value)}
               />
               <input
+                className={`field field--dark ${invalid('buyerName') ? 'field--invalid' : ''}`}
+                type="text"
+                placeholder="Your name"
+                aria-label="Your name"
+                autoComplete="name"
+                aria-invalid={invalid('buyerName') || undefined}
+                value={buyerName}
+                onChange={(e) => setBuyerName(e.target.value)}
+              />
+              <input
                 className={`field field--dark ${invalid('buyerEmail') ? 'field--invalid' : ''}`}
                 type="email"
                 placeholder="Your email"
@@ -555,6 +567,7 @@ export function GiftCalculator({ pricing, codes }: Props) {
           <div className={styles.previewShell} onClick={(e) => e.stopPropagation()}>
             <CertificatePreview
               recipientName={recipientName.trim()}
+              fromName={buyerName.trim()}
               description={
                 isPrivate
                   ? 'Redeemable for a two-hour immersive Lotus Attune experience — private session, downtown Toronto.'

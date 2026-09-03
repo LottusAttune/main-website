@@ -153,6 +153,7 @@ CREATE TABLE IF NOT EXISTS gift_requests (
   id              UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   recipient_name  TEXT NOT NULL,
   recipient_email TEXT,
+  buyer_name      TEXT,
   buyer_email     TEXT NOT NULL,
   format          TEXT NOT NULL,
   sessions        INTEGER,
@@ -173,6 +174,10 @@ ALTER TABLE gift_requests ADD COLUMN IF NOT EXISTS gratuity INTEGER NOT NULL DEF
 
 -- Table predates discount codes - add it for existing databases.
 ALTER TABLE gift_requests ADD COLUMN IF NOT EXISTS discount_code TEXT;
+
+-- Table predates the buyer's own name (previously only their email) - add
+-- it for existing databases.
+ALTER TABLE gift_requests ADD COLUMN IF NOT EXISTS buyer_name TEXT;
 
 -- ---------------------------------------------------------------------------
 -- Discovery call requests. A fixed video link is sent by email, not stored

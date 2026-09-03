@@ -177,26 +177,27 @@
    padding stays, both so the outer videos don't sit flush against the
    band's own rounded corners and for a little breathing room.
 
-   Flat colour, not var(--gradient-deep) - a gradient's stops are always
-   remapped across whichever box renders it, so the identical gradient
-   token looks like a different shade in this short, wide band than it
-   does in the tall Training card. --color-ink-deep is the gradient's own
-   darker stop, so this reads as the same dark brown as the card without
-   depending on the two boxes sharing a height. */
-.videoHint {
-  margin: 0;
-  padding: clamp(14px, 2vw, 20px) 0 clamp(20px, 2.6vw, 28px);
-  font-size: 12.5px;
-  line-height: 1.6;
-  text-align: center;
-  color: var(--color-cream-text-soft);
-}
-
+   Light, matching .credColLight next to it - a dark brown band read as
+   fighting Vimeo's own black player chrome (two different darks sitting
+   right against each other, worse than one obvious contrast), where a
+   light card lets each video read as a clean black rectangle on its own,
+   the way a video thumbnail normally looks on a light page. */
 .videoBand {
-  background: var(--color-ink-deep);
+  background: var(--color-cream-raised);
   border-radius: 0;
   padding: 0 clamp(16px, 2vw, 24px);
   overflow: hidden;
+}
+
+/* Outside the band, not inside it, so it doesn't add to the band's own
+   height - just a small caption underneath, same treatment as the
+   heading above the band. */
+.videoHint {
+  margin: clamp(14px, 2vw, 20px) 0 0;
+  font-size: 12.5px;
+  line-height: 1.6;
+  text-align: center;
+  color: var(--color-muted);
 }
 
 .videoGrid {

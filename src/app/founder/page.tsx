@@ -114,11 +114,11 @@ export default function FounderPage() {
                   <HandpanVideo key={id} vimeoId={id} />
                 ))}
               </div>
-              <p className={styles.videoHint}>
-                Tap play to listen here, or the Vimeo logo to watch full
-                screen on vimeo.com
-              </p>
             </div>
+            <p className={styles.videoHint}>
+              Tap play to listen here, or the Vimeo logo to watch full
+              screen on vimeo.com
+            </p>
           </div>
         </section>
       </main>

@@ -47,7 +47,7 @@ export function CertificatePreview({
           <div className={styles.certRedeem}>
             <div className={styles.certRedeemText}>
               <span className={styles.certRedeemLabel}>How to redeem</span>
-              Book at lotusattune.com/book — mention this code.
+              Book at lotusattune.com/book — enter this code at checkout.
               <span style={{ display: 'block', marginTop: 4 }}>
                 Questions? {SITE.email} · WhatsApp {SITE.phone}
               </span>

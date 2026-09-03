@@ -121,8 +121,13 @@ export default function FounderPage() {
                     allowFullScreen
                   />
                 </div>
-                <div className={`${styles.videoFrame} ${styles.videoFramePending}`}>
-                  <span>Video coming soon</span>
+                <div className={styles.videoFrame}>
+                  <iframe
+                    src="https://player.vimeo.com/video/1223535077?title=0&byline=0&portrait=0"
+                    title="Silvana playing the handpan"
+                    allow="autoplay; fullscreen; picture-in-picture; encrypted-media"
+                    allowFullScreen
+                  />
                 </div>
               </div>
             </div>

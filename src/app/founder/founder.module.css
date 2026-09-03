@@ -223,21 +223,6 @@
   outline: none;
 }
 
-/* Reserved slot for the third video, not live yet - a dashed outline (no
-   fill) reads as "this spot is intentional" without adding a second box
-   color the way a filled placeholder would. */
-.videoFramePending {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 16px;
-  border: 1px dashed rgba(198, 169, 122, 0.4);
-  text-align: center;
-  font-size: 13px;
-  letter-spacing: 0.02em;
-  color: #c8beb2;
-}
-
 .credColDark {
   background: var(--gradient-deep);
 }

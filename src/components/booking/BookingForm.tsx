@@ -32,7 +32,7 @@ type CodeState = {
 };
 
 const QUICK_PARTY = [1, 2, 3, 4, 5, 6];
-const GRATUITY_PERCENTS = [0, 10, 15, 18, 20] as const;
+const GRATUITY_PERCENTS = [10, 15, 18, 20] as const;
 type GratuityChoice = (typeof GRATUITY_PERCENTS)[number] | 'custom';
 
 export function BookingForm({

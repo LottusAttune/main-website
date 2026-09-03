@@ -16,7 +16,7 @@ import {
 import { CertificatePreview } from './CertificatePreview';
 import styles from './GiftCalculator.module.css';
 
-const GRATUITY_PERCENTS = [0, 10, 15, 18, 20] as const;
+const GRATUITY_PERCENTS = [10, 15, 18, 20] as const;
 type GratuityChoice = (typeof GRATUITY_PERCENTS)[number] | 'custom';
 
 type Format = 'private' | 'group';

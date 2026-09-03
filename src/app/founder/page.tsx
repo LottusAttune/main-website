@@ -23,7 +23,13 @@ export const metadata: Metadata = {
   description: FOUNDER_BIO[0],
 };
 
-const HANDPAN_VIDEO_IDS = ['1221670118', '1221664378', '1223535077'];
+const HANDPAN_VIDEOS = [
+  { id: '1221670118' },
+  { id: '1221664378' },
+  // Runs warmer/more orange than the other two in its own footage - nudged
+  // toward the same neutral grey as the others while paused.
+  { id: '1223535077', hueShift: 15 },
+];
 
 export default function FounderPage() {
   const portrait = asset('silvana-handpan');
@@ -110,8 +116,12 @@ export default function FounderPage() {
             <div className={styles.videoHeading}>Explore my handpan sounds</div>
             <div className={styles.videoBand}>
               <div className={styles.videoGrid}>
-                {HANDPAN_VIDEO_IDS.map((id) => (
-                  <HandpanVideo key={id} vimeoId={id} />
+                {HANDPAN_VIDEOS.map((video) => (
+                  <HandpanVideo
+                    key={video.id}
+                    vimeoId={video.id}
+                    hueShift={video.hueShift}
+                  />
                 ))}
               </div>
             </div>

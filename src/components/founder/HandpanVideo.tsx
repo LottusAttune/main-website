@@ -6,6 +6,10 @@ import styles from './HandpanVideo.module.css';
 
 type Props = {
   vimeoId: string;
+  /** Degrees to rotate the paused preview's hue - only needed when a
+   *  specific video's own footage runs warmer than the others and needs
+   *  a nudge to match, since all three share the same base filter. */
+  hueShift?: number;
 };
 
 /** Vimeo's own play button and progress bar default to a bright blue -
@@ -20,11 +24,15 @@ function embedUrl(id: string): string {
     byline: '0',
     portrait: '0',
     color: 'a8875a',
+    // Without this, Vimeo's own logo badge sits over the video and links
+    // out to vimeo.com - clicking it opens the video playing there too,
+    // on top of the one already playing inline here.
+    badge: '0',
   });
   return `https://player.vimeo.com/video/${id}?${params}`;
 }
 
-export function HandpanVideo({ vimeoId }: Props) {
+export function HandpanVideo({ vimeoId, hueShift = 0 }: Props) {
   const [playing, setPlaying] = useState(false);
   const frameRef = useRef<HTMLIFrameElement>(null);
   const playerRef = useRef<VimeoPlayer | null>(null);
@@ -68,6 +76,15 @@ export function HandpanVideo({ vimeoId }: Props) {
         allow="autoplay; fullscreen; picture-in-picture; encrypted-media"
         allowFullScreen
         className={playing ? styles.clear : styles.muted}
+        // Inline style fully overrides .muted's filter (can't layer onto a
+        // class's filter from here), so it repeats that class's own values
+        // - only reached when hueShift is actually set, and never while
+        // playing, so the real video is always shown unaltered.
+        style={
+          !playing && hueShift
+            ? { filter: `saturate(0.18) brightness(0.95) hue-rotate(${hueShift}deg)` }
+            : undefined
+        }
       />
     </div>
   );

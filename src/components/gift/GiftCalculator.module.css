@@ -146,6 +146,44 @@
   margin-bottom: 12px;
 }
 
+/* A gold double-line frame around the title/recipient/total, so this reads
+   as an actual certificate being filled in live, not a checkout summary. */
+.certificateFrame {
+  position: relative;
+  border: 1px solid var(--gold-rim);
+  padding: 16px 18px;
+  margin-bottom: 16px;
+}
+
+.certificateFrame::before {
+  content: '';
+  position: absolute;
+  inset: 5px;
+  border: 1px solid rgba(198, 169, 122, 0.28);
+  pointer-events: none;
+}
+
+.certificateFrame .asideTitle {
+  margin-bottom: 8px;
+}
+
+.certificateFrame .lines {
+  margin-bottom: 0;
+}
+
+.presentedTo {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: 19px;
+  color: var(--color-cream-text);
+  margin-bottom: 12px;
+}
+
+.presentedToPlaceholder {
+  color: rgba(239, 230, 218, 0.4);
+  font-style: italic;
+}
+
 .lines {
   display: flex;
   flex-direction: column;

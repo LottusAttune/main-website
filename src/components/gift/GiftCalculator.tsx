@@ -329,31 +329,46 @@ export function GiftCalculator({ pricing }: Props) {
       </div>
 
       <aside className={styles.aside}>
-        <div className={styles.asideTitle}>Gift Certificate</div>
-
         {sent ? (
-          <p className={styles.success} role="status">
-            {recipientEmail.trim()
-              ? `Your gift certificate is on its way to ${recipientName} at ${recipientEmail}. A confirmation has also been sent to ${buyerEmail}.`
-              : `Your gift certificate has been sent to ${buyerEmail} — forward it to ${recipientName} whenever you're ready.`}
-          </p>
+          <>
+            <div className={styles.asideTitle}>Gift Certificate</div>
+            <p className={styles.success} role="status">
+              {recipientEmail.trim()
+                ? `Your gift certificate is on its way to ${recipientName} at ${recipientEmail}. A confirmation has also been sent to ${buyerEmail}.`
+                : `Your gift certificate has been sent to ${buyerEmail} — forward it to ${recipientName} whenever you're ready.`}
+            </p>
+          </>
         ) : (
           <>
-            <div className={styles.lines}>
-              {quote.lines.map((line) => (
-                <div key={line.label} className="summary-line summary-line--dark">
-                  <span className="summary-line__label">{line.label}</span>
-                  <span
-                    className="summary-line__value"
-                    style={{ whiteSpace: 'nowrap' }}
-                  >
-                    {line.value}
+            <div className={styles.certificateFrame}>
+              <div className={styles.asideTitle}>Gift Certificate</div>
+              <div className={styles.presentedTo}>
+                {recipientName.trim() ? (
+                  <>
+                    For <strong>{recipientName.trim()}</strong>
+                  </>
+                ) : (
+                  <span className={styles.presentedToPlaceholder}>
+                    For —
                   </span>
+                )}
+              </div>
+              <div className={styles.lines}>
+                {quote.lines.map((line) => (
+                  <div key={line.label} className="summary-line summary-line--dark">
+                    <span className="summary-line__label">{line.label}</span>
+                    <span
+                      className="summary-line__value"
+                      style={{ whiteSpace: 'nowrap' }}
+                    >
+                      {line.value}
+                    </span>
+                  </div>
+                ))}
+                <div className={styles.totalRow}>
+                  <span className={styles.totalLabel}>Total</span>
+                  <span className={styles.totalValue}>{money(quote.total)}</span>
                 </div>
-              ))}
-              <div className={styles.totalRow}>
-                <span className={styles.totalLabel}>Total</span>
-                <span className={styles.totalValue}>{money(quote.total)}</span>
               </div>
             </div>
 

@@ -164,6 +164,21 @@
   margin-top: clamp(20px, 2.4vw, 32px);
 }
 
+/* Label and videos side by side, vertically centred together - stacked
+   with the label above (even left-aligned) put real distance between the
+   label and the row of videos it's labelling, since the videos are
+   centred in the middle of a much wider shell. */
+.videoRow {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: clamp(16px, 3vw, 32px);
+}
+
+.videoLabel {
+  flex: none;
+}
+
 /* No background card behind the videos, on purpose - they're small
    thumbnails now, and a full-width box around a handful of them read as
    mostly-empty space. Each one already reads as a clean black rectangle
@@ -184,9 +199,10 @@
    is. Playing full-size stays one tap away via Vimeo's own expand icon. */
 .videoGrid {
   display: flex;
+  flex: 1;
   flex-wrap: wrap;
   align-items: flex-start;
-  justify-content: center;
+  justify-content: flex-start;
   gap: clamp(32px, 5vw, 64px);
 }
 

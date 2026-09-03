@@ -454,7 +454,7 @@ export function GiftCalculator({ pricing, codes }: Props) {
             <button
               type="button"
               className={`btn btn--outline-dark btn--wide ${styles.previewBtn}`}
-              style={{ marginBottom: 16 }}
+              style={{ marginBottom: 12 }}
               onClick={() => setPreviewOpen(true)}
             >
               Preview certificate

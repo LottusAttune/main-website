@@ -200,22 +200,18 @@
   color: var(--color-muted);
 }
 
-/* align-items: start, not the grid default of stretch - each video now
-   sizes its own box height from its own real aspect ratio (portrait or
-   landscape), and stretch would force all three to match the tallest
-   one regardless, undoing that. */
+/* Fixed-height thumbnail row, not fixed-width columns - a portrait video
+   and a landscape video can't both fill the same box shape without
+   Vimeo pillarboxing one of them again. Holding height constant and
+   letting each video's own aspect ratio set its width instead keeps
+   every thumbnail small and bar-free, whatever shape its video really
+   is. Playing full-size stays one tap away via Vimeo's own expand icon. */
 .videoGrid {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 280px));
-  align-items: start;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
   justify-content: center;
   gap: clamp(16px, 2vw, 24px);
-}
-
-@media (max-width: 720px) {
-  .videoGrid {
-    grid-template-columns: minmax(0, 280px);
-  }
 }
 
 .credColDark {

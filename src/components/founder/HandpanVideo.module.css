@@ -1,9 +1,16 @@
-/* Same colour as founder.module.css's .videoBand, so there's no seam
+/* A thumbnail, not a full-size player - height is fixed and width comes
+   from the aspect-ratio set inline per video (its own real shape), so a
+   portrait and a landscape video both land at the same small height
+   instead of one of them dominating the row. flex: none stops the flex
+   row from stretching or shrinking it away from that.
+
+   Background matches founder.module.css's .videoBand, so there's no seam
    where this shows through around the edge before the iframe has
    painted anything. */
 .frame {
   position: relative;
-  width: 100%;
+  flex: none;
+  height: clamp(120px, 14vw, 160px);
   overflow: hidden;
   background: var(--color-cream-raised);
 }

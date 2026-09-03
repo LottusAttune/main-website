@@ -11,8 +11,9 @@ type Props = {
 /** Vimeo's own play button and progress bar default to a bright blue -
  *  off-brand next to the site's gold and cream. `color` retints Vimeo's own
  *  controls to the site's gold. The thumbnail itself stays Vimeo's real one
- *  (nothing custom drawn over it) - a light blur mutes its colors until the
- *  Player SDK confirms playback has actually started, then it clears. */
+ *  (nothing custom drawn over it) - a desaturating filter mutes its colors
+ *  toward neutral grey until the Player SDK confirms playback has actually
+ *  started, then it clears. */
 function embedUrl(id: string): string {
   const params = new URLSearchParams({
     title: '0',
@@ -66,7 +67,7 @@ export function HandpanVideo({ vimeoId }: Props) {
         title="Silvana playing the handpan"
         allow="autoplay; fullscreen; picture-in-picture; encrypted-media"
         allowFullScreen
-        className={playing ? styles.clear : styles.blurred}
+        className={playing ? styles.clear : styles.muted}
       />
     </div>
   );

@@ -18,12 +18,14 @@
   outline: none;
 }
 
-/* Vimeo's real thumbnail stays visible underneath - a light blur and a
-   touch less saturation keeps whatever bright colours are in the video's
-   first frame from competing with the page, without hiding the video or
-   darkening it. */
-.blurred {
-  filter: blur(3px) saturate(0.75);
+/* Vimeo's real thumbnail and controls stay visible and sharp underneath -
+   no blur, since a blur can't be aimed at just the thumbnail and not the
+   controls (the iframe is one opaque block to the browser; a filter
+   always applies to the whole thing). Desaturating instead keeps every
+   edge crisp while pushing whatever colours are in the video's first
+   frame toward flat neutral grey. */
+.muted {
+  filter: saturate(0.18) brightness(0.95);
   transition: filter 0.4s ease;
 }
 

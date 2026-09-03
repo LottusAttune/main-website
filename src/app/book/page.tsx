@@ -71,8 +71,8 @@ export default async function BookPage() {
             data-bg="1"
             className="photo-wash photo-wash--light"
             style={{
-              backgroundImage: assetUrl('photo-intention'),
-              backgroundPosition: '48% 65%',
+              backgroundImage: assetUrl('intention-card'),
+              backgroundPosition: 'center 30%',
             }}
           />
           <BookingForm

@@ -15,6 +15,7 @@ import {
   TRAINING,
 } from '@/data/content';
 import { asset } from '@/lib/images';
+import { vimeoThumbnail } from '@/lib/vimeo';
 import styles from './founder.module.css';
 
 export const metadata: Metadata = {
@@ -22,8 +23,13 @@ export const metadata: Metadata = {
   description: FOUNDER_BIO[0],
 };
 
-export default function FounderPage() {
+const HANDPAN_VIDEO_IDS = ['1221670118', '1221664378', '1223535077'];
+
+export default async function FounderPage() {
   const portrait = asset('silvana-handpan');
+  const handpanPosters = await Promise.all(
+    HANDPAN_VIDEO_IDS.map(vimeoThumbnail)
+  );
 
   return (
     <>
@@ -106,9 +112,9 @@ export default function FounderPage() {
             <div className={styles.videoHeading}>Explore my handpan sounds</div>
             <div className={styles.videoBand}>
               <div className={styles.videoGrid}>
-                <HandpanVideo vimeoId="1221670118" />
-                <HandpanVideo vimeoId="1221664378" />
-                <HandpanVideo vimeoId="1223535077" />
+                {HANDPAN_VIDEO_IDS.map((id, i) => (
+                  <HandpanVideo key={id} vimeoId={id} posterSrc={handpanPosters[i]} />
+                ))}
               </div>
             </div>
           </div>

@@ -17,10 +17,10 @@
   outline: none;
 }
 
-/* Stands in for Vimeo's own thumbnail and controls until tapped - a flat
-   dark cover, on the site's own palette, rather than Vimeo's default blue
-   play button and whatever colours happen to be in the video's first
-   frame. */
+/* Stands in for Vimeo's own thumbnail and controls until tapped. Flat
+   --color-ink-deep on purpose, matching .videoBand exactly - a gradient
+   here (even a dark one) reads as a visibly lighter box the moment it
+   sits next to the flat band around it. */
 .cover {
   position: absolute;
   inset: 0;
@@ -31,23 +31,42 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: var(--gradient-deep);
-  transition: background 0.25s ease;
+  overflow: hidden;
+  background: var(--color-ink-deep);
 }
 
-.cover:hover {
-  background: var(--gradient-button-dark);
+/* The video's own real thumbnail (fetched from Vimeo at build time) -
+   overscanned and blurred so its edges never show a hard line, and
+   desaturated/darkened so whatever bright colours are in the first frame
+   read as muted, not the dominant thing in the box. */
+.poster {
+  position: absolute;
+  inset: -12px;
+  background-size: cover;
+  background-position: center;
+  filter: blur(7px) saturate(0.5) brightness(0.75);
+  transform: scale(1.1);
+}
+
+/* Dark grey, not a brown/gold tint - a warm tint would still let a bright
+   blue or red mix through as a muddy version of itself. Flat grey desaturates
+   evenly instead. */
+.tint {
+  position: absolute;
+  inset: 0;
+  background: rgba(20, 18, 16, 0.58);
 }
 
 .playButton {
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 60px;
-  height: 60px;
+  width: 56px;
+  height: 56px;
   border-radius: 50%;
   border: 1.5px solid var(--gold-rim-strong);
-  background: rgba(198, 169, 122, 0.14);
+  background: rgba(198, 169, 122, 0.16);
   box-shadow: var(--shadow-gold-halo);
   transition:
     transform 0.25s ease,
@@ -56,7 +75,11 @@
 
 .cover:hover .playButton {
   transform: scale(1.06);
-  background: rgba(198, 169, 122, 0.24);
+  background: rgba(198, 169, 122, 0.28);
+}
+
+.cover:hover .poster {
+  transform: scale(1.14);
 }
 
 /* CSS triangle, not an icon font or SVG import - three border widths
@@ -66,7 +89,7 @@
   width: 0;
   height: 0;
   margin-left: 4px;
-  border-top: 9px solid transparent;
-  border-bottom: 9px solid transparent;
-  border-left: 15px solid var(--color-cream-text);
+  border-top: 8px solid transparent;
+  border-bottom: 8px solid transparent;
+  border-left: 14px solid var(--color-cream-text);
 }

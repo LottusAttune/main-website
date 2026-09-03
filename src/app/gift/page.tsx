@@ -37,8 +37,8 @@ export default async function GiftPage() {
           <div
             style={{
               display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
-              gap: 'clamp(20px, 4vw, 48px)',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
+              gap: '24px',
               alignItems: 'center',
             }}
           >

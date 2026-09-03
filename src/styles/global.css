@@ -175,6 +175,25 @@ p {
   );
 }
 
+/* Same photo as .photo-wash--light, stacked on top of it, but masked down
+   to a small spot so only the card's printed mandala reads at full
+   strength - the hand holding the card stays at the base layer's opacity. */
+.photo-wash--spot {
+  opacity: 0.09;
+  -webkit-mask-image: radial-gradient(
+    220px at 42% 50%,
+    #000 0%,
+    #000 60%,
+    transparent 100%
+  );
+  mask-image: radial-gradient(
+    220px at 42% 50%,
+    #000 0%,
+    #000 60%,
+    transparent 100%
+  );
+}
+
 /* ============================================================
    Type
    ============================================================ */

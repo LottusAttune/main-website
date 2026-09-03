@@ -44,6 +44,12 @@
   --color-gold-deep: #8a6a45;
   --color-gold-warm: #dcc194;
   --color-panel-sand: #b49f84;
+  /* Foil border on the gift certificate only - paler and richer at the
+     extremes than the general gold scale above, which reads flat at the
+     border's width. */
+  --color-gold-pale: #f0e2c4;
+  --color-gold-foil-deep: #6b4f30;
+  --color-gold-foil-light: #ddc79a;
 
   /* ---------- Text on dark ---------- */
   --color-cream-text: #f6efe5;

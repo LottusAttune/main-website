@@ -13,6 +13,7 @@ import {
   money,
   venueNoteFor,
 } from '@/lib/site';
+import { CertificatePreview } from './CertificatePreview';
 import styles from './GiftCalculator.module.css';
 
 const GRATUITY_PERCENTS = [0, 10, 15, 18, 20] as const;
@@ -64,8 +65,18 @@ export function GiftCalculator({ pricing, codes }: Props) {
     Record<string, string[] | undefined>
   >({});
   const [sent, setSent] = useState(false);
+  const [previewOpen, setPreviewOpen] = useState(false);
 
   const invalid = (field: string) => Boolean(fieldErrors[field]?.length);
+
+  useEffect(() => {
+    if (!previewOpen) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setPreviewOpen(false);
+    };
+    document.addEventListener('keydown', onKey);
+    return () => document.removeEventListener('keydown', onKey);
+  }, [previewOpen]);
 
   // Arriving from the Offerings estimator's "Gift it" link - pre-fill with
   // what was already chosen there instead of asking again. Still shown and
@@ -438,6 +449,15 @@ export function GiftCalculator({ pricing, codes }: Props) {
               </div>
             </div>
 
+            <button
+              type="button"
+              className={`btn btn--outline-dark btn--wide ${styles.previewBtn}`}
+              style={{ marginBottom: 16 }}
+              onClick={() => setPreviewOpen(true)}
+            >
+              Preview certificate
+            </button>
+
             <div className={styles.codeBlock}>
               <label className={styles.codeLabel} htmlFor="gift-discount-code">
                 Discount code
@@ -523,6 +543,29 @@ export function GiftCalculator({ pricing, codes }: Props) {
           </>
         )}
       </aside>
+
+      {previewOpen ? (
+        <div
+          className={styles.previewOverlay}
+          role="dialog"
+          aria-modal="true"
+          aria-label="Gift certificate preview"
+          onClick={() => setPreviewOpen(false)}
+        >
+          <div className={styles.previewShell} onClick={(e) => e.stopPropagation()}>
+            <CertificatePreview
+              recipientName={recipientName.trim()}
+              description={
+                isPrivate
+                  ? 'Redeemable for a two-hour immersive Lotus Attune experience — private session, downtown Toronto.'
+                  : 'Redeemable for a two-hour immersive Lotus Attune experience, downtown Toronto.'
+              }
+              valueLabel={`${money(quote.total)} value`}
+            />
+            <p className={styles.previewHint}>Click outside or press Esc to close</p>
+          </div>
+        </div>
+      ) : null}
     </div>
   );
 }

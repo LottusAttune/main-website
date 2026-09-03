@@ -304,3 +304,43 @@
   line-height: 1.8;
   color: rgba(239, 230, 218, 0.85);
 }
+
+/* ---------- Certificate preview modal ---------- */
+
+/* .btn--outline-dark ships with no background of its own (every existing
+   use supplies one) - here that's genuinely transparent, so it reads as a
+   secondary action against the aside's own dark background rather than a
+   solid pill like Request Gift Certificate below it. */
+.previewBtn.previewBtn {
+  background: transparent;
+}
+
+.previewBtn.previewBtn:hover {
+  background: rgba(198, 169, 122, 0.14);
+}
+
+.previewOverlay {
+  position: fixed;
+  inset: 0;
+  z-index: 210;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: clamp(20px, 5vw, 60px);
+  background: rgba(30, 23, 17, 0.86);
+  backdrop-filter: blur(6px);
+}
+
+.previewShell {
+  width: 100%;
+  max-width: 800px;
+  max-height: 90vh;
+  overflow: auto;
+}
+
+.previewHint {
+  margin: 16px 0 0;
+  font-size: 12.5px;
+  text-align: center;
+  color: rgba(239, 230, 218, 0.6);
+}

@@ -21,11 +21,13 @@
 /* Vimeo's real thumbnail and controls stay visible and sharp underneath -
    no blur, since a blur can't be aimed at just the thumbnail and not the
    controls (the iframe is one opaque block to the browser; a filter
-   always applies to the whole thing). Desaturating instead keeps every
-   edge crisp while pushing whatever colours are in the video's first
-   frame toward flat neutral grey. */
+   always applies to the whole thing). Full grayscale, not a partial
+   desaturation - a partial value still let each video's own color cast
+   (one ran bluer, another orange) show through differently from video to
+   video; zero saturation is the only value that reads the same no matter
+   what colors are in the source footage. */
 .muted {
-  filter: saturate(0.18) brightness(0.95);
+  filter: grayscale(1) brightness(0.95);
   transition: filter 0.4s ease;
 }
 

@@ -76,11 +76,19 @@ export default async function BookPage() {
             }}
           />
           <div
-            data-bg="1"
-            className="photo-wash photo-wash--light photo-wash--spot"
+            aria-hidden
             style={{
-              backgroundImage: assetUrl('intention-card'),
-              backgroundPosition: 'center 30%',
+              position: 'absolute',
+              top: '62%',
+              right: '4%',
+              width: 'min(320px, 26vw)',
+              aspectRatio: '270 / 205',
+              backgroundImage: assetUrl('mandala-seal'),
+              backgroundSize: 'contain',
+              backgroundRepeat: 'no-repeat',
+              opacity: 0.09,
+              mixBlendMode: 'multiply',
+              pointerEvents: 'none',
             }}
           />
           <BookingForm

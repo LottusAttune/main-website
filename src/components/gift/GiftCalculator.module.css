@@ -264,8 +264,8 @@
    reads as a capital I at this size, which matters on a price. */
 .totalValue {
   font-family: var(--font-body);
-  font-weight: 600;
-  font-size: clamp(19px, 1.9vw, 21px);
+  font-weight: 500;
+  font-size: clamp(17px, 1.6vw, 18.5px);
   line-height: 1;
   color: var(--color-cream-text);
 }

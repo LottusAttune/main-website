@@ -203,26 +203,6 @@
   }
 }
 
-/* Same flat colour as .videoBand, so there's no gap or seam where the
-   page's own background could show through around a thumbnail's edge -
-   the video (once it loads) is the only thing visible on top of it. */
-.videoFrame {
-  position: relative;
-  width: 100%;
-  aspect-ratio: 16 / 9;
-  overflow: hidden;
-  background: var(--color-ink-deep);
-}
-
-.videoFrame iframe {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  border: none;
-  outline: none;
-}
-
 .credColDark {
   background: var(--gradient-deep);
 }

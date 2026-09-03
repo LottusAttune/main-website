@@ -200,9 +200,14 @@
   color: var(--color-muted);
 }
 
+/* align-items: start, not the grid default of stretch - each video now
+   sizes its own box height from its own real aspect ratio (portrait or
+   landscape), and stretch would force all three to match the tallest
+   one regardless, undoing that. */
 .videoGrid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 280px));
+  align-items: start;
   justify-content: center;
   gap: clamp(16px, 2vw, 24px);
 }

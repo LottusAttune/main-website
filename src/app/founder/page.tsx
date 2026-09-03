@@ -16,6 +16,7 @@ import {
   TRAINING,
 } from '@/data/content';
 import { asset } from '@/lib/images';
+import { vimeoAspectRatio } from '@/lib/vimeo';
 import styles from './founder.module.css';
 
 export const metadata: Metadata = {
@@ -25,8 +26,11 @@ export const metadata: Metadata = {
 
 const HANDPAN_VIDEO_IDS = ['1221670118', '1221664378', '1223535077'];
 
-export default function FounderPage() {
+export default async function FounderPage() {
   const portrait = asset('silvana-handpan');
+  const handpanAspectRatios = await Promise.all(
+    HANDPAN_VIDEO_IDS.map(vimeoAspectRatio)
+  );
 
   return (
     <>
@@ -110,8 +114,12 @@ export default function FounderPage() {
             <div className={styles.videoHeading}>Explore my handpan sounds</div>
             <div className={styles.videoBand}>
               <div className={styles.videoGrid}>
-                {HANDPAN_VIDEO_IDS.map((id) => (
-                  <HandpanVideo key={id} vimeoId={id} />
+                {HANDPAN_VIDEO_IDS.map((id, i) => (
+                  <HandpanVideo
+                    key={id}
+                    vimeoId={id}
+                    aspectRatio={handpanAspectRatios[i]}
+                  />
                 ))}
               </div>
             </div>

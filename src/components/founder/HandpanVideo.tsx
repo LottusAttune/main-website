@@ -6,6 +6,12 @@ import styles from './HandpanVideo.module.css';
 
 type Props = {
   vimeoId: string;
+  /** e.g. "9 / 16" - the video's own real shape, fetched server-side, so
+   *  the box matches it exactly and Vimeo never has to pillarbox a
+   *  portrait video inside a landscape-shaped iframe (those bars are
+   *  Vimeo's own player chrome, rendered inside the iframe - no CSS on
+   *  this page can reach or recolor them). */
+  aspectRatio: string;
 };
 
 /** Vimeo's own play button and progress bar default to a bright blue -
@@ -32,7 +38,7 @@ function embedUrl(id: string): string {
   return `https://player.vimeo.com/video/${id}?${params}`;
 }
 
-export function HandpanVideo({ vimeoId }: Props) {
+export function HandpanVideo({ vimeoId, aspectRatio }: Props) {
   const [playing, setPlaying] = useState(false);
   const frameRef = useRef<HTMLIFrameElement>(null);
   const playerRef = useRef<VimeoPlayer | null>(null);
@@ -83,7 +89,7 @@ export function HandpanVideo({ vimeoId }: Props) {
   }, []);
 
   return (
-    <div className={styles.frame}>
+    <div className={styles.frame} style={{ aspectRatio }}>
       <iframe
         ref={frameRef}
         src={embedUrl(vimeoId)}

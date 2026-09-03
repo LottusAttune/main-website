@@ -75,6 +75,14 @@ export default async function BookPage() {
               backgroundPosition: 'center 30%',
             }}
           />
+          <div
+            data-bg="1"
+            className="photo-wash photo-wash--light photo-wash--spot"
+            style={{
+              backgroundImage: assetUrl('intention-card'),
+              backgroundPosition: 'center 30%',
+            }}
+          />
           <BookingForm
             pricing={settings.pricing}
             slots={settings.slots}

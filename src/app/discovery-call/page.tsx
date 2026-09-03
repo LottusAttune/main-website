@@ -39,7 +39,7 @@ export default async function DiscoveryCallPage() {
           }}
           aria-labelledby="discovery-heading"
         >
-          <div className="eyebrow" style={{ marginBottom: 12 }}>
+          <div className="eyebrow" style={{ fontSize: 15, marginBottom: 12 }}>
             Discovery Call
           </div>
           <h1

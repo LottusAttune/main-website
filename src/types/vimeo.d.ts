@@ -14,6 +14,7 @@ declare global {
     setVolume: (volume: number) => Promise<number>;
     setCurrentTime: (seconds: number) => Promise<number>;
     play: () => Promise<void>;
+    pause: () => Promise<void>;
     on?: (event: string, handler: () => void) => void;
   }
 }

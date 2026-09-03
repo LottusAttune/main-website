@@ -183,6 +183,15 @@
    does in the tall Training card. --color-ink-deep is the gradient's own
    darker stop, so this reads as the same dark brown as the card without
    depending on the two boxes sharing a height. */
+.videoHint {
+  margin: 0;
+  padding: clamp(14px, 2vw, 20px) 0 clamp(20px, 2.6vw, 28px);
+  font-size: 12.5px;
+  line-height: 1.6;
+  text-align: center;
+  color: var(--color-cream-text-soft);
+}
+
 .videoBand {
   background: var(--color-ink-deep);
   border-radius: 0;

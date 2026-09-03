@@ -20,9 +20,13 @@ function embedUrl(id: string): string {
     byline: '0',
     portrait: '0',
     color: 'a8875a',
-    // Without this, Vimeo's own logo badge sits over the video and links
-    // out to vimeo.com - clicking it opens the video playing there too,
-    // on top of the one already playing inline here.
+    // Vimeo's logo badge links out to vimeo.com, where the same video
+    // starts playing again in a new tab - this asks Vimeo to hide it, but
+    // free Vimeo accounts can't actually suppress it this way (that's a
+    // paid-plan feature on Vimeo's side, not something this parameter
+    // controls for every account). The visibilitychange listener below is
+    // the real fix: it can't remove the badge, but it stops this tab's
+    // copy from still playing once the new one opens.
     badge: '0',
   });
   return `https://player.vimeo.com/video/${id}?${params}`;
@@ -61,6 +65,21 @@ export function HandpanVideo({ vimeoId }: Props) {
       cancelled = true;
       if (poll) clearInterval(poll);
     };
+  }, []);
+
+  // Clicking Vimeo's own logo badge opens this same video in a new tab,
+  // which starts playing there too - leaving this copy running muted in
+  // the background would mean two copies audible at once. Pausing this
+  // one the moment the tab is no longer the visible one covers that,
+  // along with a visitor just switching away for any other reason.
+  useEffect(() => {
+    const onVisibility = () => {
+      if (document.visibilityState === 'hidden') {
+        void playerRef.current?.pause();
+      }
+    };
+    document.addEventListener('visibilitychange', onVisibility);
+    return () => document.removeEventListener('visibilitychange', onVisibility);
   }, []);
 
   return (

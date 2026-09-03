@@ -1,12 +1,14 @@
-/* Same flat colour as founder.module.css's .videoBand, so there's no seam
-   where the page's own background could show through around the edge
-   before the iframe itself has painted anything. */
+/* Plain black, not a design token - this is standing in for Vimeo's own
+   player chrome (also plain black) for the instant before the iframe has
+   painted anything, not expressing the site's own brand color. Any of
+   the site's own dark browns would read as a third, visibly different
+   dark next to both the light band around it and Vimeo's actual black. */
 .frame {
   position: relative;
   width: 100%;
   aspect-ratio: 16 / 9;
   overflow: hidden;
-  background: var(--color-ink-deep);
+  background: #000;
 }
 
 .frame iframe {

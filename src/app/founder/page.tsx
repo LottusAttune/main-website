@@ -112,16 +112,14 @@ export default async function FounderPage() {
 
           <div className={`shell ${styles.videoShell}`}>
             <div className={styles.videoHeading}>Explore my handpan sounds</div>
-            <div className={styles.videoBand}>
-              <div className={styles.videoGrid}>
-                {HANDPAN_VIDEO_IDS.map((id, i) => (
-                  <HandpanVideo
-                    key={id}
-                    vimeoId={id}
-                    aspectRatio={handpanAspectRatios[i]}
-                  />
-                ))}
-              </div>
+            <div className={styles.videoGrid}>
+              {HANDPAN_VIDEO_IDS.map((id, i) => (
+                <HandpanVideo
+                  key={id}
+                  vimeoId={id}
+                  aspectRatio={handpanAspectRatios[i]}
+                />
+              ))}
             </div>
             <p className={styles.videoHint}>
               Tap play to listen here, or the Vimeo logo to watch full

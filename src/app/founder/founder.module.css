@@ -138,11 +138,15 @@
    the Benefits section's own palette - beige base, a dark-brown card and
    a near-white one - rather than the previous single full-width dark
    section this used to be. */
+/* align-items: stretch (the grid default), not start - the two columns'
+   own content rarely matches in length, and start left whichever one is
+   naturally shorter (usually Credentials) stop early while the other
+   ran on, an uneven bottom edge that also pushed the video section
+   below it down further than it needed to be. */
 .credSplit {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: clamp(20px, 2.4vw, 32px);
-  align-items: start;
 }
 
 @media (max-width: 860px) {
@@ -160,9 +164,6 @@
   margin-top: clamp(20px, 2.4vw, 32px);
 }
 
-/* Heading sits outside the band, on the page's own beige, same as before -
-   the band is a tight backing strip for the videos only, not a padded card
-   that also has to hold a heading. */
 .videoHeading {
   margin-bottom: 14px;
   font-family: var(--font-display);
@@ -172,26 +173,10 @@
   text-align: center;
 }
 
-/* No top/bottom padding - the band's own top and bottom edges are exactly
-   the videos' top and bottom edges, not a padded card around them. Side
-   padding stays, both so the outer videos don't sit flush against the
-   band's own rounded corners and for a little breathing room.
-
-   Light, matching .credColLight next to it - a dark brown band read as
-   fighting Vimeo's own black player chrome (two different darks sitting
-   right against each other, worse than one obvious contrast), where a
-   light card lets each video read as a clean black rectangle on its own,
-   the way a video thumbnail normally looks on a light page. */
-.videoBand {
-  background: var(--color-cream-raised);
-  border-radius: 0;
-  padding: 0 clamp(16px, 2vw, 24px);
-  overflow: hidden;
-}
-
-/* Outside the band, not inside it, so it doesn't add to the band's own
-   height - just a small caption underneath, same treatment as the
-   heading above the band. */
+/* No background card behind the videos, on purpose - they're small
+   thumbnails now, and a full-width box around a handful of them read as
+   mostly-empty space. Each one already reads as a clean black rectangle
+   sitting directly on the section's own background. */
 .videoHint {
   margin: clamp(14px, 2vw, 20px) 0 0;
   font-size: 12.5px;
@@ -211,7 +196,7 @@
   flex-wrap: wrap;
   align-items: flex-start;
   justify-content: center;
-  gap: clamp(16px, 2vw, 24px);
+  gap: clamp(32px, 5vw, 64px);
 }
 
 .credColDark {

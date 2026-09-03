@@ -123,7 +123,6 @@ export async function getSettings(): Promise<SiteSettings> {
         deposit: Number(row.deposit),
       },
       slots: {
-        morning: Boolean(row.slot_morning),
         midday: Boolean(row.slot_midday),
         evening: Boolean(row.slot_evening),
       },

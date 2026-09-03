@@ -45,7 +45,6 @@ export const DEFAULT_PRICING = {
 } as const;
 
 export const DEFAULT_SLOTS = {
-  morning: true,
   midday: true,
   evening: true,
 } as const;
@@ -100,7 +99,6 @@ export const DISCOVERY_CALL_TIMES = [
 ] as const;
 
 export const TIME_SLOTS = [
-  { key: 'morning', label: '8 – 10 am', note: 'Morning reset' },
   { key: 'midday', label: '12 – 2 pm', note: 'Midday pause' },
   { key: 'evening', label: '6 – 8 pm', note: 'Evening unwind' },
 ] as const;

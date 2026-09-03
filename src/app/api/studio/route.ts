@@ -35,7 +35,6 @@ const action = z.discriminatedUnion('action', [
       deposit: z.coerce.number().int().min(0).max(100_000),
     }),
     slots: z.object({
-      morning: z.boolean(),
       midday: z.boolean(),
       evening: z.boolean(),
     }),
@@ -141,7 +140,6 @@ export async function POST(request: Request) {
             team_addon      = ${input.pricing.teamAddon},
             refreshments    = ${input.pricing.refreshments},
             deposit         = ${input.pricing.deposit},
-            slot_morning    = ${input.slots.morning},
             slot_midday     = ${input.slots.midday},
             slot_evening    = ${input.slots.evening},
             lead_time_days  = ${input.leadTimeDays},

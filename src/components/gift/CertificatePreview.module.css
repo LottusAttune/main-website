@@ -1,7 +1,10 @@
 /* Locked to the real target: a 7 x 4.5 in gift-card/voucher, not a
    letter-page certificate - this is what gets redeemed, not framed. */
 .cert {
-  width: min(760px, 100%);
+  /* Bounded by available height as well as width, via the 7:4.5 aspect
+     ratio, so the card always fits the modal without ever needing to
+     scroll - a visible scrollbar next to it looked like a stray bar. */
+  width: min(760px, 100%, calc((90vh - 60px) * 7 / 4.5));
   aspect-ratio: 7 / 4.5;
   box-shadow: 0 50px 100px -32px rgba(24, 17, 9, 0.5), 0 6px 16px rgba(24, 17, 9, 0.14);
   position: relative;

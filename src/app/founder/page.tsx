@@ -111,7 +111,9 @@ export default async function FounderPage() {
           </div>
 
           <div className={`shell ${styles.videoShell}`}>
-            <div className={styles.videoHeading}>Explore my handpan sounds</div>
+            <div className="eyebrow" style={{ marginBottom: 14 }}>
+              Explore my handpan sounds
+            </div>
             <div className={styles.videoGrid}>
               {HANDPAN_VIDEO_IDS.map((id, i) => (
                 <HandpanVideo

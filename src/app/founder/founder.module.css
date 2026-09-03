@@ -164,15 +164,6 @@
   margin-top: clamp(20px, 2.4vw, 32px);
 }
 
-.videoHeading {
-  margin-bottom: 14px;
-  font-family: var(--font-display);
-  font-weight: 400;
-  font-size: clamp(17px, 1.8vw, 20px);
-  color: var(--color-gold-text);
-  text-align: center;
-}
-
 /* No background card behind the videos, on purpose - they're small
    thumbnails now, and a full-width box around a handful of them read as
    mostly-empty space. Each one already reads as a clean black rectangle

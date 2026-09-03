@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import Image from 'next/image';
+import Script from 'next/script';
 
 import { Accordion } from '@/components/common/Accordion';
 import { Reveal } from '@/components/common/Reveal';
@@ -15,7 +16,6 @@ import {
   TRAINING,
 } from '@/data/content';
 import { asset } from '@/lib/images';
-import { vimeoThumbnail } from '@/lib/vimeo';
 import styles from './founder.module.css';
 
 export const metadata: Metadata = {
@@ -25,16 +25,14 @@ export const metadata: Metadata = {
 
 const HANDPAN_VIDEO_IDS = ['1221670118', '1221664378', '1223535077'];
 
-export default async function FounderPage() {
+export default function FounderPage() {
   const portrait = asset('silvana-handpan');
-  const handpanPosters = await Promise.all(
-    HANDPAN_VIDEO_IDS.map(vimeoThumbnail)
-  );
 
   return (
     <>
       <SiteNav />
       <Reveal />
+      <Script src="https://player.vimeo.com/api/player.js" strategy="afterInteractive" />
 
       <main>
         <section className={styles.intro} aria-labelledby="founder-heading">
@@ -112,8 +110,8 @@ export default async function FounderPage() {
             <div className={styles.videoHeading}>Explore my handpan sounds</div>
             <div className={styles.videoBand}>
               <div className={styles.videoGrid}>
-                {HANDPAN_VIDEO_IDS.map((id, i) => (
-                  <HandpanVideo key={id} vimeoId={id} posterSrc={handpanPosters[i]} />
+                {HANDPAN_VIDEO_IDS.map((id) => (
+                  <HandpanVideo key={id} vimeoId={id} />
                 ))}
               </div>
             </div>

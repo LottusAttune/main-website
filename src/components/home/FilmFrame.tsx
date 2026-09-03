@@ -8,23 +8,6 @@ import { FILM, FILM_POSTER } from '@/data/content';
 import { asset } from '@/lib/images';
 import styles from './FilmFrame.module.css';
 
-declare global {
-  interface Window {
-    Vimeo?: {
-      Player: new (el: HTMLIFrameElement) => VimeoPlayer;
-    };
-  }
-}
-
-/** Minimal shape of the bits of the Vimeo Player SDK we use. */
-type VimeoPlayer = {
-  setMuted: (muted: boolean) => Promise<boolean>;
-  setVolume: (volume: number) => Promise<number>;
-  setCurrentTime: (seconds: number) => Promise<number>;
-  play: () => Promise<void>;
-  on?: (event: string, handler: () => void) => void;
-};
-
 /**
  * `background=1` is deliberately absent — it force-mutes the player and makes
  * the sound toggle impossible.

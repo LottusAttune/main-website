@@ -1,9 +1,11 @@
 import type { Metadata } from 'next';
+import Image from 'next/image';
 
 import { Reveal } from '@/components/common/Reveal';
 import { SiteFooter } from '@/components/chrome/SiteFooter';
 import { SiteNav } from '@/components/chrome/SiteNav';
 import { GiftCalculator } from '@/components/gift/GiftCalculator';
+import { asset } from '@/lib/images';
 import { getSettings } from '@/lib/settings';
 
 export const metadata: Metadata = {
@@ -32,28 +34,56 @@ export default async function GiftPage() {
           }}
           aria-labelledby="gift-heading"
         >
-          <div className="eyebrow" style={{ fontSize: 15, marginBottom: 12 }}>
-            Gift
-          </div>
-          <h1
-            id="gift-heading"
-            className="display"
+          <div
             style={{
-              fontSize: 'clamp(26px, 3.4vw, 44px)',
-              lineHeight: 1.14,
-              margin: '0 0 10px',
-              maxWidth: 900,
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+              gap: 'clamp(20px, 4vw, 48px)',
+              alignItems: 'center',
             }}
           >
-            Give the gift of a full reset
-          </h1>
-          <p
-            className="lede"
-            style={{ maxWidth: 740, fontSize: 15.5, lineHeight: 1.65 }}
-          >
-            A two-hour immersive experience for one person or a whole gathering.
-            Choose the details below and the value updates as you go.
-          </p>
+            <div>
+              <div className="eyebrow" style={{ fontSize: 15, marginBottom: 12 }}>
+                Gift
+              </div>
+              <h1
+                id="gift-heading"
+                className="display"
+                style={{
+                  fontSize: 'clamp(26px, 3.4vw, 44px)',
+                  lineHeight: 1.14,
+                  margin: '0 0 10px',
+                  maxWidth: 900,
+                }}
+              >
+                Give the gift of a full reset
+              </h1>
+              <p
+                className="lede"
+                style={{ maxWidth: 740, fontSize: 15.5, lineHeight: 1.65 }}
+              >
+                A two-hour immersive experience for one person or a whole
+                gathering. Choose the details below and the value updates as
+                you go.
+              </p>
+            </div>
+            <div
+              style={{
+                position: 'relative',
+                aspectRatio: '5 / 4',
+                overflow: 'hidden',
+              }}
+            >
+              <Image
+                src={asset('gift-card-hands').src}
+                alt=""
+                fill
+                sizes="(max-width: 700px) 100vw, 480px"
+                style={{ objectFit: 'cover', objectPosition: 'center 42%' }}
+                unoptimized
+              />
+            </div>
+          </div>
         </section>
 
         <section

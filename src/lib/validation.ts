@@ -59,6 +59,7 @@ export const giftSchema = z.object({
     .max(MAX_PARTICIPANTS)
     .default(6),
   addons: z.record(z.string(), z.boolean()).default({}),
+  discountCode: z.string().trim().max(40).optional().nullable(),
   gratuityPercent: z.coerce.number().int().min(0).max(100).optional().nullable(),
   gratuityAmount: z.coerce.number().min(0).max(100_000).optional().nullable(),
 });

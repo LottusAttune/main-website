@@ -138,6 +138,59 @@
   border-radius: var(--radius-thumb);
 }
 
+.codeBlock {
+  margin-bottom: 16px;
+}
+
+.codeLabel {
+  display: block;
+  font-size: 11px;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--color-gold-light);
+  margin-bottom: 10px;
+}
+
+.codeRow {
+  display: flex;
+  gap: 8px;
+}
+
+.codeApply {
+  flex: none;
+  padding: 14px 20px;
+  min-height: 50px;
+  border: 1px solid rgba(239, 230, 218, 0.28);
+  border-radius: var(--radius-thumb);
+  background: transparent;
+  color: var(--color-cream-text);
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  cursor: pointer;
+  transition:
+    border-color 0.25s ease,
+    background 0.25s ease;
+}
+
+.codeApply:hover {
+  border-color: var(--color-gold-light);
+  background: rgba(198, 169, 122, 0.14);
+}
+
+.codeMessage {
+  margin-top: 10px;
+  font-size: 13.5px;
+  line-height: 1.6;
+}
+
+.codeOk {
+  color: var(--color-gold-light);
+}
+
+.codeBad {
+  color: #e8a78c;
+}
+
 .asideTitle {
   font-size: 11px;
   letter-spacing: 0.32em;

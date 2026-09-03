@@ -162,6 +162,14 @@ export type GiftInput = {
   sessions: number;
   participants: number;
   addons: Record<string, boolean>;
+  /** A code is either percent-off or a flat amount-off, never both -
+   *  already validated as active and meeting its own participant minimum. */
+  percentOff?: number;
+  amountOff?: number;
+  discountLabel?: string;
+  /** The applied code's own minimum - defaults to MIN_GROUP_SIZE so an
+   *  unset value doesn't loosen the requirement. */
+  discountMinParticipants?: number;
   /** One of the quick-pick percentages (0/10/15/18/20). A flat dollar
    *  amount in `gratuityAmount` takes priority when both are set. */
   gratuityPercent?: number;
@@ -206,6 +214,28 @@ export function giftQuoteFor(
   }
 
   let total = subtotal;
+  let discountApplied = 0;
+
+  // Discount codes are group-rate perks - a private session/package (no
+  // real participant count) never qualifies, same as booking.
+  const discountPeople = input.format === 'group' ? Number(input.participants) || 0 : 1;
+  const discountMin = input.discountMinParticipants ?? MIN_GROUP_SIZE;
+  if ((input.percentOff || input.amountOff) && discountPeople >= discountMin) {
+    if (input.amountOff) {
+      discountApplied = Math.min(input.amountOff, subtotal);
+      lines.push({
+        label: `${input.discountLabel ?? 'Discount'} — ${money(input.amountOff)} off`,
+        value: `−${money(discountApplied)}`,
+      });
+    } else if (input.percentOff) {
+      discountApplied = Math.round((subtotal * input.percentOff) / 100);
+      lines.push({
+        label: `${input.discountLabel ?? 'Discount'} — ${input.percentOff}% off`,
+        value: `−${money(discountApplied)}`,
+      });
+    }
+    total = subtotal - discountApplied;
+  }
 
   // Gratuity is optional and calculated on top of everything above - a flat
   // amount always wins over a percentage when both happen to be present.
@@ -224,5 +254,5 @@ export function giftQuoteFor(
   }
   total += gratuity;
 
-  return { lines, subtotal, total, discountApplied: 0, gratuity };
+  return { lines, subtotal, total, discountApplied, gratuity };
 }

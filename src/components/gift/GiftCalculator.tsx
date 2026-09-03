@@ -3,7 +3,7 @@
 import { useEffect, useId, useState } from 'react';
 
 import { giftQuoteFor } from '@/lib/quote';
-import type { Pricing } from '@/lib/settings';
+import type { DiscountCode, Pricing } from '@/lib/settings';
 import {
   MAX_PARTICIPANTS,
   MIN_PARTICIPANTS,
@@ -27,11 +27,18 @@ type AddonDef = {
   amount: number;
 };
 
-type Props = {
-  pricing: Pricing;
+type CodeState = {
+  applied: DiscountCode | null;
+  message: string;
+  ok: boolean;
 };
 
-export function GiftCalculator({ pricing }: Props) {
+type Props = {
+  pricing: Pricing;
+  codes: DiscountCode[];
+};
+
+export function GiftCalculator({ pricing, codes }: Props) {
   const [format, setFormat] = useState<Format>('private');
   const [sessions, setSessions] = useState(1);
   const [participants, setParticipants] = useState(6);
@@ -42,6 +49,12 @@ export function GiftCalculator({ pricing }: Props) {
     null
   );
   const [customGratuity, setCustomGratuity] = useState('');
+  const [codeInput, setCodeInput] = useState('');
+  const [code, setCode] = useState<CodeState>({
+    applied: null,
+    message: '',
+    ok: false,
+  });
   const [recipientName, setRecipientName] = useState('');
   const [recipientEmail, setRecipientEmail] = useState('');
   const [buyerEmail, setBuyerEmail] = useState('');
@@ -105,10 +118,62 @@ export function GiftCalculator({ pricing }: Props) {
       ? undefined
       : gratuityChoice;
 
+  // Discount codes are group-rate perks - a private session/package (no
+  // real participant count) never qualifies, same as booking.
+  const discountPeople = format === 'group' ? participants : 1;
+
   const quote = giftQuoteFor(
-    { format, sessions, participants, addons, gratuityPercent, gratuityAmount },
+    {
+      format,
+      sessions,
+      participants,
+      addons,
+      percentOff: code.applied?.percentOff,
+      amountOff: code.applied?.amountOff,
+      discountLabel: code.applied?.code,
+      discountMinParticipants: code.applied?.minParticipants,
+      gratuityPercent,
+      gratuityAmount,
+    },
     pricing
   );
+
+  const applyCode = () => {
+    const entered = codeInput.trim().toUpperCase();
+    if (!entered) {
+      setCode({ applied: null, message: '', ok: false });
+      return;
+    }
+    const match = codes.find((c) => c.code === entered && c.isActive);
+    if (!match) {
+      setCode({
+        applied: null,
+        message: 'That code is not recognised.',
+        ok: false,
+      });
+      return;
+    }
+    if (discountPeople < match.minParticipants) {
+      setCode({
+        applied: null,
+        message: `${match.code} applies to bookings of ${match.minParticipants} or more.`,
+        ok: false,
+      });
+      return;
+    }
+    setCode({
+      applied: match,
+      message: `${match.code} applied — ${
+        match.amountOff ? `${money(match.amountOff)} off` : `${match.percentOff}% off`
+      }.`,
+      ok: true,
+    });
+  };
+
+  const removeCode = () => {
+    setCodeInput('');
+    setCode({ applied: null, message: '', ok: false });
+  };
 
   const submit = async () => {
     setError('');
@@ -131,6 +196,7 @@ export function GiftCalculator({ pricing }: Props) {
           sessions,
           participants,
           addons,
+          discountCode: code.applied?.code ?? null,
           gratuityPercent: gratuityPercent ?? null,
           gratuityAmount: gratuityAmount ?? null,
         }),
@@ -195,7 +261,7 @@ export function GiftCalculator({ pricing }: Props) {
             onClick={() => setFormat('group')}
           >
             <span className={`choice__title ${styles.formatTitle}`}>
-              Group &amp; Corporate
+              Groups &amp; Corporate
             </span>
             <span className="choice__note">
               2–24 participants — gatherings, celebrations, teams
@@ -370,6 +436,38 @@ export function GiftCalculator({ pricing }: Props) {
                   <span className={styles.totalValue}>{money(quote.total)}</span>
                 </div>
               </div>
+            </div>
+
+            <div className={styles.codeBlock}>
+              <label className={styles.codeLabel} htmlFor="gift-discount-code">
+                Discount code
+              </label>
+              <div className={styles.codeRow}>
+                <input
+                  id="gift-discount-code"
+                  className="field field--dark"
+                  type="text"
+                  placeholder="Enter code"
+                  value={codeInput}
+                  disabled={Boolean(code.applied)}
+                  onChange={(e) => setCodeInput(e.target.value)}
+                />
+                <button
+                  type="button"
+                  className={styles.codeApply}
+                  onClick={code.applied ? removeCode : applyCode}
+                >
+                  {code.applied ? 'REMOVE' : 'APPLY'}
+                </button>
+              </div>
+              {code.message ? (
+                <div
+                  className={`${styles.codeMessage} ${code.ok ? styles.codeOk : styles.codeBad}`}
+                  role="status"
+                >
+                  {code.message}
+                </div>
+              ) : null}
             </div>
 
             <div className={styles.fields}>

@@ -158,6 +158,7 @@ CREATE TABLE IF NOT EXISTS gift_requests (
   sessions        INTEGER,
   participants    INTEGER,
   addons          JSONB NOT NULL DEFAULT '{}'::JSONB,
+  discount_code   TEXT,
   total           INTEGER NOT NULL DEFAULT 0,
   gratuity        INTEGER NOT NULL DEFAULT 0,
   status          TEXT NOT NULL DEFAULT 'requested',
@@ -169,6 +170,9 @@ ALTER TABLE gift_requests ADD COLUMN IF NOT EXISTS recipient_email TEXT;
 
 -- Table predates gratuity - add it for existing databases.
 ALTER TABLE gift_requests ADD COLUMN IF NOT EXISTS gratuity INTEGER NOT NULL DEFAULT 0;
+
+-- Table predates discount codes - add it for existing databases.
+ALTER TABLE gift_requests ADD COLUMN IF NOT EXISTS discount_code TEXT;
 
 -- ---------------------------------------------------------------------------
 -- Discovery call requests. A fixed video link is sent by email, not stored

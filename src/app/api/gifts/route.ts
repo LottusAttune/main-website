@@ -27,12 +27,25 @@ export async function POST(request: Request) {
   }
 
   const input = parsed.data;
-  const { pricing } = await getSettings();
+  const { pricing, codes } = await getSettings();
+
+  // Never trust the discount the browser applied - only honour a code that
+  // is currently active and meets its own participant minimum.
+  const discount = input.discountCode
+    ? codes.find((c) => c.code === input.discountCode?.toUpperCase() && c.isActive)
+    : undefined;
+  const discountPeople = input.format === 'group' ? input.participants : 1;
+  const eligibleDiscount =
+    discount && discountPeople >= discount.minParticipants ? discount : undefined;
 
   // Recomputed server-side; the browser's figure is never trusted.
   const { total, gratuity } = giftQuoteFor(
     {
       ...input,
+      percentOff: eligibleDiscount?.percentOff,
+      amountOff: eligibleDiscount?.amountOff,
+      discountLabel: eligibleDiscount?.code,
+      discountMinParticipants: eligibleDiscount?.minParticipants,
       gratuityPercent: input.gratuityPercent ?? undefined,
       gratuityAmount: input.gratuityAmount ?? undefined,
     },
@@ -53,12 +66,14 @@ export async function POST(request: Request) {
   try {
     const result = await sql`
       INSERT INTO gift_requests (
-        recipient_name, recipient_email, buyer_email, format, sessions, participants, addons, total, gratuity
+        recipient_name, recipient_email, buyer_email, format, sessions, participants, addons,
+        discount_code, total, gratuity
       ) VALUES (
         ${input.recipientName}, ${input.recipientEmail ?? null}, ${input.buyerEmail}, ${input.format},
         ${input.format === 'private' ? input.sessions : null},
         ${input.format === 'group' ? input.participants : null},
         ${JSON.stringify(input.addons)}::jsonb,
+        ${eligibleDiscount?.code ?? null},
         ${total},
         ${gratuity}
       )

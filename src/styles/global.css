@@ -161,18 +161,27 @@ p {
   opacity: 0.04;
   mix-blend-mode: multiply;
   background-position: center;
-  -webkit-mask-image: radial-gradient(
-    120% 90% at 50% 40%,
-    #000 0%,
-    rgba(0, 0, 0, 0.35) 55%,
-    transparent 85%
-  );
-  mask-image: radial-gradient(
-    120% 90% at 50% 40%,
-    #000 0%,
-    rgba(0, 0, 0, 0.35) 55%,
-    transparent 85%
-  );
+  /* Second gradient punches a hole where the card's mandala naturally
+     falls in this image, so it doesn't double up with the relocated
+     copy shown elsewhere on the page. */
+  -webkit-mask-image:
+    radial-gradient(
+      120% 90% at 50% 40%,
+      #000 0%,
+      rgba(0, 0, 0, 0.35) 55%,
+      transparent 85%
+    ),
+    radial-gradient(220px at 42% 50%, transparent 0%, transparent 60%, #000 100%);
+  mask-image:
+    radial-gradient(
+      120% 90% at 50% 40%,
+      #000 0%,
+      rgba(0, 0, 0, 0.35) 55%,
+      transparent 85%
+    ),
+    radial-gradient(220px at 42% 50%, transparent 0%, transparent 60%, #000 100%);
+  -webkit-mask-composite: source-in;
+  mask-composite: intersect;
 }
 
 /* Same photo as .photo-wash--light, stacked on top of it, but masked down

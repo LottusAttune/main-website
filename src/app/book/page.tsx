@@ -75,14 +75,43 @@ export default async function BookPage() {
               backgroundPosition: 'center 30%',
             }}
           />
+          {/* Same photo, same zoom level as the base wash above - just a
+              small clipped window onto it, repositioned into the empty
+              gap beside step 04 instead of where the base wash naturally
+              places the card (which cannot be moved: with `cover` sizing
+              on this tall section, the image's height is the binding
+              dimension, so background-position-y has no effect on it). */}
           <div
-            data-bg="1"
-            className="photo-wash photo-wash--light photo-wash--spot"
+            aria-hidden
             style={{
-              backgroundImage: assetUrl('intention-card'),
-              backgroundPosition: 'center 30%',
+              position: 'absolute',
+              top: '56%',
+              right: '6%',
+              width: '440px',
+              height: '440px',
+              overflow: 'hidden',
+              opacity: 0.09,
+              mixBlendMode: 'multiply',
+              pointerEvents: 'none',
+              WebkitMaskImage:
+                'radial-gradient(closest-side, #000 0%, rgba(0,0,0,0.5) 60%, transparent 100%)',
+              maskImage:
+                'radial-gradient(closest-side, #000 0%, rgba(0,0,0,0.5) 60%, transparent 100%)',
             }}
-          />
+          >
+            <div
+              style={{
+                position: 'absolute',
+                left: '-1342px',
+                top: '-670px',
+                width: '3309px',
+                height: '1861px',
+                backgroundImage: assetUrl('intention-card'),
+                backgroundSize: '3309px 1861px',
+                backgroundPosition: '0 0',
+              }}
+            />
+          </div>
           <BookingForm
             pricing={settings.pricing}
             slots={settings.slots}

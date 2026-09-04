@@ -150,7 +150,9 @@
 
 /* A small, discreet popover anchored under one tab only - not the full
    grouped mega-panel below (.panel) - sized to its own content, not the
-   page width. */
+   page width. Flat white, square corners, no gold border - matching the
+   site's current card language, not the older soft-rounded gold-edged
+   style this carried at first. */
 .tabPanel {
   position: absolute;
   top: calc(100% + 14px);
@@ -160,10 +162,10 @@
   flex-direction: column;
   min-width: 168px;
   padding: 10px 6px;
-  background: linear-gradient(160deg, #fffdfa 0%, #f3eadc 100%);
-  border: 1px solid rgba(198, 169, 122, 0.36);
-  border-radius: 12px;
-  box-shadow: 0 24px 48px -28px rgba(59, 46, 36, 0.55);
+  background: var(--color-cream-raised);
+  border: 1px solid var(--hairline-light-strong);
+  border-radius: 0;
+  box-shadow: var(--shadow-card);
   text-transform: none;
   letter-spacing: normal;
 }

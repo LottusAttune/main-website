@@ -59,6 +59,28 @@
   white-space: nowrap;
 }
 
+/* Below this width there isn't room for the tagline's full nowrap width
+   next to the Book/Gift buttons and burger - it was overflowing the brand
+   column and running under them. Dropping it keeps the wordmark alone,
+   which is enough to identify the brand at this size; the tagline comes
+   back as soon as there's room for it. */
+@media (max-width: 560px) {
+  .subMark {
+    display: none;
+  }
+}
+
+/* Even without the tagline, the full "LOTUS ATTUNE" wordmark still doesn't
+   leave enough room for Book, Gift and the burger on a phone screen - it
+   was running under the Book button. The logo mark alone still identifies
+   the brand at this size (every other page has it in the tab/app icon too),
+   so the wordmark drops as well rather than overlapping the actions. */
+@media (max-width: 480px) {
+  .lockup {
+    display: none;
+  }
+}
+
 .links {
   display: none;
   align-items: center;

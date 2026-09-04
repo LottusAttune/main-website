@@ -78,6 +78,7 @@ export default async function FounderPage() {
         </section>
 
         <section
+          id="training-credentials"
           className={`section--short section--soft ${styles.credSection}`}
           aria-labelledby="credentials-heading"
         >
@@ -85,7 +86,7 @@ export default async function FounderPage() {
             Training and education
           </h2>
           <div className={`shell ${styles.credSplit}`}>
-            <div id="training" className={`${styles.credCol} ${styles.credColDark}`}>
+            <div className={`${styles.credCol} ${styles.credColDark}`}>
               <div className={`eyebrow eyebrow--dark ${styles.groupTitle}`}>
                 Training &amp; Development in Restorative Wellness Practices
               </div>
@@ -96,7 +97,7 @@ export default async function FounderPage() {
               />
             </div>
 
-            <div id="credentials" className={`${styles.credCol} ${styles.credColLight}`}>
+            <div className={`${styles.credCol} ${styles.credColLight}`}>
               <div className={styles.groupTitleLight}>
                 Education &amp; Professional Credentials
               </div>
@@ -110,7 +111,7 @@ export default async function FounderPage() {
             </div>
           </div>
 
-          <div className={`shell ${styles.videoShell}`}>
+          <div id="sounds" className={`shell ${styles.videoShell}`}>
             <div className={styles.videoGrid}>
               {HANDPAN_VIDEO_IDS.map((id, i) => (
                 <HandpanVideo

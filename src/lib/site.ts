@@ -63,8 +63,8 @@ export const NAV_SECTIONS = [
     href: '/founder',
     sections: [
       { label: 'About', hash: '#founder-heading' },
-      { label: 'Training', hash: '#training' },
-      { label: 'Credentials', hash: '#credentials' },
+      { label: 'Training & Credentials', hash: '#training-credentials' },
+      { label: 'My Sounds', hash: '#sounds' },
     ],
   },
   {

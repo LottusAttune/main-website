@@ -6,6 +6,26 @@ Next.js 15 (App Router) · TypeScript · Supabase Postgres · deployed on Vercel
 
 ---
 
+## Mobile is paused — don't bring it up
+
+Silvana has said this many times: mobile gets its own dedicated pass, as its
+own stacked layout, done separately once the regular (desktop) site is
+finished. Until she opens that pass herself:
+
+- Don't make mobile-specific layout/CSS changes on your own initiative, even
+  ones that look like an obvious bugfix.
+- Don't mention mobile, screenshot mobile, or flag mobile-only issues in
+  conversation, QA notes, or commit messages — not even as a courtesy aside.
+- Work and review at desktop widths. If a shared style you're touching for a
+  desktop change also happens to apply at mobile widths, that's fine — just
+  don't go looking for, fixing, or commenting on mobile-only problems.
+
+This has already been said many times. Don't ask about it again and don't
+bring mobile up unprompted — hold to it silently until she raises mobile
+herself.
+
+---
+
 ## Before you start
 
 ```bash

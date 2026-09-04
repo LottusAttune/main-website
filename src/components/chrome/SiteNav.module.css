@@ -98,6 +98,13 @@
   text-transform: uppercase;
 }
 
+.tab {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 3px;
+}
+
 .link {
   padding-bottom: 3px;
   border-bottom: 1px solid transparent;
@@ -112,6 +119,66 @@
 .linkActive {
   color: var(--color-ink);
   border-bottom-color: var(--color-gold-text);
+}
+
+/* The chevron is its own click target, separate from the label - the
+   label still just navigates to the page, only this toggles the small
+   dropdown of that page's sections. */
+.tabToggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px 2px;
+  margin: -6px -2px;
+  border: none;
+  background: transparent;
+  color: var(--color-muted);
+  cursor: pointer;
+}
+
+.tabToggle svg {
+  transition: transform 0.2s ease;
+}
+
+.tabToggle:hover {
+  color: var(--color-ink);
+}
+
+.tabToggleOpen svg {
+  transform: rotate(180deg);
+}
+
+/* A small, discreet popover anchored under one tab only - not the full
+   grouped mega-panel below (.panel) - sized to its own content, not the
+   page width. */
+.tabPanel {
+  position: absolute;
+  top: calc(100% + 14px);
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  min-width: 168px;
+  padding: 10px 6px;
+  background: linear-gradient(160deg, #fffdfa 0%, #f3eadc 100%);
+  border: 1px solid rgba(198, 169, 122, 0.36);
+  border-radius: 12px;
+  box-shadow: 0 24px 48px -28px rgba(59, 46, 36, 0.55);
+  text-transform: none;
+  letter-spacing: normal;
+}
+
+.tabPanelLink {
+  padding: 9px 14px;
+  border-radius: 8px;
+  font-size: 13px;
+  white-space: nowrap;
+  color: var(--color-ink-body);
+}
+
+.tabPanelLink:hover {
+  color: var(--color-ink);
+  background: rgba(198, 169, 122, 0.14);
 }
 
 .actions {
@@ -225,13 +292,18 @@
   color: var(--color-ink);
 }
 
-/* The plain page links stay desktop-only (they'd duplicate the panel's own
-   group titles below 1080px, where the panel is the only nav). The burger
-   and its panel now stay available at every width, since the panel is no
-   longer just a mobile fallback for .links - it's the one place to jump
-   straight to a section on any page. */
+/* The single breakpoint that matters: below 1080px the plain links (and
+   their new per-tab dropdowns) collapse into the burger's grouped panel
+   instead. Above it, the tab row has its own discreet per-tab dropdowns,
+   so the burger's full panel would just be a second, redundant way to
+   reach the same thing - it stays hidden there. */
 @media (min-width: 1080px) {
   .links {
     display: flex;
+  }
+
+  .burger,
+  .panel {
+    display: none;
   }
 }

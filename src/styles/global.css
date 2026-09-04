@@ -13,10 +13,15 @@
 html {
   scroll-behavior: smooth;
   -webkit-text-size-adjust: 100%;
-  /* So a same-page anchor (#paths, #included, and the new nav section
-     links) lands with its heading clear of the sticky nav bar, not
-     hidden behind it. */
-  scroll-padding-top: 100px;
+  /* So a same-page anchor (#paths, #included, and the nav section links)
+     lands flush under the sticky nav instead of behind it. This must match
+     the nav's real rendered height (SiteNav.module.css .wrap) as closely as
+     possible - too small and the nav still covers the target's own top;
+     too large and a sliver of the previous section shows above it, since
+     sections sit flush against each other with no gap of their own. 83px
+     measured against the live header at small-laptop through large-monitor
+     widths (SiteNav's own height is fixed, so it doesn't vary by width). */
+  scroll-padding-top: 83px;
 }
 
 body {

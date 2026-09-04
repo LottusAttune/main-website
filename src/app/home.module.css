@@ -280,11 +280,8 @@
 
 /* ---------- Choose your path ---------- */
 
-/* scroll-margin-top keeps the sticky nav from covering the heading when
-   "See the options" jumps straight to this anchor. */
 .pathsSection {
   padding: clamp(20px, 2.6vw, 32px) var(--space-gutter);
-  scroll-margin-top: 100px;
 }
 
 /* Narrower than the section's full width - scales all three cards (photo and

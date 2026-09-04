@@ -171,11 +171,16 @@ don't ship in the first place:
   paragraph: measuring the full un-wrapped string as one line does not
   represent the true last visual line - get the actual rendered line box
   first (e.g. `Range.getClientRects()`), then measure only that line's text.
-- **Corners and one-off colours.** Match the page's already-established
-  system (this site currently defaults to a 6px soft-square radius, with 0
-  reserved for a couple of deliberately flat elements) rather than
-  introducing a new radius or a new hex value without first checking whether
-  an existing token already fits.
+- **Corners and one-off colours.** The site has moved to square corners
+  (`border-radius: 0`) and flat white/cream surfaces (`var(--color-cream-raised)`)
+  as the default for cards, panels, dropdowns and menus - not rounded corners
+  and not a gold-tinted border or gradient around the edge. Rounded corners
+  and gold edges are the exception now, not the default, and only belong on
+  the specific elements that already deliberately use them (pills/buttons,
+  which stay fully rounded via `--radius-pill`). Before adding any new small
+  UI surface (a dropdown, popover, card), grep the codebase for how an
+  existing, similar surface is styled and match that - don't invent a
+  fresh radius/border/gradient combination from scratch.
 - **Verify visually, not just by reading the CSS.** Screenshot the actual
   rendered result — ideally at more than one breakpoint — before calling a
   layout change done. CSS that looks correct on paper (e.g. `grid-row: 1 /

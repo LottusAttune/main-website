@@ -180,6 +180,13 @@ don't ship in the first place:
   rendered result — ideally at more than one breakpoint — before calling a
   layout change done. CSS that looks correct on paper (e.g. `grid-row: 1 /
   -1` without a `grid-template-rows` to anchor it) can silently fail.
+- **Checkpoint widths, small laptop through large monitor.** For desktop
+  work, screenshot at a spread of checkpoint widths across that range (not
+  just one, e.g. 1440px) before calling a layout change done — a small
+  laptop screen is a real, common viewport, not an edge case, and something
+  that looks fine at one width can crowd, wrap, or clip at another. This is
+  about desktop/"regular site" widths specifically; it doesn't reopen
+  mobile, which is paused (see above).
 
 ---
 

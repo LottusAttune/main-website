@@ -32,6 +32,49 @@ export const NAV_LINKS = [
 ] as const;
 
 /**
+ * The expandable nav menu's grouped view: each top-level page alongside the
+ * sections a visitor can jump straight to on it. Hashes point at anchors
+ * that already exist on each page (see the `id`/`aria-labelledby` on the
+ * matching section in that page's file).
+ */
+export const NAV_SECTIONS = [
+  {
+    label: 'Home',
+    href: '/',
+    sections: [
+      { label: 'Your Guide', hash: '#guide-heading' },
+      { label: 'Watch', hash: '#watch-heading' },
+      { label: 'Choose Your Path', hash: '#paths' },
+      { label: 'Reviews', hash: '#reviews-heading' },
+      { label: 'Frequently Asked', hash: '#faq-heading' },
+    ],
+  },
+  {
+    label: 'The Experience',
+    href: '/experience',
+    sections: [
+      { label: 'Journey', hash: '#experience-heading' },
+      { label: 'Benefits', hash: '#benefits' },
+      { label: "What's Included", hash: '#included' },
+    ],
+  },
+  {
+    label: 'Founder',
+    href: '/founder',
+    sections: [
+      { label: 'About', hash: '#founder-heading' },
+      { label: 'Training', hash: '#training' },
+      { label: 'Credentials', hash: '#credentials' },
+    ],
+  },
+  {
+    label: 'Offerings',
+    href: '/offerings',
+    sections: [],
+  },
+] as const;
+
+/**
  * Default pricing. These are overridden at request time by whatever Silvana has
  * published from the studio dashboard — see `lib/pricing.ts`.
  */

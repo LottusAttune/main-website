@@ -77,6 +77,7 @@ export default function ExperiencePage() {
 
         {/* ---------- Benefits ---------- */}
         <section
+          id="benefits"
           className={`section--soft ${styles.benefitsSection}`}
           aria-label="Benefits"
         >

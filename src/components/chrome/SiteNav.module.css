@@ -163,33 +163,53 @@
   box-shadow: 0 30px 60px -40px rgba(59, 46, 36, 0.7);
 }
 
-.panelList {
-  display: flex;
-  flex-direction: column;
+/* One column per page on a wide viewport, reading as a small mega-menu;
+   auto-fit lets it collapse to fewer, wider columns and finally one on
+   mobile without a separate breakpoint of its own. */
+.panelGroups {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 28px clamp(20px, 3vw, 48px);
 }
 
-.panelLink {
-  padding: 15px 4px;
+.panelGroup {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.panelGroupTitle {
+  padding-bottom: 10px;
+  margin-bottom: 6px;
   border-bottom: 1px solid var(--hairline-light-soft);
-  font-size: 13px;
-  letter-spacing: 0.18em;
+  font-size: 12.5px;
+  font-weight: 500;
+  letter-spacing: 0.16em;
   text-transform: uppercase;
+  color: var(--color-gold-text);
+}
+
+.panelGroupTitle:hover {
+  color: var(--color-ink);
+}
+
+.panelSectionLink {
+  padding: 9px 0;
+  font-size: 13.5px;
   color: var(--color-ink-body);
 }
 
-.panelLink:last-child {
-  border-bottom: none;
+.panelSectionLink:hover {
+  color: var(--color-ink);
 }
 
-/* The single breakpoint that matters: below 1080px the links collapse into
-   the burger panel. */
+/* The plain page links stay desktop-only (they'd duplicate the panel's own
+   group titles below 1080px, where the panel is the only nav). The burger
+   and its panel now stay available at every width, since the panel is no
+   longer just a mobile fallback for .links - it's the one place to jump
+   straight to a section on any page. */
 @media (min-width: 1080px) {
   .links {
     display: flex;
-  }
-
-  .burger,
-  .panel {
-    display: none;
   }
 }

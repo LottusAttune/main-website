@@ -13,6 +13,10 @@
 html {
   scroll-behavior: smooth;
   -webkit-text-size-adjust: 100%;
+  /* So a same-page anchor (#paths, #included, and the new nav section
+     links) lands with its heading clear of the sticky nav bar, not
+     hidden behind it. */
+  scroll-padding-top: 100px;
 }
 
 body {

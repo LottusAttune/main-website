@@ -85,7 +85,7 @@ export default async function FounderPage() {
             Training and education
           </h2>
           <div className={`shell ${styles.credSplit}`}>
-            <div className={`${styles.credCol} ${styles.credColDark}`}>
+            <div id="training" className={`${styles.credCol} ${styles.credColDark}`}>
               <div className={`eyebrow eyebrow--dark ${styles.groupTitle}`}>
                 Training &amp; Development in Restorative Wellness Practices
               </div>
@@ -96,7 +96,7 @@ export default async function FounderPage() {
               />
             </div>
 
-            <div className={`${styles.credCol} ${styles.credColLight}`}>
+            <div id="credentials" className={`${styles.credCol} ${styles.credColLight}`}>
               <div className={styles.groupTitleLight}>
                 Education &amp; Professional Credentials
               </div>

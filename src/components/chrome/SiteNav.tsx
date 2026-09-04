@@ -3,10 +3,10 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import { asset } from '@/lib/images';
-import { NAV_LINKS, SITE } from '@/lib/site';
+import { NAV_LINKS, NAV_SECTIONS, SITE } from '@/lib/site';
 import styles from './SiteNav.module.css';
 
 type Props = {
@@ -18,24 +18,36 @@ type Props = {
 export function SiteNav({ basePath = '' }: Props) {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
-
-  // Close the disclosure when the viewport grows past the breakpoint, so it
-  // cannot be left open behind the desktop layout.
-  useEffect(() => {
-    if (!open) return;
-    const media = window.matchMedia('(min-width: 1080px)');
-    const close = () => setOpen(false);
-    media.addEventListener('change', close);
-    return () => media.removeEventListener('change', close);
-  }, [open]);
+  const wrapRef = useRef<HTMLElement>(null);
 
   // Close on navigation.
   useEffect(() => setOpen(false), [pathname]);
 
+  // Close on outside click or Escape - the panel now opens at every
+  // breakpoint (it used to be a mobile-only fallback for the plain links),
+  // so it needs the same click-away behaviour a menu that size implies.
+  useEffect(() => {
+    if (!open) return;
+    const handlePointer = (e: MouseEvent) => {
+      if (wrapRef.current && !wrapRef.current.contains(e.target as Node)) {
+        setOpen(false);
+      }
+    };
+    const handleKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setOpen(false);
+    };
+    document.addEventListener('mousedown', handlePointer);
+    document.addEventListener('keydown', handleKey);
+    return () => {
+      document.removeEventListener('mousedown', handlePointer);
+      document.removeEventListener('keydown', handleKey);
+    };
+  }, [open]);
+
   const logo = asset('logo-circle');
 
   return (
-    <header className={styles.wrap}>
+    <header ref={wrapRef} className={styles.wrap}>
       <div className={styles.pill}>
         <Link
           href={basePath || '/'}
@@ -89,7 +101,7 @@ export function SiteNav({ basePath = '' }: Props) {
           <button
             type="button"
             className={styles.burger}
-            aria-label="Menu"
+            aria-label="Browse sections"
             aria-expanded={open}
             // Only reference the panel while it is actually in the DOM.
             aria-controls={open ? 'nav-panel' : undefined}
@@ -104,16 +116,27 @@ export function SiteNav({ basePath = '' }: Props) {
 
       {open ? (
         <div id="nav-panel" className={styles.panel}>
-          <div className={styles.panelList}>
-            {NAV_LINKS.map((link) => (
-              <Link
-                key={link.href}
-                href={link.href === '/' ? basePath || '/' : `${basePath}${link.href}`}
-                className={styles.panelLink}
-              >
-                {link.label}
-              </Link>
-            ))}
+          <div className={styles.panelGroups}>
+            {NAV_SECTIONS.map((group) => {
+              const groupHref =
+                group.href === '/' ? basePath || '/' : `${basePath}${group.href}`;
+              return (
+                <div key={group.href} className={styles.panelGroup}>
+                  <Link href={groupHref} className={styles.panelGroupTitle}>
+                    {group.label}
+                  </Link>
+                  {group.sections.map((section) => (
+                    <Link
+                      key={section.hash}
+                      href={`${groupHref}${section.hash}`}
+                      className={styles.panelSectionLink}
+                    >
+                      {section.label}
+                    </Link>
+                  ))}
+                </div>
+              );
+            })}
           </div>
         </div>
       ) : null}

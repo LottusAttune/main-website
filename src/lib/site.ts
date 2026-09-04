@@ -42,10 +42,10 @@ export const NAV_SECTIONS = [
     label: 'Home',
     href: '/',
     sections: [
-      { label: 'Your Guide', hash: '#guide-heading' },
+      { label: 'Your Guide', hash: '#guide' },
       { label: 'Watch', hash: '#watch-heading' },
-      { label: 'Choose Your Path', hash: '#paths' },
-      { label: 'Reviews', hash: '#reviews-heading' },
+      { label: 'Your Path', hash: '#paths' },
+      { label: 'Reviews', hash: '#reviews' },
       { label: 'Frequently Asked', hash: '#faq-heading' },
     ],
   },

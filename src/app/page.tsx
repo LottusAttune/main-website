@@ -75,7 +75,7 @@ export default function HomePage() {
         </section>
 
         {/* ---------- Guide ---------- */}
-        <section className={`${styles.guideSection} section--dark`} aria-labelledby="guide-heading">
+        <section id="guide" className={`${styles.guideSection} section--dark`} aria-labelledby="guide-heading">
           <div className={styles.guideGrid}>
             <div className={styles.guidePortrait} data-reveal="">
               <Image
@@ -192,7 +192,7 @@ export default function HomePage() {
         </section>
 
         {/* ---------- Reviews ---------- */}
-        <section className={styles.reviewsSection} aria-labelledby="reviews-heading">
+        <section id="reviews" className={styles.reviewsSection} aria-labelledby="reviews-heading">
           <div className="shell">
             <div className={styles.centered} data-reveal="" style={{ marginBottom: 28 }}>
               <div className="eyebrow" style={{ fontSize: '13.5px', marginBottom: 14 }}>

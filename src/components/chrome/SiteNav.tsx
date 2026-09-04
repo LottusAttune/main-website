@@ -119,6 +119,7 @@ export function SiteNav({ basePath = '' }: Props) {
                         key={section.hash}
                         href={`${href}${section.hash}`}
                         className={styles.tabPanelLink}
+                        onClick={() => setOpenTab(null)}
                       >
                         {section.label}
                       </Link>

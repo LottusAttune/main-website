@@ -169,7 +169,7 @@
 }
 
 /* Smaller and a solid color, overriding the shared .body--dark class
-   (also used on /lp, so not changed there) rather than inheriting its
+   (also used on /book-now, so not changed there) rather than inheriting its
    17px size and semi-transparent rgba - at that size/brightness this
    paragraph competed with the quote above it for attention and read as
    "a lot to read" rather than a quiet supporting note. Solid color also
@@ -355,7 +355,7 @@
   margin-bottom: 6px;
 }
 
-/* Scoped to these cards only (not the shared .tag, which the /lp landing
+/* Scoped to these cards only (not the shared .tag, which the /book-now landing
    page also uses) - soft-square rather than the full pill, matching the
    corner treatment used elsewhere on this page. */
 .pathTags :global(.tag) {
@@ -363,7 +363,7 @@
 }
 
 /* Scoped to these cards only (not the shared .tag--group/.tag--one, which
-   the /lp landing page also uses) - the green read as out of place here,
+   the /book-now landing page also uses) - the green read as out of place here,
    and the gold "one-on-one" tag needed to sit lighter next to it. */
 .pathTags :global(.tag--group) {
   background: #f2e8d8;

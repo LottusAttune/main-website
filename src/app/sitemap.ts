@@ -2,7 +2,7 @@ import type { MetadataRoute } from 'next';
 
 import { SITE } from '@/lib/site';
 
-/** `/lp` and `/studio` are deliberately absent — both are noindex. */
+/** `/book-now` and `/studio` are deliberately absent — both are noindex. */
 export default function sitemap(): MetadataRoute.Sitemap {
   const routes = [
     { path: '', priority: 1 },

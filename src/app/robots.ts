@@ -8,7 +8,7 @@ export default function robots(): MetadataRoute.Robots {
       userAgent: '*',
       allow: '/',
       // Ad landing pages and the owner dashboard must never be indexed.
-      disallow: ['/lp', '/studio', '/api/'],
+      disallow: ['/book-now', '/studio', '/api/'],
     },
     sitemap: `${SITE.url}/sitemap.xml`,
   };

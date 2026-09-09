@@ -602,7 +602,7 @@
 /* ---------- Included list ---------- */
 
 /* Scoped, tighter override of the shared global .numbered-row (also used on
-   /lp, so not changed there) - fits all 9 rows within one laptop screen.
+   /book-now, so not changed there) - fits all 9 rows within one laptop screen.
    Padding and line-height trimmed well below the global defaults (26px/1.75)
    without going so tight that the longer 2-line entries feel cramped. */
 .includedSection {

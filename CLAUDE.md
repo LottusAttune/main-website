@@ -213,7 +213,7 @@ src/app/                  pages (App Router)
   founder/                Founder
   offerings/              Offerings
   book/  gift/            booking and gift request forms
-  lp/                     ad landing page (noindex)
+  book-now/               ad landing page (noindex)
   v1/                     earlier design, kept as a reference (noindex)
   studio/                 owner dashboard (password-gated)
   api/                    route handlers

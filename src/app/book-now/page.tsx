@@ -19,7 +19,7 @@ import {
 } from '@/data/landing';
 import { asset, assetUrl } from '@/lib/images';
 import { SITE, SOCIAL } from '@/lib/site';
-import styles from './lp.module.css';
+import styles from './book-now.module.css';
 
 /** Ad traffic only — never index this page or let it compete with `/`. */
 export const metadata: Metadata = {

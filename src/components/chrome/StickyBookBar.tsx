@@ -11,7 +11,7 @@ import styles from './StickyBookBar.module.css';
  * about eighty pixels below an identical BOOK A SESSION button.
  *
  * So it stays out of the way until the reader has scrolled past roughly the
- * first screen, then slides up. On /lp it carries the site's only Book/Gift
+ * first screen, then slides up. On /book-now it carries the site's only Book/Gift
  * buttons at the very bottom of a page, since the footer's closing block is
  * text-only to avoid repeating them. Everywhere else, the top nav's own
  * Book/Gift buttons are already visible at every scroll position, so this
@@ -19,7 +19,7 @@ import styles from './StickyBookBar.module.css';
  * repeating them.
  */
 type Props = {
-  /** /lp's own footer is text-only, so it opts into the two-button form
+  /** /book-now's own footer is text-only, so it opts into the two-button form
    *  here instead of the quiet link every other page uses. */
   twoButtons?: boolean;
 };

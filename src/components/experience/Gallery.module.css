@@ -15,6 +15,21 @@
   margin: 0 auto;
 }
 
+/* Below this width the rail's own 88px floor was taking a third of the
+   whole layout's width just to fit two skinny columns, leaving the main
+   stage too narrow to show a photo properly. Stacks instead: full-width
+   stage on top, thumbnails as a horizontal scrolling strip underneath -
+   see .rail and .thumb below for the strip itself. */
+@media (max-width: 640px) {
+  .layout {
+    /* minmax(0, 1fr), not a bare 1fr - a bare 1fr track's default
+       min-width:auto lets it grow to fit .stage's own max-content width
+       instead of shrinking to the available space, which was blowing the
+       whole layout (and the page) out past the viewport. */
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
 /* Same page cream the surrounding page sits on, not the beige gradient
    this used to carry - a photo whose shape leaves a margin inside this box
    blends into the page instead of showing an obvious background. */
@@ -154,6 +169,15 @@
   padding: 4px;
 }
 
+@media (max-width: 640px) {
+  .rail {
+    flex-direction: row;
+    max-height: none;
+    overflow-x: auto;
+    overflow-y: visible;
+  }
+}
+
 /* Full opacity always - fading the inactive thumbnails read as lower
    quality rather than "not selected". The gold outline + offset on
    .thumbActive alone is enough to show which one is active. */
@@ -171,6 +195,16 @@
   transition:
     outline-color 0.25s ease,
     outline-offset 0.25s ease;
+}
+
+/* In the row layout above, width needs setting explicitly - a flex row
+   item with only a height set and an absolutely-covered image inside has
+   nothing else to size its own width from. */
+@media (max-width: 640px) {
+  .thumb {
+    width: clamp(70px, 22vw, 96px);
+    height: clamp(52px, 16vw, 72px);
+  }
 }
 
 .thumb:hover {

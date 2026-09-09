@@ -109,6 +109,25 @@
   padding-right: max(var(--space-gutter), min(calc((100vw - 1040px) / 2), 240px));
 }
 
+/* The desktop sizing here is a deliberately circular resolution: the
+   portrait's "auto" column width comes from the row's height (via its own
+   aspect-ratio) while the row's height also depends on the text column's
+   content height, tuned via the fixed min-height above to land somewhere
+   sane. On a narrow phone column the text wraps much taller, inflating the
+   row height, which inflates the portrait's derived width right along
+   with it - well past the viewport, with the excess silently clipped by
+   .guidePortrait's own overflow:hidden. That's a real crop of the photo,
+   which the site's photo rule doesn't allow. Stacking removes the shared
+   row entirely: the portrait sizes itself from 100% width via its own
+   aspect-ratio, independent of the text column's height. */
+@media (max-width: 760px) {
+  .guideGrid {
+    grid-template-columns: 1fr;
+    min-height: 0;
+    padding-right: 0;
+  }
+}
+
 /* Full-bleed, straight corners, full section height, nothing cropped. The
    box is locked to the photo's own 962:1635 proportions so at whatever
    height the row ends up, the width that shows 100% of the image with zero

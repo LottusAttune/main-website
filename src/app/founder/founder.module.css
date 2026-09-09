@@ -34,6 +34,26 @@
   align-items: start;
 }
 
+/* The portrait column's own floor (190px) doesn't shrink with a narrow
+   viewport, so below this width the bio column was left with barely
+   100px to work with - single words wrapping per line. Stacks instead:
+   full-width portrait on top, full-width bio below. .sticky-col's
+   position:sticky (meant for the side-by-side layout, keeping the
+   portrait in view while the longer bio scrolls past it) is disabled
+   here too, for the same reason it was on Home's FAQ card - once the
+   layout has stacked, sticky pins the portrait in place over the bio
+   scrolling underneath it instead of leaving both to flow normally. */
+@media (max-width: 650px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+
+  .grid :global(.sticky-col) {
+    position: static;
+    top: auto;
+  }
+}
+
 /* Straight edges, not the 28px rounding this carried before - matches her
    preference for a flat, uncurved edge on this photo. */
 .portrait {

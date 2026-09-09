@@ -3,10 +3,16 @@
  *
  * The `audience` variant reorders the offer cards and swaps the hero eyebrow,
  * headline and subline, so separate ad sets can point at the same page:
- *   /lp             → Everyone
- *   /lp?aud=individuals
- *   /lp?aud=corporate
+ *   /book-now             → Everyone
+ *   /book-now?aud=individuals
+ *   /book-now?aud=corporate
+ *
+ * Reviews, FAQs and the included list are drawn from the same approved text
+ * in content.ts (just a curated subset) rather than kept as separate copies
+ * here - a separate copy is exactly what let this page's wording drift out
+ * of date with the real, current text used everywhere else.
  */
+import { FAQS, INCLUDED_SHORT, REVIEWS } from './content';
 
 export type AudienceKey = 'everyone' | 'individuals' | 'corporate';
 
@@ -114,16 +120,7 @@ export const LANDING_COMPONENTS = [
   },
 ] as const;
 
-export const LANDING_INCLUDED = [
-  'Premium Signature Venue or Private Wellness Lounge — venue rental included',
-  'Fully guided somatic and mindfulness practices and a sensory connection exercise',
-  'Immersive sound session with professional-grade instruments',
-  'Educational video about neuroscience and sound benefits',
-  'Custom-branded wellness mats, memory-foam cervical pillows, cozy blankets, and eye masks',
-  'Intention-setting cards and reflection cards',
-  'Refreshments, including water, other beverages and healthy snacks',
-  'End-of-session reintegration',
-] as const;
+export const LANDING_INCLUDED = INCLUDED_SHORT;
 
 export const LANDING_OFFERS = [
   {
@@ -155,47 +152,27 @@ export const LANDING_OFFERS = [
   },
 ] as const;
 
-/** A shortened selection of the approved reviews. */
-export const LANDING_REVIEWS = [
-  {
-    name: 'Serge',
-    face: 'review-serge',
-    meta: 'Private group session',
-    text: 'Silvana is very knowledgeable, and the way she explains everything is clear and easy to follow. The design, comfort, branded materials, instruments, and visuals were all thoughtfully prepared. I would rate it 10 out of 10.',
-  },
-  {
-    name: 'Zainab',
-    face: null,
-    meta: 'Private group session',
-    text: 'My body felt tired when I arrived after a busy weekend and after the session, I felt light and renewed. I would 100% highly recommend this experience!',
-  },
-  {
-    name: 'Aldo',
-    face: null,
-    meta: 'One-on-one session',
-    text: 'I felt lighter after the session, and the vibrations helped bring my body into harmony. I left feeling calmer and more aligned.',
-  },
-] as const;
+/** A shortened selection of the approved reviews, by name - text always
+ *  comes from the live REVIEWS array so an edit there never has to be
+ *  repeated here. */
+const LANDING_REVIEW_NAMES = ['Serge', 'Zainab', 'Aldo'] as const;
+export const LANDING_REVIEWS = LANDING_REVIEW_NAMES.map((name) => {
+  const review = REVIEWS.find((r) => r.name === name);
+  if (!review) throw new Error(`Landing page review "${name}" not found in REVIEWS`);
+  return review;
+});
 
-export const LANDING_FAQS = [
-  {
-    q: 'Do I need any prior experience?',
-    a: 'No meditation background is needed. Sessions are intentionally designed to be welcoming and supportive for all levels. Simply come as you are and allow yourself to relax into the experience.',
-  },
-  {
-    q: 'How will I feel after the session?',
-    a: 'While every experience is unique, many participants report feeling deeply relaxed, grounded, cleared-minded, emotionally lighter, and energetically renewed — often describing it as a full reset for both the mind and body.',
-  },
-  {
-    q: 'What should I bring?',
-    a: 'All wellness and comfort elements are thoughtfully provided, including mats, pillows, blankets, eye masks, and water. Simply bring yourself and arrive with an open mind and heart.',
-  },
-  {
-    q: 'What should I wear?',
-    a: 'Comfortable clothing, including socks to keep your feet warm, is recommended to help you fully relax and enjoy the session. Cozy layers are encouraged for added comfort.',
-  },
-  {
-    q: 'Cancellation Policy',
-    a: "Life happens, and plans change. If you are unable to attend, please cancel at least 48 hours before the start of your session. Cancellations made with at least 48 hours' notice may be rescheduled once or transferred as a credit toward a future session, subject to availability.",
-  },
+/** Same approach as the reviews above - a curated subset of the live FAQs,
+ *  matched by question so the answer text can never drift out of date. */
+const LANDING_FAQ_QUESTIONS = [
+  'Do I need any prior experience?',
+  'How will I feel after the session?',
+  'What should I bring?',
+  'What should I wear?',
+  'Cancellation Policy',
 ] as const;
+export const LANDING_FAQS = LANDING_FAQ_QUESTIONS.map((q) => {
+  const faq = FAQS.find((f) => f.q === q);
+  if (!faq) throw new Error(`Landing page FAQ "${q}" not found in FAQS`);
+  return faq;
+});

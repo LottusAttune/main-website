@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { Accordion } from '@/components/common/Accordion';
 import { Reveal } from '@/components/common/Reveal';
 import { StickyBookBar } from '@/components/chrome/StickyBookBar';
-import { GUIDE } from '@/data/content';
+import { GUIDE, TRUST } from '@/data/content';
 import {
   ASSURANCE_LINE,
   AUDIENCES,
@@ -32,13 +32,6 @@ const TAG_CLASS = {
   group: 'tag--group',
   corp: 'tag--corp',
 } as const;
-
-const TRUST = [
-  { figure: '15+', label: 'Years in HR' },
-  { figure: '2 hrs', label: 'Fully guided' },
-  { figure: '1–24', label: 'Participants' },
-  { figure: 'Toronto', label: 'Premium venue' },
-];
 
 function resolveAudience(value: string | undefined): AudienceKey {
   const key = value?.toLowerCase();

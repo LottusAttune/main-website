@@ -233,7 +233,7 @@
 }
 
 .presentedToPlaceholder {
-  color: rgba(239, 230, 218, 0.4);
+  color: var(--color-cream-text-soft);
   font-style: italic;
 }
 
@@ -281,11 +281,28 @@
   border-radius: 0;
 }
 
+.anonToggle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 2px 2px 4px;
+  font-size: 13px;
+  color: var(--color-cream-text-soft);
+  cursor: pointer;
+}
+
+.anonToggle input {
+  width: 15px;
+  height: 15px;
+  accent-color: var(--color-gold-warm);
+  cursor: pointer;
+}
+
 .note {
   margin: 10px 0 0;
   font-size: 13.5px;
   line-height: 1.75;
-  color: rgba(239, 230, 218, 0.6);
+  color: var(--color-cream-text-soft);
 }
 
 .note a {
@@ -302,7 +319,11 @@
 .success {
   font-size: 16px;
   line-height: 1.8;
-  color: rgba(239, 230, 218, 0.85);
+  color: var(--color-cream-text);
+}
+
+.sentCert {
+  margin-top: 16px;
 }
 
 /* ---------- Certificate preview modal ---------- */
@@ -345,5 +366,5 @@
   margin: 16px 0 0;
   font-size: 12.5px;
   text-align: center;
-  color: rgba(239, 230, 218, 0.6);
+  color: var(--color-cream-text-soft);
 }

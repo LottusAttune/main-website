@@ -10,6 +10,14 @@
   position: relative;
 }
 
+/* See the `compact` prop's own comment - swaps the fixed print-ratio box
+   for one sized by its actual content, so nothing has to overlap to fit
+   a narrower column. */
+.certCompact {
+  width: 100%;
+  aspect-ratio: auto;
+}
+
 /* Metallic gold frame - a gradient reads as foil, not a flat single-color
    rule. Sits on its own layer so the inner hairline and content can be
    independently inset from it. */
@@ -161,6 +169,22 @@
 .certRedeemText {
   font-size: 14.5px;
   line-height: 1.6;
-  color: rgba(239, 230, 218, 0.78);
+  color: var(--color-cream-text-soft);
   max-width: 440px;
+}
+
+.certCode {
+  display: block;
+  margin-top: 6px;
+  font-weight: 600;
+  font-size: 15px;
+  letter-spacing: 0.12em;
+  color: var(--color-gold-warm);
+}
+
+.certCodePending {
+  display: block;
+  margin-top: 6px;
+  font-style: italic;
+  color: var(--color-cream-text-soft);
 }

@@ -66,6 +66,8 @@ export function GiftCalculator({ pricing, codes }: Props) {
     Record<string, string[] | undefined>
   >({});
   const [sent, setSent] = useState(false);
+  const [issuedCode, setIssuedCode] = useState('');
+  const [hideBuyerName, setHideBuyerName] = useState(false);
   const [previewOpen, setPreviewOpen] = useState(false);
 
   const invalid = (field: string) => Boolean(fieldErrors[field]?.length);
@@ -226,6 +228,10 @@ export function GiftCalculator({ pricing, codes }: Props) {
         setError(body?.issues ? message : `${message} Please email ${SITE.email}.`);
         return;
       }
+      const body = (await response.json().catch(() => null)) as {
+        code?: string;
+      } | null;
+      setIssuedCode(body?.code ?? '');
       setSent(true);
     } catch (err) {
       setError(
@@ -412,10 +418,24 @@ export function GiftCalculator({ pricing, codes }: Props) {
           <>
             <div className={styles.asideTitle}>Gift Certificate</div>
             <p className={styles.success} role="status">
-              {recipientEmail.trim()
-                ? `Your gift certificate is on its way to ${recipientName} at ${recipientEmail}. A confirmation has also been sent to ${buyerEmail}.`
-                : `Your gift certificate has been sent to ${buyerEmail} — forward it to ${recipientName} whenever you're ready.`}
+              Your certificate is ready — save or screenshot it below. We've
+              also noted your request; reach out any time at {SITE.email} if
+              you need anything.
             </p>
+            <div className={styles.sentCert}>
+              <CertificatePreview
+                recipientName={recipientName.trim()}
+                fromName={hideBuyerName ? '' : buyerName.trim()}
+                description={
+                  isPrivate
+                    ? 'Redeemable for a two-hour immersive Lotus Attune experience — private session, downtown Toronto.'
+                    : 'Redeemable for a two-hour immersive Lotus Attune experience, downtown Toronto.'
+                }
+                valueLabel={`${money(quote.total)} value`}
+                code={issuedCode}
+                compact
+              />
+            </div>
           </>
         ) : (
           <>
@@ -522,6 +542,14 @@ export function GiftCalculator({ pricing, codes }: Props) {
                 value={buyerName}
                 onChange={(e) => setBuyerName(e.target.value)}
               />
+              <label className={styles.anonToggle}>
+                <input
+                  type="checkbox"
+                  checked={hideBuyerName}
+                  onChange={(e) => setHideBuyerName(e.target.checked)}
+                />
+                Keep my name off the certificate
+              </label>
               <input
                 className={`field field--dark ${invalid('buyerEmail') ? 'field--invalid' : ''}`}
                 type="email"
@@ -567,7 +595,7 @@ export function GiftCalculator({ pricing, codes }: Props) {
           <div className={styles.previewShell} onClick={(e) => e.stopPropagation()}>
             <CertificatePreview
               recipientName={recipientName.trim()}
-              fromName={buyerName.trim()}
+              fromName={hideBuyerName ? '' : buyerName.trim()}
               description={
                 isPrivate
                   ? 'Redeemable for a two-hour immersive Lotus Attune experience — private session, downtown Toronto.'

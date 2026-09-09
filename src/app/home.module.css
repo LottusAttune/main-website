@@ -182,6 +182,16 @@
   color: var(--color-cream-text-soft);
 }
 
+/* Justify reads fine at desktop column widths, but on a narrow phone
+   column without hyphenation it stretches short lines into uneven,
+   distracting gaps between words. Left-aligned reads more comfortably at
+   this width. */
+@media (max-width: 600px) {
+  .guideBody {
+    text-align: left;
+  }
+}
+
 /* More room than before - with the second paragraph removed, this single
    paragraph needs more air before the button rather than the tighter gap
    that made sense between two stacked paragraphs. */
@@ -455,6 +465,12 @@
   font-size: 15.5px;
   line-height: 1.65;
   text-align: justify;
+}
+
+@media (max-width: 600px) {
+  .faqLede {
+    text-align: left;
+  }
 }
 
 .faqCard {

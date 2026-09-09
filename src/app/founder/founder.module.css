@@ -59,6 +59,15 @@
   max-width: 860px;
 }
 
+/* Justify reads fine at this column's normal (wider) width, but once the
+   layout below narrows the bio column down at phone widths, the same
+   justify stretches short lines into uneven, distracting word gaps. */
+@media (max-width: 600px) {
+  .bio {
+    text-align: left;
+  }
+}
+
 /* The founder-guide line ("I bridge the gap...") - previously a huge
    opening quote above the portrait/bio grid, now sits after the bio text
    as a small closing line, centered, in the same font treatment as

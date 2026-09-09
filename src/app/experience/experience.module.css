@@ -60,6 +60,12 @@
   text-align: justify;
 }
 
+@media (max-width: 600px) {
+  .introGrid p {
+    text-align: left;
+  }
+}
+
 /* The modal (see .componentOverlay below) never overlaps Benefits, so this
    doesn't need to reserve clearance for an open card the way an in-place
    reveal would - just a bit of normal breathing room before the section

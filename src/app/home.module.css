@@ -451,6 +451,20 @@
   align-items: start;
 }
 
+/* Below ~590px the grid above has already collapsed to one column (two
+   260px columns no longer fit) - the FAQ card and the accordion below it
+   stack instead of sitting side by side, and .sticky-col's own
+   position:sticky (meant for that side-by-side layout) then pins the card
+   in place while the accordion scrolls underneath it. Mobile/tablet pass:
+   desktop is untouched, this only applies once the grid has already
+   stacked. */
+@media (max-width: 590px) {
+  .faqGrid :global(.sticky-col) {
+    position: static;
+    top: auto;
+  }
+}
+
 .faqHeading {
   font-size: clamp(26px, 3.4vw, 44px);
   margin: 0 0 14px;

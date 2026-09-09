@@ -73,6 +73,17 @@
   .lockup {
     min-height: clamp(200px, 44vw, 240px);
   }
+
+  /* The photo is sized by height with a fixed aspect ratio and anchored to
+     the left - on a wide desktop box that leaves it confined to the left
+     portion, clear of the centered text. On a narrow mobile box its
+     height-driven width fills nearly the whole thing, landing directly
+     under the centered text instead. Simplifying to the plain dark
+     background here reads as clean rather than fixing a graphic that was
+     never going to resize cleanly at this width. */
+  .lockupPhoto {
+    display: none;
+  }
 }
 
 .mottoGroup {

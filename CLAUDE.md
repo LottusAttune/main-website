@@ -6,23 +6,30 @@ Next.js 15 (App Router) · TypeScript · Supabase Postgres · deployed on Vercel
 
 ---
 
-## Mobile is paused — don't bring it up
+## Mobile/tablet pass is now open
 
-Silvana has said this many times: mobile gets its own dedicated pass, as its
-own stacked layout, done separately once the regular (desktop) site is
-finished. Until she opens that pass herself:
+Desktop is done and approved — Silvana's own words: "I love my website
+design, its perfect for desktop." She has now explicitly opened the mobile
+and tablet pass (this was previously paused; that's over).
 
-- Don't make mobile-specific layout/CSS changes on your own initiative, even
-  ones that look like an obvious bugfix.
-- Don't mention mobile, screenshot mobile, or flag mobile-only issues in
-  conversation, QA notes, or commit messages — not even as a courtesy aside.
-- Work and review at desktop widths. If a shared style you're touching for a
-  desktop change also happens to apply at mobile widths, that's fine — just
-  don't go looking for, fixing, or commenting on mobile-only problems.
+Her brief for this pass:
 
-This has already been said many times. Don't ask about it again and don't
-bring mobile up unprompted — hold to it silently until she raises mobile
-herself.
+- Perfect the mobile and tablet responsiveness and UI/UX.
+- Simplify sections where that gives a better browsing/reading experience on
+  a small screen — this pass is not required to be a literal narrowing of
+  the desktop layout section-by-section.
+- **Do not change the desktop version.** Every fix here must be scoped to
+  mobile/tablet breakpoints (media queries, breakpoint-specific components)
+  so nothing shifts at desktop widths. Verify this by screenshotting the
+  same page at a desktop width after each change, not just trusting that a
+  max-width media query "should" be safe.
+- Still verify at a spread of checkpoint widths per the visual-QA rules
+  below — phone widths (~375-430px) through tablet (~768-1024px) - not just
+  one screen size.
+- Same rules apply as everywhere else on this site: her copy stays verbatim,
+  no AI imagery, design tokens not hex, no cropped faces, square corners/flat
+  surfaces as the current default - simplifying a section's layout doesn't
+  mean rewording it or introducing new colours/radii ad hoc.
 
 ---
 

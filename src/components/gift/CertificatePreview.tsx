@@ -37,9 +37,11 @@ export function CertificatePreview({
             <div className={styles.certEyebrow}>Gift Certificate</div>
             <div className={styles.certEntitles}>For</div>
             <div className={styles.certName}>{recipientName || 'Recipient Name'}</div>
-            <div className={styles.certFrom}>
-              From <strong>{fromName?.trim() || 'a friend'}</strong>
-            </div>
+            {fromName?.trim() ? (
+              <div className={styles.certFrom}>
+                From <strong>{fromName.trim()}</strong>
+              </div>
+            ) : null}
             <div className={styles.certRule} />
             <p className={styles.certDesc}>{description}</p>
             <div className={styles.certValue}>{valueLabel}</div>

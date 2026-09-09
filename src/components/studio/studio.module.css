@@ -225,6 +225,7 @@
   font-size: 36px;
   line-height: 1;
   margin-bottom: 8px;
+  font-variant-numeric: tabular-nums;
 }
 
 .statNote {
@@ -330,6 +331,7 @@
   font-family: var(--font-display);
   font-weight: 400;
   font-size: 17px;
+  font-variant-numeric: tabular-nums;
 }
 
 .pill {
@@ -479,7 +481,9 @@
   flex: none;
   font-family: var(--font-display);
   font-weight: 400;
-  font-size: 16px;
+  font-size: 19px;
+  color: var(--color-ink);
+  font-variant-numeric: tabular-nums;
 }
 
 .leadMeta {
@@ -544,6 +548,7 @@
   font-size: 22px;
   font-weight: 300;
   color: var(--color-ink);
+  font-variant-numeric: tabular-nums;
 }
 
 /* ============================================================
@@ -868,6 +873,147 @@
 
 .menuItemAlert {
   color: var(--status-alert);
+}
+
+/* ============================================================
+   Lead detail panel (slides in from the right)
+   ============================================================ */
+
+.modalBackdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  background: rgba(31, 23, 16, 0.32);
+  animation: studioFadeIn 0.18s ease;
+}
+
+@keyframes studioFadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.modalPanel {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: min(420px, 100vw);
+  display: flex;
+  flex-direction: column;
+  background: var(--color-cream-raised);
+  border-left: 1px solid var(--hairline-light);
+  box-shadow: var(--shadow-card-dark);
+  animation: studioSlideIn 0.22s var(--ease-out);
+  overflow-y: auto;
+}
+
+@keyframes studioSlideIn {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+.modalHead {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 26px 26px 18px;
+  border-bottom: 1px solid var(--hairline-light-soft);
+}
+
+.modalTitle {
+  font-family: var(--font-display);
+  font-weight: 300;
+  font-size: 24px;
+  color: var(--color-ink);
+}
+
+.modalSubtitle {
+  margin-top: 6px;
+  font-size: 10.5px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--color-gold-text);
+}
+
+.modalClose {
+  flex: none;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--hairline-light-strong);
+  border-radius: 50%;
+  background: transparent;
+  color: var(--color-ink-body);
+  cursor: pointer;
+  font-size: 13px;
+}
+
+.modalClose:hover {
+  border-color: var(--color-gold-deep);
+  background: rgba(198, 169, 122, 0.16);
+}
+
+.modalBody {
+  flex: 1;
+  padding: 6px 26px 22px;
+}
+
+.detailRow {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 13px 0;
+  border-bottom: 1px solid var(--hairline-light-soft);
+}
+
+.detailLabel {
+  flex: none;
+  font-size: 10.5px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--color-muted);
+}
+
+.detailValue {
+  text-align: right;
+  font-size: 14.5px;
+  color: var(--color-ink-strong);
+  font-variant-numeric: tabular-nums;
+}
+
+.detailValue a {
+  color: var(--color-gold-deep);
+}
+
+.detailValueLarge {
+  font-family: var(--font-display);
+  font-size: 22px;
+  color: var(--color-ink);
+}
+
+.modalFoot {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  padding: 18px 26px 26px;
+  border-top: 1px solid var(--hairline-light-soft);
+}
+
+.modalFoot .btn {
+  flex: 1;
+  white-space: nowrap;
 }
 
 .editRow {

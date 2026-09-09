@@ -1,7 +1,9 @@
 import type { Metadata } from 'next';
+import Image from 'next/image';
 import { redirect } from 'next/navigation';
 
 import { checkPassword, createSession, isSignedIn, isStudioConfigured } from '@/lib/auth';
+import { asset } from '@/lib/images';
 import { SITE } from '@/lib/site';
 import styles from './login.module.css';
 
@@ -19,6 +21,7 @@ export default async function LoginPage({
 
   const { error } = await searchParams;
   const configured = isStudioConfigured();
+  const mark = asset('logo-circle');
 
   async function signIn(formData: FormData) {
     'use server';
@@ -34,8 +37,16 @@ export default async function LoginPage({
   return (
     <main className={styles.wrap}>
       <div className={styles.card}>
+        <Image
+          src={mark.src}
+          alt=""
+          width={56}
+          height={56}
+          className={styles.mark}
+        />
         <div className={styles.eyebrow}>{SITE.name}</div>
         <h1 className={styles.title}>Studio</h1>
+        <div className={styles.rule} aria-hidden="true" />
 
         {configured ? (
           <form action={signIn} className={styles.form}>
@@ -44,12 +55,13 @@ export default async function LoginPage({
             </label>
             <input
               id="password"
-              className="field field--dark"
+              className={`field field--dark ${error ? 'field--invalid' : ''}`}
               type="password"
               name="password"
               required
               autoComplete="current-password"
               placeholder="Password"
+              aria-invalid={error ? 'true' : undefined}
             />
             <button type="submit" className="btn btn--cream btn--wide">
               Sign in

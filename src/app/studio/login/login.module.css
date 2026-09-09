@@ -10,7 +10,7 @@
 .card {
   width: 100%;
   max-width: 400px;
-  padding: clamp(32px, 5vw, 48px);
+  padding: clamp(36px, 5vw, 52px) clamp(32px, 5vw, 48px);
   background: rgba(246, 239, 229, 0.06);
   border: 1px solid rgba(239, 230, 218, 0.18);
   border-radius: var(--radius-lg);
@@ -18,12 +18,18 @@
   text-align: center;
 }
 
+.mark {
+  margin: 0 auto 20px;
+  display: block;
+  border-radius: 50%;
+}
+
 .eyebrow {
   font-size: var(--text-micro);
   letter-spacing: 0.4em;
   text-transform: uppercase;
   color: var(--color-gold-light);
-  margin-bottom: 18px;
+  margin-bottom: 14px;
 }
 
 .title {
@@ -31,18 +37,25 @@
   font-weight: 300;
   font-size: 42px;
   letter-spacing: 0.08em;
-  margin: 0 0 32px;
+  margin: 0;
   color: var(--color-cream-text);
+}
+
+.rule {
+  width: 40px;
+  height: 1px;
+  margin: 24px auto 28px;
+  background: rgba(239, 230, 218, 0.22);
 }
 
 .form {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 14px;
 }
 
 .error {
-  margin: 4px 0 0;
+  margin: 2px 0 0;
   font-size: 14px;
   color: #e8a78c;
 }

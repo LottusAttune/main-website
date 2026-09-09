@@ -160,6 +160,7 @@ CREATE TABLE IF NOT EXISTS gift_requests (
   participants    INTEGER,
   addons          JSONB NOT NULL DEFAULT '{}'::JSONB,
   discount_code   TEXT,
+  code            TEXT,
   total           INTEGER NOT NULL DEFAULT 0,
   gratuity        INTEGER NOT NULL DEFAULT 0,
   status          TEXT NOT NULL DEFAULT 'requested',
@@ -178,6 +179,12 @@ ALTER TABLE gift_requests ADD COLUMN IF NOT EXISTS discount_code TEXT;
 -- Table predates the buyer's own name (previously only their email) - add
 -- it for existing databases.
 ALTER TABLE gift_requests ADD COLUMN IF NOT EXISTS buyer_name TEXT;
+
+-- Table predates the certificate's own redemption code (the certificate
+-- used to tell the recipient to "enter this code" without one existing
+-- anywhere) - add it for existing databases.
+ALTER TABLE gift_requests ADD COLUMN IF NOT EXISTS code TEXT;
+CREATE UNIQUE INDEX IF NOT EXISTS gift_requests_code_idx ON gift_requests (code);
 
 -- ---------------------------------------------------------------------------
 -- Discovery call requests. A fixed video link is sent by email, not stored

@@ -253,6 +253,22 @@
   grid-column: span 2;
 }
 
+/* auto-fit's column count is meant to collapse to one once two 230px
+   tracks no longer fit, but on a phone-width form (this container sits in
+   a layout that doesn't give it a definite width early enough for that
+   calculation) it was still resolving to two narrow, part-cut-off columns
+   instead. Forcing one column directly below this width sidesteps that
+   rather than fighting auto-fit's resolution. */
+@media (max-width: 480px) {
+  .details {
+    grid-template-columns: 1fr;
+  }
+
+  .detailsWide {
+    grid-column: span 1;
+  }
+}
+
 .textarea {
   resize: vertical;
   min-height: 120px;

@@ -319,6 +319,8 @@ export const TRAINING = [
     items: [
       'Inner Growth Identity one-year program - Soul Engineering, Bali - 2025',
       'Etnikas Integrative Medicine Retreat - Cusco, Peru - 2019',
+      '21-Day Awakening Journey | Niraj Nair - 2024',
+      'Heal Your Masculine and Feminine | Danny Morel - 2025',
     ],
   },
   {
@@ -333,7 +335,7 @@ export const TRAINING = [
     items: [
       'Toronto Zen School Ensemble - Handpan musician and performer - 2025',
       'BUMI Festival - Handpan Performance - 2026',
-      'Drum & Soul in Motion - Handpan-guided meditation',
+      'Drum & Soul in Motion - Handpan-guided meditations',
     ],
   },
 ] as const;

@@ -318,9 +318,9 @@ export const TRAINING = [
     title: 'Personal Development & Integrative Healing Arts',
     items: [
       'Inner Growth Identity one-year program - Soul Engineering, Bali - 2025',
-      'Etnikas Integrative Medicine Retreat - Cusco, Peru - 2019',
-      '21-Day Awakening Journey | Niraj Nair - 2024',
       'Heal Your Masculine and Feminine | Danny Morel - 2025',
+      '21-Day Awakening Journey | Niraj Nair - 2024',
+      'Etnikas Integrative Medicine Retreat - Cusco, Peru - 2019',
     ],
   },
   {

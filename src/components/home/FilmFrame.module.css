@@ -27,12 +27,12 @@
 .sound {
   position: absolute;
   right: clamp(14px, 2vw, 24px);
-  /* Vimeo's own control bar (play/pause, scrubber, volume, fullscreen) now
-     lives along the bottom edge, and its exact height isn't something this
-     site's CSS can see (it's inside a cross-origin iframe) to clear with a
-     guessed offset - the top corner is guaranteed clear of it regardless of
-     screen size or how tall that bar actually renders. */
-  top: clamp(14px, 2vw, 24px);
+  /* Sits just above Vimeo's own control bar (play/pause, scrubber, volume,
+     fullscreen), which lives along the bottom edge. Its exact rendered
+     height isn't visible to this site's CSS - it's inside a cross-origin
+     iframe - so this is a deliberately generous clearance rather than a
+     tight guess, after a smaller one (44px) still overlapped on desktop. */
+  bottom: clamp(64px, 8vw, 88px);
   z-index: 2;
   display: flex;
   align-items: center;

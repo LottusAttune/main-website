@@ -60,6 +60,9 @@ export function InstagramIcon({ className }: IconProps) {
   );
 }
 
+/* Bold, filled "in" letterforms rather than a thin abstract line mark - the
+   previous version matched Instagram's icon in outer SVG size but read as
+   much smaller/fainter next to its bold filled camera shape. */
 export function LinkedInIcon({ className }: IconProps) {
   return (
     <svg
@@ -67,15 +70,12 @@ export function LinkedInIcon({ className }: IconProps) {
       width="21"
       height="21"
       viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2.4"
+      fill="currentColor"
       aria-hidden="true"
     >
-      <line x1="7.5" y1="10.5" x2="7.5" y2="17" />
-      <circle cx="7.5" cy="6.8" r="1" fill="currentColor" stroke="none" />
-      <path d="M11.3 17v-4.2a2.2 2.2 0 0 1 4.4 0V17" />
-      <line x1="11.3" y1="10.5" x2="11.3" y2="17" />
+      <rect x="3.8" y="9" width="3.6" height="11.2" rx="0.4" />
+      <circle cx="5.6" cy="5.1" r="2.1" />
+      <path d="M11.2 9h3.5v1.7c.7-1.2 2.1-2 3.9-2 3.2 0 4.6 2 4.6 5.6v5.9h-3.6v-5.3c0-1.8-.6-3-2.2-3-1.2 0-2 .8-2.3 1.6-.1.3-.1.7-.1 1.1v5.6h-3.6V9z" />
     </svg>
   );
 }
@@ -84,8 +84,8 @@ export function FacebookIcon({ className }: IconProps) {
   return (
     <svg
       className={className}
-      width="20"
-      height="20"
+      width="23"
+      height="23"
       viewBox="0 0 24 24"
       fill="currentColor"
       aria-hidden="true"

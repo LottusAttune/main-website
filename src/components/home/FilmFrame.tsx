@@ -93,6 +93,31 @@ export function FilmFrame() {
     if (started) attachPlayer();
   }, [started, portrait]);
 
+  // Unlike the one-shot observer above (which only ever starts the video),
+  // this one keeps watching for as long as the film is on the page - pausing
+  // once it's scrolled out of view and resuming when it's scrolled back, so
+  // sound (or the loop generally) doesn't keep running unseen after someone
+  // reads past it.
+  useEffect(() => {
+    const el = wrapRef.current;
+    if (!el || !started) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        const player = playerRef.current;
+        if (!player) return;
+        if (entry.isIntersecting) {
+          void player.play();
+        } else {
+          void player.pause();
+        }
+      },
+      { threshold: 0.2 }
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [started, portrait]);
+
   const toggleSound = () => {
     const next = !soundOn;
     setSoundOn(next);

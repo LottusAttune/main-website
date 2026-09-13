@@ -59,14 +59,16 @@
   white-space: nowrap;
 }
 
-/* Below the desktop breakpoint there isn't room for the tagline's full
-   nowrap width next to the flat nav links/burger - it was forcing them to
-   wrap onto a second row. Dropping it keeps the wordmark alone, which is
-   enough to identify the brand at this size; the tagline comes back at the
-   same 1080px point .links itself takes over. */
+/* Below desktop, tighter tracking/size than the full lockup gets at 1080px+
+   - at the original 0.36em letter-spacing "IMMERSIVE SOMA SOUND · TORONTO"
+   ran past 250px on its own and either overlapped Menu on phones or forced
+   the tablet link row onto a second line. Tightened enough to keep the
+   whole tagline (Toronto included) visible everywhere below desktop instead
+   of dropping it. */
 @media (max-width: 1079px) {
   .subMark {
-    display: none;
+    letter-spacing: 0.1em;
+    font-size: 8px;
   }
 }
 

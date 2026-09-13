@@ -173,7 +173,11 @@ export function SiteNav({ basePath = '' }: Props) {
                 group.href === '/' ? basePath || '/' : `${basePath}${group.href}`;
               return (
                 <div key={group.href} className={styles.panelGroup}>
-                  <Link href={groupHref} className={styles.panelGroupTitle}>
+                  <Link
+                    href={groupHref}
+                    className={styles.panelGroupTitle}
+                    onClick={() => setOpen(false)}
+                  >
                     {group.label}
                   </Link>
                   {group.sections.map((section) => (
@@ -181,6 +185,7 @@ export function SiteNav({ basePath = '' }: Props) {
                       key={section.hash}
                       href={`${groupHref}${section.hash}`}
                       className={styles.panelSectionLink}
+                      onClick={() => setOpen(false)}
                     >
                       {section.label}
                     </Link>

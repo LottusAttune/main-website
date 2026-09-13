@@ -4,7 +4,7 @@ import Image from 'next/image';
 import Script from 'next/script';
 import { useEffect, useRef, useState } from 'react';
 
-import { FILM, FILM_POSTER } from '@/data/content';
+import { FILM, FILM_POSTER, FILM_POSTER_PORTRAIT } from '@/data/content';
 import { asset } from '@/lib/images';
 import styles from './FilmFrame.module.css';
 
@@ -146,7 +146,7 @@ export function FilmFrame() {
   };
 
   const videoId = portrait ? FILM.portrait : FILM.landscape;
-  const poster = asset(FILM_POSTER);
+  const poster = asset(portrait ? FILM_POSTER_PORTRAIT : FILM_POSTER);
 
   return (
     <>

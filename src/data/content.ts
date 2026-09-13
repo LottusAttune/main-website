@@ -378,3 +378,8 @@ export const FILM = {
 
 /** Shown until the player reports ready, and left in place if it never does. */
 export const FILM_POSTER = 'watch-poster-candle';
+
+/** Same role as FILM_POSTER, but for the portrait/mobile film - a still from
+ *  its own final frame rather than the landscape film's candle shot, which
+ *  read as an oddly cropped/zoomed sliver at the 9:16 aspect ratio. */
+export const FILM_POSTER_PORTRAIT = 'watch-poster-portrait';

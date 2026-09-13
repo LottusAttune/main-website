@@ -214,5 +214,9 @@
   "watch-poster-candle": {
     "width": 875,
     "height": 495
+  },
+  "watch-poster-portrait": {
+    "width": 357,
+    "height": 637
   }
 }

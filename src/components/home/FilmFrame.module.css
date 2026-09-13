@@ -22,8 +22,6 @@
   height: 100%;
   border: none;
   display: block;
-  /* The frame owns interaction; sound is toggled through the pill below. */
-  pointer-events: none;
 }
 
 .sound {

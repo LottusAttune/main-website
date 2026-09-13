@@ -17,7 +17,7 @@ function embedUrl(id: string): string {
     autoplay: '1',
     muted: '1',
     loop: '1',
-    controls: '0',
+    controls: '1',
     title: '0',
     byline: '0',
     portrait: '0',

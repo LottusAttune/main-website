@@ -27,7 +27,10 @@
 .sound {
   position: absolute;
   right: clamp(14px, 2vw, 24px);
-  bottom: clamp(14px, 2vw, 24px);
+  /* Vimeo's own control bar (play/pause, scrubber, volume, fullscreen) now
+     lives along this same bottom edge - pushed up clear of it instead of
+     sitting in the same strip and overlapping it. */
+  bottom: calc(clamp(14px, 2vw, 24px) + 44px);
   z-index: 2;
   display: flex;
   align-items: center;

@@ -60,51 +60,6 @@
   border-color: rgba(198, 169, 122, 0.85);
 }
 
-/* Mirrors .sound on the opposite corner - lets anyone jump the loop back to
-   0:00 on demand (scrolled away and back, or just wants to rewatch), rather
-   than waiting for it to come back around. */
-.restart {
-  position: absolute;
-  left: clamp(14px, 2vw, 24px);
-  bottom: clamp(14px, 2vw, 24px);
-  z-index: 2;
-  padding: 12px 22px;
-  min-height: 46px;
-  /* Almost square, not the full pill used elsewhere - matches the flatter
-     corner used across the rest of this page. */
-  border-radius: 8px;
-  border: 1px solid rgba(246, 239, 229, 0.45);
-  background: rgba(28, 21, 15, 0.55);
-  backdrop-filter: blur(10px);
-  color: var(--color-cream-text);
-  font-size: 10.5px;
-  letter-spacing: 0.22em;
-  text-transform: uppercase;
-  cursor: pointer;
-  transition:
-    border-color var(--duration-button) ease,
-    background var(--duration-button) ease,
-    transform var(--duration-button) ease;
-}
-
-/* Below the same 819px breakpoint the film itself swaps to portrait, the
-   frame is narrow enough that .sound (bottom-right) and .restart
-   (bottom-left) run into each other in the middle. Stacks them in the same
-   corner instead - .restart directly above .sound - rather than two
-   corners that no longer have room between them. */
-@media (max-width: 819px) {
-  .restart {
-    left: auto;
-    right: clamp(14px, 2vw, 24px);
-    bottom: 72px;
-  }
-}
-
-.restart:hover {
-  transform: translateY(-2px);
-  border-color: var(--color-gold-light);
-}
-
 /* The player sits over the still and is only revealed once Vimeo reports it is
    running. A network that cannot reach Vimeo therefore shows the photograph,
    not the browser's broken-file icon. */

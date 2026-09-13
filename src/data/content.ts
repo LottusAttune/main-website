@@ -363,7 +363,7 @@ export const CORPORATE_ADDON_COPY =
  */
 export const FILM = {
   landscape: '1221652776',
-  portrait: '1218205483',
+  portrait: '1226406572',
 } as const;
 
 /** Shown until the player reports ready, and left in place if it never does. */

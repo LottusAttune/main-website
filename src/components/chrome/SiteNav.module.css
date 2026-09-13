@@ -70,16 +70,11 @@
   }
 }
 
-/* Even without the tagline, the full "LOTUS ATTUNE" wordmark still doesn't
-   leave enough room for Book, Gift and the burger on a phone screen - it
-   was running under the Book button. The logo mark alone still identifies
-   the brand at this size (every other page has it in the tab/app icon too),
-   so the wordmark drops as well rather than overlapping the actions. */
-@media (max-width: 480px) {
-  .lockup {
-    display: none;
-  }
-}
+/* This used to also hide below 480px - that rule existed only because the
+   wordmark, Book, Gift and the burger couldn't all fit on a phone row
+   together. Book/Gift moved to the bottom bar, so that crowding is gone and
+   the wordmark now fits fine down to the narrowest phones (tested to
+   360px); only the tagline above still needs to drop for space. */
 
 .links {
   display: none;

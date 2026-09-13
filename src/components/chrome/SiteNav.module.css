@@ -118,42 +118,6 @@
   border-bottom-color: var(--color-gold-text);
 }
 
-/* Tablet's flat equivalent of .links, without the per-tab dropdowns - hidden
-   by default (phones don't have room next to the logo and burger for four
-   full words), shown in the tablet band once there's space, hidden again at
-   1080px where .links' own desktop row takes over. */
-.mobileLinks {
-  display: none;
-}
-
-@media (min-width: 740px) and (max-width: 1079px) {
-  .mobileLinks {
-    display: flex;
-    align-items: center;
-    justify-content: flex-end;
-    flex-wrap: wrap;
-    gap: 8px clamp(8px, 1.4vw, 24px);
-    flex: 1 1 auto;
-    min-width: 0;
-    padding: 0 clamp(8px, 1.2vw, 20px);
-    font-size: 11.5px;
-    letter-spacing: 0.11em;
-    text-transform: uppercase;
-  }
-}
-
-.mobileLink {
-  padding-bottom: 3px;
-  border-bottom: 1px solid transparent;
-  white-space: nowrap;
-  color: var(--color-muted);
-}
-
-.mobileLinkActive {
-  color: var(--color-ink);
-  border-bottom-color: var(--color-gold-text);
-}
-
 /* The chevron is its own click target, separate from the label - the
    label still just navigates to the page, only this toggles the small
    dropdown of that page's sections. */
@@ -373,12 +337,12 @@
   color: var(--color-ink);
 }
 
-/* The single breakpoint that matters: below 1080px the plain links (and
-   their new per-tab dropdowns) collapse into the burger's grouped panel
-   instead. Above it, the tab row has its own discreet per-tab dropdowns,
-   so the burger's full panel would just be a second, redundant way to
-   reach the same thing - it stays hidden there. */
-@media (min-width: 1080px) {
+/* Tablet gets the exact same per-tab dropdown row as desktop, just tighter -
+   showing the flat page labels there AND the burger's full panel was two
+   ways to reach the same "jump to a section" job. Below this width there
+   still isn't room for four labels plus their dropdown chevrons next to the
+   logo, so phones keep the burger as their only nav entry point. */
+@media (min-width: 740px) {
   .links {
     display: flex;
   }
@@ -386,5 +350,14 @@
   .burger,
   .panel {
     display: none;
+  }
+}
+
+@media (min-width: 740px) and (max-width: 1079px) {
+  .links {
+    gap: 4px clamp(4px, 1vw, 20px);
+    padding: 0 clamp(4px, 0.8vw, 16px);
+    font-size: 10.5px;
+    letter-spacing: 0.08em;
   }
 }

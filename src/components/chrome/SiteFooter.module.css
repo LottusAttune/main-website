@@ -192,12 +192,19 @@
   gap: 16px;
 }
 
+.socialWrap {
+  position: relative;
+  display: inline-flex;
+}
+
 .socialIcon {
   display: flex;
   align-items: center;
   justify-content: center;
   width: 28px;
   height: 28px;
+  border: none;
+  cursor: pointer;
   /* Matches the minimal roundness standard used across the site. */
   border-radius: 6px;
   background: var(--color-ink);
@@ -205,6 +212,35 @@
   transition:
     background var(--duration-button, 0.2s) ease,
     transform var(--duration-button, 0.2s) ease;
+}
+
+/* The handles behind these icons aren't live yet - a real link would send
+   someone straight to that platform's own "page not found". This shows in
+   place of that, on click, instead of navigating anywhere. */
+.socialTooltip {
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 6px 10px;
+  background: var(--color-ink-deep);
+  color: var(--color-cream-text);
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  white-space: nowrap;
+  border-radius: 0;
+  box-shadow: var(--shadow-card);
+  pointer-events: none;
+}
+
+.socialTooltip::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border: 5px solid transparent;
+  border-top-color: var(--color-ink-deep);
 }
 
 /* Darker, not a lighter gold pop - matches the black theme used elsewhere

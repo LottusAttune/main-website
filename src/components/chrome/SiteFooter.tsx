@@ -5,6 +5,7 @@ import { asset } from '@/lib/images';
 import { SITE, SOCIAL } from '@/lib/site';
 import { ExpandableNote } from './ExpandableNote';
 import { FacebookIcon, InstagramIcon, LinkedInIcon, MailIcon, PhoneIcon } from './FooterIcons';
+import { SocialIconButton } from './SocialIconButton';
 import styles from './SiteFooter.module.css';
 
 const SPECS = [
@@ -67,16 +68,9 @@ export function SiteFooter() {
               {SOCIAL.filter((s) => s.label in SOCIAL_ICONS).map((s) => {
                 const Icon = SOCIAL_ICONS[s.label as keyof typeof SOCIAL_ICONS];
                 return (
-                  <a
-                    key={s.label}
-                    href={s.href}
-                    aria-label={s.label}
-                    className={styles.socialIcon}
-                    rel="noopener noreferrer"
-                    target="_blank"
-                  >
+                  <SocialIconButton key={s.label} label={s.label}>
                     <Icon />
-                  </a>
+                  </SocialIconButton>
                 );
               })}
             </div>

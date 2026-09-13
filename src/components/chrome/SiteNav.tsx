@@ -50,7 +50,7 @@ export function SiteNav({ basePath = '' }: Props) {
     };
   }, [open, openTab]);
 
-  const logo = asset('logo-circle');
+  const logo = asset('logo-mark');
 
   return (
     <header ref={wrapRef} className={styles.wrap}>

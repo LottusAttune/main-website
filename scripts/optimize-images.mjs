@@ -44,6 +44,7 @@ const SMALL_ASSETS = new Set([
   'icon-sound',
   'logo-circle',
   'logo-lockup',
+  'logo-mark',
   'logo-wordmark',
 ]);
 
@@ -56,6 +57,7 @@ const NEEDS_ALPHA = new Set([
   'icon-sound',
   'logo-circle',
   'logo-lockup',
+  'logo-mark',
   'logo-wordmark',
   'offerings-box-photo',
 ]);

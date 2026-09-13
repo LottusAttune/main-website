@@ -227,40 +227,59 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  gap: 4px;
+  gap: 5px;
   width: 44px;
   height: 44px;
   flex: none;
   border: 1px solid rgba(59, 46, 36, 0.28);
-  border-radius: var(--radius-pill);
+  border-radius: 0;
   background: transparent;
   cursor: pointer;
 }
 
+/* Thicker and a touch longer than before - at 16px/1px the three lines read
+   as barely-there hairlines next to the bolder Book/Gift buttons beside
+   this button. */
 .burger span {
   display: block;
-  width: 16px;
-  height: 1px;
+  width: 20px;
+  height: 2px;
   background: var(--color-ink);
 }
 
+/* Flat cream surface, square corners, hairline border - matches .tabPanel
+   (the desktop per-tab dropdown) rather than the rounded, gold-gradient
+   treatment this carried before the site moved to square corners. */
 .panel {
   max-width: 1500px;
   margin: 10px auto 0;
-  padding: 22px 26px;
-  background: linear-gradient(160deg, #fffdfa 0%, #f3eadc 100%);
-  border: 1px solid rgba(198, 169, 122, 0.36);
-  border-radius: 28px;
-  box-shadow: 0 30px 60px -40px rgba(59, 46, 36, 0.7);
+  padding: 18px 22px;
+  background: var(--color-cream-raised);
+  border: 1px solid var(--hairline-light-strong);
+  border-radius: 0;
+  box-shadow: var(--shadow-card);
 }
 
 /* One column per page on a wide viewport, reading as a small mega-menu;
-   auto-fit lets it collapse to fewer, wider columns and finally one on
-   mobile without a separate breakpoint of its own. */
+   auto-fit lets it collapse to fewer, wider columns on tablet without a
+   separate breakpoint of its own. Phones get their own explicit 2-column
+   override below - auto-fit would otherwise drop to a single column and,
+   combined with the bigger type below, run every group's sections past
+   one screen. */
 .panelGroups {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-  gap: 28px clamp(20px, 3vw, 48px);
+  gap: 20px clamp(20px, 3vw, 48px);
+}
+
+/* Two columns (Home+Experience over Founder+Offerings, in DOM order) instead
+   of one - roughly halves the panel's total height so every section fits on
+   one screen without scrolling, even with larger type. */
+@media (max-width: 600px) {
+  .panelGroups {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px 16px;
+  }
 }
 
 .panelGroup {
@@ -270,12 +289,12 @@
 }
 
 .panelGroupTitle {
-  padding-bottom: 10px;
-  margin-bottom: 6px;
+  padding-bottom: 8px;
+  margin-bottom: 4px;
   border-bottom: 1px solid var(--hairline-light-soft);
-  font-size: 12.5px;
+  font-size: 15px;
   font-weight: 500;
-  letter-spacing: 0.16em;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
   color: var(--color-gold-text);
 }
@@ -285,8 +304,8 @@
 }
 
 .panelSectionLink {
-  padding: 9px 0;
-  font-size: 13.5px;
+  padding: 7px 0;
+  font-size: 16px;
   color: var(--color-ink-body);
 }
 

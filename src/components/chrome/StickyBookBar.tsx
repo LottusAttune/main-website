@@ -67,6 +67,11 @@ export function StickyBookBar({ twoButtons = false }: Props) {
         >
           Book a session <span aria-hidden="true">→</span>
         </Link>
+        {/* Tablet has room for the same single-line format as desktop, just
+            bigger - only true phone widths need the stacked 3-line version. */}
+        <span className={styles.tabletLabel}>
+          Two-hour sessions &nbsp;·&nbsp; 1 to 24 people &nbsp;·&nbsp; downtown Toronto
+        </span>
         <span className={styles.mobileLabel}>
           Two hour session
           <br />

@@ -271,7 +271,7 @@ export const FOUNDER_BIO = [
   'Unlike many wellness practitioners, I bring over 15 years of experience in Human Resources across recognized private and public-sector organizations and corporations. This background has given me a deep understanding of the demands of fast-paced, high-performance environments, including chronic stress, burnout, workplace disconnection, and the growing need for sustainable well-being.',
   'Throughout my career, I witnessed organizations investing heavily in productivity while many employees quietly struggled with anxiety, emotional overload, fatigue, and a lack of meaningful support. Over time, this became deeply personal to me. Meditation, mindfulness, nervous system regulation, somatic practices, and sound healing became transformational tools in my own life.',
   'With intention and purpose, I created this offering to share the modalities I have studied, practiced and integrated to help others pause, reset and return to themselves.',
-  'I genuinely love what I do and pour myself into this offering with real passion and authenticity. My mission is to continue creating and facilitating meaningful restorative programs that positively impact people’s mental well-being and emotional regulation. Rooted in purpose and presence, I believe in intentional living, inner alignment, continuous growth, and the power of human potential.',
+  'I genuinely love what I do and pour myself into this offering with real passion and authenticity. My mission is to continue creating and facilitating meaningful restorative programs that positively impact people’s overall well-being and emotional regulation. Rooted in purpose and presence, I believe in intentional living, inner alignment, continuous growth, and the power of human potential.',
 ] as const;
 
 /** Phone-only condensed version of FOUNDER_BIO - approved with Silvana directly,
@@ -281,7 +281,7 @@ export const FOUNDER_BIO = [
 export const FOUNDER_BIO_SHORT = [
   'As a Wellness Facilitator, I help individuals and organizations across Toronto and the GTA reduce stress, restore balance, and enhance overall well-being through curated, immersive sound-based experiences combined with somatic practices and mindfulness. Unlike many practitioners, I bring over 15 years of experience in Human Resources across recognized private and public-sector organizations. This background has given me a deep understanding of the demands of fast-paced, high-performance environments, including burnout and workplace disconnection.',
   'Throughout my career, I witnessed organizations investing heavily in productivity while many employees quietly struggled with anxiety, fatigue and emotional overload. Over time, this became deeply personal to me. Meditation, mindfulness, nervous system regulation, somatic practices, and sound healing became transformational tools in my own life. With intention and purpose, I created this offering to share the modalities I have studied, practiced and integrated to help others pause, reset and return to themselves.',
-  'I pour myself into this offering with real passion, driven by a mission to support people’s mental well-being and emotional regulation — rooted in intentional living, inner alignment, and belief in human potential.',
+  'I pour myself into this offering with real passion, driven by a mission to support people’s overall well-being and emotional regulation — rooted in intentional living, inner alignment, and belief in human potential.',
 ] as const;
 
 export const CREDENTIALS = [

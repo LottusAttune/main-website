@@ -131,16 +131,36 @@ export function SiteNav({ basePath = '' }: Props) {
           })}
         </nav>
 
+        {/* Mobile/tablet's flat, dropdown-free equivalent of .links above -
+            the burger panel already covers "jump to a specific section" for
+            every page in one place, so these just get you to a page top. */}
+        <nav className={styles.mobileLinks} aria-label="Main navigation">
+          {NAV_LINKS.map((link) => {
+            const href = link.href === '/' ? basePath || '/' : `${basePath}${link.href}`;
+            const active = pathname === href;
+            return (
+              <Link
+                key={link.href}
+                href={href}
+                aria-current={active ? 'page' : undefined}
+                className={`${styles.mobileLink} ${active ? styles.mobileLinkActive : ''}`}
+              >
+                {link.label}
+              </Link>
+            );
+          })}
+        </nav>
+
         <div className={styles.actions}>
           <Link
             href="/book"
-            className={`btn btn--dark ${styles.actionPill} ${styles.actionPillDark}`}
+            className={`btn btn--dark ${styles.actionPill} ${styles.actionPillDark} ${styles.ctaDesktopOnly}`}
           >
             Book
           </Link>
           <Link
             href="/gift"
-            className={`btn btn--outline ${styles.actionPill} ${styles.actionPillNeutral}`}
+            className={`btn btn--outline ${styles.actionPill} ${styles.actionPillNeutral} ${styles.ctaDesktopOnly}`}
           >
             Gift
           </Link>
@@ -153,9 +173,14 @@ export function SiteNav({ basePath = '' }: Props) {
             aria-controls={open ? 'nav-panel' : undefined}
             onClick={() => setOpen((v) => !v)}
           >
-            <span />
-            <span />
-            <span />
+            <span className={styles.burgerLines}>
+              <span />
+              <span />
+              <span />
+            </span>
+            <span className={styles.burgerLabel} aria-hidden="true">
+              Menu
+            </span>
           </button>
         </div>
       </div>

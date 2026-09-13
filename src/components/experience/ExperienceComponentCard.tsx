@@ -36,7 +36,7 @@ export function ExperienceComponentCard({
           alt=""
           width={photoWidth}
           height={photoHeight}
-          sizes="(max-width: 1024px) 33vw, 20vw"
+          sizes="(max-width: 480px) 100vw, (max-width: 760px) 50vw, (max-width: 1024px) 33vw, 20vw"
           style={{
             objectPosition: photoPosition,
             transform: mirror ? 'scaleX(-1)' : undefined,

@@ -88,6 +88,23 @@
   }
 }
 
+/* Phone gets the condensed FOUNDER_BIO_SHORT paragraphs instead of the full
+   five - tablet and desktop are untouched. Both sets render in the markup
+   and are toggled here rather than in JS, so there's no hydration mismatch. */
+.bioShortP {
+  display: none;
+}
+
+@media (max-width: 600px) {
+  .bioFullP {
+    display: none;
+  }
+
+  .bioShortP {
+    display: block;
+  }
+}
+
 /* The founder-guide line ("I bridge the gap...") - previously a huge
    opening quote above the portrait/bio grid, now sits after the bio text
    as a small closing line, centered, in the same font treatment as

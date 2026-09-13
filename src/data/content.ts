@@ -274,6 +274,16 @@ export const FOUNDER_BIO = [
   'I genuinely love what I do and pour myself into this offering with real passion and authenticity. My mission is to continue creating and facilitating meaningful restorative programs that positively impact people’s mental well-being and emotional regulation. Rooted in purpose and presence, I believe in intentional living, inner alignment, continuous growth, and the power of human potential.',
 ] as const;
 
+/** Phone-only condensed version of FOUNDER_BIO - approved with Silvana directly,
+ *  word by word, rather than trimmed unilaterally. Tablet and desktop keep the
+ *  full five paragraphs above; this shows only below founder.module.css's
+ *  phone breakpoint (600px). */
+export const FOUNDER_BIO_SHORT = [
+  'As a Wellness Facilitator with 15+ years in Human Resources across Toronto and the GTA, I help individuals and organizations reduce stress and restore balance through immersive sound, somatic practices, and mindfulness — with a deep understanding of the demands of fast-paced, high-performance environments, including burnout and workplace disconnection.',
+  'Watching organizations invest in productivity while employees quietly struggled became deeply personal to me. Meditation, sound healing, and nervous system regulation transformed my own life — and inspired this offering, created to help others pause, reset, and return to themselves.',
+  'I pour myself into this work with real passion, driven by a mission to support people’s mental well-being and emotional regulation — rooted in intentional living, inner alignment, and belief in human potential.',
+] as const;
+
 export const CREDENTIALS = [
   {
     title: 'Education & Professional Credentials',

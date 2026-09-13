@@ -92,7 +92,7 @@ export function SiteFooter() {
             </ExpandableNote>
           </div>
 
-          <div className={styles.cell}>
+          <div className={`${styles.cell} ${styles.goodToKnowCell}`}>
             <div className={styles.goodToKnowInner}>
               <div className={styles.cellTitle}>Good to Know</div>
               {SPECS.map((spec) => (

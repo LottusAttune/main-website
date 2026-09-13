@@ -276,6 +276,16 @@
   margin-left: auto;
 }
 
+/* This info (session length, participants) already lives in the bottom
+   floating bar on mobile, so it's just extra scroll height there - hidden
+   below the same breakpoint .cellsGrid itself stacks to one column at.
+   Tablet and desktop keep it. */
+@media (max-width: 760px) {
+  .goodToKnowCell {
+    display: none;
+  }
+}
+
 .spec {
   display: flex;
   justify-content: space-between;

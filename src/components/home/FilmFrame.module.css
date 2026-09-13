@@ -89,6 +89,19 @@
     transform var(--duration-button) ease;
 }
 
+/* Below the same 819px breakpoint the film itself swaps to portrait, the
+   frame is narrow enough that .sound (bottom-right) and .restart
+   (bottom-left) run into each other in the middle. Stacks them in the same
+   corner instead - .restart directly above .sound - rather than two
+   corners that no longer have room between them. */
+@media (max-width: 819px) {
+  .restart {
+    left: auto;
+    right: clamp(14px, 2vw, 24px);
+    bottom: 72px;
+  }
+}
+
 .restart:hover {
   transform: translateY(-2px);
   border-color: var(--color-gold-light);

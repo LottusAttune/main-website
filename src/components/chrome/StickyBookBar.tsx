@@ -48,8 +48,10 @@ export function StickyBookBar({ twoButtons = false }: Props) {
 
   if (!twoButtons) {
     // The top nav already carries the site's real Book/Gift buttons at every
-    // scroll position - repeating them here as a second pair of pills reads
-    // as redundant. This trades the two buttons for one quiet text link.
+    // scroll position on desktop - repeating them here as a second pair of
+    // pills reads as redundant, so desktop trades the two buttons for one
+    // quiet text link. On mobile/tablet the nav sheds those buttons instead
+    // (see SiteNav), so this bar carries the real Book/Gift pair there.
     return (
       <div
         className={`${styles.bar} ${shown ? styles.barShown : ''} ${styles.barDark}`}
@@ -65,6 +67,29 @@ export function StickyBookBar({ twoButtons = false }: Props) {
         >
           Book a session <span aria-hidden="true">→</span>
         </Link>
+        <span className={styles.mobileLabel}>
+          Two hour session
+          <br />
+          Downtown Toronto
+          <br />
+          1-24 people
+        </span>
+        <div className={styles.mobileActions}>
+          <Link
+            href="/book"
+            className={`btn btn--cream ${styles.mobileCta}`}
+            tabIndex={shown ? undefined : -1}
+          >
+            Book
+          </Link>
+          <Link
+            href="/gift"
+            className={`btn btn--outline-dark ${styles.mobileCta}`}
+            tabIndex={shown ? undefined : -1}
+          >
+            Gift
+          </Link>
+        </div>
       </div>
     );
   }

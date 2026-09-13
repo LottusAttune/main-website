@@ -279,9 +279,9 @@ export const FOUNDER_BIO = [
  *  full five paragraphs above; this shows only below founder.module.css's
  *  phone breakpoint (600px). */
 export const FOUNDER_BIO_SHORT = [
-  'As a Wellness Facilitator with 15+ years in Human Resources across Toronto and the GTA, I help individuals and organizations reduce stress and restore balance through immersive sound, somatic practices, and mindfulness — with a deep understanding of the demands of fast-paced, high-performance environments, including burnout and workplace disconnection.',
-  'Watching organizations invest in productivity while employees quietly struggled became deeply personal to me. Meditation, sound healing, and nervous system regulation transformed my own life — and inspired this offering, created to help others pause, reset, and return to themselves.',
-  'I pour myself into this work with real passion, driven by a mission to support people’s mental well-being and emotional regulation — rooted in intentional living, inner alignment, and belief in human potential.',
+  'As a Wellness Facilitator, I help individuals and organizations across Toronto and the GTA reduce stress, restore balance, and enhance overall well-being through curated, immersive sound-based experiences combined with somatic practices and mindfulness. Unlike many practitioners, I bring over 15 years of experience in Human Resources across recognized private and public-sector organizations. This background has given me a deep understanding of the demands of fast-paced, high-performance environments, including burnout and workplace disconnection.',
+  'Throughout my career, I witnessed organizations investing heavily in productivity while many employees quietly struggled with anxiety, fatigue and emotional overload. Over time, this became deeply personal to me. Meditation, mindfulness, nervous system regulation, somatic practices, and sound healing became transformational tools in my own life. With intention and purpose, I created this offering to share the modalities I have studied, practiced and integrated to help others pause, reset and return to themselves.',
+  'I pour myself into this offering with real passion, driven by a mission to support people’s mental well-being and emotional regulation — rooted in intentional living, inner alignment, and belief in human potential.',
 ] as const;
 
 export const CREDENTIALS = [

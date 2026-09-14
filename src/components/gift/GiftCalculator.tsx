@@ -382,7 +382,9 @@ export function GiftCalculator({ pricing, codes }: Props) {
               type="button"
               className={`${styles.gratuityBtn} ${gratuityChoice === pct ? styles.gratuityBtnOn : ''}`}
               aria-pressed={gratuityChoice === pct}
-              onClick={() => setGratuityChoice(pct)}
+              onClick={() =>
+                setGratuityChoice((c) => (c === pct ? null : pct))
+              }
             >
               {pct}%
             </button>
@@ -391,7 +393,9 @@ export function GiftCalculator({ pricing, codes }: Props) {
             type="button"
             className={`${styles.gratuityBtn} ${gratuityChoice === 'custom' ? styles.gratuityBtnOn : ''}`}
             aria-pressed={gratuityChoice === 'custom'}
-            onClick={() => setGratuityChoice('custom')}
+            onClick={() =>
+              setGratuityChoice((c) => (c === 'custom' ? null : 'custom'))
+            }
           >
             Amount
           </button>

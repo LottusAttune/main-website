@@ -262,7 +262,7 @@ export const FAQS = [
   },
   {
     q: 'Cancellation Policy',
-    a: "Life happens, and plans change. If you are unable to attend, please cancel at least 48 hours before the start of your session. Cancellations made with at least 48 hours' notice may be rescheduled once or transferred as a credit toward a future session, subject to availability. Cancellations made with less than 48 hours' notice, or no-shows, will result in the session credit being forfeited. For groups with more than six participants, cancellations must be made 4 calendar days prior to the scheduled reservation.",
+    a: "Life happens, and plans change. If you are unable to attend, please cancel at least 72 hours before your scheduled session. You may reschedule your experience, subject to availability. Cancellations made with less than 72 hours' notice, or no-shows, are subject to a $100 fee.",
   },
 ] as const;
 

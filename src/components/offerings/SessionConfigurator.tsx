@@ -4,6 +4,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useEffect, useId, useLayoutEffect, useRef, useState, type ReactNode } from 'react';
 
+import { IncludedModal } from '@/components/common/IncludedModal';
 import { asset } from '@/lib/images';
 import { quoteFor } from '@/lib/quote';
 import type { Pricing } from '@/lib/settings';
@@ -406,12 +407,9 @@ export function SessionConfigurator({ pricing, footnote }: Props) {
           </div>
         </div>
         <div className={styles.summaryActions}>
-          <Link
-            href="/experience#included"
-            className={`btn btn--sm btn--outline-dark btn--wide ${styles.includedBtn}`}
-          >
-            See What&apos;s Included
-          </Link>
+          <IncludedModal
+            triggerClassName={`btn btn--sm btn--outline-dark btn--wide ${styles.includedBtn}`}
+          />
           <div className={styles.summaryActionsRow}>
             <Link href={bookHref} className="btn btn--sm btn--cream btn--wide">
               Book this session

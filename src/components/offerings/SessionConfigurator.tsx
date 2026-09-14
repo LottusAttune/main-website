@@ -35,6 +35,21 @@ export function SessionConfigurator({ pricing, footnote }: Props) {
   const [teamAddon, setTeamAddon] = useState(false);
   const selectId = useId();
 
+  // Choosing a group-type option reveals/updates the Participants field
+  // further down the panel - on mobile that's out of view from the card
+  // that was just tapped, so the tap alone can read as "nothing happened".
+  // This briefly highlights Participants to point at what changed.
+  const [pulseParticipants, setPulseParticipants] = useState(false);
+  const triggerParticipantsPulse = () => {
+    setPulseParticipants(false);
+    requestAnimationFrame(() => setPulseParticipants(true));
+  };
+  useEffect(() => {
+    if (!pulseParticipants) return;
+    const t = setTimeout(() => setPulseParticipants(false), 1300);
+    return () => clearTimeout(t);
+  }, [pulseParticipants]);
+
   const panelRef = useRef<HTMLDivElement>(null);
   const summaryRef = useRef<HTMLElement>(null);
   const footnoteRef = useRef<HTMLDivElement>(null);
@@ -230,7 +245,10 @@ export function SessionConfigurator({ pricing, footnote }: Props) {
             type="button"
             className={`choice ${styles.choicePrimary}`}
             aria-pressed={format === 'group'}
-            onClick={() => setFormat('group')}
+            onClick={() => {
+              setFormat('group');
+              triggerParticipantsPulse();
+            }}
           >
             <span className="choice__title">Groups &amp; Corporate</span>
             <span className="choice__note">
@@ -246,6 +264,7 @@ export function SessionConfigurator({ pricing, footnote }: Props) {
               setParticipants((p) =>
                 Math.max(p, CORPORATE_INTRO_MIN_PARTICIPANTS)
               );
+              triggerParticipantsPulse();
             }}
           >
             <span className="choice__title">Corporate Introductory</span>
@@ -294,7 +313,9 @@ export function SessionConfigurator({ pricing, footnote }: Props) {
 
         {!isPrivate && (
           <>
-            <div className={styles.fieldBlock}>
+            <div
+              className={`${styles.fieldBlock} ${pulseParticipants ? styles.participantsPulse : ''}`}
+            >
               <div className={styles.participantsHead}>
                 <label htmlFor={selectId} className={styles.legend}>
                   Participants

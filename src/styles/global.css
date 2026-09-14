@@ -678,6 +678,16 @@ p {
   transition: all 0.2s ease;
 }
 
+/* A bare 30%-opacity outline with no fill read as barely visible on mobile,
+   easy to miss as an actual checkbox - a solid white fill gives it a real
+   edge against the page instead of just a faint line. */
+@media (max-width: 1079px) {
+  .toggle-row__dot {
+    background: var(--color-cream-raised);
+    border-color: rgba(59, 46, 36, 0.4);
+  }
+}
+
 .toggle-row[aria-pressed='true'] .toggle-row__dot {
   border-color: var(--color-ink);
   background: var(--color-ink);

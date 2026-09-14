@@ -70,6 +70,18 @@
   border-color: var(--color-gold-deep);
 }
 
+/* A 1.5px border alone read as barely-different from unselected on mobile,
+   especially since both cards in a pair start from the same tinted
+   background regardless of which is actually picked - a solid dark ring
+   makes "this one is chosen" unambiguous at a glance. Desktop keeps the
+   original subtle gold border only. */
+@media (max-width: 1079px) {
+  .choices :global(.choice[aria-pressed='true']) {
+    border-color: var(--color-ink);
+    box-shadow: 0 0 0 1.5px var(--color-ink);
+  }
+}
+
 .choices :global(.choice__title) {
   font-size: 18px;
   margin-bottom: 4px;
@@ -107,6 +119,33 @@
 
 .fieldBlock {
   margin-bottom: 10px;
+}
+
+/* Picking Groups & Corporate or Corporate Introductory reveals/updates
+   Participants further down the panel - on mobile/tablet that's out of
+   view from the card just tapped, so this briefly rings the field to
+   point at what changed. Desktop shows the whole panel at once already,
+   so it doesn't need the cue. */
+@media (max-width: 1079px) {
+  .participantsPulse {
+    animation: participantsPulse 1.2s ease;
+    border-radius: 4px;
+  }
+
+  @keyframes participantsPulse {
+    0% {
+      box-shadow: 0 0 0 0 rgba(198, 169, 122, 0);
+      background: rgba(198, 169, 122, 0);
+    }
+    20% {
+      box-shadow: 0 0 0 6px rgba(198, 169, 122, 0.3);
+      background: rgba(198, 169, 122, 0.14);
+    }
+    100% {
+      box-shadow: 0 0 0 0 rgba(198, 169, 122, 0);
+      background: rgba(198, 169, 122, 0);
+    }
+  }
 }
 
 .fieldBlock:last-child,
@@ -437,13 +476,18 @@
 }
 
 /* Body font, not the display serif - Cormorant's "1" has no base flag and
-   reads as a capital I at this size, which matters on a price. */
+   reads as a capital I at this size, which matters on a price.
+
+   Color: same dimmed treatment as Gift's totalValue - bright cream-text at
+   600 weight read as shouting against this dark box, dimmed to the same
+   solid, softer tone used for dark-background body copy elsewhere on the
+   site so it's legible without being the loudest thing in the estimate. */
 .totalValue {
   font-family: var(--font-body);
   font-weight: 600;
   font-size: clamp(19px, 1.9vw, 21px);
   line-height: 1;
-  color: var(--color-cream-text);
+  color: #d7cbb6;
 }
 
 /* Solid black fill, not just an outline - this is the one thing in the box

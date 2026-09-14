@@ -67,9 +67,17 @@
 
 .mark {
   /* Bigger than the 58px nav logo above it, and a notch bigger again than
-     it was - this one should clearly read as the larger of the two. */
-  width: clamp(82px, 8.5vw, 104px);
-  height: clamp(82px, 8.5vw, 104px);
+     it was - this one should clearly read as the larger of the two.
+
+     8.5vw held this flat at 82px (its floor) all the way from mobile up to
+     965px, while .headline is already actively growing from 766px onward
+     (its own clamp) - through that whole tablet range the mark looked
+     frozen next to a visibly growing headline, an out-of-step pairing
+     neither mobile (both near their floor) nor desktop (both near their
+     ceiling) ever shows. 10.9vw starts the mark growing around ~750px
+     instead, roughly where the headline's own growth begins. */
+  width: clamp(82px, 10.9vw, 104px);
+  height: clamp(82px, 10.9vw, 104px);
   border-radius: 50%;
   object-fit: cover;
   margin-bottom: 16px;

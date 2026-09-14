@@ -318,7 +318,7 @@ export function SessionConfigurator({ pricing, footnote }: Props) {
             >
               <div className={styles.participantsHead}>
                 <label htmlFor={selectId} className={styles.legend}>
-                  Participants
+                  Select Participants
                 </label>
                 <div className={styles.participantsCount}>{participants}</div>
               </div>

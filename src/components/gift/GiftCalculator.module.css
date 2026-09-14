@@ -369,11 +369,14 @@
   background: rgba(198, 169, 122, 0.14);
 }
 
+/* Solid white, not a cream token - the whole cream-text ramp
+   (soft/default/bright) clusters within ~10 units of each other, too close
+   to read as an actual fix for "washed out" against this dark gradient. */
 .policyNote {
   margin: 0 0 14px;
   font-size: var(--text-body-sm);
   font-weight: 500;
-  color: var(--color-cream-text-bright);
+  color: #ffffff;
 }
 
 .policyLink {
@@ -383,7 +386,7 @@
   background: none;
   font: inherit;
   font-weight: 500;
-  color: var(--color-gold-light);
+  color: var(--color-gold-pale);
   text-decoration: underline;
   cursor: pointer;
 }

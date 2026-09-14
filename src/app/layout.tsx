@@ -52,6 +52,9 @@ export const metadata: Metadata = {
     images: [{ url: '/assets/silvana-hero.webp', width: 962, height: 1635 }],
   },
   twitter: { card: 'summary_large_image' },
+  verification: {
+    google: 'QC0nVB1HnLTt1Ru56akSFIfC4vpjAqQAraE8OUmHg6k',
+  },
 };
 
 export const viewport: Viewport = {

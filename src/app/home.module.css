@@ -215,6 +215,11 @@
     width: 100%;
     text-align: center;
   }
+
+  .guideSignature {
+    width: 100%;
+    text-align: center;
+  }
 }
 
 /* The quote and the paragraphs below it are both written in first person and

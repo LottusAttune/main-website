@@ -4,9 +4,15 @@ import { Cormorant_Garamond, EB_Garamond, Jost } from 'next/font/google';
 import { SITE } from '@/lib/site';
 import '@/styles/global.css';
 
+/* 500 added for the mobile/tablet readability pass - without a real
+   medium-weight file loaded, every font-weight:500 on this family was
+   silently substituting the plain 400 face (reading as no change at all)
+   or getting synthetic faux-bold from the browser for weight:600+ (reading
+   as grotesque/distorted) - neither is real font weight, just the browser
+   guessing. This is the actual fix for both complaints at once. */
 const cormorant = Cormorant_Garamond({
   subsets: ['latin'],
-  weight: ['300', '400'],
+  weight: ['300', '400', '500'],
   display: 'swap',
   variable: '--font-cormorant',
 });

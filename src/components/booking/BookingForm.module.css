@@ -154,6 +154,12 @@
   color: var(--color-muted);
 }
 
+@media (max-width: 1079px) {
+  .timesNote {
+    font-size: 15px;
+  }
+}
+
 .timeBtn {
   text-align: left;
   padding: 14px 18px;

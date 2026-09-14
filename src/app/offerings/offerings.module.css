@@ -31,6 +31,12 @@
   color: var(--color-muted);
 }
 
+@media (max-width: 1079px) {
+  .discoveryNote {
+    font-size: 15.5px;
+  }
+}
+
 .discoveryNote a {
   color: var(--color-gold-text);
   text-decoration: underline;

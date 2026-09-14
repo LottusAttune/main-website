@@ -426,6 +426,16 @@
   color: var(--color-ink-body);
 }
 
+/* 13px reads too small on a phone/tablet screen held at arm's length -
+   desktop keeps its own size, this only raises the mobile/tablet floor to
+   match the site's established small-body-text size (--text-body-sm). */
+@media (max-width: 1079px) {
+  .pathText {
+    font-size: 15.5px;
+    line-height: 1.45;
+  }
+}
+
 /* ---------- What's included ---------- */
 
 .includedIntro {

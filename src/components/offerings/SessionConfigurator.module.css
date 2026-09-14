@@ -137,6 +137,12 @@
   color: var(--color-ink-body);
 }
 
+@media (max-width: 1079px) {
+  .venueNote {
+    font-size: 15px;
+  }
+}
+
 /* More separation from the venue note above (a different block entirely)
    than the standard field gap gives, but tight to its own legend right
    below so the label and the row read as one group. */

@@ -176,6 +176,20 @@
   line-height: 1.25;
 }
 
+/* --color-gold-text already clears 4.5:1, and the title is already solid
+   ink - the flagged "hard to read" here is the thin (300/400) display
+   weight at this size, not the color. Bumped bolder on mobile/tablet only,
+   same size/color/space, for more visual presence without a redesign. */
+@media (max-width: 1079px) {
+  .componentNumber {
+    font-weight: 600;
+  }
+
+  .componentTitle {
+    font-weight: 400;
+  }
+}
+
 /* Opens .componentOverlay on click instead of showing all five descriptions
    at once - keeps the row reading as five photos and titles, not a wall of
    text, while the full wording stays one tap away. */
@@ -233,6 +247,14 @@
   font-size: 15px;
   color: var(--color-gold-text);
   margin-bottom: 6px;
+}
+
+/* Matches .componentNumber's own mobile/tablet weight bump - same card
+   content, shown again in this detail modal. */
+@media (max-width: 1079px) {
+  .componentModalNumber {
+    font-weight: 600;
+  }
 }
 
 /* The title stays visible at the top of the modal (rather than disappearing
@@ -508,6 +530,16 @@
   line-height: 1.5;
 }
 
+/* 14px on both sides reads small on a phone/tablet screen - desktop keeps
+   its own size, kept identical on both sides so neither reads bolder than
+   the other (same rule as everywhere else this panel is mirrored). */
+@media (max-width: 1079px) {
+  .benefitsFlyoutBody {
+    font-size: 15.5px;
+    line-height: 1.55;
+  }
+}
+
 .benefitsCellDark .benefitsFlyoutBody {
   color: #d7cbb6;
 }
@@ -605,6 +637,12 @@
   color: var(--color-ink-body);
 }
 
+@media (max-width: 1079px) {
+  .sectionHeadNote {
+    font-size: 15.5px;
+  }
+}
+
 /* ---------- Included list ---------- */
 
 /* Scoped, tighter override of the shared global .numbered-row (also used on
@@ -624,5 +662,15 @@
 .includedSection :global(.numbered-row__text) {
   font-size: 14.2px;
   line-height: 1.5;
+}
+
+/* The tight desktop size above is tuned to fit all 9 rows on one laptop
+   screen - that constraint doesn't apply on mobile/tablet, which already
+   scrolls through this list, so it can afford to read larger there. */
+@media (max-width: 1079px) {
+  .includedSection :global(.numbered-row__text) {
+    font-size: 15.5px;
+    line-height: 1.55;
+  }
 }
 

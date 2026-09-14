@@ -305,6 +305,12 @@
   color: var(--color-cream-text-soft);
 }
 
+@media (max-width: 1079px) {
+  .note {
+    font-size: 15px;
+  }
+}
+
 .note a {
   color: var(--color-gold-light);
 }

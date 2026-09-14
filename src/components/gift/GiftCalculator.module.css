@@ -338,6 +338,21 @@
   margin-top: 16px;
 }
 
+/* Someone landing on /gift directly (skipping Offerings) had no way to see
+   what's actually in a session before buying one as a gift - same fix as
+   Offerings' own "See What's Included" link, same treatment as
+   Preview certificate just below it. */
+.includedBtn.includedBtn {
+  background: transparent;
+  padding: 12px 24px;
+  min-height: 42px;
+  margin-bottom: 10px;
+}
+
+.includedBtn.includedBtn:hover {
+  background: rgba(198, 169, 122, 0.14);
+}
+
 /* ---------- Certificate preview modal ---------- */
 
 /* .btn--outline-dark ships with no background of its own (every existing

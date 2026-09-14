@@ -1,5 +1,6 @@
 'use client';
 
+import Link from 'next/link';
 import { useEffect, useMemo, useState } from 'react';
 
 import { quoteFor } from '@/lib/quote';
@@ -670,6 +671,13 @@ export function BookingForm({
                 : 'Select the number of participants'}
           </div>
         </div>
+
+        <Link
+          href="/experience#included"
+          className={`btn btn--outline btn--wide ${styles.includedBtn}`}
+        >
+          See What&apos;s Included
+        </Link>
 
         <button
           type="submit"

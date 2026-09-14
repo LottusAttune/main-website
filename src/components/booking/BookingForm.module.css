@@ -394,6 +394,13 @@
   margin-top: 10px;
 }
 
+/* Someone landing on /book directly (skipping Offerings) had no way to
+   check what's actually included before requesting a session - same link
+   Offerings' own estimate box already has. */
+.includedBtn {
+  margin: 16px 0 10px;
+}
+
 .formError {
   margin-top: 16px;
   font-size: 14px;

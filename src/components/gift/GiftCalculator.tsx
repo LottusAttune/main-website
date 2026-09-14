@@ -1,5 +1,6 @@
 'use client';
 
+import Link from 'next/link';
 import { useEffect, useId, useState } from 'react';
 
 import { giftQuoteFor } from '@/lib/quote';
@@ -470,6 +471,13 @@ export function GiftCalculator({ pricing, codes }: Props) {
                 </div>
               </div>
             </div>
+
+            <Link
+              href="/experience#included"
+              className={`btn btn--outline-dark btn--wide ${styles.includedBtn}`}
+            >
+              See What&apos;s Included
+            </Link>
 
             <button
               type="button"

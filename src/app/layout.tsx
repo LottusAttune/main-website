@@ -1,8 +1,11 @@
 import type { Metadata, Viewport } from 'next';
 import { Cormorant_Garamond, EB_Garamond, Jost } from 'next/font/google';
+import Script from 'next/script';
 
 import { SITE } from '@/lib/site';
 import '@/styles/global.css';
+
+const GA_MEASUREMENT_ID = 'G-9HNTMCTLNS';
 
 /* 500 added for the mobile/tablet readability pass - without a real
    medium-weight file loaded, every font-weight:500 on this family was
@@ -69,7 +72,21 @@ export default function RootLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en" className={`${cormorant.variable} ${jost.variable} ${ebGaramond.variable}`}>
-      <body>{children}</body>
+      <body>
+        {children}
+        <Script
+          src={`https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`}
+          strategy="afterInteractive"
+        />
+        <Script id="google-analytics" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', '${GA_MEASUREMENT_ID}');
+          `}
+        </Script>
+      </body>
     </html>
   );
 }

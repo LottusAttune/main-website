@@ -13,6 +13,22 @@
   overflow: hidden;
 }
 
+/* A portrait tablet is tall enough that 80vh routinely exceeds the flat
+   720px cap regardless of width, while the content inside (mark, headline,
+   etc.) is sized off viewport WIDTH via their own clamps and is still
+   well short of its desktop size in this width range - the two together
+   left the actual content centered in a container far taller than it
+   needed, reading as everything bunched into the middle with big empty
+   margins top and bottom. Phones rarely hit the 720px cap at all (their
+   height is short relative to width), and desktop is untouched (this
+   only applies below 1080px) - this narrows the cap specifically where
+   the mismatch was happening. */
+@media (min-width: 740px) and (max-width: 1079px) {
+  .hero {
+    min-height: min(80vh, clamp(460px, 62vw, 700px));
+  }
+}
+
 .bleed {
   position: absolute;
   inset: 0;

@@ -3,6 +3,7 @@
 import { useEffect, useId, useState } from 'react';
 
 import { IncludedModal } from '@/components/common/IncludedModal';
+import { PolicyModal } from '@/components/common/PolicyModal';
 import { giftQuoteFor } from '@/lib/quote';
 import type { DiscountCode, Pricing } from '@/lib/settings';
 import {
@@ -570,6 +571,11 @@ export function GiftCalculator({ pricing, codes }: Props) {
                 onChange={(e) => setBuyerEmail(e.target.value)}
               />
             </div>
+
+            <p className={styles.policyNote}>
+              By requesting this certificate, you agree to our{' '}
+              <PolicyModal triggerClassName={styles.policyLink} />.
+            </p>
 
             <button
               type="button"

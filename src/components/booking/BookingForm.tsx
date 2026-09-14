@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from 'react';
 
 import { IncludedModal } from '@/components/common/IncludedModal';
+import { PolicyModal } from '@/components/common/PolicyModal';
 import { quoteFor } from '@/lib/quote';
 import type { DiscountCode, Pricing, Slots } from '@/lib/settings';
 import {
@@ -679,6 +680,11 @@ export function BookingForm({
         <IncludedModal
           triggerClassName={`btn btn--outline btn--wide ${styles.includedBtn}`}
         />
+
+        <p className={styles.policyNote}>
+          By requesting this booking, you agree to our{' '}
+          <PolicyModal triggerClassName={styles.policyLink} />.
+        </p>
 
         <button
           type="submit"

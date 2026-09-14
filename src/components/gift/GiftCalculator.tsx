@@ -1,8 +1,8 @@
 'use client';
 
-import Link from 'next/link';
 import { useEffect, useId, useState } from 'react';
 
+import { IncludedModal } from '@/components/common/IncludedModal';
 import { giftQuoteFor } from '@/lib/quote';
 import type { DiscountCode, Pricing } from '@/lib/settings';
 import {
@@ -472,12 +472,9 @@ export function GiftCalculator({ pricing, codes }: Props) {
               </div>
             </div>
 
-            <Link
-              href="/experience#included"
-              className={`btn btn--outline-dark btn--wide ${styles.includedBtn}`}
-            >
-              See What&apos;s Included
-            </Link>
+            <IncludedModal
+              triggerClassName={`btn btn--outline-dark btn--wide ${styles.includedBtn}`}
+            />
 
             <button
               type="button"

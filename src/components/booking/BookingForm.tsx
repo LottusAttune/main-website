@@ -1,8 +1,8 @@
 'use client';
 
-import Link from 'next/link';
 import { useEffect, useMemo, useState } from 'react';
 
+import { IncludedModal } from '@/components/common/IncludedModal';
 import { quoteFor } from '@/lib/quote';
 import type { DiscountCode, Pricing, Slots } from '@/lib/settings';
 import {
@@ -672,12 +672,9 @@ export function BookingForm({
           </div>
         </div>
 
-        <Link
-          href="/experience#included"
-          className={`btn btn--outline btn--wide ${styles.includedBtn}`}
-        >
-          See What&apos;s Included
-        </Link>
+        <IncludedModal
+          triggerClassName={`btn btn--outline btn--wide ${styles.includedBtn}`}
+        />
 
         <button
           type="submit"

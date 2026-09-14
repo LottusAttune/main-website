@@ -1,0 +1,43 @@
+/* Same centered-dialog treatment as the Experience card modals and Gift's
+   certificate preview - full-viewport dark scrim, one flat light card,
+   click-outside or Esc to close. */
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 210;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: clamp(20px, 5vw, 60px);
+  background: rgba(30, 23, 17, 0.86);
+  backdrop-filter: blur(6px);
+}
+
+.shell {
+  position: relative;
+  width: 100%;
+  max-width: 620px;
+  max-height: 86vh;
+  overflow: auto;
+  text-align: left;
+  background: var(--color-cream-raised);
+  border-radius: 0;
+  box-shadow: 0 60px 120px -50px rgba(0, 0, 0, 0.85);
+  padding: clamp(28px, 4vw, 44px);
+}
+
+.title {
+  font-family: var(--font-display);
+  font-weight: 300;
+  font-size: clamp(24px, 2.6vw, 30px);
+  margin: 0 0 8px;
+  color: var(--color-ink);
+}
+
+.hint {
+  margin: 18px 0 0;
+  font-size: 12.5px;
+  letter-spacing: 0.02em;
+  text-align: center;
+  color: var(--color-ink-body);
+}

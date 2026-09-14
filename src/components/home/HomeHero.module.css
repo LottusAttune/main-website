@@ -76,17 +76,14 @@
   box-shadow: 0 24px 60px -30px rgba(0, 0, 0, 0.9);
 }
 
-/* The mark's thin gold linework on white reads as washed out sitting
-   directly on the photo on a small screen - a tight dark ring separates
-   its edge from the background behind it, and a touch more contrast/
-   saturation keeps the linework itself from looking pale. Desktop keeps
-   the plain ambient shadow only. */
+/* The mark's own gold linework reads as thin/washed out on a small screen -
+   not a background-separation problem (a ring around the outside didn't
+   help), the graphic itself needs more solidity. A stronger contrast lift
+   plus a slight darken makes the gold read as a deeper, more solid tone
+   instead of pale, without touching the source file. Desktop unchanged. */
 @media (max-width: 1079px) {
   .mark {
-    filter: contrast(1.12) saturate(1.15);
-    box-shadow:
-      0 0 0 3px rgba(24, 17, 12, 0.35),
-      0 24px 60px -26px rgba(0, 0, 0, 0.95);
+    filter: contrast(1.35) saturate(1.3) brightness(0.96);
   }
 }
 

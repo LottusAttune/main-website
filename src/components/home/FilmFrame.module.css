@@ -58,11 +58,18 @@
 
 /* "Tap for sound" read as too small on mobile/tablet - desktop keeps its
    original micro-label size. Letter-spacing is tightened along with the
-   size bump so the wider label doesn't run noticeably longer. */
+   size bump so the wider label doesn't run noticeably longer. Bottom
+   clearance is also tightened here - Vimeo's control bar renders shorter
+   on a narrow mobile embed than the wide desktop one the 64-88px floor
+   was tuned for, so the button sat floating well above it. Still an
+   estimate (the bar's real height is inside a cross-origin iframe, not
+   visible to this CSS) - flag it if it ends up overlapping on an actual
+   phone. */
 @media (max-width: 1079px) {
   .sound {
     font-size: 12.5px;
     letter-spacing: 0.14em;
+    bottom: clamp(32px, 7vw, 44px);
   }
 }
 

@@ -134,6 +134,11 @@
     grid-template-columns: 1fr;
     min-height: 0;
     padding-right: 0;
+    /* The grid gap doubles as the row gap once stacked to one column -
+       combined with .guideText's own top padding below, the portrait's
+       bottom edge and "Your Guide" above the quote ended up much further
+       apart than intended. */
+    gap: 20px;
   }
 }
 
@@ -174,6 +179,18 @@
   align-items: flex-start;
 }
 
+/* Once stacked to one column (see .guideGrid above), this text block had
+   zero horizontal padding of its own - the portrait bleeds to the true
+   edges on purpose, but the text isn't meant to sit flush against the
+   screen edge the way the photo does. Top padding also trimmed - combined
+   with the grid's own reduced gap above, that closes the oversized space
+   between the portrait and "Your Guide". */
+@media (max-width: 760px) {
+  .guideText {
+    padding: 8px var(--space-gutter) clamp(32px, 4vw, 92px);
+  }
+}
+
 .guideQuote {
   margin: 0 0 14px;
   font-family: var(--font-display);
@@ -182,6 +199,22 @@
   line-height: 1.32;
   color: var(--color-cream-text);
   text-wrap: pretty;
+}
+
+/* The desktop-tuned fixed break (each pairing on its own line) leaves the
+   second line's own natural wrap fighting the forced one on a narrow phone
+   column, reading as choppy rather than flowing - dropped here so it wraps
+   on its own, and centered (full-width) to read as one balanced block
+   instead of ragged-left. */
+@media (max-width: 760px) {
+  .guideQuoteBreak {
+    display: none;
+  }
+
+  .guideQuote {
+    width: 100%;
+    text-align: center;
+  }
 }
 
 /* The quote and the paragraphs below it are both written in first person and
@@ -510,13 +543,32 @@
   padding: clamp(24px, 3vw, 36px) var(--space-gutter);
 }
 
+/* Named areas (not auto-fit) so the three pieces (intro text, the FAQ
+   card, the accordion) can be reordered independently on mobile - auto-fit
+   only controls column count, it can't put the card after the accordion
+   while keeping the intro text above both. Two explicit columns reproduce
+   the exact sizing two auto-fit columns gave at this same width, so
+   desktop is pixel-identical to before. */
 .faqGrid {
   max-width: var(--width-prose);
   margin: 0 auto;
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  grid-template-columns: minmax(260px, 1fr) minmax(260px, 1fr);
+  grid-template-areas: 'intro accordion' 'card accordion';
   gap: clamp(28px, 4vw, 56px);
   align-items: start;
+}
+
+.faqIntro {
+  grid-area: intro;
+}
+
+.faqCard {
+  grid-area: card;
+}
+
+.faqAccordion {
+  grid-area: accordion;
 }
 
 /* Below ~590px the grid above has already collapsed to one column (two
@@ -525,8 +577,15 @@
    position:sticky (meant for that side-by-side layout) then pins the card
    in place while the accordion scrolls underneath it. Mobile/tablet pass:
    desktop is untouched, this only applies once the grid has already
-   stacked. */
+   stacked. The FAQ card also moves after the accordion here - reading the
+   answers already provided before being invited to ask a new one, rather
+   than the reverse. */
 @media (max-width: 590px) {
+  .faqGrid {
+    grid-template-columns: 1fr;
+    grid-template-areas: 'intro' 'accordion' 'card';
+  }
+
   .faqGrid :global(.sticky-col) {
     position: static;
     top: auto;

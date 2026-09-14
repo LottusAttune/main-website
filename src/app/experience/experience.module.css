@@ -23,6 +23,14 @@
   max-width: 1000px;
 }
 
+/* Composed with the global .display class (weight 300) - too light to
+   stand out as the page's own heading on mobile/tablet. Desktop unchanged. */
+@media (max-width: 1079px) {
+  .title {
+    font-weight: 500;
+  }
+}
+
 .subtitle {
   font-family: var(--font-display);
   font-weight: 400;
@@ -31,11 +39,12 @@
   margin-bottom: 30px;
 }
 
-/* Reads as washed out on mobile/tablet at the standard 400 weight -
-   heavier weight only, same size/color. Desktop unchanged. */
+/* 600 landed too heavy/grotesque once the heading above it also picked up
+   weight - 500 stands out from the plain 400 default without competing
+   with the bolder heading. Desktop unchanged. */
 @media (max-width: 1079px) {
   .subtitle {
-    font-weight: 600;
+    font-weight: 500;
   }
 }
 
@@ -432,6 +441,15 @@
   line-height: 1.15;
 }
 
+/* "For Teams & Organizations" / "For Individuals" - too light at 300 to
+   stand out as each column's own heading on mobile/tablet. Desktop
+   unchanged. */
+@media (max-width: 1079px) {
+  .benefitsPanelHeading {
+    font-weight: 500;
+  }
+}
+
 /* Same font/size/style as .benefitsClosing below - a deliberate echo of
    the closing note's serif treatment for a bit of texture against the
    sans-serif item titles/body, rather than reading as plain body copy. */
@@ -451,7 +469,7 @@
 @media (max-width: 1079px) {
   .benefitsPanelNote,
   .benefitsClosing {
-    font-size: 17px;
+    font-size: 18px;
     font-weight: 500;
     line-height: 1.55;
   }
@@ -655,6 +673,14 @@
   max-width: 22ch;
 }
 
+/* Matches .title's own mobile/tablet weight bump above - same .display
+   300-weight default, same fix. Desktop unchanged. */
+@media (max-width: 1079px) {
+  .galleryHeading {
+    font-weight: 500;
+  }
+}
+
 /* Matches .subtitle ("Everything Curated into One Offering") - same
    font/size/color treatment, now the smaller clarifying line under the
    bigger "What is Included" heading above it. */
@@ -665,11 +691,12 @@
   margin: 0;
 }
 
-/* Matches .subtitle's own mobile/tablet weight bump above - same washed-out
-   400-weight issue, same fix. Desktop unchanged. */
+/* Matches .subtitle's own mobile/tablet weight bump above (dialled back
+   from 600 to 500 for the same reason - see .subtitle's comment).
+   Desktop unchanged. */
 @media (max-width: 1079px) {
   .gallerySubtitle {
-    font-weight: 600;
+    font-weight: 500;
   }
 }
 

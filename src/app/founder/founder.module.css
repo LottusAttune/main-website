@@ -229,14 +229,14 @@
 }
 
 /* The shared .eyebrow class's 10.5px + wide tracking reads as too faint for
-   a label that's actually inviting a tap, on mobile/tablet - bigger,
-   heavier and tighter tracking here only. Desktop keeps the standard
-   eyebrow treatment. */
+   a label that's actually inviting a tap, on mobile/tablet - a modest bump
+   only (600/13px read as shouting next to the site's other quiet eyebrow
+   labels). Desktop keeps the standard eyebrow treatment. */
 @media (max-width: 1079px) {
   .videoLabel {
-    font-size: 13px;
-    font-weight: 600;
-    letter-spacing: 0.18em;
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.28em;
   }
 }
 

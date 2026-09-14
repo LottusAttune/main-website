@@ -7,6 +7,7 @@ import { StickyBookBar } from '@/components/chrome/StickyBookBar';
 import { BookingForm } from '@/components/booking/BookingForm';
 import { assetUrl } from '@/lib/images';
 import { getSettings } from '@/lib/settings';
+import styles from './book.module.css';
 
 export const metadata: Metadata = {
   title: 'Book',
@@ -34,21 +35,13 @@ export default async function BookPage() {
           }}
           aria-labelledby="book-heading"
         >
-          <div className="eyebrow" style={{ fontSize: 15, marginBottom: 12 }}>
-            Reserve your Lotus Attune experience
-          </div>
           <h1
             id="book-heading"
-            className="display"
-            style={{
-              fontSize: 'clamp(26px, 3.4vw, 44px)',
-              lineHeight: 1.14,
-              margin: '0 0 10px',
-              maxWidth: 900,
-            }}
+            className={`display ${styles.title}`}
           >
             Book
           </h1>
+          <div className={styles.subtitle}>Reserve your Lotus Attune experience</div>
           <p
             className="lede"
             style={{ maxWidth: 740, fontSize: 15.5, lineHeight: 1.65 }}

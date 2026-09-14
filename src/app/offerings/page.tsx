@@ -30,12 +30,10 @@ export default async function OfferingsPage() {
         <section className={styles.configurator} aria-labelledby="offerings-heading">
           <div className="shell" style={{ position: 'relative' }}>
             <div className={styles.configuratorHead}>
-              <div className="eyebrow" style={{ fontSize: '13.5px', marginBottom: 12 }}>
-                Choose your experience
-              </div>
               <h1 id="offerings-heading" className={`display ${styles.pageTitle}`}>
                 Offerings
               </h1>
+              <div className={styles.pageSubtitle}>Choose your experience</div>
               <p className={`body ${styles.pageLede}`}>
                 For individuals, private gatherings, organizations and teams, in
                 two-hour sessions

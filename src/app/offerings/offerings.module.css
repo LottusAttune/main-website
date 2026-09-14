@@ -19,6 +19,23 @@
   margin: 0 0 10px;
 }
 
+/* Matches Experience's .subtitle exactly - same "big heading, then a gold
+   serif line underneath" pattern, instead of a small uppercase eyebrow
+   above the heading. */
+.pageSubtitle {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: clamp(18px, 2vw, 22px);
+  color: var(--color-gold-text);
+  margin-bottom: 12px;
+}
+
+@media (max-width: 1079px) {
+  .pageSubtitle {
+    font-weight: 500;
+  }
+}
+
 .pageLede {
   margin: 0 0 14px;
   font-size: 15.5px;

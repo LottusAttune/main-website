@@ -1,0 +1,30 @@
+/* Matches Experience's heading/subtitle pattern exactly - see
+   src/app/experience/experience.module.css .title/.subtitle - so Book and
+   Offerings read as the same flow instead of each inventing its own
+   heading style. */
+.title {
+  font-size: clamp(26px, 3.4vw, 44px);
+  line-height: 1.14;
+  margin: 0 0 10px;
+  max-width: 900px;
+}
+
+@media (max-width: 1079px) {
+  .title {
+    font-weight: 500;
+  }
+}
+
+.subtitle {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: clamp(18px, 2vw, 22px);
+  color: var(--color-gold-text);
+  margin-bottom: 12px;
+}
+
+@media (max-width: 1079px) {
+  .subtitle {
+    font-weight: 500;
+  }
+}

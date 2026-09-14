@@ -22,9 +22,16 @@ type Props = {
   /** /book-now's own footer is text-only, so it opts into the two-button form
    *  here instead of the quiet link every other page uses. */
   twoButtons?: boolean;
+  /** /book and /gift don't carry the top nav's Book/Gift buttons on mobile/
+   *  tablet (see SiteNav), so this bar is the only way to switch between
+   *  them without navigating back through the rest of the site - but
+   *  showing "Book" while already on /book (or "Gift" on /gift) is a
+   *  redundant link to the current page. Suppresses just that one button,
+   *  keeping the other. */
+  hideAction?: 'book' | 'gift';
 };
 
-export function StickyBookBar({ twoButtons = false }: Props) {
+export function StickyBookBar({ twoButtons = false, hideAction }: Props) {
   const [shown, setShown] = useState(false);
 
   useEffect(() => {
@@ -80,20 +87,24 @@ export function StickyBookBar({ twoButtons = false }: Props) {
           1-24 people
         </span>
         <div className={styles.mobileActions}>
-          <Link
-            href="/book"
-            className={`btn btn--cream ${styles.mobileCta}`}
-            tabIndex={shown ? undefined : -1}
-          >
-            Book
-          </Link>
-          <Link
-            href="/gift"
-            className={`btn btn--outline-dark ${styles.mobileCta}`}
-            tabIndex={shown ? undefined : -1}
-          >
-            Gift
-          </Link>
+          {hideAction !== 'book' && (
+            <Link
+              href="/book"
+              className={`btn btn--cream ${styles.mobileCta}`}
+              tabIndex={shown ? undefined : -1}
+            >
+              Book
+            </Link>
+          )}
+          {hideAction !== 'gift' && (
+            <Link
+              href="/gift"
+              className={`btn btn--outline-dark ${styles.mobileCta}`}
+              tabIndex={shown ? undefined : -1}
+            >
+              Gift
+            </Link>
+          )}
         </div>
       </div>
     );

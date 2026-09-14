@@ -485,7 +485,7 @@
    site so it's legible without being the loudest thing in the estimate. */
 .totalValue {
   font-family: var(--font-body);
-  font-weight: 600;
+  font-weight: 400;
   font-size: clamp(19px, 1.9vw, 21px);
   line-height: 1;
   color: #d7cbb6;

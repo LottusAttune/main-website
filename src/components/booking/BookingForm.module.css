@@ -382,7 +382,7 @@
    reads as a capital I at this size, which matters on a price. */
 .estimateValue {
   font-family: var(--font-body);
-  font-weight: 600;
+  font-weight: 400;
   font-size: clamp(19px, 1.9vw, 21px);
   line-height: 1;
 }

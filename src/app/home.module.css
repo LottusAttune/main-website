@@ -66,6 +66,15 @@
   line-height: 1.42;
 }
 
+/* Same light 300 weight read as too faint on mobile/tablet - a heavier
+   weight at the same size and color gives it presence without a redesign.
+   Desktop keeps the original light display treatment. */
+@media (max-width: 1079px) {
+  .problemStatement {
+    font-weight: 500;
+  }
+}
+
 .problemSupport {
   margin: 0 auto;
   max-width: 880px;
@@ -295,6 +304,19 @@
   font-weight: 400;
   font-size: clamp(17px, 1.9vw, 20px);
   color: var(--color-gold-text);
+}
+
+/* Both this heading (light 300 weight, inherited from .display) and the
+   lede line under it read as washed out next to the now-bolder path cards
+   below - matching weight bump, mobile/tablet only. */
+@media (max-width: 1079px) {
+  .pathsHeading {
+    font-weight: 500;
+  }
+
+  .centeredLede {
+    font-weight: 500;
+  }
 }
 
 /* ---------- The plan ---------- */

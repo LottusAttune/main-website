@@ -31,6 +31,14 @@
   margin-bottom: 30px;
 }
 
+/* Reads as washed out on mobile/tablet at the standard 400 weight -
+   heavier weight only, same size/color. Desktop unchanged. */
+@media (max-width: 1079px) {
+  .subtitle {
+    font-weight: 600;
+  }
+}
+
 /* No max-width of its own - matches the full width of the photo row below
    (both sit inside .intro/.block, which share the same --width-content
    container), so the right edge of the second column lines up with the
@@ -159,6 +167,16 @@
   flex-direction: column;
   gap: 6px;
   min-height: 74px;
+}
+
+/* Below 480px the grid drops to a single column (see .componentGrid) - no
+   row of neighbouring cards left to line up with, so the reserved height
+   just reads as a big empty gap before "Details" on a short 1-line title.
+   Tablet's 2-3 column rows above this width still need the reservation. */
+@media (max-width: 480px) {
+  .componentHead {
+    min-height: 0;
+  }
 }
 
 .componentNumber {
@@ -434,6 +452,7 @@
   .benefitsPanelNote,
   .benefitsClosing {
     font-size: 17px;
+    font-weight: 500;
     line-height: 1.55;
   }
 }
@@ -611,6 +630,18 @@
   margin-bottom: 34px;
 }
 
+/* On mobile/tablet this wraps to two stacked rows (heading block, then the
+   note) - the row gap plus the block's own margin-bottom below stacked up
+   to a much bigger gap than intended before the gallery photo starts.
+   Tightened here only; desktop's single-row layout is unaffected since it
+   never wraps at that width. */
+@media (max-width: 1079px) {
+  .galleryHead {
+    gap: 14px;
+    margin-bottom: 20px;
+  }
+}
+
 /* Matches .title ("A Journey to Reset, Align and Thrive") - same font
    size/line-height, so "What is Included" stands out at the same scale as
    the page's own heading, with "Two-hour transformative..." now the
@@ -634,6 +665,14 @@
   margin: 0;
 }
 
+/* Matches .subtitle's own mobile/tablet weight bump above - same washed-out
+   400-weight issue, same fix. Desktop unchanged. */
+@media (max-width: 1079px) {
+  .gallerySubtitle {
+    font-weight: 600;
+  }
+}
+
 /* Widened from 380px, and the two sentences in the JSX get an explicit
    <br/> between them - relying on width-based wrapping alone put the break
    randomly mid-sentence depending on viewport width; the explicit break
@@ -646,6 +685,19 @@
   font-size: 14.5px;
   line-height: 1.7;
   color: var(--color-ink-body);
+}
+
+/* Only mobile reads this as its own sentence lacking a closing period -
+   desktop's wrapping/context reads fine without it, so the mark is added
+   here rather than in the source copy itself. */
+.mobilePeriod {
+  display: none;
+}
+
+@media (max-width: 1079px) {
+  .mobilePeriod {
+    display: inline;
+  }
 }
 
 @media (max-width: 1079px) {

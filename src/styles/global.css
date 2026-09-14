@@ -632,6 +632,21 @@ p {
   color: var(--color-muted);
 }
 
+/* Shared by every choice card (Booking, Gift, Offerings) - the title's
+   standard 400 weight and the note's 14px both read as washed out/small on
+   mobile/tablet, same fix as the home page's path cards. Desktop unchanged.
+   Page-specific overrides of these classes (e.g. Offerings' own smaller
+   .choice__note) get their own matching bump alongside this one. */
+@media (max-width: 1079px) {
+  .choice__title {
+    font-weight: 500;
+  }
+
+  .choice__note {
+    font-size: 15.5px;
+  }
+}
+
 /* Add-on toggle row. */
 .toggle-row {
   display: flex;

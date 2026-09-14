@@ -113,6 +113,7 @@ export default function ExperiencePage() {
               <br />
               Venue rental, comfort provisions, and refreshments are
               included in the package price
+              <span className={styles.mobilePeriod}>.</span>
             </p>
           </div>
 

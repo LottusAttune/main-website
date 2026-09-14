@@ -115,8 +115,8 @@
      to pick out as a question on a small screen - a touch heavier and
      larger closes that without borrowing .headBold's darker color too. */
   .headCompact {
-    font-weight: 400;
-    font-size: 17px;
+    font-weight: 500;
+    font-size: 17.5px;
   }
 }
 

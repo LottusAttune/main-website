@@ -123,6 +123,16 @@
   text-align: center;
 }
 
+/* Reads as too quiet to stand out as her own closing line on mobile/
+   tablet - heavier weight and a touch bigger, same color. Desktop
+   unchanged. */
+@media (max-width: 1079px) {
+  .closingQuote {
+    font-weight: 500;
+    font-size: 18px;
+  }
+}
+
 /* First name only, no title - "Facilitator"/"Founder" is already clear
    from the page itself and she didn't want it re-emphasized. Same
    signature treatment (small flourish + letter-spaced name) already used
@@ -216,6 +226,18 @@
 .videoLabel {
   margin: clamp(20px, 2.6vw, 28px) 0 0;
   text-align: center;
+}
+
+/* The shared .eyebrow class's 10.5px + wide tracking reads as too faint for
+   a label that's actually inviting a tap, on mobile/tablet - bigger,
+   heavier and tighter tracking here only. Desktop keeps the standard
+   eyebrow treatment. */
+@media (max-width: 1079px) {
+  .videoLabel {
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+  }
 }
 
 .videoHint {

@@ -80,6 +80,23 @@
   line-height: 1.45;
 }
 
+/* This page's own tighter overrides above win over the shared .choice__note
+   mobile bump in global.css (equal specificity, later in cascade) - repeat
+   the same idea at a size that fits this compact card. Title gets the same
+   weight bump as the shared rule, applied here since this override doesn't
+   touch weight itself. */
+@media (max-width: 1079px) {
+  .choices :global(.choice__title) {
+    font-weight: 500;
+    font-size: 19px;
+  }
+
+  .choices :global(.choice__note) {
+    font-size: 14.5px;
+    line-height: 1.5;
+  }
+}
+
 .choicePrimary {
   background: rgba(198, 169, 122, 0.18);
 }

@@ -441,11 +441,12 @@
 }
 
 .summaryTitle {
-  font-size: 11px;
-  letter-spacing: 0.32em;
+  font-size: 13.5px;
+  font-weight: 500;
+  letter-spacing: 0.28em;
   text-transform: uppercase;
   color: var(--color-gold-light);
-  margin-bottom: 9px;
+  margin-bottom: 11px;
 }
 
 .summaryLines {

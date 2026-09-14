@@ -76,7 +76,7 @@ export const COMPONENTS = [
     n: '05',
     icon: 'icon-reintegration',
     title: 'Reintegration',
-    body: 'Close with a gentle transition to reconnect with your surroundings through gentle stretching, allow the effects of the practice to settle, and carry a renewed sense of calm into the days ahead',
+    body: 'Close with a gentle transition to reconnect with your surroundings and stretch. Allow the effects of the practice to settle, and carry a renewed sense of calm into the days ahead.',
   },
 ] as const;
 

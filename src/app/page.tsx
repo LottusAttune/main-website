@@ -87,7 +87,7 @@ export default function HomePage() {
             </div>
             <div className={styles.guideText} data-reveal="">
               <div
-                className="eyebrow eyebrow--dark"
+                className={`eyebrow eyebrow--dark ${styles.guideEyebrow}`}
                 style={{ fontSize: '13.5px', marginBottom: 18, color: 'var(--color-gold-light)' }}
               >
                 Your Guide

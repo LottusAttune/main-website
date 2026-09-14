@@ -220,6 +220,15 @@
     width: 100%;
     text-align: center;
   }
+
+  /* "Your Guide" is part of the same pull-quote block as the quote and
+     signature just below it - left-aligning only this one line while its
+     neighbours are centered read as inconsistent. The body paragraph
+     after it stays left-aligned normal prose, unchanged. */
+  .guideEyebrow {
+    width: 100%;
+    text-align: center;
+  }
 }
 
 /* The quote and the paragraphs below it are both written in first person and
@@ -589,6 +598,11 @@
   .faqGrid {
     grid-template-columns: 1fr;
     grid-template-areas: 'intro' 'accordion' 'card';
+    /* The lede ("...fully guided from start to finish.") to the first
+       question read as a bigger gap than intended once stacked - this row
+       gap plus the lede's own margin-bottom added up. Tightened here only;
+       side-by-side tablet/desktop never shows this relationship at all. */
+    gap: 18px;
   }
 
   .faqGrid :global(.sticky-col) {

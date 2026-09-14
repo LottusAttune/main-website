@@ -45,7 +45,7 @@ export default async function GiftPage() {
           >
             <div>
               <div className="eyebrow" style={{ fontSize: 15, marginBottom: 12 }}>
-                Give the gift of a full reset
+                Gift
               </div>
               <h1
                 id="gift-heading"
@@ -57,7 +57,7 @@ export default async function GiftPage() {
                   maxWidth: 900,
                 }}
               >
-                Gift
+                Give the gift of a full reset
               </h1>
               <p
                 className="lede"

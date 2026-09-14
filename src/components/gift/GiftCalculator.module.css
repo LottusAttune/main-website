@@ -372,7 +372,8 @@
 .policyNote {
   margin: 0 0 14px;
   font-size: var(--text-body-sm);
-  color: var(--color-cream-text-soft);
+  font-weight: 500;
+  color: var(--color-cream-text-bright);
 }
 
 .policyLink {
@@ -381,6 +382,7 @@
   border: none;
   background: none;
   font: inherit;
+  font-weight: 500;
   color: var(--color-gold-light);
   text-decoration: underline;
   cursor: pointer;

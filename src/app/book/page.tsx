@@ -35,7 +35,7 @@ export default async function BookPage() {
           aria-labelledby="book-heading"
         >
           <div className="eyebrow" style={{ fontSize: 15, marginBottom: 12 }}>
-            Book
+            Reserve your Lotus Attune experience
           </div>
           <h1
             id="book-heading"
@@ -47,7 +47,7 @@ export default async function BookPage() {
               maxWidth: 900,
             }}
           >
-            Reserve your Lotus Attune experience
+            Book
           </h1>
           <p
             className="lede"

@@ -427,6 +427,17 @@
   line-height: 1.6;
 }
 
+/* 15px reads small on mobile/tablet, same as the rest of this pass -
+   desktop keeps its own size. Shared with .benefitsClosing below, which
+   gets the identical bump so the two stay matched on each side. */
+@media (max-width: 1079px) {
+  .benefitsPanelNote,
+  .benefitsClosing {
+    font-size: 17px;
+    line-height: 1.55;
+  }
+}
+
 /* A solid color rather than a semi-transparent rgba blend - the partial
    opacity was rendering noticeably softer/hazier than the fully-opaque ink
    text on the Individuals side, not just more muted.

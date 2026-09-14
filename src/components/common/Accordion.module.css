@@ -110,6 +110,14 @@
     font-size: 15.5px;
     line-height: 1.65;
   }
+
+  /* Same thin 300 weight as .head, which at this size read as too faint
+     to pick out as a question on a small screen - a touch heavier and
+     larger closes that without borrowing .headBold's darker color too. */
+  .headCompact {
+    font-weight: 400;
+    font-size: 17px;
+  }
 }
 
 /* Solid ink-body by default (light-background use); .bulletsDark below

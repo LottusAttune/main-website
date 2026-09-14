@@ -428,11 +428,28 @@
 
 /* 13px reads too small on a phone/tablet screen held at arm's length -
    desktop keeps its own size, this only raises the mobile/tablet floor to
-   match the site's established small-body-text size (--text-body-sm). */
+   match the site's established small-body-text size (--text-body-sm).
+   The title's light 300 weight also read as too faint to "stand out" at
+   this size on a small screen, so mobile/tablet gets a heavier weight and
+   a touch more size here too - desktop's lighter, larger display treatment
+   is unaffected. */
 @media (max-width: 1079px) {
+  .pathTitle {
+    font-weight: 500;
+    font-size: 18.5px;
+  }
+
   .pathText {
     font-size: 15.5px;
     line-height: 1.45;
+  }
+
+  /* rgba(198,169,122,0.12) background with --color-gold-deep text measures
+     right at the 4.5:1 AA edge - swapping to --color-gold-text (the only
+     gold token approved to carry words, see tokens.css) clears it with
+     margin instead of riding the line. */
+  .pathTags :global(.tag--one) {
+    color: var(--color-gold-text);
   }
 }
 

@@ -226,6 +226,14 @@
   color: var(--color-muted);
 }
 
+/* Reads too small at arm's length on mobile/tablet - desktop keeps its
+   original size. */
+@media (max-width: 1079px) {
+  .videoHint {
+    font-size: 14.5px;
+  }
+}
+
 /* Fixed-height thumbnail row, not fixed-width columns - a portrait video
    and a landscape video can't both fill the same box shape without
    Vimeo pillarboxing one of them again. Holding height constant and

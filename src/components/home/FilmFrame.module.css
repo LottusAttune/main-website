@@ -56,6 +56,16 @@
     transform var(--duration-button) ease;
 }
 
+/* "Tap for sound" read as too small on mobile/tablet - desktop keeps its
+   original micro-label size. Letter-spacing is tightened along with the
+   size bump so the wider label doesn't run noticeably longer. */
+@media (max-width: 1079px) {
+  .sound {
+    font-size: 12.5px;
+    letter-spacing: 0.14em;
+  }
+}
+
 .sound:hover {
   transform: translateY(-2px);
   border-color: var(--color-gold-light);

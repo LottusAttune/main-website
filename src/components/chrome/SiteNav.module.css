@@ -59,27 +59,24 @@
   white-space: nowrap;
 }
 
-/* Below this width there isn't room for the tagline's full nowrap width
-   next to the Book/Gift buttons and burger - it was overflowing the brand
-   column and running under them. Dropping it keeps the wordmark alone,
-   which is enough to identify the brand at this size; the tagline comes
-   back as soon as there's room for it. */
-@media (max-width: 560px) {
+/* Below desktop, tighter tracking/size than the full lockup gets at 1080px+
+   - at the original 0.36em letter-spacing "IMMERSIVE SOMA SOUND · TORONTO"
+   ran past 250px on its own and either overlapped Menu on phones or forced
+   the tablet link row onto a second line. Tightened enough to keep the
+   whole tagline (Toronto included) visible everywhere below desktop instead
+   of dropping it. */
+@media (max-width: 1079px) {
   .subMark {
-    display: none;
+    letter-spacing: 0.08em;
+    font-size: 9.5px;
   }
 }
 
-/* Even without the tagline, the full "LOTUS ATTUNE" wordmark still doesn't
-   leave enough room for Book, Gift and the burger on a phone screen - it
-   was running under the Book button. The logo mark alone still identifies
-   the brand at this size (every other page has it in the tab/app icon too),
-   so the wordmark drops as well rather than overlapping the actions. */
-@media (max-width: 480px) {
-  .lockup {
-    display: none;
-  }
-}
+/* This used to also hide below 480px - that rule existed only because the
+   wordmark, Book, Gift and the burger couldn't all fit on a phone row
+   together. Book/Gift moved to the bottom bar, so that crowding is gone and
+   the wordmark now fits fine down to the narrowest phones (tested to
+   360px); only the tagline above still needs to drop for space. */
 
 .links {
   display: none;
@@ -222,45 +219,91 @@
   background: rgba(59, 46, 36, 0.06);
 }
 
+/* Book/Gift move to the bottom sticky bar on mobile/tablet (see
+   StickyBookBar) so the top nav isn't carrying them twice - only visible
+   again once .links' own desktop row takes over at 1080px. */
+@media (max-width: 1079px) {
+  .ctaDesktopOnly {
+    display: none;
+  }
+}
+
 .burger {
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  gap: 4px;
-  width: 44px;
-  height: 44px;
+  gap: 3px;
+  width: 50px;
+  height: 50px;
   flex: none;
   border: 1px solid rgba(59, 46, 36, 0.28);
-  border-radius: var(--radius-pill);
+  border-radius: 0;
   background: transparent;
   cursor: pointer;
 }
 
-.burger span {
+.burgerLines {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+/* Thicker and a touch longer than before - at 16px/1px the three lines read
+   as barely-there hairlines next to the bolder Book/Gift buttons beside
+   this button. */
+.burgerLines span {
   display: block;
-  width: 16px;
-  height: 1px;
+  width: 18px;
+  height: 2px;
   background: var(--color-ink);
 }
 
+/* Spells out what the icon alone wasn't reading as clearly enough on its
+   own - a plain word beats relying on the three-line glyph being
+   universally obvious at this size. */
+.burgerLabel {
+  font-size: 8.5px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-ink);
+}
+
+/* Flat cream surface, square corners, hairline border - matches .tabPanel
+   (the desktop per-tab dropdown) rather than the rounded, gold-gradient
+   treatment this carried before the site moved to square corners. */
 .panel {
   max-width: 1500px;
   margin: 10px auto 0;
-  padding: 22px 26px;
-  background: linear-gradient(160deg, #fffdfa 0%, #f3eadc 100%);
-  border: 1px solid rgba(198, 169, 122, 0.36);
-  border-radius: 28px;
-  box-shadow: 0 30px 60px -40px rgba(59, 46, 36, 0.7);
+  padding: 18px 22px;
+  background: var(--color-cream-raised);
+  border: 1px solid var(--hairline-light-strong);
+  border-radius: 0;
+  box-shadow: var(--shadow-card);
 }
 
 /* One column per page on a wide viewport, reading as a small mega-menu;
-   auto-fit lets it collapse to fewer, wider columns and finally one on
-   mobile without a separate breakpoint of its own. */
+   auto-fit lets it collapse to fewer, wider columns on tablet without a
+   separate breakpoint of its own. Phones get their own explicit 2-column
+   override below - auto-fit would otherwise drop to a single column and,
+   combined with the bigger type below, run every group's sections past
+   one screen. */
 .panelGroups {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-  gap: 28px clamp(20px, 3vw, 48px);
+  gap: 20px clamp(20px, 3vw, 48px);
+}
+
+/* Two columns (Home+Experience over Founder+Offerings, in DOM order) instead
+   of one - roughly halves the panel's total height so every section fits on
+   one screen without scrolling, even with larger type. */
+@media (max-width: 600px) {
+  .panelGroups {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px 16px;
+  }
 }
 
 .panelGroup {
@@ -270,12 +313,12 @@
 }
 
 .panelGroupTitle {
-  padding-bottom: 10px;
-  margin-bottom: 6px;
+  padding-bottom: 8px;
+  margin-bottom: 4px;
   border-bottom: 1px solid var(--hairline-light-soft);
-  font-size: 12.5px;
+  font-size: 15px;
   font-weight: 500;
-  letter-spacing: 0.16em;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
   color: var(--color-gold-text);
 }
@@ -285,8 +328,8 @@
 }
 
 .panelSectionLink {
-  padding: 9px 0;
-  font-size: 13.5px;
+  padding: 7px 0;
+  font-size: 16px;
   color: var(--color-ink-body);
 }
 
@@ -294,12 +337,12 @@
   color: var(--color-ink);
 }
 
-/* The single breakpoint that matters: below 1080px the plain links (and
-   their new per-tab dropdowns) collapse into the burger's grouped panel
-   instead. Above it, the tab row has its own discreet per-tab dropdowns,
-   so the burger's full panel would just be a second, redundant way to
-   reach the same thing - it stays hidden there. */
-@media (min-width: 1080px) {
+/* Tablet gets the exact same per-tab dropdown row as desktop, just tighter -
+   showing the flat page labels there AND the burger's full panel was two
+   ways to reach the same "jump to a section" job. Below this width there
+   still isn't room for four labels plus their dropdown chevrons next to the
+   logo, so phones keep the burger as their only nav entry point. */
+@media (min-width: 740px) {
   .links {
     display: flex;
   }
@@ -307,5 +350,14 @@
   .burger,
   .panel {
     display: none;
+  }
+}
+
+@media (min-width: 740px) and (max-width: 1079px) {
+  .links {
+    gap: 4px clamp(4px, 1vw, 20px);
+    padding: 0 clamp(4px, 0.8vw, 16px);
+    font-size: 10.5px;
+    letter-spacing: 0.08em;
   }
 }

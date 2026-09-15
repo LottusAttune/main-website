@@ -87,7 +87,7 @@ export default function HomePage() {
             </div>
             <div className={styles.guideText} data-reveal="">
               <div
-                className="eyebrow eyebrow--dark"
+                className={`eyebrow eyebrow--dark ${styles.guideEyebrow}`}
                 style={{ fontSize: '13.5px', marginBottom: 18, color: 'var(--color-gold-light)' }}
               >
                 Your Guide
@@ -98,12 +98,12 @@ export default function HomePage() {
                   productivity/well-being, excellence/human connection) stays
                   whole on one line. */}
               <blockquote id="guide-heading" className={styles.guideQuote}>
-                ”I bridge the gap between performance and restoration,
-                <br />
+                ”I bridge the gap between performance and restoration,{' '}
+                <br className={styles.guideQuoteBreak} />
                 productivity and well-being, and excellence and human connection”
               </blockquote>
               <div className={styles.guideSignature}>
-                — Silvana, Founder &amp; Facilitator
+                — Silvana Rotti, Founder &amp; Facilitator
               </div>
               {GUIDE.paragraphs.map((paragraph) => (
                 <p key={paragraph} className={`body body--dark ${styles.guideBody}`}>
@@ -111,7 +111,7 @@ export default function HomePage() {
                 </p>
               ))}
               <Link href="/founder" className={`btn btn--cream ${styles.guideBtn}`}>
-                Her Story
+                My Story
               </Link>
             </div>
           </div>
@@ -209,7 +209,7 @@ export default function HomePage() {
         {/* ---------- FAQ ---------- */}
         <section className={`${styles.faqSection} section--soft`} aria-labelledby="faq-heading">
           <div className={styles.faqGrid}>
-            <div className="sticky-col" data-reveal="">
+            <div className={`sticky-col ${styles.faqIntro}`} data-reveal="">
               <div className="eyebrow" style={{ fontSize: '13.5px', marginBottom: 18 }}>
                 Before you arrive
               </div>
@@ -220,34 +220,40 @@ export default function HomePage() {
                 Everything you need is provided, and every session is fully guided
                 from start to finish.
               </p>
-              <div className={`card ${styles.faqCard}`}>
-                <div className={styles.faqCardTitle}>Still have a question?</div>
-                <p className={styles.faqCardBody}>
-                  Write or WhatsApp and Silvana will answer personally.
-                </p>
-                <div className={styles.faqCardActions}>
-                  <CopyButton
-                    value={SITE.email}
-                    label="Email us"
-                    className={`btn btn--dark ${styles.faqCardBtn}`}
-                  />
-                  <a
-                    href={SITE.whatsappHref}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className={`btn btn--outline ${styles.faqCardBtn}`}
-                  >
-                    WhatsApp us
-                  </a>
-                </div>
-              </div>
             </div>
 
-            <div data-reveal="">
+            <div className={styles.faqAccordion} data-reveal="">
               <Accordion
                 items={FAQS.map((faq) => ({ title: faq.q, answer: faq.a }))}
                 compact
               />
+            </div>
+
+            {/* On mobile this reads after the FAQ list, not before it (see
+                .faqGrid's mobile grid-template-areas) - so a visitor reads
+                the answers already provided before being offered a way to
+                ask something new, rather than being invited to ask first.
+                Desktop keeps its original side-by-side position. */}
+            <div className={`card ${styles.faqCard}`} data-reveal="">
+              <div className={styles.faqCardTitle}>Still have a question?</div>
+              <p className={styles.faqCardBody}>
+                Write or WhatsApp and Silvana will answer personally.
+              </p>
+              <div className={styles.faqCardActions}>
+                <CopyButton
+                  value={SITE.email}
+                  label="Email us"
+                  className={`btn btn--dark ${styles.faqCardBtn}`}
+                />
+                <a
+                  href={SITE.whatsappHref}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={`btn btn--outline ${styles.faqCardBtn}`}
+                >
+                  WhatsApp us
+                </a>
+              </div>
             </div>
           </div>
         </section>

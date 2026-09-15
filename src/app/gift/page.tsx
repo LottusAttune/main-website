@@ -4,6 +4,7 @@ import Image from 'next/image';
 import { Reveal } from '@/components/common/Reveal';
 import { SiteFooter } from '@/components/chrome/SiteFooter';
 import { SiteNav } from '@/components/chrome/SiteNav';
+import { StickyBookBar } from '@/components/chrome/StickyBookBar';
 import { GiftCalculator } from '@/components/gift/GiftCalculator';
 import { asset } from '@/lib/images';
 import { getSettings } from '@/lib/settings';
@@ -99,6 +100,7 @@ export default async function GiftPage() {
       </main>
 
       <SiteFooter />
+      <StickyBookBar hideAction="gift" />
     </>
   );
 }

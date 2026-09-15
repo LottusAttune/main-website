@@ -2,6 +2,8 @@
 
 import { useEffect, useId, useState } from 'react';
 
+import { IncludedModal } from '@/components/common/IncludedModal';
+import { PolicyModal } from '@/components/common/PolicyModal';
 import { giftQuoteFor } from '@/lib/quote';
 import type { DiscountCode, Pricing } from '@/lib/settings';
 import {
@@ -381,7 +383,9 @@ export function GiftCalculator({ pricing, codes }: Props) {
               type="button"
               className={`${styles.gratuityBtn} ${gratuityChoice === pct ? styles.gratuityBtnOn : ''}`}
               aria-pressed={gratuityChoice === pct}
-              onClick={() => setGratuityChoice(pct)}
+              onClick={() =>
+                setGratuityChoice((c) => (c === pct ? null : pct))
+              }
             >
               {pct}%
             </button>
@@ -390,7 +394,9 @@ export function GiftCalculator({ pricing, codes }: Props) {
             type="button"
             className={`${styles.gratuityBtn} ${gratuityChoice === 'custom' ? styles.gratuityBtnOn : ''}`}
             aria-pressed={gratuityChoice === 'custom'}
-            onClick={() => setGratuityChoice('custom')}
+            onClick={() =>
+              setGratuityChoice((c) => (c === 'custom' ? null : 'custom'))
+            }
           >
             Amount
           </button>
@@ -470,6 +476,10 @@ export function GiftCalculator({ pricing, codes }: Props) {
                 </div>
               </div>
             </div>
+
+            <IncludedModal
+              triggerClassName={`btn btn--outline-dark btn--wide ${styles.includedBtn}`}
+            />
 
             <button
               type="button"
@@ -561,6 +571,11 @@ export function GiftCalculator({ pricing, codes }: Props) {
                 onChange={(e) => setBuyerEmail(e.target.value)}
               />
             </div>
+
+            <p className={styles.policyNote}>
+              By requesting this certificate, you agree to our{' '}
+              <PolicyModal triggerClassName={styles.policyLink} />.
+            </p>
 
             <button
               type="button"

@@ -261,13 +261,19 @@
 }
 
 /* Body font, not the display serif - Cormorant's "1" has no base flag and
-   reads as a capital I at this size, which matters on a price. */
+   reads as a capital I at this size, which matters on a price.
+
+   Color: bright cream-text at 600 weight read as shouting against this
+   card's dark background - dimmed to the same solid, softer tone already
+   used for dark-background body copy elsewhere on the site (still clears
+   contrast comfortably), so the total is legible without being the
+   loudest thing on the card. */
 .totalValue {
   font-family: var(--font-body);
-  font-weight: 600;
+  font-weight: 400;
   font-size: clamp(19px, 1.9vw, 21px);
   line-height: 1;
-  color: var(--color-cream-text);
+  color: #d7cbb6;
 }
 
 .fields {
@@ -305,6 +311,12 @@
   color: var(--color-cream-text-soft);
 }
 
+@media (max-width: 1079px) {
+  .note {
+    font-size: 15px;
+  }
+}
+
 .note a {
   color: var(--color-gold-light);
 }
@@ -326,6 +338,21 @@
   margin-top: 16px;
 }
 
+/* Someone landing on /gift directly (skipping Offerings) had no way to see
+   what's actually in a session before buying one as a gift - same fix as
+   Offerings' own "See What's Included" link, same treatment as
+   Preview certificate just below it. */
+.includedBtn.includedBtn {
+  background: transparent;
+  padding: 12px 24px;
+  min-height: 42px;
+  margin-bottom: 10px;
+}
+
+.includedBtn.includedBtn:hover {
+  background: rgba(198, 169, 122, 0.14);
+}
+
 /* ---------- Certificate preview modal ---------- */
 
 /* .btn--outline-dark ships with no background of its own (every existing
@@ -340,6 +367,28 @@
 
 .previewBtn.previewBtn:hover {
   background: rgba(198, 169, 122, 0.14);
+}
+
+/* Solid white, not a cream token - the whole cream-text ramp
+   (soft/default/bright) clusters within ~10 units of each other, too close
+   to read as an actual fix for "washed out" against this dark gradient. */
+.policyNote {
+  margin: 0 0 14px;
+  font-size: var(--text-body-sm);
+  font-weight: 500;
+  color: #ffffff;
+}
+
+.policyLink {
+  display: inline;
+  padding: 0;
+  border: none;
+  background: none;
+  font: inherit;
+  font-weight: 500;
+  color: var(--color-gold-pale);
+  text-decoration: underline;
+  cursor: pointer;
 }
 
 .previewOverlay {

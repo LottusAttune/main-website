@@ -14,14 +14,13 @@ html {
   scroll-behavior: smooth;
   -webkit-text-size-adjust: 100%;
   /* So a same-page anchor (#paths, #included, and the nav section links)
-     lands flush under the sticky nav instead of behind it. This must match
-     the nav's real rendered height (SiteNav.module.css .wrap) as closely as
-     possible - too small and the nav still covers the target's own top;
-     too large and a sliver of the previous section shows above it, since
-     sections sit flush against each other with no gap of their own. 83px
-     measured against the live header at small-laptop through large-monitor
-     widths (SiteNav's own height is fixed, so it doesn't vary by width). */
-  scroll-padding-top: 83px;
+     lands flush under the sticky nav instead of behind it. This must clear
+     the nav's real rendered height (SiteNav.module.css .wrap, a fixed 83px
+     at every width) - a target landing exactly at 83px still measured a few
+     pixels short in practice (visibly clipping heading text on mobile,
+     e.g. "Frequently Asked"), so this carries a small buffer past the
+     literal nav height rather than the exact figure. */
+  scroll-padding-top: 100px;
 }
 
 body {
@@ -633,6 +632,21 @@ p {
   color: var(--color-muted);
 }
 
+/* Shared by every choice card (Booking, Gift, Offerings) - the title's
+   standard 400 weight and the note's 14px both read as washed out/small on
+   mobile/tablet, same fix as the home page's path cards. Desktop unchanged.
+   Page-specific overrides of these classes (e.g. Offerings' own smaller
+   .choice__note) get their own matching bump alongside this one. */
+@media (max-width: 1079px) {
+  .choice__title {
+    font-weight: 500;
+  }
+
+  .choice__note {
+    font-size: 15.5px;
+  }
+}
+
 /* Add-on toggle row. */
 .toggle-row {
   display: flex;
@@ -662,6 +676,16 @@ p {
   border-radius: 50%;
   border: 1px solid rgba(59, 46, 36, 0.3);
   transition: all 0.2s ease;
+}
+
+/* A bare 30%-opacity outline with no fill read as barely visible on mobile,
+   easy to miss as an actual checkbox - a solid white fill gives it a real
+   edge against the page instead of just a faint line. */
+@media (max-width: 1079px) {
+  .toggle-row__dot {
+    background: var(--color-cream-raised);
+    border-color: rgba(59, 46, 36, 0.4);
+  }
 }
 
 .toggle-row[aria-pressed='true'] .toggle-row__dot {

@@ -40,7 +40,7 @@ export const JOURNEY_INTRO = {
   subtitle: 'Everything Curated into One Offering',
   lede: 'Each session brings together five carefully curated components in one seamless offering that supports deep relaxation, nervous system regulation, and sustainable well-being.',
   longIntro:
-    'More than a traditional sound bath, this all-in-one holistic wellness journey combines restorative and transformational modalities within one cohesive, fully guided experience. Every element is intentionally selected and sequenced to create meaningful impact and a supportive container for self-connection, restore inner balance, and feel renewed and empowered.',
+    'More than a traditional sound bath, this all-in-one holistic wellness journey combines restorative and transformational modalities within one cohesive, fully guided experience.',
 } as const;
 
 /**
@@ -76,7 +76,7 @@ export const COMPONENTS = [
     n: '05',
     icon: 'icon-reintegration',
     title: 'Reintegration',
-    body: 'Close with a gentle transition to reconnect with your surroundings, allow the effects of the practice to settle, and carry a renewed sense of calm into the days ahead',
+    body: 'Close with a gentle transition to reconnect with your surroundings, mindful stretching to allow the effects of the practice to settle, and carry a renewed sense of calm into the days ahead.',
   },
 ] as const;
 
@@ -262,16 +262,26 @@ export const FAQS = [
   },
   {
     q: 'Cancellation Policy',
-    a: "Life happens, and plans change. If you are unable to attend, please cancel at least 48 hours before the start of your session. Cancellations made with at least 48 hours' notice may be rescheduled once or transferred as a credit toward a future session, subject to availability. Cancellations made with less than 48 hours' notice, or no-shows, will result in the session credit being forfeited. For groups with more than six participants, cancellations must be made 4 calendar days prior to the scheduled reservation.",
+    a: "Life happens, and plans change. If you are unable to attend, please cancel at least 72 hours before your scheduled session. You may reschedule your experience, subject to availability. Cancellations made with less than 72 hours' notice, or no-shows, are subject to a $100 fee.",
   },
 ] as const;
 
 export const FOUNDER_BIO = [
   'As a Wellness Facilitator with a strong Human Resources background, I help individuals and organizations across Toronto and the GTA reduce stress, restore balance, and enhance overall well-being through curated, immersive sound-based experiences combined with somatic practices and mindfulness.',
   'Unlike many wellness practitioners, I bring over 15 years of experience in Human Resources across recognized private and public-sector organizations and corporations. This background has given me a deep understanding of the demands of fast-paced, high-performance environments, including chronic stress, burnout, workplace disconnection, and the growing need for sustainable well-being.',
-  'Throughout my career, I witnessed organizations investing heavily in productivity while many employees quietly struggled with anxiety, emotional overload, fatigue, and a lack of meaningful support. Over time, this became deeply personal to me. Meditation, mindfulness, nervous system regulation, somatic practices, and sound healing became transformational tools in my own life.',
+  'Throughout my career, I witnessed organizations investing heavily in productivity while many employees quietly struggled with anxiety, emotional overload, fatigue, and a lack of meaningful support. Over time, this became deeply personal: meditation, mindfulness, nervous system regulation, somatic practices, and sound healing became transformational tools in my own life.',
   'With intention and purpose, I created this offering to share the modalities I have studied, practiced and integrated to help others pause, reset and return to themselves.',
-  'I genuinely love what I do and pour myself into this offering with real passion and authenticity. My mission is to continue creating and facilitating meaningful restorative programs that positively impact people’s mental well-being and emotional regulation. Rooted in purpose and presence, I believe in intentional living, inner alignment, continuous growth, and the power of human potential.',
+  'I genuinely love what I do and pour myself into this offering with real passion and authenticity. My mission is to continue creating and facilitating meaningful restorative programs that positively impact people’s overall well-being and emotional regulation. Rooted in purpose and presence, I believe in intentional living, inner alignment, continuous growth, and the power of human potential.',
+] as const;
+
+/** Phone-only condensed version of FOUNDER_BIO - approved with Silvana directly,
+ *  word by word, rather than trimmed unilaterally. Tablet and desktop keep the
+ *  full five paragraphs above; this shows only below founder.module.css's
+ *  phone breakpoint (600px). */
+export const FOUNDER_BIO_SHORT = [
+  'As a Wellness Facilitator, I help individuals and organizations across Toronto and the GTA reduce stress, restore balance, and enhance overall well-being through curated, immersive sound-based experiences combined with somatic practices and mindfulness. Unlike many practitioners, I bring over 15 years of experience in Human Resources across recognized private and public-sector organizations. This background has given me a deep understanding of the demands of fast-paced, high-performance environments, including burnout and workplace disconnection.',
+  'Throughout my career, I witnessed organizations investing heavily in productivity while many employees quietly struggled with anxiety, fatigue and emotional overload. Over time, this became deeply personal: meditation, mindfulness, nervous system regulation, somatic practices, and sound healing became transformational tools in my own life. With intention and purpose, I created this offering to share the modalities I have studied, practiced and integrated to help others pause, reset and return to themselves.',
+  'I pour myself into this offering with real passion, driven by a mission to support people’s overall well-being and emotional regulation — rooted in intentional living, inner alignment, and belief in human potential.',
 ] as const;
 
 export const CREDENTIALS = [
@@ -289,10 +299,9 @@ export const CREDENTIALS = [
 
 export const TRAINING = [
   {
-    title: 'Meditation & Mindfulness',
+    title: 'Meditation & Mindfulness (12+ years of dedicated practice)',
     items: [
-      '12+ years of dedicated meditation practices',
-      'Meditation Facilitator | Guided meditation for corporate teams and Sahaja Yoga, Toronto',
+      'Meditation Facilitator | Guided meditation for corporate teams (including Metrolinx) and Sahaja Yoga, Toronto',
       'Mindfulness Training Programs through the Mindfulness Clinic',
       'Insight Meditation Practice and Studies with Satipanna Insight Meditation, Toronto',
     ],
@@ -318,6 +327,8 @@ export const TRAINING = [
     title: 'Personal Development & Integrative Healing Arts',
     items: [
       'Inner Growth Identity one-year program - Soul Engineering, Bali - 2025',
+      'Heal Your Masculine and Feminine | Danny Morel - 2025',
+      '21-Day Awakening Journey | Niraj Nair - 2024',
       'Etnikas Integrative Medicine Retreat - Cusco, Peru - 2019',
     ],
   },
@@ -333,13 +344,13 @@ export const TRAINING = [
     items: [
       'Toronto Zen School Ensemble - Handpan musician and performer - 2025',
       'BUMI Festival - Handpan Performance - 2026',
-      'Drum & Soul in Motion - Handpan-guided meditation',
+      'Drum & Soul in Motion - Handpan-guided meditations',
     ],
   },
 ] as const;
 
 export const FOUNDER_CLIENTS =
-  'I bring over 15 years of Human Resources and wellness experience across leading organizations, including Metrolinx, Toronto Hydro, Infrastructure Ontario, Mount Sinai Hospital, George Brown College, Magna International, and Bell Canada. I have also provided services to Scotiabank, the University of Toronto, and other organizations.';
+  'I bring over 15 years of Human Resources experience across leading organizations, including Metrolinx, Toronto Hydro, Infrastructure Ontario, Mount Sinai Hospital, George Brown College, Magna International, and Bell Canada. I have also provided services to Scotiabank, the University of Toronto, and other organizations.';
 
 export const VENUE_COPY = [
   'A premium venue situated in downtown Toronto, just a couple of minutes walk from Bloor–Yonge subway station, and with easy access to the Don Valley Parkway (DVP).',
@@ -361,8 +372,13 @@ export const CORPORATE_ADDON_COPY =
  */
 export const FILM = {
   landscape: '1221652776',
-  portrait: '1218205483',
+  portrait: '1226406572',
 } as const;
 
 /** Shown until the player reports ready, and left in place if it never does. */
 export const FILM_POSTER = 'watch-poster-candle';
+
+/** Same role as FILM_POSTER, but for the portrait/mobile film - a still from
+ *  its own final frame rather than the landscape film's candle shot, which
+ *  read as an oddly cropped/zoomed sliver at the 9:16 aspect ratio. */
+export const FILM_POSTER_PORTRAIT = 'watch-poster-portrait';

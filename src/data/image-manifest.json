@@ -115,6 +115,10 @@
     "width": 600,
     "height": 404
   },
+  "logo-mark": {
+    "width": 600,
+    "height": 600
+  },
   "logo-wordmark": {
     "width": 230,
     "height": 135
@@ -210,5 +214,9 @@
   "watch-poster-candle": {
     "width": 875,
     "height": 495
+  },
+  "watch-poster-portrait": {
+    "width": 1080,
+    "height": 1920
   }
 }

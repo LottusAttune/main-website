@@ -2,6 +2,8 @@
 
 import { useEffect, useMemo, useState } from 'react';
 
+import { IncludedModal } from '@/components/common/IncludedModal';
+import { PolicyModal } from '@/components/common/PolicyModal';
 import { quoteFor } from '@/lib/quote';
 import type { DiscountCode, Pricing, Slots } from '@/lib/settings';
 import {
@@ -499,7 +501,9 @@ export function BookingForm({
                 type="button"
                 className={`${styles.gratuityBtn} ${gratuityChoice === pct ? styles.gratuityBtnOn : ''}`}
                 aria-pressed={gratuityChoice === pct}
-                onClick={() => setGratuityChoice(pct)}
+                onClick={() =>
+                  setGratuityChoice((c) => (c === pct ? null : pct))
+                }
               >
                 {pct}%
               </button>
@@ -508,7 +512,9 @@ export function BookingForm({
               type="button"
               className={`${styles.gratuityBtn} ${gratuityChoice === 'custom' ? styles.gratuityBtnOn : ''}`}
               aria-pressed={gratuityChoice === 'custom'}
-              onClick={() => setGratuityChoice('custom')}
+              onClick={() =>
+                setGratuityChoice((c) => (c === 'custom' ? null : 'custom'))
+              }
             >
               Amount
             </button>
@@ -670,6 +676,15 @@ export function BookingForm({
                 : 'Select the number of participants'}
           </div>
         </div>
+
+        <IncludedModal
+          triggerClassName={`btn btn--outline btn--wide ${styles.includedBtn}`}
+        />
+
+        <p className={styles.policyNote}>
+          By requesting this booking, you agree to our{' '}
+          <PolicyModal triggerClassName={styles.policyLink} />.
+        </p>
 
         <button
           type="submit"

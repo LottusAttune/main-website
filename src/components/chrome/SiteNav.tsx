@@ -50,7 +50,7 @@ export function SiteNav({ basePath = '' }: Props) {
     };
   }, [open, openTab]);
 
-  const logo = asset('logo-circle');
+  const logo = asset('logo-mark');
 
   return (
     <header ref={wrapRef} className={styles.wrap}>
@@ -134,13 +134,13 @@ export function SiteNav({ basePath = '' }: Props) {
         <div className={styles.actions}>
           <Link
             href="/book"
-            className={`btn btn--dark ${styles.actionPill} ${styles.actionPillDark}`}
+            className={`btn btn--dark ${styles.actionPill} ${styles.actionPillDark} ${styles.ctaDesktopOnly}`}
           >
             Book
           </Link>
           <Link
             href="/gift"
-            className={`btn btn--outline ${styles.actionPill} ${styles.actionPillNeutral}`}
+            className={`btn btn--outline ${styles.actionPill} ${styles.actionPillNeutral} ${styles.ctaDesktopOnly}`}
           >
             Gift
           </Link>
@@ -153,9 +153,14 @@ export function SiteNav({ basePath = '' }: Props) {
             aria-controls={open ? 'nav-panel' : undefined}
             onClick={() => setOpen((v) => !v)}
           >
-            <span />
-            <span />
-            <span />
+            <span className={styles.burgerLines}>
+              <span />
+              <span />
+              <span />
+            </span>
+            <span className={styles.burgerLabel} aria-hidden="true">
+              Menu
+            </span>
           </button>
         </div>
       </div>
@@ -168,7 +173,11 @@ export function SiteNav({ basePath = '' }: Props) {
                 group.href === '/' ? basePath || '/' : `${basePath}${group.href}`;
               return (
                 <div key={group.href} className={styles.panelGroup}>
-                  <Link href={groupHref} className={styles.panelGroupTitle}>
+                  <Link
+                    href={groupHref}
+                    className={styles.panelGroupTitle}
+                    onClick={() => setOpen(false)}
+                  >
                     {group.label}
                   </Link>
                   {group.sections.map((section) => (
@@ -176,6 +185,7 @@ export function SiteNav({ basePath = '' }: Props) {
                       key={section.hash}
                       href={`${groupHref}${section.hash}`}
                       className={styles.panelSectionLink}
+                      onClick={() => setOpen(false)}
                     >
                       {section.label}
                     </Link>

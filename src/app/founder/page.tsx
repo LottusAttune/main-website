@@ -12,6 +12,7 @@ import { HandpanVideo } from '@/components/founder/HandpanVideo';
 import {
   CREDENTIALS,
   FOUNDER_BIO,
+  FOUNDER_BIO_SHORT,
   FOUNDER_CLIENTS,
   TRAINING,
 } from '@/data/content';
@@ -60,7 +61,12 @@ export default async function FounderPage() {
             </div>
             <div className={styles.bio}>
               {FOUNDER_BIO.map((paragraph) => (
-                <p key={paragraph} style={{ margin: 0 }}>
+                <p key={paragraph} className={styles.bioFullP} style={{ margin: 0 }}>
+                  {paragraph}
+                </p>
+              ))}
+              {FOUNDER_BIO_SHORT.map((paragraph) => (
+                <p key={paragraph} className={styles.bioShortP} style={{ margin: 0 }}>
                   {paragraph}
                 </p>
               ))}

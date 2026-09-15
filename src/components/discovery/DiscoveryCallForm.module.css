@@ -61,6 +61,12 @@
   color: var(--color-muted);
 }
 
+@media (max-width: 1079px) {
+  .timesNote {
+    font-size: 15px;
+  }
+}
+
 .timeBtn {
   padding: 14px 10px;
   min-height: 46px;

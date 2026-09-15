@@ -79,7 +79,11 @@ export function ReviewsCarousel({ reviews }: Props) {
   // instead of hiding it outright.
   const peek = perView === 1 ? 0.86 : 0.88;
   const cardWidth = `calc((100% - ${GAP * (perView - 1)}px) / ${perView} * ${peek})`;
-  const step = `calc((100% - ${GAP * (perView - 1)}px) / ${perView} + ${GAP}px)`;
+  // Must be derived from cardWidth, not recomputed independently - the peek
+  // factor shrinks each card, so a step that ignores it overshoots the real
+  // on-screen card pitch. That overshoot then compounds with every advance,
+  // eventually landing the slide between two cards instead of on one.
+  const step = `calc(${cardWidth} + ${GAP}px)`;
 
   const active = openReview !== null ? reviews[openReview] : null;
   const atStart = index === 0;

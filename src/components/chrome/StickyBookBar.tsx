@@ -11,7 +11,7 @@ import styles from './StickyBookBar.module.css';
  * about eighty pixels below an identical BOOK A SESSION button.
  *
  * So it stays out of the way until the reader has scrolled past roughly the
- * first screen, then slides up. On /lp it carries the site's only Book/Gift
+ * first screen, then slides up. On /book-now it carries the site's only Book/Gift
  * buttons at the very bottom of a page, since the footer's closing block is
  * text-only to avoid repeating them. Everywhere else, the top nav's own
  * Book/Gift buttons are already visible at every scroll position, so this
@@ -19,12 +19,19 @@ import styles from './StickyBookBar.module.css';
  * repeating them.
  */
 type Props = {
-  /** /lp's own footer is text-only, so it opts into the two-button form
+  /** /book-now's own footer is text-only, so it opts into the two-button form
    *  here instead of the quiet link every other page uses. */
   twoButtons?: boolean;
+  /** /book and /gift don't carry the top nav's Book/Gift buttons on mobile/
+   *  tablet (see SiteNav), so this bar is the only way to switch between
+   *  them without navigating back through the rest of the site - but
+   *  showing "Book" while already on /book (or "Gift" on /gift) is a
+   *  redundant link to the current page. Suppresses just that one button,
+   *  keeping the other. */
+  hideAction?: 'book' | 'gift';
 };
 
-export function StickyBookBar({ twoButtons = false }: Props) {
+export function StickyBookBar({ twoButtons = false, hideAction }: Props) {
   const [shown, setShown] = useState(false);
 
   useEffect(() => {
@@ -48,8 +55,10 @@ export function StickyBookBar({ twoButtons = false }: Props) {
 
   if (!twoButtons) {
     // The top nav already carries the site's real Book/Gift buttons at every
-    // scroll position - repeating them here as a second pair of pills reads
-    // as redundant. This trades the two buttons for one quiet text link.
+    // scroll position on desktop - repeating them here as a second pair of
+    // pills reads as redundant, so desktop trades the two buttons for one
+    // quiet text link. On mobile/tablet the nav sheds those buttons instead
+    // (see SiteNav), so this bar carries the real Book/Gift pair there.
     return (
       <div
         className={`${styles.bar} ${shown ? styles.barShown : ''} ${styles.barDark}`}
@@ -65,6 +74,38 @@ export function StickyBookBar({ twoButtons = false }: Props) {
         >
           Book a session <span aria-hidden="true">→</span>
         </Link>
+        {/* Tablet has room for the same single-line format as desktop, just
+            bigger - only true phone widths need the stacked 3-line version. */}
+        <span className={styles.tabletLabel}>
+          Two-hour sessions &nbsp;·&nbsp; 1 to 24 people &nbsp;·&nbsp; downtown Toronto
+        </span>
+        <span className={styles.mobileLabel}>
+          Two hour session
+          <br />
+          Downtown Toronto
+          <br />
+          1-24 people
+        </span>
+        <div className={styles.mobileActions}>
+          {hideAction !== 'book' && (
+            <Link
+              href="/book"
+              className={`btn btn--cream ${styles.mobileCta}`}
+              tabIndex={shown ? undefined : -1}
+            >
+              Book
+            </Link>
+          )}
+          {hideAction !== 'gift' && (
+            <Link
+              href="/gift"
+              className={`btn btn--outline-dark ${styles.mobileCta}`}
+              tabIndex={shown ? undefined : -1}
+            >
+              Gift
+            </Link>
+          )}
+        </div>
       </div>
     );
   }

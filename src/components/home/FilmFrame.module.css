@@ -22,14 +22,20 @@
   height: 100%;
   border: none;
   display: block;
-  /* The frame owns interaction; sound is toggled through the pill below. */
-  pointer-events: none;
 }
 
 .sound {
   position: absolute;
   right: clamp(14px, 2vw, 24px);
-  bottom: clamp(14px, 2vw, 24px);
+  /* Sits just above Vimeo's own control bar (play/pause, scrubber, volume,
+     fullscreen), which lives along the bottom edge. Its exact rendered
+     height isn't visible to this site's CSS - it's inside a cross-origin
+     iframe - so this is an estimate, tightened twice now (was 64-88px,
+     then 48-64px, still a visible gap on an actual desktop render). The
+     bar's height is a fixed Vimeo UI thickness, not something that scales
+     up with a wider embed, so desktop needs a value close to mobile's own
+     clamp(32px, 7vw, 44px) rather than a separate larger range. */
+  bottom: clamp(36px, 3vw, 48px);
   z-index: 2;
   display: flex;
   align-items: center;
@@ -53,6 +59,23 @@
     transform var(--duration-button) ease;
 }
 
+/* "Tap for sound" read as too small on mobile/tablet - desktop keeps its
+   original micro-label size. Letter-spacing is tightened along with the
+   size bump so the wider label doesn't run noticeably longer. Bottom
+   clearance is also tightened here - Vimeo's control bar renders shorter
+   on a narrow mobile embed than the wide desktop one the 64-88px floor
+   was tuned for, so the button sat floating well above it. Still an
+   estimate (the bar's real height is inside a cross-origin iframe, not
+   visible to this CSS) - flag it if it ends up overlapping on an actual
+   phone. */
+@media (max-width: 1079px) {
+  .sound {
+    font-size: 12.5px;
+    letter-spacing: 0.14em;
+    bottom: clamp(32px, 7vw, 44px);
+  }
+}
+
 .sound:hover {
   transform: translateY(-2px);
   border-color: var(--color-gold-light);
@@ -60,38 +83,6 @@
 
 .soundOn {
   border-color: rgba(198, 169, 122, 0.85);
-}
-
-/* Mirrors .sound on the opposite corner - lets anyone jump the loop back to
-   0:00 on demand (scrolled away and back, or just wants to rewatch), rather
-   than waiting for it to come back around. */
-.restart {
-  position: absolute;
-  left: clamp(14px, 2vw, 24px);
-  bottom: clamp(14px, 2vw, 24px);
-  z-index: 2;
-  padding: 12px 22px;
-  min-height: 46px;
-  /* Almost square, not the full pill used elsewhere - matches the flatter
-     corner used across the rest of this page. */
-  border-radius: 8px;
-  border: 1px solid rgba(246, 239, 229, 0.45);
-  background: rgba(28, 21, 15, 0.55);
-  backdrop-filter: blur(10px);
-  color: var(--color-cream-text);
-  font-size: 10.5px;
-  letter-spacing: 0.22em;
-  text-transform: uppercase;
-  cursor: pointer;
-  transition:
-    border-color var(--duration-button) ease,
-    background var(--duration-button) ease,
-    transform var(--duration-button) ease;
-}
-
-.restart:hover {
-  transform: translateY(-2px);
-  border-color: var(--color-gold-light);
 }
 
 /* The player sits over the still and is only revealed once Vimeo reports it is

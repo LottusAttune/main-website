@@ -3,14 +3,16 @@ import type { Metadata } from 'next';
 import { Reveal } from '@/components/common/Reveal';
 import { SiteFooter } from '@/components/chrome/SiteFooter';
 import { SiteNav } from '@/components/chrome/SiteNav';
+import { StickyBookBar } from '@/components/chrome/StickyBookBar';
 import { BookingForm } from '@/components/booking/BookingForm';
 import { assetUrl } from '@/lib/images';
 import { getSettings } from '@/lib/settings';
+import styles from './book.module.css';
 
 export const metadata: Metadata = {
   title: 'Book',
   description:
-    'Reserve a two-hour Lotus Attune experience in downtown Toronto for 1 to 24 people. Dates open five calendar days ahead.',
+    'Reserve a two-hour Lotus Attune experience in downtown Toronto for 1 to 24 people. Dates open six calendar days ahead.',
 };
 
 /** Availability changes from the dashboard, so this must never be cached. */
@@ -33,21 +35,13 @@ export default async function BookPage() {
           }}
           aria-labelledby="book-heading"
         >
-          <div className="eyebrow" style={{ fontSize: 15, marginBottom: 12 }}>
-            Book
-          </div>
           <h1
             id="book-heading"
-            className="display"
-            style={{
-              fontSize: 'clamp(26px, 3.4vw, 44px)',
-              lineHeight: 1.14,
-              margin: '0 0 10px',
-              maxWidth: 900,
-            }}
+            className={`display ${styles.title}`}
           >
-            Reserve your Lotus Attune experience
+            Book
           </h1>
+          <div className={styles.subtitle}>Reserve your Lotus Attune experience</div>
           <p
             className="lede"
             style={{ maxWidth: 740, fontSize: 15.5, lineHeight: 1.65 }}
@@ -94,6 +88,7 @@ export default async function BookPage() {
       </main>
 
       <SiteFooter />
+      <StickyBookBar hideAction="book" />
     </>
   );
 }

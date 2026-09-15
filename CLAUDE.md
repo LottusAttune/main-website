@@ -213,7 +213,7 @@ src/app/                  pages (App Router)
   founder/                Founder
   offerings/              Offerings
   book/  gift/            booking and gift request forms
-  lp/                     ad landing page (noindex)
+  book-now/               ad landing page (noindex)
   v1/                     earlier design, kept as a reference (noindex)
   studio/                 owner dashboard (password-gated)
   api/                    route handlers
@@ -325,11 +325,19 @@ Ask Silvana about these rather than guessing:
 1. **Social handles** — footer links are placeholders (`/lotusattune`).
 2. **Gift certificate maximum** — her notes said "up to 21", the rest of her
    material says 2–24. The site uses 24.
-3. **Venue street address** — deliberately left out of the structured data until
-   she confirms it should be public.
+3. ~~Venue street address~~ — resolved: Silvana wants it kept private (it's her
+   home address, not a public storefront). Google Business Profile is set up
+   as a service-area listing rather than a public map pin. Keep it out of the
+   site's structured data.
 4. **Founder page portrait** (`/v1/founder`) — Silvana wants her name added
    somewhere on this section, but it's getting resized/reworked separately.
    Revisit name placement when that redesign happens, not before.
+5. **New venue: "Cinematic Experience"** (a small theater space) — a third
+   venue option alongside the existing Signature Venue and Wellness Lounge.
+   Not ready to add to the site yet: Silvana needs to take real photos of the
+   space first (source-assets/ → `npm run optimize:images`, same as every
+   other image — no stock/AI substitute in the meantime). Ask her before
+   adding a placeholder or using any interim image.
 
 The landscape film (`src/data/content.ts`, `FILM.landscape`) was replaced with
 her final cut. One standing caution stays relevant regardless of which video

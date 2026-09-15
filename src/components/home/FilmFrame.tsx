@@ -4,7 +4,7 @@ import Image from 'next/image';
 import Script from 'next/script';
 import { useEffect, useRef, useState } from 'react';
 
-import { FILM, FILM_POSTER } from '@/data/content';
+import { FILM, FILM_POSTER, FILM_POSTER_PORTRAIT } from '@/data/content';
 import { asset } from '@/lib/images';
 import styles from './FilmFrame.module.css';
 
@@ -17,7 +17,7 @@ function embedUrl(id: string): string {
     autoplay: '1',
     muted: '1',
     loop: '1',
-    controls: '0',
+    controls: '1',
     title: '0',
     byline: '0',
     portrait: '0',
@@ -93,6 +93,31 @@ export function FilmFrame() {
     if (started) attachPlayer();
   }, [started, portrait]);
 
+  // Unlike the one-shot observer above (which only ever starts the video),
+  // this one keeps watching for as long as the film is on the page - pausing
+  // once it's scrolled out of view and resuming when it's scrolled back, so
+  // sound (or the loop generally) doesn't keep running unseen after someone
+  // reads past it.
+  useEffect(() => {
+    const el = wrapRef.current;
+    if (!el || !started) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        const player = playerRef.current;
+        if (!player) return;
+        if (entry.isIntersecting) {
+          void player.play();
+        } else {
+          void player.pause();
+        }
+      },
+      { threshold: 0.2 }
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [started, portrait]);
+
   const toggleSound = () => {
     const next = !soundOn;
     setSoundOn(next);
@@ -122,31 +147,8 @@ export function FilmFrame() {
     }
   };
 
-  // Lets a visitor who scrolled away and back (or just wants to rewatch)
-  // jump the loop back to 0:00 on demand, rather than waiting for it to
-  // come back around.
-  const restart = () => {
-    const player = playerRef.current;
-    if (player) {
-      void player.setCurrentTime(0).then(() => player.play());
-      return;
-    }
-    try {
-      frameRef.current?.contentWindow?.postMessage(
-        { method: 'setCurrentTime', value: 0 },
-        'https://player.vimeo.com'
-      );
-      frameRef.current?.contentWindow?.postMessage(
-        { method: 'play' },
-        'https://player.vimeo.com'
-      );
-    } catch {
-      // No running player to reach yet - nothing to restart.
-    }
-  };
-
   const videoId = portrait ? FILM.portrait : FILM.landscape;
-  const poster = asset(FILM_POSTER);
+  const poster = asset(portrait ? FILM_POSTER_PORTRAIT : FILM_POSTER);
 
   return (
     <>
@@ -181,16 +183,6 @@ export function FilmFrame() {
             allowFullScreen
             className={ready ? styles.playerReady : styles.playerHidden}
           />
-        ) : null}
-        {started ? (
-          <button
-            type="button"
-            className={styles.restart}
-            onClick={restart}
-            aria-label="Watch from the beginning"
-          >
-            Watch from start
-          </button>
         ) : null}
         <button
           type="button"

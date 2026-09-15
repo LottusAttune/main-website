@@ -82,6 +82,8 @@ async function sessionEmailInput(
     location: settings.business.venueDetails || venue,
     startISO,
     endISO,
+    attendeeName: String(row.name),
+    attendeeEmail: String(row.email),
   };
   const due = invoice ? balanceDue(invoice) : 0;
   return {

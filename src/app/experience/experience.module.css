@@ -23,12 +23,29 @@
   max-width: 1000px;
 }
 
+/* Composed with the global .display class (weight 300) - too light to
+   stand out as the page's own heading on mobile/tablet. Desktop unchanged. */
+@media (max-width: 1079px) {
+  .title {
+    font-weight: 500;
+  }
+}
+
 .subtitle {
   font-family: var(--font-display);
   font-weight: 400;
   font-size: clamp(18px, 2vw, 22px);
   color: var(--color-gold-text);
   margin-bottom: 30px;
+}
+
+/* 600 landed too heavy/grotesque once the heading above it also picked up
+   weight - 500 stands out from the plain 400 default without competing
+   with the bolder heading. Desktop unchanged. */
+@media (max-width: 1079px) {
+  .subtitle {
+    font-weight: 500;
+  }
 }
 
 /* No max-width of its own - matches the full width of the photo row below
@@ -58,6 +75,12 @@
      paragraph wraps to 4 lines instead of 5 even at laptop widths. */
   font-size: 15px;
   text-align: justify;
+}
+
+@media (max-width: 600px) {
+  .introGrid p {
+    text-align: left;
+  }
 }
 
 /* The modal (see .componentOverlay below) never overlaps Benefits, so this
@@ -155,6 +178,16 @@
   min-height: 74px;
 }
 
+/* Below 480px the grid drops to a single column (see .componentGrid) - no
+   row of neighbouring cards left to line up with, so the reserved height
+   just reads as a big empty gap before "Details" on a short 1-line title.
+   Tablet's 2-3 column rows above this width still need the reservation. */
+@media (max-width: 480px) {
+  .componentHead {
+    min-height: 0;
+  }
+}
+
 .componentNumber {
   font-family: var(--font-display);
   font-weight: 400;
@@ -168,6 +201,20 @@
   font-size: 19px;
   margin: 0;
   line-height: 1.25;
+}
+
+/* --color-gold-text already clears 4.5:1, and the title is already solid
+   ink - the flagged "hard to read" here is the thin (300/400) display
+   weight at this size, not the color. Bumped bolder on mobile/tablet only,
+   same size/color/space, for more visual presence without a redesign. */
+@media (max-width: 1079px) {
+  .componentNumber {
+    font-weight: 600;
+  }
+
+  .componentTitle {
+    font-weight: 400;
+  }
 }
 
 /* Opens .componentOverlay on click instead of showing all five descriptions
@@ -227,6 +274,14 @@
   font-size: 15px;
   color: var(--color-gold-text);
   margin-bottom: 6px;
+}
+
+/* Matches .componentNumber's own mobile/tablet weight bump - same card
+   content, shown again in this detail modal. */
+@media (max-width: 1079px) {
+  .componentModalNumber {
+    font-weight: 600;
+  }
 }
 
 /* The title stays visible at the top of the modal (rather than disappearing
@@ -386,6 +441,15 @@
   line-height: 1.15;
 }
 
+/* "For Teams & Organizations" / "For Individuals" - too light at 300 to
+   stand out as each column's own heading on mobile/tablet. Desktop
+   unchanged. */
+@media (max-width: 1079px) {
+  .benefitsPanelHeading {
+    font-weight: 500;
+  }
+}
+
 /* Same font/size/style as .benefitsClosing below - a deliberate echo of
    the closing note's serif treatment for a bit of texture against the
    sans-serif item titles/body, rather than reading as plain body copy. */
@@ -397,6 +461,18 @@
   font-style: normal;
   font-size: 15px;
   line-height: 1.6;
+}
+
+/* 15px reads small on mobile/tablet, same as the rest of this pass -
+   desktop keeps its own size. Shared with .benefitsClosing below, which
+   gets the identical bump so the two stay matched on each side. */
+@media (max-width: 1079px) {
+  .benefitsPanelNote,
+  .benefitsClosing {
+    font-size: 19.5px;
+    font-weight: 500;
+    line-height: 1.55;
+  }
 }
 
 /* A solid color rather than a semi-transparent rgba blend - the partial
@@ -502,6 +578,16 @@
   line-height: 1.5;
 }
 
+/* 14px on both sides reads small on a phone/tablet screen - desktop keeps
+   its own size, kept identical on both sides so neither reads bolder than
+   the other (same rule as everywhere else this panel is mirrored). */
+@media (max-width: 1079px) {
+  .benefitsFlyoutBody {
+    font-size: 15.5px;
+    line-height: 1.55;
+  }
+}
+
 .benefitsCellDark .benefitsFlyoutBody {
   color: #d7cbb6;
 }
@@ -562,6 +648,18 @@
   margin-bottom: 34px;
 }
 
+/* On mobile/tablet this wraps to two stacked rows (heading block, then the
+   note) - the row gap plus the block's own margin-bottom below stacked up
+   to a much bigger gap than intended before the gallery photo starts.
+   Tightened here only; desktop's single-row layout is unaffected since it
+   never wraps at that width. */
+@media (max-width: 1079px) {
+  .galleryHead {
+    gap: 8px;
+    margin-bottom: 10px;
+  }
+}
+
 /* Matches .title ("A Journey to Reset, Align and Thrive") - same font
    size/line-height, so "What is Included" stands out at the same scale as
    the page's own heading, with "Two-hour transformative..." now the
@@ -575,6 +673,14 @@
   max-width: 22ch;
 }
 
+/* Matches .title's own mobile/tablet weight bump above - same .display
+   300-weight default, same fix. Desktop unchanged. */
+@media (max-width: 1079px) {
+  .galleryHeading {
+    font-weight: 500;
+  }
+}
+
 /* Matches .subtitle ("Everything Curated into One Offering") - same
    font/size/color treatment, now the smaller clarifying line under the
    bigger "What is Included" heading above it. */
@@ -583,6 +689,15 @@
   font-size: clamp(18px, 2vw, 22px);
   color: var(--color-gold-text);
   margin: 0;
+}
+
+/* Matches .subtitle's own mobile/tablet weight bump above (dialled back
+   from 600 to 500 for the same reason - see .subtitle's comment).
+   Desktop unchanged. */
+@media (max-width: 1079px) {
+  .gallerySubtitle {
+    font-weight: 500;
+  }
 }
 
 /* Widened from 380px, and the two sentences in the JSX get an explicit
@@ -599,10 +714,29 @@
   color: var(--color-ink-body);
 }
 
+/* Only mobile reads this as its own sentence lacking a closing period -
+   desktop's wrapping/context reads fine without it, so the mark is added
+   here rather than in the source copy itself. */
+.mobilePeriod {
+  display: none;
+}
+
+@media (max-width: 1079px) {
+  .mobilePeriod {
+    display: inline;
+  }
+}
+
+@media (max-width: 1079px) {
+  .sectionHeadNote {
+    font-size: 15.5px;
+  }
+}
+
 /* ---------- Included list ---------- */
 
 /* Scoped, tighter override of the shared global .numbered-row (also used on
-   /lp, so not changed there) - fits all 9 rows within one laptop screen.
+   /book-now, so not changed there) - fits all 9 rows within one laptop screen.
    Padding and line-height trimmed well below the global defaults (26px/1.75)
    without going so tight that the longer 2-line entries feel cramped. */
 .includedSection {
@@ -618,5 +752,15 @@
 .includedSection :global(.numbered-row__text) {
   font-size: 14.2px;
   line-height: 1.5;
+}
+
+/* The tight desktop size above is tuned to fit all 9 rows on one laptop
+   screen - that constraint doesn't apply on mobile/tablet, which already
+   scrolls through this list, so it can afford to read larger there. */
+@media (max-width: 1079px) {
+  .includedSection :global(.numbered-row__text) {
+    font-size: 15.5px;
+    line-height: 1.55;
+  }
 }
 

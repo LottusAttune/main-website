@@ -103,6 +103,23 @@
   line-height: 1.6;
 }
 
+/* The compact FAQ variant (used on the Home page) reads small on mobile/
+   tablet - desktop keeps its own size. */
+@media (max-width: 1079px) {
+  .answerCompact {
+    font-size: 15.5px;
+    line-height: 1.65;
+  }
+
+  /* Same thin 300 weight as .head, which at this size read as too faint
+     to pick out as a question on a small screen - a touch heavier and
+     larger closes that without borrowing .headBold's darker color too. */
+  .headCompact {
+    font-weight: 500;
+    font-size: 17.5px;
+  }
+}
+
 /* Solid ink-body by default (light-background use); .bulletsDark below
    swaps in a solid cream-ish tone for dark-card use - not the alpha-
    blended cream (rgba(239, 230, 218, 0.78)) this carried before, which

@@ -62,13 +62,66 @@
 .label {
   font-size: 12.5px;
   letter-spacing: 0.16em;
-  color: rgba(239, 230, 218, 0.72);
+  color: var(--color-cream-text-soft);
 }
 
 .actions {
   display: flex;
   gap: 10px;
   flex-wrap: wrap;
+}
+
+/* Mobile/tablet-only variant of the bar's content - hidden on desktop, where
+   the top nav already carries real Book/Gift buttons (see .label/.quietLink
+   above). Base rules here are the mobile state; the min-width query below
+   swaps back to the desktop pair, mirroring SiteNav's own .links toggle. */
+.mobileLabel {
+  display: none;
+  flex: 1 1 auto;
+  min-width: 0;
+  font-size: 13px;
+  line-height: 1.35;
+  letter-spacing: 0.01em;
+  color: var(--color-cream-text-soft);
+  text-align: left;
+}
+
+@media (max-width: 739px) {
+  .mobileLabel {
+    display: block;
+  }
+}
+
+/* Tablet has room to keep the same single-line, middle-dot format as
+   desktop's .label instead of the stacked phone version - just bigger, since
+   that was the actual complaint (phone is the real space constraint). */
+.tabletLabel {
+  display: none;
+}
+
+@media (min-width: 740px) and (max-width: 1079px) {
+  .tabletLabel {
+    display: block;
+    flex: 1 1 auto;
+    min-width: 0;
+    font-size: 13.5px;
+    letter-spacing: 0.14em;
+    color: var(--color-cream-text-soft);
+  }
+}
+
+.mobileActions {
+  display: flex;
+  flex: none;
+  gap: 8px;
+}
+
+.mobileCta {
+  padding: 6px 16px;
+  min-height: 34px;
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  border-radius: var(--radius-thumb);
 }
 
 .cta {
@@ -91,7 +144,7 @@
   text-transform: uppercase;
   /* Same muted tone as the label text next to it, so the two read as one
      family at rest - only the hover state brightens. */
-  color: rgba(239, 230, 218, 0.72);
+  color: var(--color-cream-text-soft);
   border-bottom: 1px solid rgba(239, 230, 218, 0.4);
   padding-bottom: 2px;
   white-space: nowrap;
@@ -105,4 +158,25 @@
 .quietLink:hover {
   color: var(--color-cream-text-bright);
   border-color: rgba(239, 230, 218, 0.8);
+}
+
+@media (max-width: 1079px) {
+  .barDark {
+    justify-content: space-between;
+    flex-wrap: nowrap;
+    gap: 14px;
+    padding: 6px clamp(16px, 4vw, 28px) calc(6px + env(safe-area-inset-bottom));
+  }
+
+  .label,
+  .quietLink {
+    display: none;
+  }
+}
+
+@media (min-width: 1080px) {
+  .mobileLabel,
+  .mobileActions {
+    display: none;
+  }
 }

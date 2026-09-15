@@ -34,6 +34,26 @@
   align-items: start;
 }
 
+/* The portrait column's own floor (190px) doesn't shrink with a narrow
+   viewport, so below this width the bio column was left with barely
+   100px to work with - single words wrapping per line. Stacks instead:
+   full-width portrait on top, full-width bio below. .sticky-col's
+   position:sticky (meant for the side-by-side layout, keeping the
+   portrait in view while the longer bio scrolls past it) is disabled
+   here too, for the same reason it was on Home's FAQ card - once the
+   layout has stacked, sticky pins the portrait in place over the bio
+   scrolling underneath it instead of leaving both to flow normally. */
+@media (max-width: 650px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+
+  .grid :global(.sticky-col) {
+    position: static;
+    top: auto;
+  }
+}
+
 /* Straight edges, not the 28px rounding this carried before - matches her
    preference for a flat, uncurved edge on this photo. */
 .portrait {
@@ -59,6 +79,32 @@
   max-width: 860px;
 }
 
+/* Justify reads fine at this column's normal (wider) width, but once the
+   layout below narrows the bio column down at phone widths, the same
+   justify stretches short lines into uneven, distracting word gaps. */
+@media (max-width: 600px) {
+  .bio {
+    text-align: left;
+  }
+}
+
+/* Phone gets the condensed FOUNDER_BIO_SHORT paragraphs instead of the full
+   five - tablet and desktop are untouched. Both sets render in the markup
+   and are toggled here rather than in JS, so there's no hydration mismatch. */
+.bioShortP {
+  display: none;
+}
+
+@media (max-width: 600px) {
+  .bioFullP {
+    display: none;
+  }
+
+  .bioShortP {
+    display: block;
+  }
+}
+
 /* The founder-guide line ("I bridge the gap...") - previously a huge
    opening quote above the portrait/bio grid, now sits after the bio text
    as a small closing line, centered, in the same font treatment as
@@ -75,6 +121,16 @@
   line-height: 1.35;
   color: var(--color-gold-text);
   text-align: center;
+}
+
+/* Reads as too quiet to stand out as her own closing line on mobile/
+   tablet - heavier weight and a touch bigger, same color. Desktop
+   unchanged. */
+@media (max-width: 1079px) {
+  .closingQuote {
+    font-weight: 500;
+    font-size: 18px;
+  }
 }
 
 /* First name only, no title - "Facilitator"/"Founder" is already clear
@@ -172,12 +228,32 @@
   text-align: center;
 }
 
+/* The shared .eyebrow class's 10.5px + wide tracking reads as too faint for
+   a label that's actually inviting a tap, on mobile/tablet - a modest bump
+   only (600/13px read as shouting next to the site's other quiet eyebrow
+   labels). Desktop keeps the standard eyebrow treatment. */
+@media (max-width: 1079px) {
+  .videoLabel {
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.28em;
+  }
+}
+
 .videoHint {
   margin: 14px 0 0;
   font-size: 12.5px;
   line-height: 1.6;
   text-align: center;
   color: var(--color-muted);
+}
+
+/* Reads too small at arm's length on mobile/tablet - desktop keeps its
+   original size. */
+@media (max-width: 1079px) {
+  .videoHint {
+    font-size: 14.5px;
+  }
 }
 
 /* Fixed-height thumbnail row, not fixed-width columns - a portrait video

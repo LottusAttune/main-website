@@ -4,15 +4,35 @@ import { z } from 'zod';
 
 import { isSignedIn } from '@/lib/auth';
 import {
+  chargeBalance,
+  chargeCancellationFee,
+  afterPayment,
+  sendBookingConfirmation,
+  sendBookingReminder,
+} from '@/lib/bookings';
+import {
   deleteCalendarEvent,
   discoveryCallWindow,
   sessionSlotWindow,
   updateCalendarEventTime,
 } from '@/lib/calendar';
 import { isDatabaseConfigured, sql } from '@/lib/db';
-import { STAGE_KEYS } from '@/lib/pipeline';
+import {
+  ensureBookingDocument,
+  ensureGiftDocument,
+  generatePdf,
+  getDocument,
+  logActivity,
+  markDocument,
+  recordPayment,
+  sendDocument,
+  updateDocument,
+} from '@/lib/documents';
+import { balanceDue, STAGE_KEYS, STAGES } from '@/lib/pipeline';
 
 export const runtime = 'nodejs';
+
+const isoDay = z.string().regex(/^\d{4}-\d{2}-\d{2}$/);
 
 /**
  * Every studio mutation goes through here, so authentication is enforced in
@@ -84,6 +104,88 @@ const action = z.discriminatedUnion('action', [
     action: z.literal('cancelBooking'),
     id: z.string().uuid(),
     cancelled: z.boolean(),
+    /** Also charge the late-cancellation fee to the card on file. */
+    chargeFee: z.boolean().optional(),
+  }),
+  z.object({
+    action: z.literal('editLead'),
+    id: z.string().uuid(),
+    name: z.string().trim().min(1).max(120),
+    email: z.string().trim().email().max(200),
+    phone: z.string().trim().max(60).nullable(),
+    company: z.string().trim().max(160).nullable(),
+  }),
+  z.object({
+    action: z.literal('addNote'),
+    bookingId: z.string().uuid().optional(),
+    giftId: z.string().uuid().optional(),
+    body: z.string().trim().min(1).max(4000),
+  }),
+  z.object({
+    action: z.literal('createDocument'),
+    bookingId: z.string().uuid(),
+    kind: z.enum(['proposal', 'invoice']),
+  }),
+  z.object({
+    action: z.literal('createGiftDocument'),
+    giftId: z.string().uuid(),
+    kind: z.enum(['invoice', 'certificate']),
+  }),
+  z.object({ action: z.literal('sendDocument'), id: z.string().uuid() }),
+  z.object({ action: z.literal('regeneratePdf'), id: z.string().uuid() }),
+  z.object({
+    action: z.literal('updateDocument'),
+    id: z.string().uuid(),
+    lines: z
+      .array(z.object({ label: z.string().trim().min(1).max(200), amount: z.coerce.number().int().min(-100_000).max(100_000) }))
+      .min(1)
+      .max(30),
+    notes: z.string().trim().max(2000).nullable(),
+    dueOn: isoDay.nullable(),
+  }),
+  z.object({
+    action: z.literal('markDocument'),
+    id: z.string().uuid(),
+    status: z.enum(['void', 'accepted', 'declined']),
+  }),
+  z.object({
+    action: z.literal('recordPayment'),
+    id: z.string().uuid(),
+    /** Omit to settle the outstanding balance. */
+    amount: z.coerce.number().int().min(1).max(100_000).optional(),
+    method: z.enum(['e-transfer', 'cash', 'card', 'other']),
+    note: z.string().trim().max(400).nullable().optional(),
+  }),
+  z.object({ action: z.literal('sendConfirmation'), bookingId: z.string().uuid() }),
+  z.object({ action: z.literal('sendReminder'), bookingId: z.string().uuid() }),
+  z.object({ action: z.literal('chargeBalance'), bookingId: z.string().uuid() }),
+  z.object({ action: z.literal('chargeCancellationFee'), bookingId: z.string().uuid() }),
+  z.object({ action: z.literal('deleteGift'), id: z.string().uuid() }),
+  z.object({
+    action: z.literal('updateBusiness'),
+    businessName: z.string().trim().min(1).max(160),
+    businessAddress: z.string().trim().max(400),
+    businessEmail: z.string().trim().email().max(200),
+    businessPhone: z.string().trim().max(60),
+    taxLabel: z.string().trim().max(20),
+    taxNumber: z.string().trim().max(60),
+    taxRatePercent: z.coerce.number().min(0).max(50),
+    paymentInstructions: z.string().trim().max(2000),
+    invoiceDueDays: z.coerce.number().int().min(0).max(120),
+    invoicePrefix: z.string().trim().min(1).max(10).regex(/^[A-Za-z0-9]+$/),
+    invoiceFooter: z.string().trim().max(2000),
+    proposalIntro: z.string().trim().max(3000),
+    proposalValidDays: z.coerce.number().int().min(1).max(120),
+    autoSendProposals: z.boolean(),
+    autoSendInvoices: z.boolean(),
+    cardFeePercent: z.coerce.number().min(0).max(20),
+    depositPercent: z.coerce.number().int().min(0).max(100),
+    balanceDaysBefore: z.coerce.number().int().min(0).max(60),
+    cancellationFee: z.coerce.number().int().min(0).max(10_000),
+    cancellationHours: z.coerce.number().int().min(0).max(720),
+    cancellationPolicy: z.string().trim().max(3000),
+    venueDetails: z.string().trim().max(3000),
+    reminderDaysBefore: z.coerce.number().int().min(0).max(30),
   }),
   z.object({ action: z.literal('deleteBooking'), id: z.string().uuid() }),
   z.object({
@@ -127,8 +229,162 @@ export async function POST(request: Request) {
 
   try {
     switch (input.action) {
-      case 'moveLead':
+      case 'moveLead': {
         await sql`UPDATE bookings SET status = ${input.status} WHERE id = ${input.id}`;
+        const label = STAGES.find((s) => s.key === input.status)?.label ?? input.status;
+        await logActivity({ bookingId: input.id, kind: 'stage', body: `Moved to ${label}` });
+        break;
+      }
+
+      case 'editLead':
+        await sql`
+          UPDATE bookings SET name = ${input.name}, email = ${input.email},
+            phone = ${input.phone}, company = ${input.company}
+          WHERE id = ${input.id}
+        `;
+        // Paperwork not yet sent follows the corrected details.
+        await sql`
+          UPDATE documents SET client_name = ${input.name}, client_email = ${input.email},
+            client_company = ${input.company}, pdf = NULL, pdf_generated_at = NULL
+          WHERE booking_id = ${input.id} AND status = 'draft'
+        `;
+        break;
+
+      case 'addNote':
+        if (!input.bookingId && !input.giftId) {
+          return NextResponse.json({ error: 'A note needs a lead or gift.' }, { status: 400 });
+        }
+        await logActivity({
+          bookingId: input.bookingId ?? null,
+          giftId: input.giftId ?? null,
+          kind: 'note',
+          body: input.body,
+        });
+        break;
+
+      case 'createDocument': {
+        const doc = await ensureBookingDocument(input.bookingId, input.kind);
+        revalidatePath('/studio');
+        return NextResponse.json({ ok: true, id: doc.id });
+      }
+
+      case 'createGiftDocument': {
+        const doc = await ensureGiftDocument(input.giftId, input.kind);
+        revalidatePath('/studio');
+        return NextResponse.json({ ok: true, id: doc.id });
+      }
+
+      case 'sendDocument': {
+        const result = await sendDocument(input.id);
+        revalidatePath('/studio');
+        if (!result.ok) return NextResponse.json({ error: result.error }, { status: 502 });
+        break;
+      }
+
+      case 'regeneratePdf': {
+        const doc = await getDocument(input.id);
+        if (!doc) return NextResponse.json({ error: 'Document not found.' }, { status: 404 });
+        const pdf = await generatePdf(doc);
+        if (!pdf) {
+          return NextResponse.json(
+            { error: 'PDF could not be generated - check PDFSHIFT_API_KEY.' },
+            { status: 502 }
+          );
+        }
+        break;
+      }
+
+      case 'updateDocument':
+        await updateDocument(input.id, {
+          lines: input.lines,
+          notes: input.notes,
+          dueOn: input.dueOn,
+        });
+        break;
+
+      case 'markDocument': {
+        const result = await markDocument(input.id, input.status);
+        if (!result.ok) return NextResponse.json({ error: result.error }, { status: 400 });
+        break;
+      }
+
+      case 'recordPayment': {
+        const doc = await getDocument(input.id);
+        if (!doc) return NextResponse.json({ error: 'Document not found.' }, { status: 404 });
+        const amount = input.amount ?? balanceDue(doc);
+        if (amount <= 0) return NextResponse.json({ error: 'Nothing is outstanding.' }, { status: 400 });
+        const { doc: updated } = await recordPayment({
+          documentId: doc.id,
+          amount,
+          method: input.method,
+          note: input.note ?? null,
+        });
+        const kind = updated.status === 'paid' && doc.paidAmount > 0 ? 'balance' : updated.status === 'paid' ? 'payment' : 'deposit';
+        await afterPayment(updated, amount, input.method, kind);
+        break;
+      }
+
+      case 'sendConfirmation': {
+        const result = await sendBookingConfirmation(input.bookingId);
+        revalidatePath('/studio');
+        if (!result.ok) return NextResponse.json({ error: result.error }, { status: 502 });
+        break;
+      }
+
+      case 'sendReminder': {
+        const result = await sendBookingReminder(input.bookingId);
+        revalidatePath('/studio');
+        if (!result.ok) return NextResponse.json({ error: result.error }, { status: 502 });
+        break;
+      }
+
+      case 'chargeBalance': {
+        const result = await chargeBalance(input.bookingId);
+        revalidatePath('/studio');
+        if (!result.ok) return NextResponse.json({ error: result.error }, { status: 502 });
+        break;
+      }
+
+      case 'chargeCancellationFee': {
+        const result = await chargeCancellationFee(input.bookingId);
+        revalidatePath('/studio');
+        if (!result.ok) return NextResponse.json({ error: result.error }, { status: 502 });
+        break;
+      }
+
+      case 'deleteGift':
+        await sql`DELETE FROM gift_requests WHERE id = ${input.id}`;
+        break;
+
+      case 'updateBusiness':
+        await sql`
+          UPDATE settings SET
+            business_name = ${input.businessName},
+            business_address = ${input.businessAddress},
+            business_email = ${input.businessEmail},
+            business_phone = ${input.businessPhone},
+            tax_label = ${input.taxLabel},
+            tax_number = ${input.taxNumber},
+            tax_rate_percent = ${input.taxRatePercent},
+            payment_instructions = ${input.paymentInstructions},
+            invoice_due_days = ${input.invoiceDueDays},
+            invoice_prefix = ${input.invoicePrefix.toUpperCase()},
+            invoice_footer = ${input.invoiceFooter},
+            proposal_intro = ${input.proposalIntro},
+            proposal_valid_days = ${input.proposalValidDays},
+            auto_send_proposals = ${input.autoSendProposals},
+            auto_send_invoices = ${input.autoSendInvoices},
+            card_fee_percent = ${input.cardFeePercent},
+            deposit_percent = ${input.depositPercent},
+            balance_days_before = ${input.balanceDaysBefore},
+            cancellation_fee = ${input.cancellationFee},
+            cancellation_hours = ${input.cancellationHours},
+            cancellation_policy = ${input.cancellationPolicy},
+            venue_details = ${input.venueDetails},
+            reminder_days_before = ${input.reminderDaysBefore},
+            updated_at = NOW()
+          WHERE id = TRUE
+        `;
         break;
 
       case 'publishSettings':
@@ -276,8 +532,20 @@ export async function POST(request: Request) {
             SET status = 'cancelled', calendar_event_id = NULL, calendar_event_id_2 = NULL
             WHERE id = ${input.id}
           `;
+          await logActivity({ bookingId: input.id, kind: 'cancelled', body: 'Booking cancelled' });
+          if (input.chargeFee) {
+            const fee = await chargeCancellationFee(input.id);
+            if (!fee.ok) {
+              revalidatePath('/studio');
+              return NextResponse.json(
+                { error: `Cancelled, but the fee was not charged: ${fee.error}` },
+                { status: 502 }
+              );
+            }
+          }
         } else {
           await sql`UPDATE bookings SET status = 'booked' WHERE id = ${input.id}`;
+          await logActivity({ bookingId: input.id, kind: 'stage', body: 'Booking restored' });
         }
         break;
 

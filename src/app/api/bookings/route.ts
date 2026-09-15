@@ -2,9 +2,11 @@ import { NextResponse } from 'next/server';
 
 import { createCalendarEvent, sessionSlotWindow } from '@/lib/calendar';
 import { isDatabaseConfigured, sql } from '@/lib/db';
+import { ensureBookingDocument, logActivity, sendDocument } from '@/lib/documents';
+import { sendBookingRequestEmails } from '@/lib/email';
 import { quoteFor } from '@/lib/quote';
 import { getSettings } from '@/lib/settings';
-import { LOUNGE_MAX } from '@/lib/site';
+import { LOUNGE_MAX, SITE } from '@/lib/site';
 import { bookingSchema } from '@/lib/validation';
 
 function venueFor(participants: number): string {
@@ -146,6 +148,37 @@ export async function POST(request: Request) {
         SET calendar_event_id = ${eventId}, calendar_event_id_2 = ${eventId2}
         WHERE id = ${result.rows[0]?.id}
       `;
+    }
+
+    // The paperwork starts the moment the request lands: a proposal is
+    // drafted from the quoted price (and its card links minted), both
+    // sides get a "received" email, and - if Silvana has switched it on -
+    // the proposal goes straight out.
+    const bookingId = String(result.rows[0]?.id);
+    await logActivity({ bookingId, kind: 'received', body: 'Booking request received from the website' });
+    const emails = await sendBookingRequestEmails({
+      name: input.name,
+      email: input.email,
+      phone: input.phone ?? null,
+      company: input.company ?? null,
+      message: input.message ?? null,
+      participants: input.participants,
+      sessionDate: input.sessionDate,
+      sessionTime: input.sessionTime,
+      sessionDate2: input.sessionDate2 ?? null,
+      sessionTime2: input.sessionTime2 ?? null,
+      total,
+      venue,
+      studioUrl: `${SITE.url}/studio`,
+    });
+    if (!emails.client.ok) {
+      await logActivity({ bookingId, kind: 'email_failed', body: `Request received email: ${emails.client.error}` });
+    }
+    try {
+      const proposal = await ensureBookingDocument(bookingId, 'proposal', settings);
+      if (settings.business.autoSendProposals) await sendDocument(proposal.id);
+    } catch (error) {
+      console.error('[bookings] proposal draft failed:', error);
     }
 
     return NextResponse.json(

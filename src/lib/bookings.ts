@@ -1,0 +1,325 @@
+import 'server-only';
+
+import { sessionSlotWindow } from '@/lib/calendar';
+import { FAQS, VENUE_COPY } from '@/data/content';
+import { sql } from '@/lib/db';
+import {
+  ensureBookingDocument,
+  getDocument,
+  logActivity,
+  publicUrl,
+  recordPayment,
+  type ActionResult,
+} from '@/lib/documents';
+import {
+  sendBookingConfirmationEmail,
+  sendOwnerNotification,
+  sendReceiptEmail,
+  sendReminderEmail,
+  type SessionEmailInput,
+} from '@/lib/email';
+import { buildIcs, googleCalendarUrl } from '@/lib/ics';
+import { balanceDue, type DocumentRow } from '@/lib/pipeline';
+import { getSettings, type SiteSettings } from '@/lib/settings';
+import { chargeSavedCard, isStripeConfigured, StripeError } from '@/lib/stripe';
+import { LOUNGE_MAX, money } from '@/lib/site';
+
+/**
+ * Everything that happens to a booking after the client says yes:
+ * confirmation, reminders, the deposit-plan balance and the late fee.
+ */
+
+type Row = Record<string, unknown>;
+
+function toIso(value: unknown): string | null {
+  if (!value) return null;
+  if (value instanceof Date) return value.toISOString().slice(0, 10);
+  return String(value).slice(0, 10);
+}
+
+function addDays(iso: string, days: number): string {
+  const [y, m, d] = iso.split('-').map(Number);
+  return new Date(Date.UTC(y, m - 1, d + days)).toISOString().slice(0, 10);
+}
+
+function torontoToday(): string {
+  return new Date().toLocaleDateString('en-CA', { timeZone: 'America/Toronto' });
+}
+
+const CONFIRMATION_FAQS = FAQS.filter((f) =>
+  ['What should I bring?', 'What should I wear?', 'What to expect?'].includes(f.q)
+);
+
+const DEFAULT_CANCELLATION_POLICY =
+  FAQS.find((f) => f.q === 'Cancellation Policy')?.a ?? '';
+
+async function invoiceFor(bookingId: string): Promise<DocumentRow | null> {
+  const result = await sql`
+    SELECT id FROM documents
+    WHERE booking_id = ${bookingId} AND kind = 'invoice' AND status != 'void'
+    ORDER BY created_at DESC LIMIT 1
+  `;
+  const id = result.rows[0]?.id;
+  return id ? getDocument(String(id)) : null;
+}
+
+async function sessionEmailInput(
+  row: Row,
+  settings: SiteSettings,
+  invoice: DocumentRow | null
+): Promise<SessionEmailInput | null> {
+  const sessionDate = toIso(row.session_date);
+  const sessionTime = row.session_time ? String(row.session_time) : null;
+  if (!sessionDate || !sessionTime) return null;
+
+  const participants = Number(row.participants);
+  const venue = participants <= LOUNGE_MAX ? 'Private Wellness Lounge' : 'Premium Signature Venue';
+  const { startISO, endISO } = sessionSlotWindow(sessionDate, sessionTime);
+  const event = {
+    uid: `booking-${String(row.id)}@lotusattune.com`,
+    title: 'Lotus Attune — Immersive Soma Sound Experience',
+    description: `${venue}. ${VENUE_COPY[0]}`,
+    location: settings.business.venueDetails || venue,
+    startISO,
+    endISO,
+  };
+  const due = invoice ? balanceDue(invoice) : 0;
+  return {
+    name: String(row.name),
+    email: String(row.email),
+    participants,
+    sessionDate,
+    sessionTime,
+    sessionDate2: toIso(row.session_date_2),
+    sessionTime2: row.session_time_2 ? String(row.session_time_2) : null,
+    venue,
+    venueCopy: VENUE_COPY,
+    venueDetails: settings.business.venueDetails,
+    cancellationPolicy: settings.business.cancellationPolicy || DEFAULT_CANCELLATION_POLICY,
+    faqs: CONFIRMATION_FAQS,
+    googleCalendarUrl: googleCalendarUrl(event),
+    ics: buildIcs(event),
+    amountPaid: invoice?.paidAmount ?? 0,
+    balanceDue: due,
+    balanceChargeDate:
+      due > 0 && row.stripe_payment_method_id
+        ? addDays(sessionDate, -settings.business.balanceDaysBefore)
+        : null,
+  };
+}
+
+/** Confirmation email with venue, FAQs, policy and calendar file. */
+export async function sendBookingConfirmation(bookingId: string): Promise<ActionResult> {
+  const result = await sql`SELECT * FROM bookings WHERE id = ${bookingId}`;
+  const row = result.rows[0];
+  if (!row) return { ok: false, error: 'Booking not found.' };
+
+  const settings = await getSettings();
+  const invoice = await invoiceFor(bookingId);
+  const input = await sessionEmailInput(row, settings, invoice);
+  if (!input) return { ok: false, error: 'This booking has no session date yet.' };
+
+  const sent = await sendBookingConfirmationEmail(input);
+  if (!sent.ok) {
+    await logActivity({ bookingId, kind: 'email_failed', body: `Confirmation: ${sent.error}` });
+    return sent;
+  }
+  await sql`UPDATE bookings SET confirmation_sent_at = NOW() WHERE id = ${bookingId}`;
+  await logActivity({ bookingId, kind: 'confirmation_sent', body: `Confirmation sent to ${input.email}` });
+  return { ok: true };
+}
+
+export async function sendBookingReminder(bookingId: string): Promise<ActionResult> {
+  const result = await sql`SELECT * FROM bookings WHERE id = ${bookingId}`;
+  const row = result.rows[0];
+  if (!row) return { ok: false, error: 'Booking not found.' };
+
+  const settings = await getSettings();
+  const invoice = await invoiceFor(bookingId);
+  const input = await sessionEmailInput(row, settings, invoice);
+  if (!input) return { ok: false, error: 'This booking has no session date yet.' };
+
+  const sent = await sendReminderEmail(input);
+  if (!sent.ok) {
+    await logActivity({ bookingId, kind: 'email_failed', body: `Reminder: ${sent.error}` });
+    return sent;
+  }
+  await sql`UPDATE bookings SET reminder_sent_at = NOW() WHERE id = ${bookingId}`;
+  await logActivity({ bookingId, kind: 'reminder_sent', body: `Reminder sent to ${input.email}` });
+  return { ok: true };
+}
+
+/** After any card payment lands: receipt to the client, heads-up to Silvana,
+ *  and the confirmation email the first time money arrives. */
+export async function afterPayment(
+  doc: DocumentRow,
+  amount: number,
+  method: string,
+  kind: string
+): Promise<void> {
+  await sendReceiptEmail({
+    name: doc.clientName,
+    email: doc.clientEmail,
+    number: doc.number,
+    amount,
+    method,
+    kind,
+    balanceDue: balanceDue(doc),
+    viewUrl: publicUrl(doc),
+  });
+  await sendOwnerNotification({
+    subject: `Payment received: ${money(amount)} from ${doc.clientName} — ${doc.number}`,
+    html: `<p style="margin:0;">${doc.clientName} paid ${money(amount)} by ${method} (${kind}) on ${doc.number}.${balanceDue(doc) > 0 ? ` ${money(balanceDue(doc))} remains.` : ' Paid in full.'}</p>`,
+  });
+  if (doc.bookingId && kind !== 'cancellation_fee') {
+    const b = await sql`SELECT confirmation_sent_at FROM bookings WHERE id = ${doc.bookingId}`;
+    if (!b.rows[0]?.confirmation_sent_at) await sendBookingConfirmation(doc.bookingId);
+  }
+}
+
+/** Charges the deposit plan's remaining balance to the saved card. */
+export async function chargeBalance(bookingId: string): Promise<ActionResult> {
+  if (!isStripeConfigured()) return { ok: false, error: 'Stripe is not connected.' };
+  const result = await sql`SELECT * FROM bookings WHERE id = ${bookingId}`;
+  const row = result.rows[0];
+  if (!row) return { ok: false, error: 'Booking not found.' };
+  if (!row.stripe_customer_id || !row.stripe_payment_method_id) {
+    return { ok: false, error: 'No card on file for this booking.' };
+  }
+  const invoice = await invoiceFor(bookingId);
+  if (!invoice) return { ok: false, error: 'No invoice for this booking.' };
+  const due = balanceDue(invoice);
+  if (due <= 0) return { ok: false, error: 'Nothing outstanding on this invoice.' };
+
+  const settings = await getSettings();
+  const fee = Math.round((due * settings.business.cardFeePercent) / 100);
+  try {
+    const intent = await chargeSavedCard({
+      customerId: String(row.stripe_customer_id),
+      paymentMethodId: String(row.stripe_payment_method_id),
+      amount: due + fee,
+      description: `${settings.business.businessName} — ${invoice.number} balance`,
+      metadata: { documentId: invoice.id, plan: 'balance' },
+      idempotencyKey: `balance-${invoice.id}`,
+    });
+    const { doc } = await recordPayment({
+      documentId: invoice.id,
+      amount: due,
+      method: 'card',
+      kind: 'balance',
+      stripePaymentIntent: intent,
+      note: fee > 0 ? `Card fee ${money(fee)} charged on top` : null,
+    });
+    await sql`UPDATE bookings SET balance_charged_at = NOW() WHERE id = ${bookingId}`;
+    await afterPayment(doc, due, 'card', 'balance');
+    return { ok: true };
+  } catch (error) {
+    const message = error instanceof StripeError ? error.message : 'The card could not be charged.';
+    await logActivity({ bookingId, documentId: invoice.id, kind: 'charge_failed', body: `Balance: ${message}` });
+    await sendOwnerNotification({
+      subject: `Balance charge failed: ${String(row.name)} — ${invoice.number}`,
+      html: `<p style="margin:0;">Stripe could not charge the remaining ${money(due)} for ${String(row.name)}: ${message}</p>`,
+    });
+    return { ok: false, error: message };
+  }
+}
+
+/** The late-cancellation / no-show fee, to the card on file. */
+export async function chargeCancellationFee(bookingId: string): Promise<ActionResult> {
+  if (!isStripeConfigured()) return { ok: false, error: 'Stripe is not connected.' };
+  const result = await sql`SELECT * FROM bookings WHERE id = ${bookingId}`;
+  const row = result.rows[0];
+  if (!row) return { ok: false, error: 'Booking not found.' };
+  if (!row.stripe_customer_id || !row.stripe_payment_method_id) {
+    return { ok: false, error: 'No card on file for this booking.' };
+  }
+  if (row.cancellation_fee_charged_at) return { ok: false, error: 'The fee was already charged.' };
+
+  const settings = await getSettings();
+  const fee = settings.business.cancellationFee;
+  if (fee <= 0) return { ok: false, error: 'No cancellation fee is set.' };
+  const invoice = (await invoiceFor(bookingId)) ?? (await ensureBookingDocument(bookingId, 'invoice', settings));
+
+  try {
+    const intent = await chargeSavedCard({
+      customerId: String(row.stripe_customer_id),
+      paymentMethodId: String(row.stripe_payment_method_id),
+      amount: fee,
+      description: `${settings.business.businessName} — cancellation fee (${invoice.number})`,
+      metadata: { documentId: invoice.id, plan: 'cancellation_fee' },
+      idempotencyKey: `cancel-fee-${bookingId}`,
+    });
+    await sql`
+      INSERT INTO payments (document_id, booking_id, amount, method, kind, stripe_payment_intent, note)
+      VALUES (${invoice.id}, ${bookingId}, ${fee}, 'card', 'cancellation_fee', ${intent}, 'Late cancellation / no-show')
+    `;
+    await sql`UPDATE bookings SET cancellation_fee_charged_at = NOW() WHERE id = ${bookingId}`;
+    await logActivity({ bookingId, documentId: invoice.id, kind: 'cancellation_fee_charged', body: money(fee) });
+    await sendReceiptEmail({
+      name: String(row.name),
+      email: String(row.email),
+      number: invoice.number,
+      amount: fee,
+      method: 'card',
+      kind: 'cancellation_fee',
+      balanceDue: 0,
+      viewUrl: publicUrl(invoice),
+    });
+    return { ok: true };
+  } catch (error) {
+    const message = error instanceof StripeError ? error.message : 'The card could not be charged.';
+    await logActivity({ bookingId, kind: 'charge_failed', body: `Cancellation fee: ${message}` });
+    return { ok: false, error: message };
+  }
+}
+
+/** Hours between now and the session start, for the late-cancel rule. */
+export function hoursUntilSession(sessionDate: string | null, sessionTime: string | null): number | null {
+  if (!sessionDate || !sessionTime) return null;
+  try {
+    const { startISO } = sessionSlotWindow(sessionDate, sessionTime);
+    const start = new Date(`${startISO}-04:00`);
+    return (start.getTime() - Date.now()) / 3_600_000;
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Once a day (Vercel Cron → /api/cron/daily): reminders N days out, deposit
+ * balances M days out. Each is idempotent via the *_at stamps.
+ */
+export async function runDailyJobs(): Promise<{ reminders: number; balances: number; errors: string[] }> {
+  const settings = await getSettings();
+  const today = torontoToday();
+  const errors: string[] = [];
+
+  const reminderDay = addDays(today, settings.business.reminderDaysBefore);
+  const remind = await sql`
+    SELECT id FROM bookings
+    WHERE status = 'booked' AND session_date = ${reminderDay} AND reminder_sent_at IS NULL
+  `;
+  let reminders = 0;
+  for (const row of remind.rows) {
+    const r = await sendBookingReminder(String(row.id));
+    if (r.ok) reminders += 1;
+    else errors.push(`reminder ${String(row.id)}: ${r.error}`);
+  }
+
+  const balanceDay = addDays(today, settings.business.balanceDaysBefore);
+  const charge = await sql`
+    SELECT b.id FROM bookings b
+    JOIN documents d ON d.booking_id = b.id AND d.kind = 'invoice' AND d.status NOT IN ('void', 'paid')
+    WHERE b.status = 'booked' AND b.session_date <= ${balanceDay}
+      AND b.stripe_payment_method_id IS NOT NULL AND b.balance_charged_at IS NULL
+      AND d.paid_amount > 0 AND d.paid_amount < d.total
+  `;
+  let balances = 0;
+  for (const row of charge.rows) {
+    const r = await chargeBalance(String(row.id));
+    if (r.ok) balances += 1;
+    else errors.push(`balance ${String(row.id)}: ${r.error}`);
+  }
+
+  return { reminders, balances, errors };
+}

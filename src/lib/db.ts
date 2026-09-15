@@ -110,22 +110,40 @@ export async function sql(
   strings: TemplateStringsArray,
   ...values: unknown[]
 ): Promise<{ rows: Row[] }> {
-  const client = createClient();
-  if (!client) throw new DatabaseNotConfiguredError();
-
-  try {
-    const query = (
+  return run((client) =>
+    (
       client as unknown as (
         s: TemplateStringsArray,
         ...v: unknown[]
       ) => Promise<Row[]>
-    )(strings, ...values);
+    )(strings, ...values)
+  );
+}
 
+/**
+ * Positional-parameter form (`$1`, `$2`…) for the few queries whose column
+ * list or WHERE clause is assembled from trusted, hard-coded fragments.
+ * Values are still bound parameters, never concatenated.
+ */
+export async function sqlRaw(
+  text: string,
+  params: unknown[] = []
+): Promise<{ rows: Row[] }> {
+  return run((client) => client.unsafe(text, params as never) as unknown as Promise<Row[]>);
+}
+
+async function run(
+  query: (client: NonNullable<ReturnType<typeof createClient>>) => Promise<Row[]>
+): Promise<{ rows: Row[] }> {
+  const client = createClient();
+  if (!client) throw new DatabaseNotConfiguredError();
+
+  try {
     const timeout = new Promise<never>((_, reject) => {
       setTimeout(() => reject(new DatabaseTimeoutError()), QUERY_TIMEOUT_MS);
     });
 
-    const result = await Promise.race([query, timeout]);
+    const result = await Promise.race([query(client), timeout]);
     return { rows: Array.from(result) };
   } finally {
     // Closing a connection that is already wedged can itself hang (observed

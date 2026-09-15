@@ -250,3 +250,148 @@ CREATE TABLE IF NOT EXISTS contact_messages (
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
+
+-- ---------------------------------------------------------------------------
+-- Business details printed on proposals and invoices, plus the automation
+-- switches. All additive with defaults, so an existing database keeps
+-- working untouched until Silvana fills them in from Settings.
+-- ---------------------------------------------------------------------------
+ALTER TABLE settings ADD COLUMN IF NOT EXISTS business_name         TEXT NOT NULL DEFAULT 'Lotus Attune';
+ALTER TABLE settings ADD COLUMN IF NOT EXISTS business_address      TEXT NOT NULL DEFAULT '';
+ALTER TABLE settings ADD COLUMN IF NOT EXISTS business_email        TEXT NOT NULL DEFAULT 'info@lotusattune.com';
+ALTER TABLE settings ADD COLUMN IF NOT EXISTS business_phone        TEXT NOT NULL DEFAULT '416-871-5610';
+ALTER TABLE settings ADD COLUMN IF NOT EXISTS tax_label             TEXT NOT NULL DEFAULT 'HST';
+ALTER TABLE settings ADD COLUMN IF NOT EXISTS tax_number            TEXT NOT NULL DEFAULT '';
+-- 0 until she confirms registration; Ontario HST is 13.
+ALTER TABLE settings ADD COLUMN IF NOT EXISTS tax_rate_percent      NUMERIC(5,2) NOT NULL DEFAULT 0;
+ALTER TABLE settings ADD COLUMN IF NOT EXISTS payment_instructions  TEXT NOT NULL DEFAULT '';
+ALTER TABLE settings ADD COLUMN IF NOT EXISTS invoice_due_days      INTEGER NOT NULL DEFAULT 7;
+ALTER TABLE settings ADD COLUMN IF NOT EXISTS invoice_prefix        TEXT NOT NULL DEFAULT 'LA';
+ALTER TABLE settings ADD COLUMN IF NOT EXISTS invoice_footer        TEXT NOT NULL DEFAULT '';
+ALTER TABLE settings ADD COLUMN IF NOT EXISTS proposal_intro        TEXT NOT NULL DEFAULT '';
+ALTER TABLE settings ADD COLUMN IF NOT EXISTS proposal_valid_days   INTEGER NOT NULL DEFAULT 14;
+-- Automation: send the proposal the moment a booking request lands, and
+-- send the invoice the moment a proposal is accepted. Both off by default
+-- so she reviews first until she chooses otherwise.
+ALTER TABLE settings ADD COLUMN IF NOT EXISTS auto_send_proposals   BOOLEAN NOT NULL DEFAULT FALSE;
+ALTER TABLE settings ADD COLUMN IF NOT EXISTS auto_send_invoices    BOOLEAN NOT NULL DEFAULT FALSE;
+
+-- ---------------------------------------------------------------------------
+-- Proposals, invoices and gift certificates. One table: the paperwork for a
+-- booking or a gift request, with its own public token (the link in the
+-- client's email), the rendered PDF, and the timestamps that drive status.
+-- ---------------------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS documents (
+  id               UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  kind             TEXT NOT NULL CHECK (kind IN ('proposal', 'invoice', 'certificate')),
+  number           TEXT NOT NULL,
+  booking_id       UUID REFERENCES bookings(id) ON DELETE CASCADE,
+  gift_id          UUID REFERENCES gift_requests(id) ON DELETE CASCADE,
+  client_name      TEXT NOT NULL,
+  client_email     TEXT NOT NULL,
+  client_company   TEXT,
+  -- draft | sent | accepted | declined | paid | void
+  status           TEXT NOT NULL DEFAULT 'draft',
+  -- [{ "label": "...", "amount": 1250 }]
+  lines            JSONB NOT NULL DEFAULT '[]'::JSONB,
+  subtotal         INTEGER NOT NULL DEFAULT 0,
+  tax_rate         NUMERIC(5,2) NOT NULL DEFAULT 0,
+  tax              INTEGER NOT NULL DEFAULT 0,
+  total            INTEGER NOT NULL DEFAULT 0,
+  currency         TEXT NOT NULL DEFAULT 'CAD',
+  issued_on        DATE NOT NULL DEFAULT CURRENT_DATE,
+  due_on           DATE,
+  notes            TEXT,
+  token            UUID NOT NULL DEFAULT gen_random_uuid(),
+  pdf              BYTEA,
+  pdf_generated_at TIMESTAMPTZ,
+  sent_at          TIMESTAMPTZ,
+  sent_to          TEXT,
+  viewed_at        TIMESTAMPTZ,
+  accepted_at      TIMESTAMPTZ,
+  paid_at          TIMESTAMPTZ,
+  paid_method      TEXT,
+  voided_at        TIMESTAMPTZ,
+  created_at       TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  updated_at       TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+CREATE UNIQUE INDEX IF NOT EXISTS documents_number_idx  ON documents (number);
+CREATE UNIQUE INDEX IF NOT EXISTS documents_token_idx   ON documents (token);
+CREATE INDEX IF NOT EXISTS documents_booking_idx        ON documents (booking_id);
+CREATE INDEX IF NOT EXISTS documents_gift_idx           ON documents (gift_id);
+CREATE INDEX IF NOT EXISTS documents_kind_status_idx    ON documents (kind, status);
+
+-- Sequential numbering per kind and year (LA-2026-0001), allocated
+-- atomically so two documents can never share a number.
+CREATE TABLE IF NOT EXISTS document_counters (
+  kind  TEXT    NOT NULL,
+  year  INTEGER NOT NULL,
+  last  INTEGER NOT NULL DEFAULT 0,
+  PRIMARY KEY (kind, year)
+);
+
+-- ---------------------------------------------------------------------------
+-- Timeline per lead / gift: notes Silvana writes, plus everything the system
+-- did on her behalf (proposal sent, viewed, accepted, invoice paid...).
+-- ---------------------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS activity (
+  id          BIGSERIAL PRIMARY KEY,
+  booking_id  UUID REFERENCES bookings(id) ON DELETE CASCADE,
+  gift_id     UUID REFERENCES gift_requests(id) ON DELETE CASCADE,
+  document_id UUID REFERENCES documents(id) ON DELETE SET NULL,
+  kind        TEXT NOT NULL,
+  body        TEXT,
+  created_at  TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS activity_booking_idx ON activity (booking_id, created_at DESC);
+CREATE INDEX IF NOT EXISTS activity_gift_idx    ON activity (gift_id, created_at DESC);
+
+-- ---------------------------------------------------------------------------
+-- Payments. E-transfer is the default; card (Stripe) is optional, with a
+-- 50% deposit plan whose balance is charged automatically before the session
+-- and a late-cancellation fee charged to the card on file.
+-- ---------------------------------------------------------------------------
+ALTER TABLE settings ADD COLUMN IF NOT EXISTS card_fee_percent     NUMERIC(5,2) NOT NULL DEFAULT 3;
+ALTER TABLE settings ADD COLUMN IF NOT EXISTS deposit_percent      INTEGER NOT NULL DEFAULT 50;
+ALTER TABLE settings ADD COLUMN IF NOT EXISTS balance_days_before  INTEGER NOT NULL DEFAULT 4;
+ALTER TABLE settings ADD COLUMN IF NOT EXISTS cancellation_fee     INTEGER NOT NULL DEFAULT 100;
+ALTER TABLE settings ADD COLUMN IF NOT EXISTS cancellation_hours   INTEGER NOT NULL DEFAULT 72;
+ALTER TABLE settings ADD COLUMN IF NOT EXISTS cancellation_policy  TEXT NOT NULL DEFAULT '';
+ALTER TABLE settings ADD COLUMN IF NOT EXISTS venue_details        TEXT NOT NULL DEFAULT '';
+ALTER TABLE settings ADD COLUMN IF NOT EXISTS reminder_days_before INTEGER NOT NULL DEFAULT 2;
+
+ALTER TABLE documents ADD COLUMN IF NOT EXISTS paid_amount            INTEGER NOT NULL DEFAULT 0;
+ALTER TABLE documents ADD COLUMN IF NOT EXISTS payment_plan           TEXT;
+ALTER TABLE documents ADD COLUMN IF NOT EXISTS stripe_link_full       TEXT;
+ALTER TABLE documents ADD COLUMN IF NOT EXISTS stripe_link_deposit    TEXT;
+ALTER TABLE documents ADD COLUMN IF NOT EXISTS stripe_link_full_id    TEXT;
+ALTER TABLE documents ADD COLUMN IF NOT EXISTS stripe_link_deposit_id TEXT;
+
+ALTER TABLE bookings ADD COLUMN IF NOT EXISTS stripe_customer_id          TEXT;
+ALTER TABLE bookings ADD COLUMN IF NOT EXISTS stripe_payment_method_id    TEXT;
+ALTER TABLE bookings ADD COLUMN IF NOT EXISTS confirmation_sent_at        TIMESTAMPTZ;
+ALTER TABLE bookings ADD COLUMN IF NOT EXISTS reminder_sent_at            TIMESTAMPTZ;
+ALTER TABLE bookings ADD COLUMN IF NOT EXISTS balance_charged_at          TIMESTAMPTZ;
+ALTER TABLE bookings ADD COLUMN IF NOT EXISTS cancellation_fee_charged_at TIMESTAMPTZ;
+
+CREATE TABLE IF NOT EXISTS payments (
+  id                      UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  document_id             UUID REFERENCES documents(id) ON DELETE SET NULL,
+  booking_id              UUID REFERENCES bookings(id) ON DELETE SET NULL,
+  gift_id                 UUID REFERENCES gift_requests(id) ON DELETE SET NULL,
+  amount                  INTEGER NOT NULL,
+  -- card | e-transfer | cash | other
+  method                  TEXT NOT NULL,
+  -- payment | deposit | balance | cancellation_fee | refund
+  kind                    TEXT NOT NULL DEFAULT 'payment',
+  stripe_payment_intent   TEXT,
+  stripe_checkout_session TEXT,
+  note                    TEXT,
+  created_at              TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+CREATE UNIQUE INDEX IF NOT EXISTS payments_intent_idx  ON payments (stripe_payment_intent) WHERE stripe_payment_intent IS NOT NULL;
+CREATE INDEX IF NOT EXISTS payments_document_idx       ON payments (document_id);
+CREATE INDEX IF NOT EXISTS payments_booking_idx        ON payments (booking_id);

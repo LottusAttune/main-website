@@ -39,10 +39,71 @@ export type BookedCallSlot = {
   time: string;
 };
 
+/** What prints on proposals and invoices, and the automation switches. */
+export type BusinessSettings = {
+  businessName: string;
+  businessAddress: string;
+  businessEmail: string;
+  businessPhone: string;
+  taxLabel: string;
+  taxNumber: string;
+  /** Percent, e.g. 13 for Ontario HST. 0 means no tax line. */
+  taxRatePercent: number;
+  paymentInstructions: string;
+  invoiceDueDays: number;
+  invoicePrefix: string;
+  invoiceFooter: string;
+  proposalIntro: string;
+  proposalValidDays: number;
+  autoSendProposals: boolean;
+  autoSendInvoices: boolean;
+  /** Card payments: surcharge percent added on top when paying by card. */
+  cardFeePercent: number;
+  /** Deposit plan: percent charged at booking, balance charged later. */
+  depositPercent: number;
+  /** Days before the session the remaining balance is charged. */
+  balanceDaysBefore: number;
+  cancellationFee: number;
+  /** Cancelling inside this many hours (or a no-show) incurs the fee. */
+  cancellationHours: number;
+  /** Printed in the confirmation email; defaults to the website FAQ text. */
+  cancellationPolicy: string;
+  /** Address, directions, parking - printed in the confirmation email. */
+  venueDetails: string;
+  reminderDaysBefore: number;
+};
+
+export const DEFAULT_BUSINESS: BusinessSettings = {
+  businessName: 'Lotus Attune',
+  businessAddress: '',
+  businessEmail: 'info@lotusattune.com',
+  businessPhone: '416-871-5610',
+  taxLabel: 'HST',
+  taxNumber: '',
+  taxRatePercent: 0,
+  paymentInstructions: '',
+  invoiceDueDays: 7,
+  invoicePrefix: 'LA',
+  invoiceFooter: '',
+  proposalIntro: '',
+  proposalValidDays: 14,
+  autoSendProposals: false,
+  autoSendInvoices: false,
+  cardFeePercent: 3,
+  depositPercent: 50,
+  balanceDaysBefore: 4,
+  cancellationFee: 100,
+  cancellationHours: 72,
+  cancellationPolicy: '',
+  venueDetails: '',
+  reminderDaysBefore: 2,
+};
+
 export type SiteSettings = {
   pricing: Pricing;
   slots: Slots;
   leadTimeDays: number;
+  business: BusinessSettings;
   /** ISO `YYYY-MM-DD` strings. */
   blockedDates: string[];
   codes: DiscountCode[];
@@ -59,6 +120,7 @@ const FALLBACK: SiteSettings = {
   pricing: { ...DEFAULT_PRICING },
   slots: { ...DEFAULT_SLOTS },
   leadTimeDays: DEFAULT_LEAD_TIME,
+  business: { ...DEFAULT_BUSINESS },
   blockedDates: [],
   blockedCallTimes: [],
   bookedEventDates: [],
@@ -69,6 +131,42 @@ const FALLBACK: SiteSettings = {
     { code: 'GROUP4', amountOff: 100, minParticipants: 4, isActive: true },
   ],
 };
+
+/** Tolerates a database that predates the business columns. */
+export function businessFromRow(row: Record<string, unknown>): BusinessSettings {
+  const text = (key: string, fallback: string) =>
+    row[key] == null ? fallback : String(row[key]);
+  const num = (key: string, fallback: number) =>
+    row[key] == null ? fallback : Number(row[key]);
+  const bool = (key: string, fallback: boolean) =>
+    row[key] == null ? fallback : Boolean(row[key]);
+  const d = DEFAULT_BUSINESS;
+  return {
+    businessName: text('business_name', d.businessName),
+    businessAddress: text('business_address', d.businessAddress),
+    businessEmail: text('business_email', d.businessEmail),
+    businessPhone: text('business_phone', d.businessPhone),
+    taxLabel: text('tax_label', d.taxLabel),
+    taxNumber: text('tax_number', d.taxNumber),
+    taxRatePercent: num('tax_rate_percent', d.taxRatePercent),
+    paymentInstructions: text('payment_instructions', d.paymentInstructions),
+    invoiceDueDays: num('invoice_due_days', d.invoiceDueDays),
+    invoicePrefix: text('invoice_prefix', d.invoicePrefix),
+    invoiceFooter: text('invoice_footer', d.invoiceFooter),
+    proposalIntro: text('proposal_intro', d.proposalIntro),
+    proposalValidDays: num('proposal_valid_days', d.proposalValidDays),
+    autoSendProposals: bool('auto_send_proposals', d.autoSendProposals),
+    autoSendInvoices: bool('auto_send_invoices', d.autoSendInvoices),
+    cardFeePercent: num('card_fee_percent', d.cardFeePercent),
+    depositPercent: num('deposit_percent', d.depositPercent),
+    balanceDaysBefore: num('balance_days_before', d.balanceDaysBefore),
+    cancellationFee: num('cancellation_fee', d.cancellationFee),
+    cancellationHours: num('cancellation_hours', d.cancellationHours),
+    cancellationPolicy: text('cancellation_policy', d.cancellationPolicy),
+    venueDetails: text('venue_details', d.venueDetails),
+    reminderDaysBefore: num('reminder_days_before', d.reminderDaysBefore),
+  };
+}
 
 function toIsoDay(value: unknown): string {
   if (value instanceof Date) return value.toISOString().slice(0, 10);
@@ -127,6 +225,7 @@ export async function getSettings(): Promise<SiteSettings> {
         evening: Boolean(row.slot_evening),
       },
       leadTimeDays: Number(row.lead_time_days),
+      business: businessFromRow(row),
       blockedDates: blockedResult.rows.map((r) => toIsoDay(r.day)),
       codes: codesResult.rows.map((r) => ({
         code: String(r.code),

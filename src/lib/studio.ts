@@ -1,23 +1,22 @@
 import 'server-only';
 
 import { isDatabaseConfigured, sql } from '@/lib/db';
+import { documentFromRow } from '@/lib/documents';
+import { isEmailConfigured } from '@/lib/email';
+import { isPdfConfigured } from '@/lib/pdfshift';
 import {
   STAGE_KEYS,
+  type ActivityEntry,
   type BookingRow,
   type Client,
+  type GiftCard,
   type Lead,
+  type PaymentRow,
   type StageKey,
   type StudioData,
 } from '@/lib/pipeline';
-
-const EMPTY: StudioData = {
-  leads: [],
-  bookings: [],
-  giftCards: [],
-  reviews: [],
-  clients: [],
-  discoveryCalls: [],
-};
+import { LOUNGE_MAX } from '@/lib/site';
+import { isStripeConfigured } from '@/lib/stripe';
 
 function typeFor(participants: number): string {
   if (participants === 1) return '1 : 1';
@@ -26,7 +25,7 @@ function typeFor(participants: number): string {
 }
 
 function venueFor(participants: number): string {
-  return participants <= 6 ? 'Private Wellness Lounge' : 'Premium Signature Venue';
+  return participants <= LOUNGE_MAX ? 'Private Wellness Lounge' : 'Premium Signature Venue';
 }
 
 function toIso(value: unknown): string | null {
@@ -35,6 +34,38 @@ function toIso(value: unknown): string | null {
   return String(value).slice(0, 10);
 }
 
+function toStamp(value: unknown): string | null {
+  if (!value) return null;
+  return new Date(String(value)).toISOString();
+}
+
+function integrations() {
+  return {
+    database: isDatabaseConfigured(),
+    email: isEmailConfigured(),
+    pdf: isPdfConfigured(),
+    calendar: Boolean(
+      process.env.GOOGLE_CALENDAR_CLIENT_ID &&
+        process.env.GOOGLE_CALENDAR_CLIENT_SECRET &&
+        process.env.GOOGLE_CALENDAR_REFRESH_TOKEN
+    ),
+    stripe: isStripeConfigured(),
+  };
+}
+
+const EMPTY = (): StudioData => ({
+  leads: [],
+  bookings: [],
+  giftCards: [],
+  reviews: [],
+  clients: [],
+  discoveryCalls: [],
+  documents: [],
+  payments: [],
+  activity: [],
+  integrations: integrations(),
+});
+
 /**
  * Everything the dashboard renders, in one round trip.
  *
@@ -42,42 +73,66 @@ function toIso(value: unknown): string | null {
  * loads and shows its real (empty) state rather than erroring.
  */
 export async function getStudioData(): Promise<StudioData> {
-  if (!isDatabaseConfigured()) return EMPTY;
+  if (!isDatabaseConfigured()) return EMPTY();
 
-  const [bookingRows, giftRows, reviewRows, discoveryCallRows] = await Promise.all([
-    sql`SELECT * FROM bookings ORDER BY created_at DESC LIMIT 500`,
-    sql`SELECT * FROM gift_requests ORDER BY created_at DESC LIMIT 200`,
-    sql`SELECT * FROM reviews ORDER BY sort_order, created_at LIMIT 200`,
-    sql`SELECT * FROM discovery_calls ORDER BY call_date, call_time LIMIT 200`,
-  ]);
+  const [bookingRows, giftRows, reviewRows, discoveryCallRows, documentRows, paymentRows, activityRows] =
+    await Promise.all([
+      sql`SELECT * FROM bookings ORDER BY created_at DESC LIMIT 500`,
+      sql`SELECT * FROM gift_requests ORDER BY created_at DESC LIMIT 200`,
+      sql`SELECT * FROM reviews ORDER BY sort_order, created_at LIMIT 200`,
+      sql`SELECT * FROM discovery_calls ORDER BY call_date, call_time LIMIT 200`,
+      sql`
+        SELECT id, kind, number, booking_id, gift_id, client_name, client_email,
+               client_company, status, lines, subtotal, tax_rate, tax, total, issued_on,
+               due_on, notes, token, (pdf IS NOT NULL) AS has_pdf, pdf_generated_at,
+               paid_amount, payment_plan, stripe_link_full, stripe_link_deposit,
+               sent_at, sent_to, viewed_at, accepted_at, paid_at, paid_method, voided_at,
+               created_at
+        FROM documents ORDER BY created_at DESC LIMIT 1000
+      `,
+      sql`SELECT * FROM payments ORDER BY created_at DESC LIMIT 1000`,
+      sql`SELECT * FROM activity ORDER BY created_at DESC LIMIT 1000`,
+    ]);
 
-  const leads: Lead[] = bookingRows.rows.map((row) => ({
-    id: String(row.id),
-    name: String(row.name),
-    email: String(row.email),
-    phone: row.phone ? String(row.phone) : null,
-    company: row.company ? String(row.company) : null,
-    participants: Number(row.participants),
-    sessionDate: toIso(row.session_date),
-    sessionTime: row.session_time ? String(row.session_time) : null,
-    sessionDate2: toIso(row.session_date_2),
-    sessionTime2: row.session_time_2 ? String(row.session_time_2) : null,
-    teamAddon: Boolean(row.team_addon),
-    gratuity: Number(row.gratuity ?? 0),
-    total: Number(row.estimated_total),
-    status:
-      String(row.status) === 'cancelled'
-        ? 'cancelled'
-        : (STAGE_KEYS as string[]).includes(String(row.status))
-          ? (String(row.status) as StageKey)
-          : 'new_enquiry',
-    createdAt: new Date(String(row.created_at)).toISOString(),
-    type: typeFor(Number(row.participants)),
-    calendarEventId: row.calendar_event_id ? String(row.calendar_event_id) : null,
-    calendarEventId2: row.calendar_event_id_2
-      ? String(row.calendar_event_id_2)
-      : null,
-  }));
+  const leads: Lead[] = bookingRows.rows.map((row) => {
+    const participants = Number(row.participants);
+    return {
+      id: String(row.id),
+      name: String(row.name),
+      email: String(row.email),
+      phone: row.phone ? String(row.phone) : null,
+      company: row.company ? String(row.company) : null,
+      message: row.message ? String(row.message) : null,
+      participants,
+      sessionDate: toIso(row.session_date),
+      sessionTime: row.session_time ? String(row.session_time) : null,
+      sessionDate2: toIso(row.session_date_2),
+      sessionTime2: row.session_time_2 ? String(row.session_time_2) : null,
+      teamAddon: Boolean(row.team_addon),
+      refreshments: Boolean(row.refreshments),
+      isPackage: Boolean(row.is_package),
+      isCorporateIntro: Boolean(row.is_corporate_intro),
+      discountCode: row.discount_code ? String(row.discount_code) : null,
+      gratuity: Number(row.gratuity ?? 0),
+      total: Number(row.estimated_total),
+      status:
+        String(row.status) === 'cancelled'
+          ? 'cancelled'
+          : (STAGE_KEYS as string[]).includes(String(row.status))
+            ? (String(row.status) as StageKey)
+            : 'new_enquiry',
+      createdAt: new Date(String(row.created_at)).toISOString(),
+      type: typeFor(participants),
+      venue: venueFor(participants),
+      calendarEventId: row.calendar_event_id ? String(row.calendar_event_id) : null,
+      calendarEventId2: row.calendar_event_id_2 ? String(row.calendar_event_id_2) : null,
+      cardOnFile: Boolean(row.stripe_payment_method_id),
+      confirmationSentAt: toStamp(row.confirmation_sent_at),
+      reminderSentAt: toStamp(row.reminder_sent_at),
+      balanceChargedAt: toStamp(row.balance_charged_at),
+      cancellationFeeChargedAt: toStamp(row.cancellation_fee_charged_at),
+    };
+  });
 
   const bookings: BookingRow[] = leads
     .filter(
@@ -86,17 +141,39 @@ export async function getStudioData(): Promise<StudioData> {
         lead.status === 'complete' ||
         lead.status === 'cancelled'
     )
-    .map((lead) => ({ ...lead, venue: venueFor(lead.participants) }))
     .sort((a, b) => (a.sessionDate ?? '').localeCompare(b.sessionDate ?? ''));
+
+  const documents = documentRows.rows.map(documentFromRow);
+
+  const payments: PaymentRow[] = paymentRows.rows.map((row) => ({
+    id: String(row.id),
+    documentId: row.document_id ? String(row.document_id) : null,
+    bookingId: row.booking_id ? String(row.booking_id) : null,
+    giftId: row.gift_id ? String(row.gift_id) : null,
+    amount: Number(row.amount),
+    method: String(row.method),
+    kind: String(row.kind),
+    note: row.note ? String(row.note) : null,
+    createdAt: new Date(String(row.created_at)).toISOString(),
+  }));
+
+  // Paid money per client email, from settled invoice payments.
+  const paidByBooking = new Map<string, number>();
+  for (const p of payments) {
+    if (!p.bookingId || p.kind === 'refund' || p.kind === 'cancellation_fee') continue;
+    paidByBooking.set(p.bookingId, (paidByBooking.get(p.bookingId) ?? 0) + p.amount);
+  }
 
   // Clients are derived, not stored — one row per email that has ever booked.
   const byEmail = new Map<string, Client>();
   for (const lead of leads) {
     if (lead.status !== 'booked' && lead.status !== 'complete') continue;
+    const paid = paidByBooking.get(lead.id) ?? 0;
     const existing = byEmail.get(lead.email);
     if (existing) {
       existing.sessions += 1;
       existing.lifetimeValue += lead.total;
+      existing.paidValue += paid;
       existing.totalParticipants += lead.participants;
       if (lead.teamAddon) existing.teamAddon = true;
       if (lead.phone) existing.phone = lead.phone;
@@ -117,24 +194,43 @@ export async function getStudioData(): Promise<StudioData> {
         totalParticipants: lead.participants,
         teamAddon: lead.teamAddon,
         lifetimeValue: lead.total,
+        paidValue: paid,
         lastSession: lead.sessionDate,
       });
     }
   }
 
+  const giftCards: GiftCard[] = giftRows.rows.map((row) => ({
+    id: String(row.id),
+    recipientName: String(row.recipient_name),
+    recipientEmail: row.recipient_email ? String(row.recipient_email) : null,
+    buyerName: row.buyer_name ? String(row.buyer_name) : null,
+    buyerEmail: String(row.buyer_email),
+    format: String(row.format),
+    sessions: row.sessions == null ? null : Number(row.sessions),
+    participants: row.participants == null ? null : Number(row.participants),
+    teamAddon: Boolean((row.addons as Record<string, boolean> | null)?.team),
+    code: row.code ? String(row.code) : null,
+    total: Number(row.total),
+    gratuity: Number(row.gratuity ?? 0),
+    status: String(row.status),
+    createdAt: new Date(String(row.created_at)).toISOString(),
+  }));
+
+  const activity: ActivityEntry[] = activityRows.rows.map((row) => ({
+    id: String(row.id),
+    bookingId: row.booking_id ? String(row.booking_id) : null,
+    giftId: row.gift_id ? String(row.gift_id) : null,
+    documentId: row.document_id ? String(row.document_id) : null,
+    kind: String(row.kind),
+    body: row.body ? String(row.body) : null,
+    createdAt: new Date(String(row.created_at)).toISOString(),
+  }));
+
   return {
     leads,
     bookings,
-    giftCards: giftRows.rows.map((row) => ({
-      id: String(row.id),
-      recipientName: String(row.recipient_name),
-      recipientEmail: row.recipient_email ? String(row.recipient_email) : null,
-      buyerEmail: String(row.buyer_email),
-      format: String(row.format),
-      total: Number(row.total),
-      status: String(row.status),
-      createdAt: new Date(String(row.created_at)).toISOString(),
-    })),
+    giftCards,
     reviews: reviewRows.rows.map((row) => ({
       id: String(row.id),
       name: String(row.name),
@@ -157,5 +253,9 @@ export async function getStudioData(): Promise<StudioData> {
       status: String(row.status),
       createdAt: new Date(String(row.created_at)).toISOString(),
     })),
+    documents,
+    payments,
+    activity,
+    integrations: integrations(),
   };
 }

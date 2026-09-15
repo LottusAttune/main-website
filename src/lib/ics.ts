@@ -62,7 +62,7 @@ export function buildDiscoveryCallIcs(input: {
 
   const summary = 'Discovery Call \u2014 Lotus Attune';
   const description = escapeIcsText(
-    `Looking forward to connecting with you and exploring how Lotus Attune can support your reset.\n\nJoin via Google Meet: ${input.meetLink}\n\nAny questions before then, reach out anytime at ${input.organizerEmail}.\n\nWarm regards,\nSilvana`
+    `Looking forward to connecting with you and exploring how Lotus Attune can support your reset.\n\nJoin via Google Meet: ${input.meetLink}\n\nAny questions before then, reach out at ${input.organizerEmail}.\n\nWarm regards,\nSilvana`
   );
 
   const lines = [
@@ -104,7 +104,7 @@ export function buildGoogleCalendarLink(input: {
   const start = zonedTimeToUtc(startISO, TIME_ZONE);
   const end = zonedTimeToUtc(endISO, TIME_ZONE);
 
-  const details = `Looking forward to connecting with you and exploring how Lotus Attune can support your reset.\n\nJoin via Google Meet: ${input.meetLink}\n\nAny questions before then, reach out anytime at ${input.organizerEmail}.\n\nWarm regards,\nSilvana`;
+  const details = `Looking forward to connecting with you and exploring how Lotus Attune can support your reset.\n\nJoin via Google Meet: ${input.meetLink}\n\nAny questions before then, reach out at ${input.organizerEmail}.\n\nWarm regards,\nSilvana`;
 
   const params = new URLSearchParams({
     action: 'TEMPLATE',

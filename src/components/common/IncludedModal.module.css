@@ -21,6 +21,13 @@
   overflow: auto;
   text-align: left;
   background: var(--color-cream-raised);
+  /* Explicit, not inherited - this modal can be mounted anywhere in the
+     page (including inside a paragraph styled for a dark background), and
+     position:fixed only changes where it's drawn, not the DOM ancestry
+     `color` inherits through. Without this, a bright color set on that
+     ancestor for its own dark-background context bleeds into this modal's
+     light card and can render its text nearly invisible. */
+  color: var(--color-ink-body);
   border-radius: 0;
   box-shadow: 0 60px 120px -50px rgba(0, 0, 0, 0.85);
   padding: clamp(28px, 4vw, 44px);

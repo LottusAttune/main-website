@@ -1,0 +1,59 @@
+/* Bookings panel - only what studio.module.css does not already cover. */
+
+/* Buttons and filter pills this panel renders: a comfortable thumb size.
+   Doubled selector so it outranks the global .btn / .segment sizing. */
+.tap.tap {
+  min-height: 40px;
+}
+
+.tap.tap:disabled {
+  color: var(--color-disabled);
+  border-color: var(--hairline-light-strong);
+  cursor: default;
+}
+
+.tap.tap:disabled:hover {
+  transform: none;
+  background: transparent;
+  box-shadow: none;
+}
+
+/* Delete on the mobile cards, where there is no menu to colour it. */
+.alertBtn.alertBtn {
+  color: var(--status-alert);
+}
+
+/* Status pill + "balance $X" side by side, wrapping on a narrow card. */
+.payment {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 10px;
+}
+
+/* "Confirmation sent · Card on file" under a row or card. */
+.flags {
+  margin-top: 8px;
+  line-height: 1.5;
+}
+
+/* Keeps the desktop action buttons to two tidy columns. */
+.actionsCell {
+  min-width: 240px;
+}
+
+/* Date + time editor on a phone: full-width, 16px so iOS does not zoom. */
+.editField.editField {
+  flex: 1 1 140px;
+  min-width: 0;
+  min-height: 44px;
+  padding: 10px 12px;
+  font-size: 16px;
+}
+
+.editStack {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 12px;
+}

@@ -1,0 +1,28 @@
+/* Today panel - the few layout hooks the shared studio module does not carry.
+   Colours, type and spacing all come from the shared classes; nothing here
+   sets a colour. */
+
+/* Lets the action label take the slack so the count and arrow sit hard right
+   and a long label wraps instead of pushing them off a phone screen. */
+.actionLabel {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+/* Title/subtitle on the left, value on the right, one layout at every width. */
+.recordRow {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.recordText {
+  min-width: 0;
+}
+
+/* A note is a block under its timeline label, not run inline with it. */
+.noteBlock {
+  display: block;
+  margin-top: 6px;
+}

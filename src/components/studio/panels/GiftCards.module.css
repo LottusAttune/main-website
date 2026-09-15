@@ -1,0 +1,38 @@
+/* Gift cards panel - only what studio.module.css does not already cover. */
+
+/* The pills and buttons this panel renders itself: a comfortable thumb size. */
+.tap {
+  min-height: 40px;
+}
+
+.guidance {
+  margin: -6px 0 18px;
+  line-height: 1.6;
+}
+
+/* Invoice + certificate block inside each record card. */
+.paperwork {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid var(--hairline-light-soft);
+}
+
+.paperworkLabel {
+  font-size: 10.5px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--color-muted);
+  margin-bottom: 8px;
+}
+
+.createRow {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px 12px;
+  margin-bottom: 10px;
+}
+
+.createRow:last-child {
+  margin-bottom: 0;
+}

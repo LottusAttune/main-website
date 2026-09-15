@@ -288,7 +288,30 @@ The site works without any of these; they turn on the parts that need a server.
 | `POSTGRES_URL` | Supabase connection. Without it, bookings are refused with a clear message rather than silently lost. |
 | `STUDIO_PASSWORD` | Password for `/studio`. |
 | `SESSION_SECRET` | Signs the studio session cookie. |
-| `NEXT_PUBLIC_SITE_URL` | Production origin, for Open Graph images and the sitemap. |
+| `NEXT_PUBLIC_SITE_URL` | Production origin, for Open Graph images, the sitemap and the links inside emails/PDFs. |
+| `RESEND_API_KEY` | Every automatic email (request received, proposal, invoice, receipt, confirmation, reminder, gift certificate, discovery call). Without it, Send in the studio fails with a visible message. |
+| `PDFSHIFT_API_KEY` | Renders proposals, invoices and gift certificates to PDF. Without it, documents still send (content inline + online link), just no attachment. |
+| `STRIPE_SECRET_KEY` / `STRIPE_WEBHOOK_SECRET` | Card payments on invoices (full or deposit plan) and late-cancellation fees. Without them, invoices offer e-transfer only. |
+| `CRON_SECRET` | Authorises the daily job (`/api/cron/daily`, scheduled in `vercel.json`) that sends reminders and charges deposit balances. |
+
+### How the studio's paperwork works
+
+- A booking request → `bookings` row + a **proposal** draft in `documents`
+  (numbered `LA-P-YYYY-NNNN`), "request received" emails to both sides.
+- Silvana (or the automation switch in Settings) sends the proposal; the
+  client opens `/d/<token>` and accepts → the lead moves to Booked, an
+  **invoice** (`LA-YYYY-NNNN`) is drafted with Stripe payment links minted,
+  and (if switched on) sent.
+- Payment: e-transfer (she records it in the studio) or card (Stripe webhook
+  records it). Any payment triggers the receipt and the **confirmation
+  email** (venue, parking, FAQs, cancellation policy, .ics + Google link).
+- Daily cron: reminder N days before, deposit balance charged M days before.
+- Everything is in `src/lib/documents.ts` (documents), `src/lib/bookings.ts`
+  (confirmation/reminder/charges), `src/lib/email.ts`, `src/lib/stripe.ts`,
+  `src/lib/pdfshift.ts`. Line items come from `src/lib/quote.ts` — the same
+  engine the website uses — and are snapshotted onto the document.
+- All of this degrades honestly: a missing key shows up as a plain message
+  in the studio and in the lead's history, never as a silent no-op.
 
 Never commit real values. `.env.local` is gitignored; `.env.example` shows the
 shape.

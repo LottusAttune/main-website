@@ -1,0 +1,42 @@
+/*
+ * Invoices panel — only what studio.module.css doesn't already cover.
+ * Colours and radii come from tokens; everything else reuses the shared
+ * studio classes.
+ */
+
+/* Filter pills: 40px touch target (the shared .segment is 36px). */
+.filters .filterBtn {
+  min-height: 40px;
+}
+
+/* The expanded "Manage" row under an invoice sits on plain cream so the
+   document card inside it reads as a panel, not another table row. */
+.expandCell {
+  background: var(--color-cream);
+}
+
+/* Mobile card: status pill on the left, Manage on the right. */
+.cardRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid var(--hairline-light-soft);
+}
+
+.cardRow .manageBtn {
+  min-height: 40px;
+}
+
+/* Lets the title column shrink so a long name wraps instead of pushing the
+   amount off a 375px screen. */
+.grow {
+  flex: 1;
+  min-width: 0;
+}
+
+.nested {
+  margin-top: 12px;
+}

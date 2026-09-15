@@ -1036,6 +1036,402 @@
 }
 
 /* ============================================================
+   Shared primitives (used by every panel)
+   ============================================================ */
+
+/* Row of controls above a list: export, filters, primary action. */
+.toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 18px;
+}
+
+.toolbarGroup {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+/* Filter pills: one is "on". */
+.segmented {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.segment {
+  padding: 8px 14px;
+  min-height: 36px;
+  border: 1px solid var(--hairline-light-strong);
+  border-radius: var(--radius-pill);
+  background: transparent;
+  color: var(--color-ink-body);
+  font-size: 11.5px;
+  letter-spacing: 0.08em;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.segment:hover {
+  border-color: var(--color-gold-deep);
+}
+
+.segmentOn {
+  background: var(--gradient-button-dark);
+  border-color: transparent;
+  color: var(--color-cream-text);
+}
+
+/* Stacked record cards - the mobile form of every table. */
+.cardList {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.recordCard {
+  padding: 16px 16px 14px;
+  border: 1px solid var(--hairline-light);
+  border-radius: var(--radius-thumb);
+  background: var(--color-cream-raised);
+}
+
+.recordHead {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.recordTitle {
+  font-size: 15px;
+  color: var(--color-ink);
+  line-height: 1.35;
+}
+
+.recordSub {
+  font-size: 12.5px;
+  color: var(--color-muted);
+  line-height: 1.5;
+}
+
+.recordValue {
+  flex: none;
+  font-family: var(--font-display);
+  font-size: 20px;
+  color: var(--color-ink);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+/* Label / value pairs inside a card or drawer. */
+.kv {
+  display: grid;
+  grid-template-columns: minmax(96px, auto) 1fr;
+  gap: 6px 14px;
+  font-size: 13.5px;
+  line-height: 1.5;
+  margin: 8px 0;
+}
+
+.kvLabel {
+  font-size: 10.5px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--color-muted);
+  padding-top: 3px;
+}
+
+.kvValue {
+  color: var(--color-ink-strong);
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.kvValue a {
+  color: var(--color-gold-deep);
+}
+
+.recordActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid var(--hairline-light-soft);
+}
+
+/* Show one form on desktop and the other on phones/tablets. */
+.desktopOnly {
+  display: block;
+}
+
+.mobileOnly {
+  display: none;
+}
+
+/* Section heading inside a panel or drawer. */
+.subhead {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+  margin: 22px 0 10px;
+  font-size: 10.5px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--color-gold-text);
+}
+
+.subhead:first-child {
+  margin-top: 0;
+}
+
+/* "Today" action list. */
+.actionList {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 26px;
+}
+
+.actionItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  width: 100%;
+  padding: 14px 18px;
+  border: 1px solid var(--hairline-light);
+  border-radius: var(--radius-thumb);
+  background: var(--color-cream-raised);
+  color: var(--color-ink);
+  text-align: left;
+  font-size: 14.5px;
+  line-height: 1.45;
+  cursor: pointer;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.actionItem:hover {
+  border-color: var(--gold-rim);
+  box-shadow: var(--shadow-gold-halo);
+}
+
+.actionItemUrgent {
+  border-left: 3px solid var(--status-alert);
+}
+
+.actionItemDone {
+  color: var(--color-muted);
+}
+
+.actionCount {
+  flex: none;
+  min-width: 28px;
+  padding: 4px 9px;
+  border-radius: var(--radius-pill);
+  background: var(--status-pending-bg);
+  color: var(--status-pending);
+  font-size: 12px;
+  text-align: center;
+}
+
+.actionCountUrgent {
+  background: var(--status-alert-bg);
+  color: var(--status-alert);
+}
+
+.actionArrow {
+  flex: none;
+  color: var(--color-faint);
+}
+
+/* Integration status strip (email, PDF, card payments, calendar). */
+.integrations {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 22px;
+}
+
+.integration {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 6px 12px;
+  border-radius: var(--radius-pill);
+  font-size: 11.5px;
+  letter-spacing: 0.06em;
+  border: 1px solid var(--hairline-light);
+  color: var(--color-ink-body);
+  background: var(--color-cream-raised);
+}
+
+.integrationDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--status-success);
+}
+
+.integrationOff .integrationDot {
+  background: var(--status-alert);
+}
+
+/* Inline forms (record payment, add note, edit lines). */
+.inlineForm {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  padding: 12px;
+  margin-top: 10px;
+  border: 1px dashed var(--hairline-light-strong);
+  border-radius: var(--radius-thumb);
+  background: var(--color-cream);
+}
+
+.inlineForm .field {
+  padding: 9px 12px;
+  min-height: 40px;
+  font-size: 14px;
+}
+
+.textarea {
+  width: 100%;
+  min-height: 84px;
+  padding: 12px 14px;
+  border: 1px solid var(--hairline-light-strong);
+  border-radius: var(--radius-input);
+  background: var(--color-cream-raised);
+  font: inherit;
+  font-size: 14.5px;
+  line-height: 1.6;
+  color: var(--color-ink);
+  resize: vertical;
+}
+
+/* Timeline (activity + notes) inside the drawer. */
+.timeline {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.timelineItem {
+  display: grid;
+  grid-template-columns: 74px 1fr;
+  gap: 10px;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.timelineWhen {
+  font-size: 11px;
+  color: var(--color-faint);
+  padding-top: 2px;
+  white-space: nowrap;
+}
+
+.timelineBody {
+  color: var(--color-ink-body);
+  overflow-wrap: anywhere;
+}
+
+.timelineNote {
+  padding: 8px 12px;
+  border-left: 2px solid var(--color-gold-light);
+  background: var(--status-pending-bg);
+  color: var(--color-ink);
+  white-space: pre-wrap;
+}
+
+/* Document (proposal / invoice / certificate) summary block. */
+.docCard {
+  padding: 14px 16px;
+  border: 1px solid var(--hairline-light);
+  border-radius: var(--radius-thumb);
+  background: var(--color-cream-raised);
+  margin-bottom: 10px;
+}
+
+.docHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.docNumber {
+  font-size: 13.5px;
+  letter-spacing: 0.06em;
+  color: var(--color-ink);
+}
+
+.docMeta {
+  font-size: 12.5px;
+  color: var(--color-muted);
+  margin-top: 4px;
+  line-height: 1.5;
+}
+
+.docActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 10px;
+}
+
+.linkBtn {
+  padding: 0;
+  border: none;
+  background: none;
+  color: var(--color-gold-deep);
+  font-size: 12.5px;
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.linkBtn:disabled {
+  color: var(--color-disabled);
+  cursor: default;
+  text-decoration: none;
+}
+
+.warn {
+  padding: 10px 14px;
+  border-radius: var(--radius-thumb);
+  background: var(--status-alert-bg);
+  color: var(--status-alert);
+  font-size: 13px;
+  line-height: 1.5;
+  margin-bottom: 14px;
+}
+
+.okNote {
+  padding: 10px 14px;
+  border-radius: var(--radius-thumb);
+  background: var(--status-success-bg);
+  color: var(--status-success);
+  font-size: 13px;
+  line-height: 1.5;
+  margin-bottom: 14px;
+}
+
+/* Mobile top bar (replaces the sidebar under 900px). */
+.topbar {
+  display: none;
+}
+
+/* ============================================================
    Responsive
    ============================================================ */
 
@@ -1045,19 +1441,163 @@
   }
 
   .sidebar {
-    width: 100%;
-    height: auto;
-    position: static;
-    border-right: none;
-    border-bottom: 1px solid rgba(59, 46, 36, 0.12);
+    display: none;
   }
 
-  .navList {
-    flex-direction: row;
-    flex-wrap: wrap;
+  .topbar {
+    display: block;
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background: var(--color-cream-raised);
+    border-bottom: 1px solid var(--hairline-light);
   }
 
-  .navRow {
+  .topbarRow {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 12px 16px 8px;
+  }
+
+  .topbarBrand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-family: var(--font-display);
+    font-size: 15px;
+    letter-spacing: 0.14em;
+    color: var(--color-ink-deepest);
+  }
+
+  .topbarLinks {
+    display: flex;
+    gap: 6px;
+  }
+
+  .topbarLink {
+    padding: 8px 12px;
+    min-height: 36px;
+    border: 1px solid var(--hairline-light-strong);
+    border-radius: var(--radius-pill);
+    background: transparent;
+    color: var(--color-ink-body);
+    font-size: 10.5px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    cursor: pointer;
+  }
+
+  .tabStrip {
+    display: flex;
+    gap: 6px;
+    padding: 4px 16px 12px;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+
+  .tabStrip::-webkit-scrollbar {
+    display: none;
+  }
+
+  .tabStrip .navRow {
+    flex: none;
     width: auto;
+    padding: 10px 14px;
+    min-height: 42px;
+    font-size: 12.5px;
+    gap: 8px;
+  }
+
+  .main {
+    padding: 20px 16px 48px;
+  }
+
+  .header {
+    padding-bottom: 16px;
+    margin-bottom: 20px;
+  }
+
+  .headerTitle {
+    font-size: 30px;
+  }
+
+  .desktopOnly {
+    display: none;
+  }
+
+  .mobileOnly {
+    display: block;
+  }
+
+  .board {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .statGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+  }
+
+  .stat {
+    padding: 16px 16px 14px;
+  }
+
+  .statValue {
+    font-size: 28px;
+  }
+
+  .settingsGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .settingsCard {
+    padding: 20px 18px 22px;
+  }
+
+  .modalPanel {
+    width: 100vw;
+  }
+
+  .modalHead {
+    padding: 18px 18px 14px;
+  }
+
+  .modalBody {
+    padding: 4px 18px 18px;
+  }
+
+  .modalFoot {
+    padding: 14px 18px 22px;
+  }
+
+  .timelineItem {
+    grid-template-columns: 60px 1fr;
+  }
+}
+
+@media (max-width: 640px) {
+  .board {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 480px) {
+  .statGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .kv {
+    grid-template-columns: 1fr;
+    gap: 2px 0;
+  }
+
+  .kvLabel {
+    padding-top: 6px;
   }
 }

@@ -161,6 +161,7 @@ export async function sendDiscoveryCallEmails(input: {
     callTime: input.callTime,
     meetLink: DISCOVERY_CALL_MEET_LINK,
     organizerEmail: SITE.email,
+    whatsappLink: SITE.whatsappHref,
   });
 
   const clientHtml = wrapperHtml(`
@@ -197,6 +198,7 @@ export async function sendDiscoveryCallEmails(input: {
     clientName: input.name,
     clientEmail: input.email,
     organizerEmail: SITE.email,
+    whatsappLink: SITE.whatsappHref,
     callDate: input.callDate,
     callTime: input.callTime,
     meetLink: DISCOVERY_CALL_MEET_LINK,

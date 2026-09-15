@@ -51,6 +51,7 @@ export function buildDiscoveryCallIcs(input: {
   clientName: string;
   clientEmail: string;
   organizerEmail: string;
+  whatsappLink: string;
   callDate: string;
   callTime: string;
   meetLink: string;
@@ -62,7 +63,7 @@ export function buildDiscoveryCallIcs(input: {
 
   const summary = 'Discovery Call \u2014 Lotus Attune';
   const description = escapeIcsText(
-    `Looking forward to connecting with you and exploring how Lotus Attune can support your reset.\n\nJoin via Google Meet: ${input.meetLink}\n\nAny questions before then, reach out at ${input.organizerEmail}.\n\nWarm regards,\nSilvana`
+    `Looking forward to connecting with you and exploring how Lotus Attune can support your reset.\n\nJoin via Google Meet: ${input.meetLink}\n\nAny questions before then, reach out at ${input.organizerEmail} or WhatsApp: ${input.whatsappLink}\n\nWarm regards,\nSilvana`
   );
 
   const lines = [
@@ -99,12 +100,13 @@ export function buildGoogleCalendarLink(input: {
   callTime: string;
   meetLink: string;
   organizerEmail: string;
+  whatsappLink: string;
 }): string {
   const { startISO, endISO } = discoveryCallWindowLocal(input.callDate, input.callTime);
   const start = zonedTimeToUtc(startISO, TIME_ZONE);
   const end = zonedTimeToUtc(endISO, TIME_ZONE);
 
-  const details = `Looking forward to connecting with you and exploring how Lotus Attune can support your reset.\n\nJoin via Google Meet: ${input.meetLink}\n\nAny questions before then, reach out at ${input.organizerEmail}.\n\nWarm regards,\nSilvana`;
+  const details = `Looking forward to connecting with you and exploring how Lotus Attune can support your reset.\n\nJoin via Google Meet: ${input.meetLink}\n\nAny questions before then, reach out at ${input.organizerEmail} or WhatsApp: ${input.whatsappLink}\n\nWarm regards,\nSilvana`;
 
   const params = new URLSearchParams({
     action: 'TEMPLATE',

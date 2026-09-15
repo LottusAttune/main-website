@@ -12,7 +12,7 @@ import styles from './book.module.css';
 export const metadata: Metadata = {
   title: 'Book',
   description:
-    'Reserve a two-hour Lotus Attune experience in downtown Toronto for 1 to 24 people. Dates open five calendar days ahead.',
+    'Reserve a two-hour Lotus Attune experience in downtown Toronto for 1 to 24 people. Dates open six calendar days ahead.',
 };
 
 /** Availability changes from the dashboard, so this must never be cached. */

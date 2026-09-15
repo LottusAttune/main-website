@@ -83,7 +83,7 @@ export const LANDING_STEPS = [
   {
     n: '02',
     title: 'Pick a date',
-    body: 'Send your preferred date and time. We confirm every booking personally, at least five days ahead.',
+    body: 'Send your preferred date and time. We confirm every booking personally, at least six days ahead.',
   },
   {
     n: '03',

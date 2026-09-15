@@ -2,6 +2,7 @@ import 'server-only';
 
 import { Resend } from 'resend';
 
+import { buildDiscoveryCallIcs, buildGoogleCalendarLink } from '@/lib/ics';
 import { SITE } from '@/lib/site';
 
 /**
@@ -155,6 +156,12 @@ export async function sendDiscoveryCallEmails(input: {
   const dayLabel = formatCallDay(input.callDate);
   const verb = input.rescheduled ? 'rescheduled' : 'confirmed';
   const rescheduleUrl = `${SITE.url}/discovery-call/reschedule?token=${input.rescheduleToken}`;
+  const googleCalendarUrl = buildGoogleCalendarLink({
+    callDate: input.callDate,
+    callTime: input.callTime,
+    meetLink: DISCOVERY_CALL_MEET_LINK,
+    organizerEmail: SITE.email,
+  });
 
   const clientHtml = wrapperHtml(`
     <p style="margin:0 0 10px;">Hi ${input.name},</p>
@@ -162,6 +169,9 @@ export async function sendDiscoveryCallEmails(input: {
     ${callDetailsHtml(null, dayLabel, input.callTime)}
     <p style="margin:18px 0 0;">
       Join Silvana with this link when it's time: <a href="${DISCOVERY_CALL_MEET_LINK}" style="color:#7c5b3b;">${DISCOVERY_CALL_MEET_LINK}</a>
+    </p>
+    <p style="margin:18px 0 0;">
+      <a href="${googleCalendarUrl}" style="color:#7c5b3b;">Add to Google Calendar</a> — or open the attached invite for Outlook, Apple Calendar and others.
     </p>
     <p style="margin:18px 0 0;">
       Need a different time? <a href="${rescheduleUrl}" style="color:#7c5b3b;">Reschedule your call</a>
@@ -182,12 +192,29 @@ export async function sendDiscoveryCallEmails(input: {
     ${mottoHtml()}
   `);
 
+  const icsContent = buildDiscoveryCallIcs({
+    rescheduleToken: input.rescheduleToken,
+    clientName: input.name,
+    clientEmail: input.email,
+    organizerEmail: SITE.email,
+    callDate: input.callDate,
+    callTime: input.callTime,
+    meetLink: DISCOVERY_CALL_MEET_LINK,
+  });
+
   const results = await Promise.allSettled([
     resend.emails.send({
       from: FROM,
       to: input.email,
       subject: `Your discovery call is ${verb} - ${dayLabel} at ${input.callTime}`,
       html: clientHtml,
+      attachments: [
+        {
+          filename: 'discovery-call.ics',
+          content: Buffer.from(icsContent, 'utf-8'),
+          contentType: 'text/calendar; charset=utf-8; method=REQUEST',
+        },
+      ],
     }),
     resend.emails.send({
       from: FROM,

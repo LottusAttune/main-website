@@ -11,6 +11,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { path: '/founder', priority: 0.7 },
     { path: '/book', priority: 0.8 },
     { path: '/gift', priority: 0.6 },
+    { path: '/terms', priority: 0.3 },
+    { path: '/privacy', priority: 0.3 },
   ];
 
   return routes.map((route) => ({

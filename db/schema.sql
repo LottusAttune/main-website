@@ -368,6 +368,9 @@ ALTER TABLE documents ADD COLUMN IF NOT EXISTS stripe_link_full       TEXT;
 ALTER TABLE documents ADD COLUMN IF NOT EXISTS stripe_link_deposit    TEXT;
 ALTER TABLE documents ADD COLUMN IF NOT EXISTS stripe_link_full_id    TEXT;
 ALTER TABLE documents ADD COLUMN IF NOT EXISTS stripe_link_deposit_id TEXT;
+-- The outstanding amount the "full" link was minted for, so a link is retired
+-- and re-minted the moment the balance changes (deposit paid, lines edited).
+ALTER TABLE documents ADD COLUMN IF NOT EXISTS stripe_link_amount     INTEGER;
 
 ALTER TABLE bookings ADD COLUMN IF NOT EXISTS stripe_customer_id          TEXT;
 ALTER TABLE bookings ADD COLUMN IF NOT EXISTS stripe_payment_method_id    TEXT;

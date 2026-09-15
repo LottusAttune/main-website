@@ -194,19 +194,20 @@ export function verifyWebhook(rawBody: string, signatureHeader: string | null): 
   const secret = process.env.STRIPE_WEBHOOK_SECRET;
   if (!secret || !signatureHeader) return null;
 
-  const parts = Object.fromEntries(
-    signatureHeader.split(',').map((part) => part.split('=') as [string, string])
-  );
-  const timestamp = parts.t;
-  const signature = parts.v1;
-  if (!timestamp || !signature) return null;
+  const pairs = signatureHeader.split(',').map((part) => part.split('=') as [string, string]);
+  const timestamp = pairs.find(([k]) => k === 't')?.[1];
+  // Several v1 signatures are present while a secret is being rotated.
+  const signatures = pairs.filter(([k]) => k === 'v1').map(([, v]) => v);
+  if (!timestamp || signatures.length === 0) return null;
 
-  const expected = createHmac('sha256', secret)
-    .update(`${timestamp}.${rawBody}`)
-    .digest('hex');
-  const a = Buffer.from(expected);
-  const b = Buffer.from(signature);
-  if (a.length !== b.length || !timingSafeEqual(a, b)) return null;
+  const expected = Buffer.from(
+    createHmac('sha256', secret).update(`${timestamp}.${rawBody}`).digest('hex')
+  );
+  const valid = signatures.some((signature) => {
+    const given = Buffer.from(signature);
+    return given.length === expected.length && timingSafeEqual(given, expected);
+  });
+  if (!valid) return null;
   if (Math.abs(Date.now() / 1000 - Number(timestamp)) > 300) return null;
 
   try {

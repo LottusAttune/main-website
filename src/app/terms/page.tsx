@@ -5,9 +5,11 @@ import { LegalPage } from '@/components/legal/LegalPage';
 import { getSettings } from '@/lib/settings';
 import { money, SITE } from '@/lib/site';
 
+// Draft wording awaiting Silvana's sign-off - kept out of search until then.
 export const metadata: Metadata = {
   title: 'Terms & Conditions',
   description: 'Booking, payment and cancellation terms for Lotus Attune experiences.',
+  robots: { index: false, follow: false },
 };
 
 export const dynamic = 'force-dynamic';

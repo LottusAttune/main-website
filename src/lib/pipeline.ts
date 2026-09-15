@@ -159,6 +159,8 @@ export type DocumentRow = {
   paymentPlan: string | null;
   payFullUrl: string | null;
   payDepositUrl: string | null;
+  /** Outstanding amount the full-payment link charges; null when no link. */
+  linkAmount: number | null;
   sentAt: string | null;
   sentTo: string | null;
   viewedAt: string | null;

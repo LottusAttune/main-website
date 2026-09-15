@@ -86,7 +86,7 @@ export async function getStudioData(): Promise<StudioData> {
                client_company, status, lines, subtotal, tax_rate, tax, total, issued_on,
                due_on, notes, token, (pdf IS NOT NULL) AS has_pdf, pdf_generated_at,
                paid_amount, payment_plan, stripe_link_full, stripe_link_deposit,
-               sent_at, sent_to, viewed_at, accepted_at, paid_at, paid_method, voided_at,
+               stripe_link_amount, sent_at, sent_to, viewed_at, accepted_at, paid_at, paid_method, voided_at,
                created_at
         FROM documents ORDER BY created_at DESC LIMIT 1000
       `,

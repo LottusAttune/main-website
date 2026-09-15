@@ -41,8 +41,16 @@ export async function POST(request: Request) {
 
     const settings = await getSettings();
     // What the client paid includes the card fee; the invoice is credited
-    // with the service amount the link was minted for.
-    const amount = plan === 'deposit' ? depositAmount(doc, settings.business.depositPercent) : doc.total - doc.paidAmount;
+    // with the service amount the link was minted for (carried in the
+    // link's metadata, with a computed fallback for links minted before
+    // that field existed).
+    const minted = Number(metadata.amount);
+    const amount =
+      Number.isFinite(minted) && minted > 0
+        ? minted
+        : plan === 'deposit'
+          ? depositAmount(doc, settings.business.depositPercent)
+          : doc.total - doc.paidAmount;
 
     const intentId = session.payment_intent ? String(session.payment_intent) : null;
     let paymentMethodId: string | null = null;

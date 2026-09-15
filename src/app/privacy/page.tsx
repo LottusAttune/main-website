@@ -3,9 +3,11 @@ import type { Metadata } from 'next';
 import { LegalPage } from '@/components/legal/LegalPage';
 import { SITE } from '@/lib/site';
 
+// Draft wording awaiting Silvana's sign-off - kept out of search until then.
 export const metadata: Metadata = {
   title: 'Privacy Policy',
   description: 'How Lotus Attune collects, uses and protects your information.',
+  robots: { index: false, follow: false },
 };
 
 const sections = [

@@ -7,7 +7,7 @@ import {
   sendOwnerNotification,
 } from '@/lib/email';
 import { renderPdf } from '@/lib/pdfshift';
-import { createPaymentLink, isStripeConfigured } from '@/lib/stripe';
+import { createPaymentLink, deactivatePaymentLink, isStripeConfigured } from '@/lib/stripe';
 import {
   formatStudioDate,
   type DocumentKind,
@@ -104,6 +104,7 @@ export function documentFromRow(row: Row): DocumentRow {
     paymentPlan: row.payment_plan ? String(row.payment_plan) : null,
     payFullUrl: row.stripe_link_full ? String(row.stripe_link_full) : null,
     payDepositUrl: row.stripe_link_deposit ? String(row.stripe_link_deposit) : null,
+    linkAmount: row.stripe_link_amount == null ? null : Number(row.stripe_link_amount),
     sentAt: toStamp(row.sent_at),
     sentTo: row.sent_to ? String(row.sent_to) : null,
     viewedAt: toStamp(row.viewed_at),
@@ -121,6 +122,7 @@ export const DOC_COLUMNS = `
   client_company, status, lines, subtotal, tax_rate, tax, total, issued_on,
   due_on, notes, token, (pdf IS NOT NULL) AS has_pdf, pdf_generated_at,
   paid_amount, payment_plan, stripe_link_full, stripe_link_deposit,
+  stripe_link_amount,
   sent_at, sent_to, viewed_at, accepted_at, paid_at, paid_method, voided_at,
   created_at
 `;
@@ -473,6 +475,7 @@ export async function updateDocument(
       updated_at = NOW()
     WHERE id = ${id}
   `;
+  if (total !== current.total) await retirePaymentLinks(id);
   return (await getDocument(id))!;
 }
 
@@ -489,50 +492,90 @@ export function depositAmount(doc: DocumentRow, depositPercent: number): number 
   return Math.round((doc.total * depositPercent) / 100);
 }
 
+/**
+ * Switches off both Stripe links (so an old email can no longer charge the
+ * client) and forgets them. Called whenever the amount owed changes or the
+ * invoice stops being payable; the next view/send mints fresh ones.
+ */
+export async function retirePaymentLinks(id: string): Promise<void> {
+  const result = await sql`
+    SELECT stripe_link_full_id, stripe_link_deposit_id FROM documents WHERE id = ${id}
+  `;
+  const row = result.rows[0];
+  if (!row) return;
+  for (const linkId of [row.stripe_link_full_id, row.stripe_link_deposit_id]) {
+    if (linkId) await deactivatePaymentLink(String(linkId));
+  }
+  await sql`
+    UPDATE documents SET
+      stripe_link_full = NULL, stripe_link_full_id = NULL,
+      stripe_link_deposit = NULL, stripe_link_deposit_id = NULL,
+      stripe_link_amount = NULL, updated_at = NOW()
+    WHERE id = ${id}
+  `;
+}
+
+/**
+ * The card links for what is *currently* owed: a "pay in full" link for the
+ * outstanding balance and, before any money has arrived on a session
+ * invoice, a deposit link. Links minted for a different balance are retired
+ * first, so the amount printed and the amount Stripe charges always agree.
+ */
 export async function ensurePaymentLinks(
   doc: DocumentRow,
   business: BusinessSettings
 ): Promise<DocumentRow> {
   if (doc.kind !== 'invoice' || doc.status === 'void' || doc.status === 'paid') return doc;
   if (!isStripeConfigured()) return doc;
-  if (doc.payFullUrl && (doc.payDepositUrl || !doc.bookingId)) return doc;
 
-  const metadata = { documentId: doc.id, number: doc.number };
+  const due = doc.total - doc.paidAmount;
+  if (due <= 0) return doc;
+  const depositWanted =
+    Boolean(doc.bookingId) &&
+    doc.paidAmount === 0 &&
+    business.depositPercent > 0 &&
+    business.depositPercent < 100;
+
+  const fullOk = Boolean(doc.payFullUrl) && doc.linkAmount === due;
+  const depositOk = depositWanted ? Boolean(doc.payDepositUrl) : !doc.payDepositUrl;
+  if (fullOk && depositOk) return doc;
+
   const redirectUrl = `${publicUrl(doc)}?paid=1`;
   const feeLabel = `Card processing fee (${business.cardFeePercent}%)`;
+  const metadata = { documentId: doc.id, number: doc.number };
 
   try {
-    const full = doc.payFullUrl ? null : await createPaymentLink({
-      description: `${business.businessName} — ${doc.number}`,
-      amount: doc.total,
-      feeAmount: cardFee(doc.total, business.cardFeePercent),
+    if (doc.payFullUrl || doc.payDepositUrl) await retirePaymentLinks(doc.id);
+
+    const full = await createPaymentLink({
+      description: `${business.businessName} — ${doc.number}${doc.paidAmount > 0 ? ' (balance)' : ''}`,
+      amount: due,
+      feeAmount: cardFee(due, business.cardFeePercent),
       feeLabel,
-      metadata: { ...metadata, plan: 'full' },
+      metadata: { ...metadata, plan: 'full', amount: String(due) },
       redirectUrl,
       saveCard: Boolean(doc.bookingId),
     });
     // The deposit plan only makes sense for a session with a date to charge
     // the balance before - gift certificates are paid in full.
     let deposit: { id: string; url: string } | null = null;
-    if (doc.bookingId && !doc.payDepositUrl && business.depositPercent > 0 && business.depositPercent < 100) {
+    if (depositWanted) {
       const amount = depositAmount(doc, business.depositPercent);
       deposit = await createPaymentLink({
         description: `${business.businessName} — ${doc.number} (${business.depositPercent}% deposit)`,
         amount,
         feeAmount: cardFee(amount, business.cardFeePercent),
         feeLabel,
-        metadata: { ...metadata, plan: 'deposit' },
+        metadata: { ...metadata, plan: 'deposit', amount: String(amount) },
         redirectUrl,
         saveCard: true,
       });
     }
     await sql`
       UPDATE documents SET
-        stripe_link_full = COALESCE(${full?.url ?? null}, stripe_link_full),
-        stripe_link_full_id = COALESCE(${full?.id ?? null}, stripe_link_full_id),
-        stripe_link_deposit = COALESCE(${deposit?.url ?? null}, stripe_link_deposit),
-        stripe_link_deposit_id = COALESCE(${deposit?.id ?? null}, stripe_link_deposit_id),
-        updated_at = NOW()
+        stripe_link_full = ${full.url}, stripe_link_full_id = ${full.id},
+        stripe_link_deposit = ${deposit?.url ?? null}, stripe_link_deposit_id = ${deposit?.id ?? null},
+        stripe_link_amount = ${due}, updated_at = NOW()
       WHERE id = ${doc.id}
     `;
     return (await getDocument(doc.id)) ?? doc;
@@ -574,6 +617,23 @@ export async function recordPayment(input: {
             ${input.stripePaymentIntent ?? null}, ${input.stripeCheckoutSession ?? null}, ${input.note ?? null})
   `;
 
+  // Money against a voided invoice is real money - keep the record and shout,
+  // but never resurrect the void document or move the booking on its account.
+  if (doc.status === 'void') {
+    await logActivity({
+      bookingId: doc.bookingId,
+      giftId: doc.giftId,
+      documentId: doc.id,
+      kind: 'payment_on_void',
+      body: `${money(input.amount)} by ${input.method} arrived against voided ${doc.number} - apply it to the replacement invoice or refund it`,
+    });
+    await sendOwnerNotification({
+      subject: `Payment received on a VOID invoice — ${doc.number}`,
+      html: `<p style="margin:0;">${escapeHtml(doc.clientName)} paid ${money(input.amount)} by ${input.method} against ${escapeHtml(doc.number)}, which is void. Record it on the replacement invoice or refund it.</p>`,
+    });
+    return { doc, alreadyRecorded: false };
+  }
+
   const paid = doc.paidAmount + input.amount;
   const settled = paid >= doc.total;
   const plan = doc.paymentPlan ?? (settled ? 'full' : 'deposit');
@@ -608,6 +668,12 @@ export async function recordPayment(input: {
     kind: settled ? 'invoice_paid' : 'deposit_paid',
     body: `${money(input.amount)} by ${input.method} on ${doc.number}${settled ? '' : ` · ${money(doc.total - paid)} remaining`}`,
   });
+
+  // The old links charged the old balance; they are re-minted for what is
+  // left the next time the invoice is viewed or sent.
+  await retirePaymentLinks(doc.id).catch((error) =>
+    console.error('[documents] retiring links failed:', error)
+  );
 
   return { doc: (await getDocument(doc.id))!, alreadyRecorded: false };
 }
@@ -1028,11 +1094,13 @@ export async function markDocument(
       UPDATE documents SET status = 'paid', paid_at = NOW(), paid_method = ${method ?? null}, updated_at = NOW()
       WHERE id = ${id}
     `;
+    await retirePaymentLinks(id);
     if (doc.bookingId) {
       await sql`UPDATE bookings SET status = 'booked' WHERE id = ${doc.bookingId} AND status IN ('new_enquiry','contacted','proposal_sent')`;
     }
   } else if (status === 'void') {
     await sql`UPDATE documents SET status = 'void', voided_at = NOW(), updated_at = NOW() WHERE id = ${id}`;
+    await retirePaymentLinks(id);
   } else if (status === 'accepted') {
     await sql`UPDATE documents SET status = 'accepted', accepted_at = NOW(), updated_at = NOW() WHERE id = ${id}`;
     if (doc.bookingId) {

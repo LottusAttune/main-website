@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 
+import { isSignedIn } from '@/lib/auth';
 import {
   documentHtml,
   ensurePaymentLinks,
@@ -29,7 +30,8 @@ export async function GET(request: Request, { params }: { params: Promise<{ toke
   let doc = await getDocumentByToken(token);
   if (!doc) return new NextResponse('Not found', { status: 404 });
 
-  await markViewed(token);
+  // Silvana previewing from the studio is not the client opening it.
+  if (!(await isSignedIn())) await markViewed(token);
   const ctx = await loadContext(doc);
   doc = await ensurePaymentLinks(doc, ctx.business);
 
@@ -61,10 +63,9 @@ export async function GET(request: Request, { params }: { params: Promise<{ toke
     }
   }
 
-  const inner = documentHtml(doc, ctx)
-    .replace(/^[\s\S]*?<body>/, '')
-    .replace(/<\/body>[\s\S]*$/, '');
-  const styles = documentHtml(doc, ctx).match(/<style>([\s\S]*?)<\/style>/)?.[1] ?? '';
+  const rendered = documentHtml(doc, ctx);
+  const inner = rendered.replace(/^[\s\S]*?<body>/, '').replace(/<\/body>[\s\S]*$/, '');
+  const styles = rendered.match(/<style>([\s\S]*?)<\/style>/)?.[1] ?? '';
 
   const html = `<!doctype html><html><head><meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" /><meta name="robots" content="noindex" />
   <title>${escapeHtml(doc.number)} — Lotus Attune</title>

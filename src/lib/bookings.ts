@@ -193,8 +193,10 @@ export async function chargeBalance(bookingId: string): Promise<ActionResult> {
 
   const settings = await getSettings();
   const fee = Math.round((due * settings.business.cardFeePercent) / 100);
+
+  let intent: string;
   try {
-    const intent = await chargeSavedCard({
+    intent = await chargeSavedCard({
       customerId: String(row.stripe_customer_id),
       paymentMethodId: String(row.stripe_payment_method_id),
       amount: due + fee,
@@ -202,17 +204,6 @@ export async function chargeBalance(bookingId: string): Promise<ActionResult> {
       metadata: { documentId: invoice.id, plan: 'balance' },
       idempotencyKey: `balance-${invoice.id}`,
     });
-    const { doc } = await recordPayment({
-      documentId: invoice.id,
-      amount: due,
-      method: 'card',
-      kind: 'balance',
-      stripePaymentIntent: intent,
-      note: fee > 0 ? `Card fee ${money(fee)} charged on top` : null,
-    });
-    await sql`UPDATE bookings SET balance_charged_at = NOW() WHERE id = ${bookingId}`;
-    await afterPayment(doc, due, 'card', 'balance');
-    return { ok: true };
   } catch (error) {
     const message = error instanceof StripeError ? error.message : 'The card could not be charged.';
     await logActivity({ bookingId, documentId: invoice.id, kind: 'charge_failed', body: `Balance: ${message}` });
@@ -221,6 +212,32 @@ export async function chargeBalance(bookingId: string): Promise<ActionResult> {
       html: `<p style="margin:0;">Stripe could not charge the remaining ${money(due)} for ${String(row.name)}: ${message}</p>`,
     });
     return { ok: false, error: message };
+  }
+
+  // The card has been charged. Mark that first, so a hiccup while recording
+  // it can never lead to a second charge tomorrow; the intent id in the
+  // history makes the money traceable in Stripe if the record fails.
+  await sql`UPDATE bookings SET balance_charged_at = NOW() WHERE id = ${bookingId}`;
+  try {
+    const { doc } = await recordPayment({
+      documentId: invoice.id,
+      amount: due,
+      method: 'card',
+      kind: 'balance',
+      stripePaymentIntent: intent,
+      note: fee > 0 ? `Card fee ${money(fee)} charged on top` : null,
+    });
+    await afterPayment(doc, due, 'card', 'balance');
+    return { ok: true };
+  } catch (error) {
+    console.error('[bookings] balance charged but not recorded:', error);
+    await logActivity({
+      bookingId,
+      documentId: invoice.id,
+      kind: 'record_failed',
+      body: `Balance of ${money(due)} WAS charged (Stripe ${intent}) but could not be recorded - record it by hand`,
+    });
+    return { ok: false, error: `The card was charged (Stripe ${intent}) but the payment could not be recorded. Record it manually.` };
   }
 }
 
@@ -270,18 +287,6 @@ export async function chargeCancellationFee(bookingId: string): Promise<ActionRe
     const message = error instanceof StripeError ? error.message : 'The card could not be charged.';
     await logActivity({ bookingId, kind: 'charge_failed', body: `Cancellation fee: ${message}` });
     return { ok: false, error: message };
-  }
-}
-
-/** Hours between now and the session start, for the late-cancel rule. */
-export function hoursUntilSession(sessionDate: string | null, sessionTime: string | null): number | null {
-  if (!sessionDate || !sessionTime) return null;
-  try {
-    const { startISO } = sessionSlotWindow(sessionDate, sessionTime);
-    const start = new Date(`${startISO}-04:00`);
-    return (start.getTime() - Date.now()) / 3_600_000;
-  } catch {
-    return null;
   }
 }
 

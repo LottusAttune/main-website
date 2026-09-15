@@ -30,9 +30,11 @@
   /* Sits just above Vimeo's own control bar (play/pause, scrubber, volume,
      fullscreen), which lives along the bottom edge. Its exact rendered
      height isn't visible to this site's CSS - it's inside a cross-origin
-     iframe - so this is a deliberately generous clearance rather than a
-     tight guess, after a smaller one (44px) still overlapped on desktop. */
-  bottom: clamp(64px, 8vw, 88px);
+     iframe - so this is an estimate. The previous clamp(64px, 8vw, 88px)
+     overshot the real bar height on desktop, leaving a visible dead gap
+     between the button and the bar - tightened closer to it, still with
+     enough clearance to stay clear of the 44px that once overlapped. */
+  bottom: clamp(48px, 5.5vw, 64px);
   z-index: 2;
   display: flex;
   align-items: center;

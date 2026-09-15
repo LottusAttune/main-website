@@ -233,7 +233,7 @@ async function loadBooking(id: string): Promise<BookingCtx | null> {
   return row ? bookingCtx(row) : null;
 }
 
-function bookingLines(booking: BookingCtx, settings: SiteSettings): DocumentLine[] {
+export function bookingLines(booking: BookingCtx, settings: SiteSettings): DocumentLine[] {
   const code = booking.discountCode
     ? settings.codes.find((c) => c.code === booking.discountCode)
     : undefined;
@@ -308,7 +308,7 @@ async function loadGift(id: string): Promise<GiftCtx | null> {
   return row ? giftCtx(row) : null;
 }
 
-function giftLines(gift: GiftCtx, settings: SiteSettings): DocumentLine[] {
+export function giftLines(gift: GiftCtx, settings: SiteSettings): DocumentLine[] {
   const code = gift.discountCode
     ? settings.codes.find((c) => c.code === gift.discountCode)
     : undefined;
@@ -338,13 +338,13 @@ function giftLines(gift: GiftCtx, settings: SiteSettings): DocumentLine[] {
 }
 
 /** "$1,725" → 1725, "−$100" → -100 (the quote engine formats with U+2212). */
-function parseMoney(value: string): number {
+export function parseMoney(value: string): number {
   const digits = Number(value.replace(/[^0-9.]/g, ''));
   return /^[−-]/.test(value.trim()) ? -digits : digits;
 }
 
 /** Gratuity is a gift to Silvana, not a taxable service. */
-function totalsFor(lines: DocumentLine[], taxRatePercent: number) {
+export function totalsFor(lines: DocumentLine[], taxRatePercent: number) {
   const subtotal = lines.reduce((t, l) => t + Math.round(l.amount), 0);
   const taxable = lines
     .filter((l) => !/^Gratuity/.test(l.label))

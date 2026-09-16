@@ -26,17 +26,16 @@ type Props = {
   documents: DocumentRow[];
   payments: PaymentRow[];
   integrations: Integrations;
-  /** Which filter pill starts selected; 'proposals' for the Proposals tab. */
+  /** Which filter pill starts selected. */
   initialFilter?: FilterKey;
   /** Hide the money tiles (the Getting paid tab shows its own). */
   compact?: boolean;
 };
 
-export type FilterKey = 'all' | 'invoices' | 'open' | 'overdue' | 'paid' | 'proposals' | 'void';
+export type FilterKey = 'all' | 'open' | 'overdue' | 'paid' | 'void';
 
 const FILTERS: { key: FilterKey; label: string; test: (doc: DocumentRow) => boolean }[] = [
   { key: 'all', label: 'All', test: () => true },
-  { key: 'invoices', label: 'Invoices', test: (doc) => doc.kind === 'invoice' },
   {
     key: 'open',
     label: 'Open',
@@ -44,17 +43,14 @@ const FILTERS: { key: FilterKey; label: string; test: (doc: DocumentRow) => bool
   },
   { key: 'overdue', label: 'Overdue', test: (doc) => isOverdue(doc) },
   { key: 'paid', label: 'Paid', test: (doc) => doc.status === 'paid' },
-  { key: 'proposals', label: 'Proposals', test: (doc) => doc.kind === 'proposal' },
   { key: 'void', label: 'Void', test: (doc) => doc.status === 'void' },
 ];
 
 const EMPTY: Record<FilterKey, string> = {
-  all: 'No invoices yet. Accept a proposal, or open a lead and create one.',
-  invoices: 'No invoices yet. Create one above, or accept a proposal.',
+  all: 'No invoices yet. Every website booking creates one; you can also write one above.',
   open: 'Nothing open right now.',
   overdue: 'Nothing overdue.',
   paid: 'No paid invoices yet.',
-  proposals: 'No proposals yet. Open a lead to create one.',
   void: 'Nothing has been voided.',
 };
 
@@ -188,9 +184,6 @@ export function Invoices({ documents, payments, integrations, initialFilter = 'a
       localDate(p.createdAt).slice(0, 7) === thisMonth
   );
   const paidThisMonth = monthPayments.reduce((sum, p) => sum + p.amount, 0);
-  const awaitingAnswer = documents.filter(
-    (doc) => doc.kind === 'proposal' && doc.status === 'sent'
-  ).length;
 
   // --- The list -------------------------------------------------------------
   const sorted = [...documents].sort(compareDocs);
@@ -259,11 +252,6 @@ export function Invoices({ documents, payments, integrations, initialFilter = 'a
               ? `Nothing received yet in ${monthName}`
               : `${plural(monthPayments.length, 'payment')} in ${monthName}`}
           </div>
-        </div>
-        <div className={`card ${styles.stat}`}>
-          <div className={styles.statLabel}>Proposals awaiting answer</div>
-          <div className={styles.statValue}>{awaitingAnswer}</div>
-          <div className={styles.statNote}>Sent, not yet accepted or declined</div>
         </div>
       </div>
       )}

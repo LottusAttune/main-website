@@ -17,7 +17,7 @@ import { useStudioAction } from '../useStudioAction';
 import { Invoices } from './Invoices';
 import styles from '../studio.module.css';
 
-type Tab = 'proposals' | 'invoices' | 'receipts' | 'links';
+type Tab = 'invoices' | 'receipts' | 'links';
 
 type Props = {
   documents: DocumentRow[];
@@ -361,17 +361,17 @@ export function GettingPaid({ documents, payments, paymentLinks, integrations }:
   const { run, runJson, pending, error } = useStudioAction();
   const [tab, setTab] = useState<Tab>('invoices');
 
-  const invoices = documents.filter((d) => d.kind === 'invoice' && d.status !== 'void');
+  // Only invoicing lives here: proposals, when used at all, sit on the lead.
+  const invoiceDocs = documents.filter((d) => d.kind === 'invoice');
+  const invoices = invoiceDocs.filter((d) => d.status !== 'void');
   const outstanding = invoices.filter((d) => d.status !== 'paid').reduce((t, d) => t + balanceDue(d), 0);
   const overdue = invoices.filter((d) => isOverdue(d)).reduce((t, d) => t + balanceDue(d), 0);
-  const awaiting = documents.filter((d) => d.kind === 'proposal' && d.status === 'sent').length;
   const month = new Date().toISOString().slice(0, 7);
   const received = payments
     .filter((p) => p.createdAt.startsWith(month) && p.kind !== 'refund' && p.kind !== 'cancellation_fee')
     .reduce((t, p) => t + p.amount, 0);
 
   const tabs: Array<{ key: Tab; label: string; count?: number }> = [
-    { key: 'proposals', label: 'Proposals', count: awaiting },
     { key: 'invoices', label: 'Invoices', count: invoices.filter((d) => d.status !== 'paid').length },
     { key: 'receipts', label: 'Receipts', count: payments.length },
     { key: 'links', label: 'Payment links', count: paymentLinks.filter((l) => l.isActive && !l.paidAt).length },
@@ -397,11 +397,6 @@ export function GettingPaid({ documents, payments, paymentLinks, integrations }:
           <div className={styles.statValue}>{money(received)}</div>
           <div className={styles.statNote}>{payments.filter((p) => p.createdAt.startsWith(month)).length} payments</div>
         </div>
-        <div className={`card ${styles.stat}`}>
-          <div className={styles.statLabel}>Proposals out</div>
-          <div className={styles.statValue}>{awaiting}</div>
-          <div className={styles.statNote}>Awaiting a signature</div>
-        </div>
       </div>
 
       <div className={styles.segmented} style={{ marginBottom: 18 }}>
@@ -412,16 +407,10 @@ export function GettingPaid({ documents, payments, paymentLinks, integrations }:
         ))}
       </div>
 
-      {tab === 'proposals' ? (
-        <>
-          <Composer kind="proposal" runJson={runJson} pending={pending} emailReady={integrations.email} />
-          <Invoices documents={documents} payments={payments} integrations={integrations} initialFilter="proposals" compact />
-        </>
-      ) : null}
       {tab === 'invoices' ? (
         <>
           <Composer kind="invoice" runJson={runJson} pending={pending} emailReady={integrations.email} />
-          <Invoices documents={documents} payments={payments} integrations={integrations} initialFilter="invoices" compact />
+          <Invoices documents={invoiceDocs} payments={payments} integrations={integrations} compact />
         </>
       ) : null}
       {tab === 'receipts' ? <Receipts payments={payments} documents={documents} run={run} pending={pending} /> : null}

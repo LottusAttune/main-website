@@ -467,7 +467,8 @@ export async function insertBookingInvoice(input: {
 export async function ensureGiftDocument(
   giftId: string,
   kind: 'invoice' | 'certificate',
-  settings?: SiteSettings
+  settings?: SiteSettings,
+  options: { mintLinks?: boolean } = {}
 ): Promise<DocumentRow> {
   const existing = await selectDocuments(
     `gift_id = $1 AND kind = $2 AND status != 'void' ORDER BY created_at DESC LIMIT 1`,
@@ -506,8 +507,47 @@ export async function ensureGiftDocument(
     kind: `${kind}_created`,
     body: `${doc.number} · ${money(doc.total)}`,
   });
-  if (kind === 'invoice') doc = await ensurePaymentLinks(doc, s.business);
+  if (kind === 'invoice' && options.mintLinks !== false) doc = await ensurePaymentLinks(doc, s.business);
   return doc;
+}
+
+/**
+ * Once a gift invoice is paid: the certificate is created and emailed to the
+ * recipient (when an email was given) and always to the buyer, so they can
+ * hand it over themselves. Safe to call twice: an already-sent certificate
+ * is left alone.
+ */
+export async function issueGiftCertificate(giftId: string): Promise<ActionResult> {
+  const settings = await getSettings();
+  const gift = await loadGift(giftId);
+  if (!gift) return { ok: false, error: 'Gift request not found.' };
+  const certificate = await ensureGiftDocument(giftId, 'certificate', settings);
+  if (certificate.status === 'sent') return { ok: true };
+
+  const sent = await sendDocument(certificate.id);
+  if (!sent.ok) return sent;
+
+  // The buyer gets their own copy when the certificate went to someone else.
+  if (certificate.clientEmail.toLowerCase() !== gift.buyerEmail.toLowerCase()) {
+    const ctx = await loadContext(certificate);
+    const pdf = (await getDocumentPdf(certificate.id)) ?? (await generatePdf(certificate, ctx));
+    await sendDocumentEmail({
+      kind: 'certificate',
+      to: gift.buyerEmail,
+      name: gift.buyerName ?? gift.buyerEmail,
+      number: certificate.number,
+      total: certificate.total,
+      dueOn: null,
+      summaryHtml: emailBodyHtml(certificate, ctx.business),
+      viewUrl: publicUrl(certificate),
+      pdf,
+      paymentHtml: '',
+      giftCode: gift.code,
+      subject: `Your Lotus Attune gift certificate for ${gift.recipientName}`,
+      introHtml: `Thank you for your gift. The certificate for ${escapeHtml(gift.recipientName)} is ${pdf ? 'attached' : 'below'} and has also been sent to ${escapeHtml(certificate.clientEmail)}.`,
+    });
+  }
+  return { ok: true };
 }
 
 /** Edit a draft's lines, notes and due date before it goes out. */

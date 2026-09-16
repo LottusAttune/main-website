@@ -39,9 +39,11 @@ type CodeState = {
 type Props = {
   pricing: Pricing;
   codes: DiscountCode[];
+  /** Tax and card fee, so the button shows what the checkout will charge. */
+  payTerms: { taxRatePercent: number; taxLabel: string; cardFeePercent: number };
 };
 
-export function GiftCalculator({ pricing, codes }: Props) {
+export function GiftCalculator({ pricing, codes, payTerms }: Props) {
   const [format, setFormat] = useState<Format>('private');
   const [sessions, setSessions] = useState(1);
   const [participants, setParticipants] = useState(6);
@@ -69,6 +71,8 @@ export function GiftCalculator({ pricing, codes }: Props) {
   >({});
   const [sent, setSent] = useState(false);
   const [issuedCode, setIssuedCode] = useState('');
+  const [invoiceUrl, setInvoiceUrl] = useState<string | null>(null);
+  const [redirecting, setRedirecting] = useState(false);
   const [hideBuyerName, setHideBuyerName] = useState(false);
   const [previewOpen, setPreviewOpen] = useState(false);
 
@@ -154,6 +158,12 @@ export function GiftCalculator({ pricing, codes }: Props) {
     pricing
   );
 
+  // What the checkout charges: tax on everything but the gratuity, then the
+  // card fee on the whole amount.
+  const giftTax = Math.round(((quote.total - quote.gratuity) * payTerms.taxRatePercent) / 100);
+  const giftWithTax = quote.total + giftTax;
+  const chargeToday = giftWithTax + Math.round((giftWithTax * payTerms.cardFeePercent) / 100);
+
   const applyCode = () => {
     const entered = codeInput.trim().toUpperCase();
     if (!entered) {
@@ -232,8 +242,18 @@ export function GiftCalculator({ pricing, codes }: Props) {
       }
       const body = (await response.json().catch(() => null)) as {
         code?: string;
+        payment?: { checkoutUrl: string | null; invoiceUrl: string; invoiceNumber: string } | null;
       } | null;
       setIssuedCode(body?.code ?? '');
+      setInvoiceUrl(body?.payment?.invoiceUrl ?? null);
+      // Straight to the secure payment page; the certificate is emailed the
+      // moment the payment completes. Without a card checkout the invoice
+      // (with e-transfer details) has gone by email instead.
+      if (body?.payment?.checkoutUrl) {
+        setRedirecting(true);
+        window.location.assign(body.payment.checkoutUrl);
+        return;
+      }
       setSent(true);
     } catch (err) {
       setError(
@@ -424,9 +444,14 @@ export function GiftCalculator({ pricing, codes }: Props) {
           <>
             <div className={styles.asideTitle}>Gift Certificate</div>
             <p className={styles.success} role="status">
-              Your certificate is ready — save or screenshot it below. We've
-              also noted your request; reach out any time at {SITE.email} if
-              you need anything.
+              Thank you. Your invoice is on its way by email with the payment details.
+              The certificate below is issued and emailed as soon as the payment arrives.
+              {invoiceUrl ? (
+                <>
+                  {' '}
+                  <a href={invoiceUrl} style={{ color: 'inherit' }}>View the invoice</a>.
+                </>
+              ) : null}
             </p>
             <div className={styles.sentCert}>
               <CertificatePreview
@@ -580,11 +605,20 @@ export function GiftCalculator({ pricing, codes }: Props) {
             <button
               type="button"
               className="btn btn--cream btn--wide"
-              disabled={submitting}
+              disabled={submitting || redirecting}
               onClick={submit}
             >
-              {submitting ? 'Sending…' : 'Request gift certificate'}
+              {redirecting
+                ? 'Opening the secure payment page…'
+                : submitting
+                  ? 'Saving your request…'
+                  : `Continue to pay ${money(chargeToday)}`}
             </button>
+            <p className={styles.policyNote} style={{ marginTop: 12 }}>
+              {payTerms.taxRatePercent > 0 ? `Includes ${payTerms.taxLabel} ${payTerms.taxRatePercent}%` : 'Tax included'}
+              {payTerms.cardFeePercent > 0 ? ` and the ${payTerms.cardFeePercent}% card fee.` : '.'}{' '}
+              Next: the secure card payment page (Stripe). The certificate is emailed the moment the payment completes.
+            </p>
 
             {error ? (
               <div className={styles.error} role="alert">

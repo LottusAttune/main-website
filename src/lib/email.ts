@@ -389,10 +389,10 @@ export async function sendDocumentEmail(input: {
       ${BUTTON(input.viewUrl, 'View invoice')}
       ${mottoHtml()}`;
   } else {
-    subject = `A Lotus Attune gift certificate for you`;
+    subject = input.subject ?? `A Lotus Attune gift certificate for you`;
     body = `
       <p style="margin:0 0 10px;">Hi ${escapeHtml(first)},</p>
-      <p style="margin:0;">Someone thought of you. Your Lotus Attune gift certificate is ${input.pdf ? 'attached' : 'below'}: a two-hour immersive sound experience in downtown Toronto, ready whenever you are.</p>
+      <p style="margin:0;">${input.introHtml ?? `Someone thought of you. Your Lotus Attune gift certificate is ${input.pdf ? 'attached' : 'below'}: a two-hour immersive sound experience in downtown Toronto, ready whenever you are.`}</p>
       ${input.summaryHtml}
       ${input.giftCode ? `<p style="margin:0 0 6px;">Your redemption code: <strong style="letter-spacing:0.12em;">${escapeHtml(input.giftCode)}</strong></p>` : ''}
       <p style="margin:0;">To redeem, book at <a href="${SITE.url}/book" style="color:#7c5b3b;">lotusattune.com/book</a> and enter your code.</p>

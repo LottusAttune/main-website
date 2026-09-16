@@ -1,9 +1,13 @@
-import { NextResponse } from 'next/server';
+import { after, NextResponse } from 'next/server';
 
 import { isDatabaseConfigured, sql } from '@/lib/db';
 import { generateGiftCode } from '@/lib/gift-code';
 import { giftQuoteFor } from '@/lib/quote';
+import { createGiftCheckout } from '@/lib/checkout';
+import { ensureGiftDocument, logActivity, sendDocument } from '@/lib/documents';
+import { sendOwnerNotification } from '@/lib/email';
 import { getSettings } from '@/lib/settings';
+import { money, SITE } from '@/lib/site';
 import { giftSchema } from '@/lib/validation';
 
 const MAX_CODE_ATTEMPTS = 5;
@@ -30,7 +34,8 @@ export async function POST(request: Request) {
   }
 
   const input = parsed.data;
-  const { pricing, codes } = await getSettings();
+  const settings = await getSettings();
+  const { pricing, codes } = settings;
 
   // Never trust the discount the browser applied - only honour a code that
   // is currently active and meets its own participant minimum.
@@ -89,10 +94,43 @@ export async function POST(request: Request) {
         RETURNING id
       `;
 
-      return NextResponse.json(
-        { id: result.rows[0]?.id, code, total },
-        { status: 201 }
-      );
+      const giftId = String(result.rows[0]?.id);
+
+      // The invoice and a full-payment checkout are made before answering,
+      // so the buyer goes straight on to pay; the certificate follows the
+      // payment automatically.
+      let payment: { invoiceNumber: string; invoiceTotal: number; checkoutUrl: string | null; invoiceUrl: string } | null = null;
+      let invoiceId: string | null = null;
+      try {
+        const doc = await ensureGiftDocument(giftId, 'invoice', settings, { mintLinks: false });
+        invoiceId = doc.id;
+        const checkout = await createGiftCheckout(doc, settings.business, {
+          recipientName: input.recipientName,
+          buyerEmail: input.buyerEmail,
+        });
+        payment = {
+          invoiceNumber: doc.number,
+          invoiceTotal: doc.total,
+          checkoutUrl: checkout?.url ?? null,
+          invoiceUrl: `${SITE.url}/d/${doc.token}`,
+        };
+      } catch (error) {
+        console.error('[gifts] invoice failed:', error);
+      }
+
+      after(async () => {
+        await logActivity({ giftId, kind: 'received', body: 'Gift certificate requested from the website' });
+        if (invoiceId && settings.business.autoSendInvoices) {
+          const sent = await sendDocument(invoiceId);
+          if (!sent.ok) await logActivity({ giftId, documentId: invoiceId, kind: 'email_failed', body: `Gift invoice: ${sent.error}` });
+        }
+        await sendOwnerNotification({
+          subject: `New gift certificate request: ${input.buyerName} for ${input.recipientName}, ${money(total)}`,
+          html: `<p style="margin:0 0 8px;">${input.buyerName} (${input.buyerEmail}) is buying a ${money(total)} gift certificate for ${input.recipientName}${input.recipientEmail ? ` (${input.recipientEmail})` : ''}.</p><p style="margin:0;">${payment?.checkoutUrl ? 'They were sent to the card checkout; the certificate goes out on its own once paid.' : 'The invoice went to them by email.'}</p>`,
+        });
+      });
+
+      return NextResponse.json({ id: giftId, code, total, payment }, { status: 201 });
     } catch (error) {
       const isCodeCollision =
         error instanceof Error &&

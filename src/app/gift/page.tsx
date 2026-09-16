@@ -18,7 +18,7 @@ export const metadata: Metadata = {
 export const dynamic = 'force-dynamic';
 
 export default async function GiftPage() {
-  const { pricing, codes } = await getSettings();
+  const { pricing, codes, business } = await getSettings();
 
   return (
     <>
@@ -94,7 +94,15 @@ export default async function GiftPage() {
           }}
           aria-label="Gift certificate"
         >
-          <GiftCalculator pricing={pricing} codes={codes} />
+          <GiftCalculator
+            pricing={pricing}
+            codes={codes}
+            payTerms={{
+              taxRatePercent: business.taxRatePercent,
+              taxLabel: business.taxLabel,
+              cardFeePercent: business.cardFeePercent,
+            }}
+          />
         </section>
       </main>
 

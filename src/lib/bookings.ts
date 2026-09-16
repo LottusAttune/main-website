@@ -8,6 +8,7 @@ import {
   ensurePaymentLinks,
   generatePdf,
   getDocument,
+  issueGiftCertificate,
   loadContext,
   logActivity,
   paymentOptionsHtml,
@@ -190,6 +191,13 @@ export async function afterPayment(
   if (doc.bookingId && kind !== 'cancellation_fee') {
     const b = await sql`SELECT confirmation_sent_at FROM bookings WHERE id = ${doc.bookingId}`;
     if (!b.rows[0]?.confirmation_sent_at) await sendBookingConfirmation(doc.bookingId);
+  }
+  // A paid gift invoice turns into the certificate itself.
+  if (doc.giftId && balanceDue(doc) <= 0 && kind !== 'cancellation_fee' && kind !== 'refund') {
+    const issued = await issueGiftCertificate(doc.giftId);
+    if (!issued.ok) {
+      await logActivity({ giftId: doc.giftId, documentId: doc.id, kind: 'email_failed', body: `Certificate: ${issued.error}` });
+    }
   }
 }
 

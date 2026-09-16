@@ -92,6 +92,38 @@ export async function createBookingCheckout(
   }
 }
 
+/** A gift certificate is paid in full at once: one line, no card kept. */
+export async function createGiftCheckout(
+  doc: CheckoutDoc,
+  business: BusinessSettings,
+  gift: { recipientName: string; buyerEmail: string }
+): Promise<{ url: string; amount: number } | null> {
+  if (!isStripeConfigured() || doc.kind !== 'invoice') return null;
+  const amount = doc.total - doc.paidAmount;
+  if (amount <= 0) return null;
+  try {
+    const session = await createCheckoutSession({
+      description: `Lotus Attune gift certificate for ${gift.recipientName}: ${money(amount)}`,
+      details: `Two-hour Immersive Soma Sound Experience, downtown Toronto. Invoice ${doc.number}. The certificate is emailed as soon as this payment goes through.`,
+      imageUrl: `${SITE.url}/assets/logo-circle.webp`,
+      submitType: 'pay',
+      submitMessage: 'The gift certificate is emailed to you (and to the recipient, if you gave their email) the moment the payment completes.',
+      amount,
+      feeAmount: cardFee(amount, business.cardFeePercent),
+      feeLabel: `Card processing fee (${business.cardFeePercent}%)`,
+      customerEmail: gift.buyerEmail,
+      metadata: { documentId: doc.id, number: doc.number, plan: 'full', amount: String(amount) },
+      successUrl: `${SITE.url}/gift/confirmed?session_id={CHECKOUT_SESSION_ID}`,
+      cancelUrl: `${SITE.url}/d/${doc.token}`,
+      saveCard: false,
+    });
+    return { url: session.url, amount };
+  } catch (error) {
+    console.error('[checkout] gift session failed:', error);
+    return null;
+  }
+}
+
 export type SettledCheckout = {
   doc: DocumentRow;
   amount: number;

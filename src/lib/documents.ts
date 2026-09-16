@@ -182,7 +182,7 @@ async function nextNumber(kind: DocumentKind, prefix: string): Promise<string> {
 // Line items from a booking / gift, priced with the shared quote engine.
 // ---------------------------------------------------------------------------
 
-type BookingCtx = {
+export type BookingCtx = {
   id: string;
   name: string;
   email: string;
@@ -228,7 +228,7 @@ function bookingCtx(row: Row): BookingCtx {
   };
 }
 
-async function loadBooking(id: string): Promise<BookingCtx | null> {
+export async function loadBooking(id: string): Promise<BookingCtx | null> {
   const result = await sql`SELECT * FROM bookings WHERE id = ${id}`;
   const row = result.rows[0];
   return row ? bookingCtx(row) : null;

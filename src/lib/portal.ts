@@ -1,0 +1,264 @@
+import 'server-only';
+
+import { CORPORATE_ADDON_COPY, FAQS, VENUE_COPY } from '@/data/content';
+import { sessionSlotWindow } from '@/lib/calendar';
+import { sql } from '@/lib/db';
+import {
+  balanceDueOn,
+  bookingLines,
+  ensurePaymentLinks,
+  getDocument,
+  logActivity,
+  publicUrl,
+  updateDocument,
+  type BookingCtx,
+} from '@/lib/documents';
+import { sendOwnerNotification } from '@/lib/email';
+import { buildIcs, googleCalendarUrl, zonedTimeToUtc, type CalendarEvent } from '@/lib/ics';
+import { balanceDue, type DocumentRow } from '@/lib/pipeline';
+import { MIN_GROUP_SIZE, quoteFor } from '@/lib/quote';
+import { getSettings, type SiteSettings } from '@/lib/settings';
+import { LOUNGE_MAX, money, SITE, TEAM_ADDON_MIN_PARTICIPANTS } from '@/lib/site';
+
+/**
+ * The client portal: one private link per booking (the token is the
+ * credential, like the invoice link) showing the session, a countdown, the
+ * money side, and the add-ons they can still put on the booking themselves.
+ */
+
+export type UpsellKey = 'teamAddon' | 'refreshments';
+
+export type Upsell = {
+  key: UpsellKey;
+  title: string;
+  blurb: string;
+  price: number;
+  priceNote: string;
+};
+
+export type PortalData = {
+  token: string;
+  booking: BookingCtx & { cardOnFile: boolean; confirmed: boolean };
+  invoice: DocumentRow | null;
+  settings: SiteSettings;
+  venue: string;
+  venueCopy: readonly string[];
+  faqs: ReadonlyArray<{ q: string; a: string }>;
+  cancellationPolicy: string;
+  /** Absolute start/end of the (first) session, for the countdown. */
+  startsAt: string | null;
+  endsAt: string | null;
+  googleCalendarUrl: string | null;
+  upsells: Upsell[];
+  paid: number;
+  balance: number;
+  balanceDay: string | null;
+  invoiceUrl: string | null;
+  payUrl: string | null;
+};
+
+export function portalUrl(token: string): string {
+  return `${SITE.url}/portal/${token}`;
+}
+
+function ctxFromRow(row: Record<string, unknown>): BookingCtx {
+  const toIso = (v: unknown) =>
+    !v ? null : v instanceof Date ? v.toISOString().slice(0, 10) : String(v).slice(0, 10);
+  return {
+    id: String(row.id),
+    name: String(row.name),
+    email: String(row.email),
+    phone: row.phone ? String(row.phone) : null,
+    company: row.company ? String(row.company) : null,
+    message: row.message ? String(row.message) : null,
+    participants: Number(row.participants),
+    sessionDate: toIso(row.session_date),
+    sessionTime: row.session_time ? String(row.session_time) : null,
+    sessionDate2: toIso(row.session_date_2),
+    sessionTime2: row.session_time_2 ? String(row.session_time_2) : null,
+    teamAddon: Boolean(row.team_addon),
+    refreshments: Boolean(row.refreshments),
+    isPackage: Boolean(row.is_package),
+    isCorporateIntro: Boolean(row.is_corporate_intro),
+    discountCode: row.discount_code ? String(row.discount_code) : null,
+    gratuity: Number(row.gratuity ?? 0),
+    total: Number(row.estimated_total ?? 0),
+    status: String(row.status),
+  };
+}
+
+async function liveInvoice(bookingId: string): Promise<DocumentRow | null> {
+  const result = await sql`
+    SELECT id FROM documents
+    WHERE booking_id = ${bookingId} AND kind = 'invoice' AND status != 'void'
+    ORDER BY created_at DESC LIMIT 1
+  `;
+  const id = result.rows[0]?.id;
+  return id ? getDocument(String(id)) : null;
+}
+
+export function upsellsFor(booking: BookingCtx, settings: SiteSettings): Upsell[] {
+  const list: Upsell[] = [];
+  const people = booking.participants;
+  if (booking.status === 'cancelled' || booking.status === 'complete') return list;
+  if (people >= TEAM_ADDON_MIN_PARTICIPANTS && !booking.teamAddon) {
+    list.push({
+      key: 'teamAddon',
+      title: 'Team-building add-on',
+      blurb: CORPORATE_ADDON_COPY,
+      price: settings.pricing.teamAddon,
+      priceNote: 'per event',
+    });
+  }
+  if (people >= MIN_GROUP_SIZE && !booking.refreshments) {
+    list.push({
+      key: 'refreshments',
+      title: 'Refreshments',
+      blurb: 'Light refreshments for your group, served in the Arrival Lounge before and after the experience.',
+      price: settings.pricing.refreshments * people,
+      priceNote: `${money(settings.pricing.refreshments)} per person`,
+    });
+  }
+  return list;
+}
+
+export async function loadPortal(token: string): Promise<PortalData | null> {
+  if (!/^[0-9a-f-]{36}$/i.test(token)) return null;
+  const result = await sql`SELECT * FROM bookings WHERE portal_token = ${token}`;
+  const row = result.rows[0];
+  if (!row) return null;
+
+  const settings = await getSettings();
+  const booking = ctxFromRow(row);
+  let invoice = await liveInvoice(booking.id);
+  if (invoice && invoice.status !== 'paid' && balanceDue(invoice) > 0) {
+    invoice = await ensurePaymentLinks(invoice, settings.business);
+  }
+  const paid = invoice?.paidAmount ?? 0;
+  const balance = invoice ? balanceDue(invoice) : 0;
+  const venue = booking.participants <= LOUNGE_MAX ? 'Private Wellness Lounge' : 'Premium Signature Venue';
+
+  let startsAt: string | null = null;
+  let endsAt: string | null = null;
+  let calendar: string | null = null;
+  if (booking.sessionDate && booking.sessionTime) {
+    try {
+      const { startISO, endISO } = sessionSlotWindow(booking.sessionDate, booking.sessionTime);
+      startsAt = zonedTimeToUtc(startISO, 'America/Toronto').toISOString();
+      endsAt = zonedTimeToUtc(endISO, 'America/Toronto').toISOString();
+      calendar = googleCalendarUrl(calendarEvent(booking, settings, venue));
+    } catch {
+      // An unrecognised slot label: no countdown, the rest still works.
+    }
+  }
+
+  return {
+    token,
+    booking: { ...booking, cardOnFile: Boolean(row.stripe_payment_method_id), confirmed: paid > 0 },
+    invoice,
+    settings,
+    venue,
+    venueCopy: VENUE_COPY,
+    faqs: FAQS.filter((f) => ['What to expect?', 'What should I bring?', 'What should I wear?'].includes(f.q)),
+    cancellationPolicy:
+      settings.business.cancellationPolicy || (FAQS.find((f) => f.q === 'Cancellation Policy')?.a ?? ''),
+    startsAt,
+    endsAt,
+    googleCalendarUrl: calendar,
+    upsells: upsellsFor(booking, settings),
+    paid,
+    balance,
+    balanceDay: invoice && paid > 0 ? invoice.dueOn : balanceDueOn(booking.sessionDate, settings.business),
+    invoiceUrl: invoice ? publicUrl(invoice) : null,
+    payUrl: invoice ? (paid === 0 ? invoice.payDepositUrl ?? invoice.payFullUrl : invoice.payFullUrl) : null,
+  };
+}
+
+export function calendarEvent(booking: BookingCtx, settings: SiteSettings, venue: string): CalendarEvent {
+  const { startISO, endISO } = sessionSlotWindow(booking.sessionDate!, booking.sessionTime!);
+  return {
+    uid: `booking-${booking.id}@lotusattune.com`,
+    title: 'Lotus Attune, Immersive Soma Sound Experience',
+    description: `${venue}. ${VENUE_COPY[0]}`,
+    location: settings.business.venueDetails || venue,
+    startISO,
+    endISO,
+    attendeeName: booking.name,
+    attendeeEmail: booking.email,
+  };
+}
+
+export async function portalIcs(token: string): Promise<string | null> {
+  const data = await loadPortal(token);
+  if (!data || !data.booking.sessionDate || !data.booking.sessionTime) return null;
+  return buildIcs(calendarEvent(data.booking, data.settings, data.venue));
+}
+
+/**
+ * Puts an add-on on the booking and on its invoice. The extra joins the
+ * balance: charged with it to the card on file, or paid from the invoice.
+ */
+export async function addUpsell(
+  token: string,
+  key: UpsellKey
+): Promise<{ ok: true; total: number; balance: number } | { ok: false; error: string }> {
+  const data = await loadPortal(token);
+  if (!data) return { ok: false, error: 'Booking not found.' };
+  const upsell = data.upsells.find((u) => u.key === key);
+  if (!upsell) return { ok: false, error: 'That add-on is not available on this booking.' };
+
+  const { booking, settings } = data;
+  const next: BookingCtx = { ...booking, teamAddon: booking.teamAddon || key === 'teamAddon', refreshments: booking.refreshments || key === 'refreshments' };
+  const code = next.discountCode ? settings.codes.find((c) => c.code === next.discountCode) : undefined;
+  const quote = quoteFor(
+    {
+      participants: next.participants,
+      isPackage: next.isPackage,
+      isCorporateIntro: next.isCorporateIntro,
+      teamAddon: next.teamAddon,
+      refreshments: next.refreshments,
+      percentOff: code?.percentOff,
+      amountOff: code?.amountOff,
+      discountLabel: code?.code,
+      discountMinParticipants: code?.minParticipants,
+      gratuityAmount: next.gratuity || undefined,
+    },
+    settings.pricing
+  );
+  next.total = quote.total;
+
+  await sql`
+    UPDATE bookings SET
+      team_addon = ${next.teamAddon}, refreshments = ${next.refreshments},
+      estimated_total = ${quote.total}
+    WHERE id = ${booking.id}
+  `;
+
+  let total = quote.total;
+  let balance = 0;
+  if (data.invoice) {
+    const updated = await updateDocument(data.invoice.id, { lines: bookingLines(next, settings) });
+    total = updated.total;
+    balance = balanceDue(updated);
+    // An invoice that was settled has something owing again.
+    if (updated.status === 'paid' && balance > 0) {
+      await sql`
+        UPDATE documents SET status = 'sent', paid_at = NULL,
+          due_on = COALESCE(${balanceDueOn(next.sessionDate, settings.business)}::date, due_on)
+        WHERE id = ${updated.id}
+      `;
+    }
+  }
+
+  await logActivity({
+    bookingId: booking.id,
+    documentId: data.invoice?.id ?? null,
+    kind: 'addon_added',
+    body: `${upsell.title} (${money(upsell.price)}) added from the client portal${data.invoice ? ` · ${data.invoice.number} now ${money(total)}` : ''}`,
+  });
+  await sendOwnerNotification({
+    subject: `${booking.name} added ${upsell.title} (${money(upsell.price)})`,
+    html: `<p style="margin:0;">${booking.name} added <strong>${upsell.title}</strong> from their portal.${data.invoice ? ` Invoice ${data.invoice.number} is now ${money(total)}; ${money(balance)} is outstanding${booking.cardOnFile ? ' and will be charged with the balance' : ''}.` : ''}</p>`,
+  });
+  return { ok: true, total, balance };
+}

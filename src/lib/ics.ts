@@ -8,7 +8,7 @@ const TIME_ZONE = 'America/Toronto';
  *  handling DST correctly for the given date - comparing how the same
  *  instant renders in the target zone vs. UTC and correcting for the
  *  difference, rather than assuming a fixed offset. */
-function zonedTimeToUtc(localISO: string, timeZone: string): Date {
+export function zonedTimeToUtc(localISO: string, timeZone: string): Date {
   const asUTC = new Date(`${localISO}Z`);
   const tzString = asUTC.toLocaleString('en-US', { timeZone });
   const utcString = asUTC.toLocaleString('en-US', { timeZone: 'UTC' });

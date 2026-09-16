@@ -1,0 +1,221 @@
+.page {
+  padding: clamp(24px, 4vw, 44px) var(--space-gutter) clamp(48px, 6vw, 80px);
+  max-width: var(--width-prose-narrow);
+  margin: 0 auto;
+}
+
+.title {
+  font-size: clamp(26px, 3.4vw, 44px);
+  line-height: 1.14;
+  margin: 0 0 8px;
+}
+
+.intro {
+  font-size: 16px;
+  line-height: 1.7;
+  margin: 0 0 24px;
+  color: var(--color-ink-body);
+}
+
+/* ---------- Countdown ---------- */
+
+.countdown {
+  background: var(--color-ink-strong);
+  color: var(--color-cream-text);
+  padding: clamp(22px, 3vw, 32px) clamp(20px, 3vw, 32px);
+  margin: 0 0 24px;
+  min-height: 120px;
+  text-align: center;
+}
+
+.countdownLabel {
+  font-size: var(--text-eyebrow);
+  letter-spacing: var(--tracking-eyebrow);
+  text-transform: uppercase;
+  color: var(--color-gold);
+  margin-bottom: 12px;
+}
+
+.countdownRow {
+  display: flex;
+  justify-content: center;
+  gap: clamp(20px, 6vw, 56px);
+}
+
+.countdownCell {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 64px;
+}
+
+.countdownNum {
+  font-family: var(--font-body);
+  font-weight: 400;
+  font-size: clamp(34px, 6vw, 52px);
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+
+.countdownUnit {
+  margin-top: 6px;
+  font-size: 12.5px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-cream-text);
+}
+
+.countdownWord {
+  font-family: var(--font-display);
+  font-weight: 300;
+  font-size: clamp(22px, 3vw, 30px);
+}
+
+/* ---------- Panels ---------- */
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr));
+  gap: 20px;
+  margin-bottom: 24px;
+}
+
+.panel {
+  border-radius: 0;
+  padding: clamp(20px, 3vw, 28px);
+}
+
+.panelTitle {
+  font-size: var(--text-eyebrow);
+  letter-spacing: var(--tracking-eyebrow);
+  text-transform: uppercase;
+  color: var(--color-gold-text);
+  margin: 0 0 14px;
+}
+
+.rows {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  gap: 8px 18px;
+  font-size: 15px;
+  line-height: 1.5;
+}
+
+.rowLabel {
+  color: var(--color-muted);
+  font-size: 13px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  padding-top: 2px;
+}
+
+.rowValue {
+  color: var(--color-ink);
+}
+
+.money {
+  font-family: var(--font-body);
+  font-variant-numeric: tabular-nums;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 18px;
+}
+
+.note {
+  margin: 14px 0 0;
+  font-size: 14px;
+  line-height: 1.65;
+  color: var(--color-ink-body);
+}
+
+.note a,
+.intro a {
+  color: var(--color-gold-text);
+}
+
+.section {
+  margin-bottom: 28px;
+}
+
+.sectionTitle {
+  font-family: var(--font-display);
+  font-weight: 300;
+  font-size: clamp(22px, 2.4vw, 28px);
+  margin: 0 0 10px;
+}
+
+.body {
+  font-size: 15.5px;
+  line-height: 1.75;
+  margin: 0 0 10px;
+  color: var(--color-ink-body);
+}
+
+.faqQ {
+  font-weight: 500;
+  color: var(--color-ink);
+}
+
+/* ---------- Add-ons ---------- */
+
+.addons {
+  display: grid;
+  gap: 14px;
+}
+
+.addon {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  padding: 18px 20px;
+  border: 1px solid var(--hairline-light);
+  background: var(--color-cream-raised);
+}
+
+@media (max-width: 560px) {
+  .addon {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}
+
+.addonTitle {
+  font-weight: 500;
+  font-size: 16px;
+  color: var(--color-ink);
+  margin-bottom: 4px;
+}
+
+.addonBlurb {
+  margin: 0 0 8px;
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--color-ink-body);
+}
+
+.addonPrice {
+  font-size: 15px;
+  color: var(--color-ink);
+}
+
+.addonPrice span {
+  font-size: 13px;
+  color: var(--color-muted);
+}
+
+.addonMessage {
+  margin: 0;
+  font-size: 14.5px;
+  color: var(--color-gold-text);
+}
+
+.addonError {
+  margin: 0;
+  font-size: 14.5px;
+  color: var(--status-alert);
+}

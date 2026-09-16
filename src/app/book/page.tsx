@@ -4,6 +4,7 @@ import { Reveal } from '@/components/common/Reveal';
 import { SiteFooter } from '@/components/chrome/SiteFooter';
 import { SiteNav } from '@/components/chrome/SiteNav';
 import { BookingForm } from '@/components/booking/BookingForm';
+import { assetUrl } from '@/lib/images';
 import { getSettings } from '@/lib/settings';
 import { termsSections } from '@/lib/terms';
 import styles from './book.module.css';
@@ -26,54 +27,75 @@ export default async function BookPage() {
       <Reveal />
 
       <main>
-        <section
-          style={{
-            padding: 'clamp(20px, 3vw, 28px) var(--space-gutter) 16px',
-            maxWidth: 'var(--width-content)',
-            margin: '0 auto',
-          }}
-          aria-labelledby="book-heading"
-        >
-          <h1
-            id="book-heading"
-            className={`display ${styles.title}`}
-          >
-            Book
-          </h1>
-          <div className={styles.subtitle}>Reserve your Lotus Attune experience</div>
-          <p
-            className="lede"
-            style={{ maxWidth: 740, fontSize: 15.5, lineHeight: 1.65 }}
-          >
-            Dates open {settings.leadTimeDays} calendar days ahead so each
-            experience can be prepared with care.
-          </p>
-        </section>
-
-        <section
-          style={{
-            padding: '0 var(--space-gutter) clamp(20px, 3vw, 32px)',
-            maxWidth: 'var(--width-content)',
-            margin: '0 auto',
-          }}
-          aria-label="Booking request"
-        >
-          <BookingForm
-            pricing={settings.pricing}
-            slots={settings.slots}
-            blockedDates={settings.blockedDates}
-            codes={settings.codes}
-            leadTimeDays={settings.leadTimeDays}
-            terms={termsSections(settings.business)}
-            payTerms={{
-              taxRatePercent: settings.business.taxRatePercent,
-              taxLabel: settings.business.taxLabel,
-              depositPercent: settings.business.depositPercent,
-              cardFeePercent: settings.business.cardFeePercent,
-              balanceDaysBefore: settings.business.balanceDaysBefore,
+        <div style={{ position: 'relative', overflow: 'hidden' }}>
+          <div
+            data-bg="1"
+            className="photo-wash photo-wash--light"
+            style={{
+              backgroundImage: assetUrl('intention-card'),
+              backgroundPosition: 'center 30%',
             }}
           />
-        </section>
+          <div
+            data-bg="1"
+            className="photo-wash photo-wash--light photo-wash--spot"
+            style={{
+              backgroundImage: assetUrl('intention-card'),
+              backgroundPosition: 'center 30%',
+            }}
+          />
+
+          <section
+            style={{
+              position: 'relative',
+              padding: 'clamp(20px, 3vw, 28px) var(--space-gutter) 16px',
+              maxWidth: 'var(--width-content)',
+              margin: '0 auto',
+            }}
+            aria-labelledby="book-heading"
+          >
+            <h1
+              id="book-heading"
+              className={`display ${styles.title}`}
+            >
+              Book
+            </h1>
+            <div className={styles.subtitle}>Reserve your Lotus Attune experience</div>
+            <p
+              className="lede"
+              style={{ maxWidth: 740, fontSize: 15.5, lineHeight: 1.65 }}
+            >
+              Dates open {settings.leadTimeDays} calendar days ahead so each
+              experience can be prepared with care.
+            </p>
+          </section>
+
+          <section
+            style={{
+              position: 'relative',
+              padding: '0 var(--space-gutter) clamp(20px, 3vw, 32px)',
+              maxWidth: 'var(--width-content)',
+              margin: '0 auto',
+            }}
+            aria-label="Booking request"
+          >
+            <BookingForm
+              pricing={settings.pricing}
+              slots={settings.slots}
+              blockedDates={settings.blockedDates}
+              codes={settings.codes}
+              leadTimeDays={settings.leadTimeDays}
+              terms={termsSections(settings.business)}
+              payTerms={{
+                taxRatePercent: settings.business.taxRatePercent,
+                taxLabel: settings.business.taxLabel,
+                depositPercent: settings.business.depositPercent,
+                cardFeePercent: settings.business.cardFeePercent,
+                balanceDaysBefore: settings.business.balanceDaysBefore,
+              }}
+            />
+          </section>
+        </div>
       </main>
 
       <SiteFooter />

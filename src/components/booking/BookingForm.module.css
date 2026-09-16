@@ -325,8 +325,8 @@
    (YOUR SESSION, DISCOUNT CODE) - this is where money actually changes
    hands, so it earns more visual weight than the descriptive labels. */
 .payTitle {
-  font-size: 16px;
-  font-weight: 600;
+  font-size: 16.5px;
+  font-weight: 500;
   color: var(--color-ink);
   margin-bottom: 14px;
 }

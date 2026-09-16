@@ -688,3 +688,10 @@
 .payToday .tierChoice {
   margin-top: 0;
 }
+
+.payGroupNote {
+  margin: 8px 0 0;
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--color-muted);
+}

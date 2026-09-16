@@ -834,6 +834,10 @@ export function BookingForm({
                   <span className={styles.timeNote}>{money(fullWithFee)} now, nothing more to pay</span>
                 </button>
               </div>
+              <div className={styles.payGroupNote}>
+                Card, Apple Pay and Google Pay on the secure Stripe page.
+                {depositOffered ? ' With the deposit, the balance is charged to the same card automatically.' : ''}
+              </div>
             </div>
 
             <div className={styles.payGroup}>
@@ -850,13 +854,16 @@ export function BookingForm({
                   <span className={styles.timeNote}>{money(invoiceTotal)} now, no card fee</span>
                 </button>
               </div>
+              <div className={styles.payGroupNote}>
+                You send it from your bank; the details follow on the next screen and by email. Your booking is
+                confirmed as soon as we receive the transfer.
+              </div>
             </div>
-
-            <div className={styles.estimateNote}>
-              {plan === 'etransfer'
-                ? `${payTerms.taxRatePercent > 0 ? `Includes ${payTerms.taxLabel} ${payTerms.taxRatePercent}%. ` : ''}You send the e-transfer from your bank; the details follow on the next screen and by email. Your booking is confirmed as soon as we receive the transfer.`
-                : `${payTerms.taxRatePercent > 0 ? `Includes ${payTerms.taxLabel} ${payTerms.taxRatePercent}%. ` : ''}Card, Apple Pay and Google Pay on the secure Stripe page.${plan === 'deposit' && depositOffered ? ' The balance is charged to the same card automatically.' : ''}`}
-            </div>
+            {payTerms.taxRatePercent > 0 ? (
+              <div className={styles.estimateNote}>
+                All amounts include {payTerms.taxLabel} {payTerms.taxRatePercent}%.
+              </div>
+            ) : null}
           </div>
         ) : null}
 

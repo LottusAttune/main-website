@@ -28,6 +28,14 @@ type Props = {
   codes: DiscountCode[];
   leadTimeDays: number;
   terms: LegalSection[];
+  /** The figures behind "pay today": tax, deposit share, card fee, balance timing. */
+  payTerms: {
+    taxRatePercent: number;
+    taxLabel: string;
+    depositPercent: number;
+    cardFeePercent: number;
+    balanceDaysBefore: number;
+  };
 };
 
 type CodeState = {
@@ -57,7 +65,9 @@ export function BookingForm({
   codes,
   leadTimeDays,
   terms,
+  payTerms,
 }: Props) {
+  const [plan, setPlan] = useState<'deposit' | 'full'>('deposit');
   const [party, setParty] = useState<number | null>(null);
   const [date, setDate] = useState<Date | null>(null);
   const [time, setTime] = useState<string | null>(null);
@@ -150,6 +160,16 @@ export function BookingForm({
     pricing
   );
 
+  // What the checkout will actually ask for: tax on everything but the
+  // gratuity, then the deposit share, then the card fee on what is paid.
+  const taxable = quote.total - quote.gratuity;
+  const invoiceTotal = quote.total + Math.round((taxable * payTerms.taxRatePercent) / 100);
+  const depositOffered = payTerms.depositPercent > 0 && payTerms.depositPercent < 100;
+  const depositNow = Math.round((invoiceTotal * payTerms.depositPercent) / 100);
+  const cardFee = (amount: number) => Math.round((amount * payTerms.cardFeePercent) / 100);
+  const depositWithFee = depositNow + cardFee(depositNow);
+  const fullWithFee = invoiceTotal + cardFee(invoiceTotal);
+
   const applyCode = () => {
     const entered = codeInput.trim().toUpperCase();
     if (!entered) {
@@ -233,6 +253,7 @@ export function BookingForm({
           gratuityPercent: gratuityPercent ?? null,
           gratuityAmount: gratuityAmount ?? null,
           acceptTerms: agreed,
+          paymentPlan: plan,
         }),
       });
 
@@ -749,6 +770,43 @@ export function BookingForm({
                 : 'Select the number of participants'}
           </div>
         </div>
+
+        {people >= 1 ? (
+          <div className={styles.payToday}>
+            <div className={styles.codeLabel}>Pay today</div>
+            <div className={styles.tierChoice} role="radiogroup" aria-label="Pay today">
+              {depositOffered ? (
+                <button
+                  type="button"
+                  role="radio"
+                  aria-checked={plan === 'deposit'}
+                  className={`${styles.timeBtn} ${plan === 'deposit' ? styles.timeBtnOn : ''}`}
+                  onClick={() => setPlan('deposit')}
+                >
+                  <span className={styles.tierLabel}>{payTerms.depositPercent}% deposit</span>
+                  <span className={styles.timeNote}>
+                    {money(depositWithFee)} now, {money(invoiceTotal - depositNow)} {payTerms.balanceDaysBefore} days before
+                  </span>
+                </button>
+              ) : null}
+              <button
+                type="button"
+                role="radio"
+                aria-checked={plan === 'full' || !depositOffered}
+                className={`${styles.timeBtn} ${plan === 'full' || !depositOffered ? styles.timeBtnOn : ''}`}
+                onClick={() => setPlan('full')}
+              >
+                <span className={styles.tierLabel}>Pay in full</span>
+                <span className={styles.timeNote}>{money(fullWithFee)} now, nothing more to pay</span>
+              </button>
+            </div>
+            <div className={styles.estimateNote}>
+              {payTerms.taxRatePercent > 0 ? `Includes ${payTerms.taxLabel} ${payTerms.taxRatePercent}%` : 'Tax included'}
+              {payTerms.cardFeePercent > 0 ? ` and the ${payTerms.cardFeePercent}% card fee. ` : '. '}
+              Prefer e-transfer, with no card fee? The details are on your invoice.
+            </div>
+          </div>
+        ) : null}
 
         <IncludedModal
           triggerClassName={`btn btn--outline btn--wide ${styles.includedBtn}`}

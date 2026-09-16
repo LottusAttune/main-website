@@ -32,6 +32,7 @@ export const bookingSchema = z
     discountCode: z.string().trim().max(40).optional().nullable(),
     gratuityPercent: z.coerce.number().int().min(0).max(100).optional().nullable(),
     gratuityAmount: z.coerce.number().min(0).max(100_000).optional().nullable(),
+    paymentPlan: z.enum(['deposit', 'full']).default('deposit'),
     acceptTerms: z
       .boolean()
       .refine((v) => v === true, {

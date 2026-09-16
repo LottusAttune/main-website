@@ -525,3 +525,16 @@
   outline: 2px solid var(--status-alert);
   outline-offset: 2px;
 }
+
+/* "Pay today": deposit or full, in the summary aside. */
+.payToday {
+  margin: 0 0 18px;
+}
+
+.payToday .tierChoice {
+  margin-top: 0;
+}
+
+.payToday .timeBtn {
+  padding: 12px 14px;
+}

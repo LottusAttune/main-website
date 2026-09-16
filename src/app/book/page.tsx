@@ -85,6 +85,13 @@ export default async function BookPage() {
             codes={settings.codes}
             leadTimeDays={settings.leadTimeDays}
             terms={termsSections(settings.business)}
+            payTerms={{
+              taxRatePercent: settings.business.taxRatePercent,
+              taxLabel: settings.business.taxLabel,
+              depositPercent: settings.business.depositPercent,
+              cardFeePercent: settings.business.cardFeePercent,
+              balanceDaysBefore: settings.business.balanceDaysBefore,
+            }}
           />
         </section>
       </main>

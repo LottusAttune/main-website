@@ -130,7 +130,7 @@ export async function POST(request: Request) {
     if (settings.business.autoSendInvoices) {
       try {
         const doc = await ensureBookingDocument(bookingId, 'invoice', settings, { mintLinks: false });
-        const checkout = await createBookingCheckout(doc, settings.business);
+        const checkout = await createBookingCheckout(doc, settings.business, input.paymentPlan);
         payment = {
           invoiceNumber: doc.number,
           invoiceTotal: doc.total,

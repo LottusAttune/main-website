@@ -23,10 +23,12 @@ import { createCheckoutSession, getCheckoutSession, getPaymentIntent, isStripeCo
  */
 export async function createBookingCheckout(
   doc: DocumentRow,
-  business: BusinessSettings
+  business: BusinessSettings,
+  /** What the client chose on the form: the deposit, or everything now. */
+  wanted: 'deposit' | 'full' = 'deposit'
 ): Promise<{ url: string; amount: number; plan: 'deposit' | 'full' } | null> {
   if (!isStripeConfigured() || doc.kind !== 'invoice') return null;
-  const deposit = depositDue(doc, business);
+  const deposit = wanted === 'deposit' ? depositDue(doc, business) : null;
   const amount = deposit ?? doc.total - doc.paidAmount;
   if (amount <= 0) return null;
   const plan = deposit !== null ? 'deposit' : 'full';
@@ -48,10 +50,10 @@ export async function createBookingCheckout(
   const remaining = doc.total - amount;
   const details = [
     `Immersive Soma Sound Experience${who ? `, ${who}` : ''}${when ? `. ${when}` : ''}${venue ? `, ${venue}` : ''}.`,
-    `Invoice ${doc.number}, total ${money(doc.total)}.`,
+    `Invoice ${doc.number}.`,
     plan === 'deposit'
-      ? `The remaining ${money(remaining)} is charged to this card ${business.balanceDaysBefore} days before the session${balanceDay ? `, on ${formatStudioDate(balanceDay)}` : ''}.`
-      : '',
+      ? `Paying this ${business.depositPercent}% deposit confirms your date. The remaining ${money(remaining)} is charged to this card ${business.balanceDaysBefore} days before the session${balanceDay ? `, on ${formatStudioDate(balanceDay)}` : ''}.`
+      : 'Nothing more to pay after this.',
   ]
     .filter(Boolean)
     .join(' ');
@@ -60,8 +62,8 @@ export async function createBookingCheckout(
     const session = await createCheckoutSession({
       description:
         plan === 'deposit'
-          ? `${business.depositPercent}% deposit to confirm your date`
-          : `Your Lotus Attune experience`,
+          ? `${business.depositPercent}% deposit: ${money(amount)} of ${money(doc.total)} total`
+          : `Your Lotus Attune experience: ${money(amount)} in full`,
       details,
       imageUrl: `${SITE.url}/assets/logo-circle.webp`,
       submitType: 'book',

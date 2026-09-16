@@ -343,14 +343,21 @@
    Offerings' own "See What's Included" link, same treatment as
    Preview certificate just below it. */
 .includedBtn.includedBtn {
-  background: transparent;
-  padding: 12px 24px;
-  min-height: 42px;
+  min-height: 38px;
+  padding: 9px 30px;
   margin-bottom: 10px;
+  border-radius: var(--radius-thumb);
+  border-width: 1.5px;
+  border-color: var(--color-gold-light);
+  background: var(--color-ink-deepest);
+  color: var(--color-cream-text);
+  box-shadow: var(--shadow-pill-dark);
 }
 
 .includedBtn.includedBtn:hover {
-  background: rgba(198, 169, 122, 0.14);
+  border-color: var(--color-gold-light);
+  background: var(--color-ink-deep);
+  color: var(--color-cream-text);
 }
 
 /* ---------- Certificate preview modal ---------- */

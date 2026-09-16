@@ -660,7 +660,7 @@ export function GiftCalculator({ pricing, codes, payTerms }: Props) {
                     : `Continue to pay ${money(chargeToday)}`}
             </button>
             <p className={styles.policyNote} style={{ marginTop: 12 }}>
-              {payTerms.taxRatePercent > 0 ? `Includes ${payTerms.taxLabel} ${payTerms.taxRatePercent}%.` : 'Tax included.'}{' '}
+              {payTerms.taxRatePercent > 0 ? `Includes ${payTerms.taxLabel} ${payTerms.taxRatePercent}%. ` : ''}
               {payBy === 'etransfer'
                 ? 'Next: the e-transfer details. The certificate is emailed the moment the transfer arrives.'
                 : 'Next: the secure payment page (Stripe). The certificate is emailed the moment the payment completes.'}

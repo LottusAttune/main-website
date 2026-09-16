@@ -841,8 +841,8 @@ export function BookingForm({
             </div>
             <div className={styles.estimateNote}>
               {plan === 'etransfer'
-                ? `Includes ${payTerms.taxRatePercent > 0 ? `${payTerms.taxLabel} ${payTerms.taxRatePercent}%` : 'tax'}. E-transfer is paid in full, in one go, with no card fee. You send it from your bank; the details follow on the next screen and by email. Your booking is confirmed as soon as we receive the transfer.`
-                : `${payTerms.taxRatePercent > 0 ? `Includes ${payTerms.taxLabel} ${payTerms.taxRatePercent}%` : 'Tax included'}${payTerms.cardFeePercent > 0 ? ` and the ${payTerms.cardFeePercent}% card fee.` : '.'} Card, Apple Pay and Google Pay on the secure Stripe page.`}
+                ? `${payTerms.taxRatePercent > 0 ? `Includes ${payTerms.taxLabel} ${payTerms.taxRatePercent}%. ` : ''}E-transfer is paid in full, in one go, with no card fee. You send it from your bank; the details follow on the next screen and by email. Your booking is confirmed as soon as we receive the transfer.`
+                : `${payTerms.taxRatePercent > 0 ? `Includes ${payTerms.taxLabel} ${payTerms.taxRatePercent}%${payTerms.cardFeePercent > 0 ? ` and the ${payTerms.cardFeePercent}% card fee` : ''}. ` : payTerms.cardFeePercent > 0 ? `Includes the ${payTerms.cardFeePercent}% card fee. ` : ''}Card, Apple Pay and Google Pay on the secure Stripe page.`}
             </div>
           </div>
         ) : null}

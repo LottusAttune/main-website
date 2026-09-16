@@ -6,6 +6,7 @@ import { SiteNav } from '@/components/chrome/SiteNav';
 import { settleCheckoutById } from '@/lib/checkout';
 import { isDatabaseConfigured } from '@/lib/db';
 import { publicUrl } from '@/lib/documents';
+import { portalUrlForBooking } from '@/lib/portal';
 import { balanceDue, formatStudioDate } from '@/lib/pipeline';
 import { getSettings } from '@/lib/settings';
 import { money, SITE } from '@/lib/site';
@@ -40,6 +41,7 @@ export default async function BookingConfirmedPage({
   const paid = settled !== null;
   const doc = settled?.doc ?? null;
   const remaining = doc ? balanceDue(doc) : 0;
+  const portal = doc ? await portalUrlForBooking(doc.bookingId) : null;
 
   return (
     <>
@@ -76,12 +78,23 @@ export default async function BookingConfirmedPage({
               </p>
               <p className="body" style={{ fontSize: 16, lineHeight: 1.75, marginBottom: 22 }}>
                 A receipt, the updated invoice and your booking confirmation with venue details are on
-                their way to {doc.clientEmail}. You can start preparing: comfortable clothing and warm
-                socks are all you need. Everything else is provided.
+                their way to {doc.clientEmail}, together with the link to your booking page. You can
+                start preparing: comfortable clothing and warm socks are all you need. Everything else
+                is provided.
               </p>
-              <a className="btn btn--dark" href={publicUrl(doc)}>
-                View your invoice
-              </a>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12 }}>
+                {portal ? (
+                  <a className="btn btn--dark" href={portal}>
+                    Open your booking page
+                  </a>
+                ) : null}
+                <a className={portal ? 'btn btn--outline' : 'btn btn--dark'} href={publicUrl(doc)}>
+                  View your invoice
+                </a>
+              </div>
+              <p className="body" style={{ fontSize: 14.5, lineHeight: 1.7, marginTop: 16, color: 'var(--color-muted)' }}>
+                Your booking page has a countdown to the day, your details, calendar links, and extras you can add any time.
+              </p>
             </>
           ) : (
             <>

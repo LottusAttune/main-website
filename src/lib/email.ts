@@ -440,6 +440,8 @@ export async function sendBookingRequestEmails(input: {
   venue: string;
   studioUrl: string;
   cancellationPolicy: string;
+  /** The client's private booking page. */
+  portalUrl: string | null;
   /** The session invoice, when it is ready to ride along in this email. */
   invoice: {
     number: string;
@@ -500,6 +502,7 @@ export async function sendBookingRequestEmails(input: {
       <p style="margin:0;"><strong>What you can do</strong><br />You can start preparing. Comfortable clothing and warm socks are all you need. Everything else is provided.</p>
       ${details}
       ${inv ? `<div style="margin:0 0 6px;">${sectionTitle('How to pay')}<div style="font-size:14px;">${inv.paymentHtml.replace(/<a /g, '<a style="color:#7c5b3b;" ')}</div></div>${BUTTON(inv.viewUrl, 'View invoice')}` : ''}
+      ${input.portalUrl ? portalSection(input.portalUrl) : ''}
       ${input.cancellationPolicy ? `${sectionTitle('Cancellation policy')}<p style="margin:0 0 16px;">${escapeHtml(input.cancellationPolicy).replace(/\n/g, '<br />')}</p>` : ''}
       <p style="margin:0;">Need to reach us sooner? Reply to this email or call ${SITE.phone}.</p>
       ${mottoHtml()}`),
@@ -545,7 +548,16 @@ export type SessionEmailInput = {
   amountPaid: number;
   balanceDue: number;
   balanceChargeDate: string | null;
+  portalUrl: string | null;
 };
+
+/** "Your booking page": the countdown, the details, add-ons and the invoice, all in one link. */
+function portalSection(url: string): string {
+  return `
+    ${sectionTitle('Your booking page')}
+    <p style="margin:0 0 4px;">Everything for the day in one place: a countdown to your session, the details, your invoice, calendar links, and extras you can add to your experience.</p>
+    ${BUTTON(url, 'Open your booking page')}`;
+}
 
 function sessionBoxHtml(input: SessionEmailInput, eyebrow: string): string {
   const rows: Array<[string, string]> = [
@@ -605,6 +617,7 @@ export async function sendBookingConfirmationEmail(input: SessionEmailInput): Pr
     <p style="margin:0;">Your Lotus Attune experience is confirmed. Everything you need is below - we look forward to welcoming you.</p>
     ${sessionBoxHtml(input, 'Your session')}
     ${payment}
+    ${input.portalUrl ? portalSection(input.portalUrl) : ''}
     ${venueSection(input)}
     ${sectionTitle('Good to know')}
     ${input.faqs
@@ -629,6 +642,7 @@ export async function sendReminderEmail(input: SessionEmailInput): Promise<Email
     <p style="margin:0 0 10px;">Hi ${escapeHtml(first)},</p>
     <p style="margin:0;">A gentle reminder - your Lotus Attune experience is coming up. Comfortable clothing and socks are all you need; everything else is provided.</p>
     ${sessionBoxHtml(input, 'Coming up')}
+    ${input.portalUrl ? portalSection(input.portalUrl) : ''}
     ${venueSection(input)}
     ${input.balanceDue > 0 ? `<p style="margin:16px 0 0;">Balance outstanding: <strong>${money(input.balanceDue)}</strong>.</p>` : ''}
     ${input.cancellationPolicy ? `${sectionTitle('Cancellation policy')}<p style="margin:0;">${escapeHtml(input.cancellationPolicy).replace(/\n/g, '<br />')}</p>` : ''}

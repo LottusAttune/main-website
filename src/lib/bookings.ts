@@ -27,7 +27,7 @@ import { buildIcs, googleCalendarUrl } from '@/lib/ics';
 import { balanceDue, type DocumentRow } from '@/lib/pipeline';
 import { getSettings, type SiteSettings } from '@/lib/settings';
 import { chargeSavedCard, isStripeConfigured, StripeError } from '@/lib/stripe';
-import { LOUNGE_MAX, money } from '@/lib/site';
+import { LOUNGE_MAX, money, SITE } from '@/lib/site';
 
 /**
  * Everything that happens to a booking after the client says yes:
@@ -112,6 +112,7 @@ async function sessionEmailInput(
       due > 0 && row.stripe_payment_method_id
         ? addDays(sessionDate, -settings.business.balanceDaysBefore)
         : null,
+    portalUrl: row.portal_token ? `${SITE.url}/portal/${String(row.portal_token)}` : null,
   };
 }
 

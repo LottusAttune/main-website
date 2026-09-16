@@ -61,6 +61,14 @@ export function portalUrl(token: string): string {
   return `${SITE.url}/portal/${token}`;
 }
 
+/** The booking page for a booking id, for pages that only know the invoice. */
+export async function portalUrlForBooking(bookingId: string | null): Promise<string | null> {
+  if (!bookingId) return null;
+  const result = await sql`SELECT portal_token FROM bookings WHERE id = ${bookingId}`;
+  const token = result.rows[0]?.portal_token;
+  return token ? portalUrl(String(token)) : null;
+}
+
 function ctxFromRow(row: Record<string, unknown>): BookingCtx {
   const toIso = (v: unknown) =>
     !v ? null : v instanceof Date ? v.toISOString().slice(0, 10) : String(v).slice(0, 10);

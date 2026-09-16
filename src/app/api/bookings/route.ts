@@ -111,10 +111,11 @@ export async function POST(request: Request) {
         ${input.teamAddon}, ${input.refreshments}, ${input.isPackage}, ${input.isCorporateIntro},
         ${eligibleDiscount?.code ?? null}, ${gratuity}, ${total}, NOW()
       )
-      RETURNING id
+      RETURNING id, portal_token
     `;
 
     const bookingId = String(result.rows[0]?.id);
+    const portalToken = result.rows[0]?.portal_token ? String(result.rows[0].portal_token) : null;
 
     // The invoice and a checkout page for its deposit are made before
     // answering, so the client goes straight on to pay. One Stripe call and
@@ -192,6 +193,7 @@ export async function POST(request: Request) {
         total,
         venue,
         studioUrl: `${SITE.url}/studio`,
+        portalUrl: portalToken ? `${SITE.url}/portal/${portalToken}` : null,
         cancellationPolicy:
           settings.business.cancellationPolicy || (FAQS.find((f) => f.q === 'Cancellation Policy')?.a ?? ''),
         invoice,

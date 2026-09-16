@@ -6,7 +6,7 @@ import { SiteFooter } from '@/components/chrome/SiteFooter';
 import { SiteNav } from '@/components/chrome/SiteNav';
 import { isDatabaseConfigured } from '@/lib/db';
 import { formatStudioDate } from '@/lib/pipeline';
-import { loadPortal } from '@/lib/portal';
+import { loadPortal, type PortalData } from '@/lib/portal';
 import { money, SITE } from '@/lib/site';
 import { Countdown } from './Countdown';
 import { PortalAddons } from './PortalAddons';
@@ -23,7 +23,12 @@ export default async function PortalPage({ params }: { params: Promise<{ token: 
   const { token } = await params;
   const data = isDatabaseConfigured() ? await loadPortal(token) : null;
   if (!data) notFound();
+  return <PortalView data={data} />;
+}
 
+/** The page itself, separate from the loading so it can be previewed with sample data. */
+export function PortalView({ data }: { data: PortalData }) {
+  const { token } = data;
   const { booking, invoice, settings, upsells } = data;
   const first = booking.name.split(' ')[0] || booking.name;
   const cancelled = booking.status === 'cancelled';

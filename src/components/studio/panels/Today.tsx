@@ -70,6 +70,7 @@ const ACTIVITY_LABELS: Record<string, string> = {
   deposit_paid: 'Deposit paid',
   balance_requested: 'Balance requested',
   terms_accepted: 'Terms accepted',
+  addon_added: 'Add-on added',
   confirmation_sent: 'Confirmation sent',
   reminder_sent: 'Reminder sent',
   email_failed: '⚠ Email failed',

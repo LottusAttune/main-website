@@ -16,7 +16,7 @@ import {
   type StageKey,
   type StudioData,
 } from '@/lib/pipeline';
-import { LOUNGE_MAX } from '@/lib/site';
+import { LOUNGE_MAX, SITE } from '@/lib/site';
 import { isStripeConfigured } from '@/lib/stripe';
 
 function typeFor(participants: number): string {
@@ -135,6 +135,7 @@ export async function getStudioData(): Promise<StudioData> {
       balanceChargedAt: toStamp(row.balance_charged_at),
       balanceRequestedAt: toStamp(row.balance_requested_at),
       termsAcceptedAt: toStamp(row.terms_accepted_at),
+      portalUrl: row.portal_token ? `${SITE.url}/portal/${String(row.portal_token)}` : null,
       cancellationFeeChargedAt: toStamp(row.cancellation_fee_charged_at),
     };
   });

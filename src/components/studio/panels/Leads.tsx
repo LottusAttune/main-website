@@ -305,6 +305,7 @@ const ACTIVITY_LABELS: Record<string, string> = {
   deposit_paid: 'Deposit paid',
   balance_requested: 'Balance requested',
   terms_accepted: 'Terms accepted',
+  addon_added: 'Add-on added',
   confirmation_sent: 'Confirmation sent',
   reminder_sent: 'Reminder sent',
   cancelled: 'Cancelled',
@@ -467,6 +468,13 @@ function LeadDrawer({
             <DetailRow label="Quoted">
               <span className={styles.numeric}>{money(lead.total)}</span>
             </DetailRow>
+            {lead.portalUrl ? (
+              <DetailRow label="Client page">
+                <a href={lead.portalUrl} target="_blank" rel="noopener" className={styles.linkBtn}>
+                  Open their booking page
+                </a>
+              </DetailRow>
+            ) : null}
           </div>
 
           <div className={styles.subhead}><span>Paperwork</span></div>

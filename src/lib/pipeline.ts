@@ -53,6 +53,8 @@ export type Lead = {
   balanceChargedAt: string | null;
   balanceRequestedAt: string | null;
   termsAcceptedAt: string | null;
+  /** The client's private booking page. */
+  portalUrl: string | null;
   cancellationFeeChargedAt: string | null;
 };
 

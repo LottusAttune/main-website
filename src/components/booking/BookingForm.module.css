@@ -538,3 +538,11 @@
 .payToday .timeBtn {
   padding: 12px 14px;
 }
+
+.nextNote {
+  margin: 12px 0 0;
+  font-size: 13.5px;
+  line-height: 1.6;
+  text-align: center;
+  color: var(--color-muted);
+}

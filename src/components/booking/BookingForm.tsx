@@ -841,8 +841,17 @@ export function BookingForm({
           className="btn btn--dark btn--wide"
           disabled={submitting || redirecting}
         >
-          {redirecting ? 'Taking you to the secure payment page…' : submitting ? 'Sending…' : 'Request booking'}
+          {redirecting
+            ? 'Opening the secure payment page…'
+            : submitting
+              ? 'Saving your request…'
+              : people >= 1
+                ? `Continue to pay ${money(plan === 'deposit' && depositOffered ? depositWithFee : fullWithFee)}`
+                : 'Continue to payment'}
         </button>
+        <p className={styles.nextNote}>
+          Next: the secure card payment page (Stripe). Your date is held once the payment is made.
+        </p>
 
         {submitError ? (
           <div className={styles.formError} role="alert">

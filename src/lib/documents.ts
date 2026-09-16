@@ -711,6 +711,8 @@ export async function recordPayment(input: {
   stripeCheckoutSession?: string | null;
   stripeCustomerId?: string | null;
   stripePaymentMethodId?: string | null;
+  /** Outside id of the notice this came from (an Interac email), for de-duplication. */
+  externalRef?: string | null;
   note?: string | null;
 }): Promise<{ doc: DocumentRow; alreadyRecorded: boolean }> {
   const doc = await getDocument(input.documentId);
@@ -722,12 +724,16 @@ export async function recordPayment(input: {
     `;
     if (dup.rows[0]) return { doc, alreadyRecorded: true };
   }
+  if (input.externalRef) {
+    const dup = await sql`SELECT id FROM payments WHERE external_ref = ${input.externalRef}`;
+    if (dup.rows[0]) return { doc, alreadyRecorded: true };
+  }
 
   const kind = input.kind ?? (input.amount >= doc.total - doc.paidAmount ? 'payment' : 'deposit');
   await sql`
-    INSERT INTO payments (document_id, booking_id, gift_id, amount, method, kind, stripe_payment_intent, stripe_checkout_session, note)
+    INSERT INTO payments (document_id, booking_id, gift_id, amount, method, kind, stripe_payment_intent, stripe_checkout_session, external_ref, note)
     VALUES (${doc.id}, ${doc.bookingId}, ${doc.giftId}, ${input.amount}, ${input.method}, ${kind},
-            ${input.stripePaymentIntent ?? null}, ${input.stripeCheckoutSession ?? null}, ${input.note ?? null})
+            ${input.stripePaymentIntent ?? null}, ${input.stripeCheckoutSession ?? null}, ${input.externalRef ?? null}, ${input.note ?? null})
   `;
 
   // Money against a voided invoice is real money - keep the record and shout,

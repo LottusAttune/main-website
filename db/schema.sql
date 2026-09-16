@@ -426,6 +426,11 @@ CREATE TABLE IF NOT EXISTS payments (
   created_at              TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
+-- An outside reference for a payment recorded automatically (the Gmail id of
+-- an Interac notification), so the same notice can never be recorded twice.
+ALTER TABLE payments ADD COLUMN IF NOT EXISTS external_ref TEXT;
+CREATE UNIQUE INDEX IF NOT EXISTS payments_external_ref_idx ON payments (external_ref) WHERE external_ref IS NOT NULL;
+
 CREATE UNIQUE INDEX IF NOT EXISTS payments_intent_idx  ON payments (stripe_payment_intent) WHERE stripe_payment_intent IS NOT NULL;
 CREATE INDEX IF NOT EXISTS payments_document_idx       ON payments (document_id);
 CREATE INDEX IF NOT EXISTS payments_booking_idx        ON payments (booking_id);

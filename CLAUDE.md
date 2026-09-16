@@ -293,6 +293,7 @@ The site works without any of these; they turn on the parts that need a server.
 | `PDFSHIFT_API_KEY` | Renders proposals, invoices and gift certificates to PDF. Without it, documents still send (content inline + online link), just no attachment. |
 | `STRIPE_SECRET_KEY` / `STRIPE_WEBHOOK_SECRET` | Card payments on invoices (full or deposit plan) and late-cancellation fees. Without them, invoices offer e-transfer only. |
 | `CRON_SECRET` | Authorises the daily job (`/api/cron/daily`, scheduled in `vercel.json`) that sends reminders and charges deposit balances. |
+| `ETRANSFER_WEBHOOK_SECRET` | Lets the Gmail script in `docs/etransfer-webhook.md` report deposited Interac e-transfers to `/api/etransfer/webhook`, which records them on the matching invoice. Without it, e-transfers are recorded by hand in the studio. |
 
 ### How the booking flow works (fully automatic)
 

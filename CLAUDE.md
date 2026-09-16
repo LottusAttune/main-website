@@ -294,24 +294,42 @@ The site works without any of these; they turn on the parts that need a server.
 | `STRIPE_SECRET_KEY` / `STRIPE_WEBHOOK_SECRET` | Card payments on invoices (full or deposit plan) and late-cancellation fees. Without them, invoices offer e-transfer only. |
 | `CRON_SECRET` | Authorises the daily job (`/api/cron/daily`, scheduled in `vercel.json`) that sends reminders and charges deposit balances. |
 
-### How the studio's paperwork works
+### How the booking flow works (fully automatic)
 
-- A booking request → `bookings` row + a **proposal** draft in `documents`
-  (numbered `LA-P-YYYY-NNNN`), "request received" emails to both sides.
-- Silvana (or the automation switch in Settings) sends the proposal; the
-  client opens `/d/<token>` and accepts → the lead moves to Booked, an
-  **invoice** (`LA-YYYY-NNNN`) is drafted with Stripe payment links minted,
-  and (if switched on) sent.
-- Payment: e-transfer (she records it in the studio) or card (Stripe webhook
-  records it). Any payment triggers the receipt and the **confirmation
-  email** (venue, parking, FAQs, cancellation policy, .ics + Google link).
-- Daily cron: reminder N days before, deposit balance charged M days before.
+- Booking form → the client ticks Terms & Conditions (a pop-up, shared with
+  `/terms` via `src/lib/terms.ts`), picks **50% deposit** or **pay in full**,
+  and presses "Continue to pay". `/api/bookings` saves the `bookings` row,
+  drafts the **invoice** (`LA-YYYY-NNNN`, line items from `src/lib/quote.ts`,
+  the deposit asked for first) and creates a Stripe **Checkout Session**
+  (`src/lib/checkout.ts`); the response carries its URL and the form sends
+  the client straight there. No proposal step, no manual check.
+- After the response (`after()`): the "Request confirmed" email goes to the
+  client with the invoice PDF, payment options (e-transfer or card links),
+  the cancellation policy and their **booking page** link; Silvana gets the
+  new-request email; calendar events are created.
+- Stripe returns the client to `/book/confirmed`, which records the payment
+  (idempotent with the webhook, whichever lands first) and links to the
+  invoice and the portal. Any payment triggers the receipt (updated invoice
+  PDF attached) and the **booking confirmation email** (venue, parking, FAQs,
+  policy, .ics + Google link, portal link).
+- **Client portal** `/portal/<token>` (`src/lib/portal.ts`, one private
+  token per booking): countdown, session details, payment status with pay /
+  invoice buttons, add-ons the client can add themselves (they join the
+  invoice and the balance), calendar links, directions once confirmed.
+- Daily cron (`/api/cron/daily`, also the Supabase keep-alive): reminder N
+  days before; M days before the session the balance is **charged to the
+  card on file**, or a balance-due email with payment links goes out when
+  there is no card.
+- Proposals still exist for stand-alone use (Getting paid tab writes
+  invoices only; a proposal can still be created from a lead) and convert to
+  an invoice when signed online at `/d/<token>`.
 - Everything is in `src/lib/documents.ts` (documents), `src/lib/bookings.ts`
-  (confirmation/reminder/charges), `src/lib/email.ts`, `src/lib/stripe.ts`,
-  `src/lib/pdfshift.ts`. Line items come from `src/lib/quote.ts` — the same
-  engine the website uses — and are snapshotted onto the document.
+  (confirmation/reminder/charges/balance requests), `src/lib/checkout.ts`,
+  `src/lib/portal.ts`, `src/lib/email.ts`, `src/lib/stripe.ts`,
+  `src/lib/pdfshift.ts`.
 - All of this degrades honestly: a missing key shows up as a plain message
-  in the studio and in the lead's history, never as a silent no-op.
+  in the studio and in the lead's history, never as a silent no-op. Without
+  Stripe the form falls back to a confirmation card and the invoice email.
 
 Never commit real values. `.env.local` is gitignored; `.env.example` shows the
 shape.

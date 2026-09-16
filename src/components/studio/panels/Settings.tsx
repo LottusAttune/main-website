@@ -184,27 +184,11 @@ export function Settings({ settings, integrations }: { settings: SiteSettings; i
           <h3 className={styles.settingsTitle}>Automation</h3>
           <div className={styles.switchRow}>
             <span>
-              Send proposals automatically
-              <span className={styles.priceNote} style={{ display: 'block' }}>
-                The moment a booking request lands, the proposal goes to the client. Off = you review and press Send.
-              </span>
-            </span>
-            <button
-              type="button"
-              role="switch"
-              aria-checked={biz.autoSendProposals}
-              aria-label="Send proposals automatically"
-              className={`${styles.switch} ${biz.autoSendProposals ? styles.switchOn : ''}`}
-              onClick={() => toggle('autoSendProposals')}
-            >
-              <span className={styles.switchKnob} />
-            </button>
-          </div>
-          <div className={styles.switchRow}>
-            <span>
               Send invoices automatically
               <span className={styles.priceNote} style={{ display: 'block' }}>
-                When a client accepts a proposal online, the invoice goes straight out.
+                The moment a booking request lands, the confirmation email goes out with the invoice attached
+                ({biz.depositPercent}% deposit to confirm the date). Off = the invoice waits as a draft and the
+                confirmation says it will follow. Also sends the invoice when a proposal is accepted online.
               </span>
             </span>
             <button
@@ -219,8 +203,9 @@ export function Settings({ settings, integrations }: { settings: SiteSettings; i
             </button>
           </div>
           <p className={styles.priceNote} style={{ marginTop: 10 }}>
-            Always automatic: the &ldquo;request received&rdquo; email, the receipt and confirmation after a payment,
-            the reminder {biz.reminderDaysBefore} days before, and the deposit balance charge {biz.balanceDaysBefore} days before.
+            Always automatic: the confirmation email after a request, the receipt and booking confirmation after a
+            payment, the reminder {biz.reminderDaysBefore} days before, and {biz.balanceDaysBefore} days before the
+            session either the balance charge (card on file) or a balance-due email with payment links.
           </p>
           {saveRow}
         </div>

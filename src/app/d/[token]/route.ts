@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 
 import { isSignedIn } from '@/lib/auth';
 import {
+  depositDue,
   documentHtml,
   ensurePaymentLinks,
   getDocumentByToken,
@@ -80,7 +81,8 @@ export async function GET(request: Request, { params }: { params: Promise<{ toke
     } else if (doc.status === 'void') {
       banner = `<div class="bar muted">This invoice has been replaced. Please use the newest one from Silvana.</div>`;
     } else {
-      banner = `<div class="bar"><div class="pay">${paymentOptionsHtml(doc, ctx.business).replace(/<a /g, '<a class="btn" ')}</div><span>Balance: <strong>${money(doc.total - doc.paidAmount)}</strong></span></div>`;
+      const deposit = depositDue(doc, ctx.business);
+      banner = `<div class="bar"><div class="pay">${paymentOptionsHtml(doc, ctx.business, ctx.booking).replace(/<a /g, '<a class="btn" ')}</div><span>${deposit !== null ? 'Deposit due' : 'Balance'}: <strong>${money(deposit ?? doc.total - doc.paidAmount)}</strong></span></div>`;
     }
   }
 

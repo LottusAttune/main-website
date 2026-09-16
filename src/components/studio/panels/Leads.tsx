@@ -303,6 +303,8 @@ const ACTIVITY_LABELS: Record<string, string> = {
   invoice_paid: 'Invoice paid',
   invoice_void: 'Invoice voided',
   deposit_paid: 'Deposit paid',
+  balance_requested: 'Balance requested',
+  terms_accepted: 'Terms accepted',
   confirmation_sent: 'Confirmation sent',
   reminder_sent: 'Reminder sent',
   cancelled: 'Cancelled',
@@ -378,13 +380,17 @@ function LeadDrawer({
   const nextStep = (() => {
     if (lead.status === 'cancelled') return 'This booking was cancelled.';
     if (invoice?.status === 'paid') return 'Paid in full. Send the confirmation if it has not gone out, then mark complete after the session.';
-    if (invoice && invoice.paidAmount > 0) return `Deposit received. The balance of ${money(balanceDue(invoice))} is ${lead.cardOnFile ? `charged automatically ${business.balanceDaysBefore} days before the session` : 'due before the session'}.`;
-    if (invoice && invoice.status === 'sent') return 'Invoice sent. When the e-transfer arrives, record the payment below; card payments record themselves.';
-    if (proposal?.status === 'accepted' && !invoice) return 'Proposal accepted. Create and send the invoice.';
-    if (proposal?.status === 'accepted') return 'Proposal accepted. Send the invoice to confirm the date.';
-    if (proposal?.status === 'sent') return `Proposal sent ${proposal.sentAt ? relativeDays(proposal.sentAt) : ''}${proposal.viewedAt ? ' and viewed' : ''}. Waiting on the client - a nudge after a few days works.`;
-    if (proposal) return 'Proposal is drafted. Check the lines below and send it.';
-    return 'Reply to the enquiry, then create and send a proposal.';
+    if (invoice && invoice.paidAmount > 0) {
+      const balance = money(balanceDue(invoice));
+      if (lead.cardOnFile) return `Deposit received. The balance of ${balance} is charged to the card on file ${business.balanceDaysBefore} days before the session.`;
+      if (lead.balanceRequestedAt) return `Deposit received. The balance of ${balance} was requested by email ${formatShortDate(lead.balanceRequestedAt.slice(0, 10))}. Record the e-transfer when it arrives.`;
+      return `Deposit received. The balance of ${balance} is requested by email ${business.balanceDaysBefore} days before the session.`;
+    }
+    if (invoice && invoice.status === 'sent') return `Invoice sent${invoice.sentAt ? ` ${relativeDays(invoice.sentAt)}` : ''}${invoice.viewedAt ? ' and viewed' : ''}. The ${business.depositPercent}% deposit confirms the date: card deposits record themselves, record an e-transfer below.`;
+    if (invoice) return 'Invoice is drafted. Check the lines below and send it.';
+    if (proposal?.status === 'accepted') return 'Proposal accepted. Create and send the invoice.';
+    if (proposal?.status === 'sent') return `Proposal sent ${proposal.sentAt ? relativeDays(proposal.sentAt) : ''}${proposal.viewedAt ? ' and viewed' : ''}. Waiting on the client.`;
+    return 'No invoice yet. Create and send the invoice; the deposit confirms the date.';
   })();
 
   return createPortal(
@@ -529,11 +535,23 @@ function LeadDrawer({
                     Charge balance now
                   </button>
                 ) : null}
+                {!lead.cardOnFile && invoice && invoice.paidAmount > 0 && balanceDue(invoice) > 0 ? (
+                  <button
+                    type="button"
+                    className={`btn btn--outline ${styles.smallBtn}`}
+                    disabled={pending}
+                    onClick={() => void run({ action: 'sendBalanceRequest', bookingId: lead.id })}
+                  >
+                    {lead.balanceRequestedAt ? 'Request balance again' : 'Request balance'}
+                  </button>
+                ) : null}
               </div>
               <p className={styles.priceNote} style={{ marginTop: 8 }}>
                 {lead.confirmationSentAt ? `Confirmation sent ${formatShortDate(lead.confirmationSentAt.slice(0, 10))}. ` : 'Confirmation goes out automatically when a payment lands. '}
                 {lead.reminderSentAt ? `Reminder sent ${formatShortDate(lead.reminderSentAt.slice(0, 10))}.` : `Reminder goes out ${business.reminderDaysBefore} days before the session.`}
                 {lead.cardOnFile ? ' Card on file.' : ''}
+                {lead.balanceRequestedAt ? ` Balance requested ${formatShortDate(lead.balanceRequestedAt.slice(0, 10))}.` : ''}
+                {lead.termsAcceptedAt ? ` Terms accepted ${formatShortDate(lead.termsAcceptedAt.slice(0, 10))}.` : ''}
               </p>
             </>
           ) : null}

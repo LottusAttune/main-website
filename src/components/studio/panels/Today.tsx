@@ -68,6 +68,8 @@ const ACTIVITY_LABELS: Record<string, string> = {
   invoice_sent: 'Invoice sent',
   invoice_paid: 'Invoice paid',
   deposit_paid: 'Deposit paid',
+  balance_requested: 'Balance requested',
+  terms_accepted: 'Terms accepted',
   confirmation_sent: 'Confirmation sent',
   reminder_sent: 'Reminder sent',
   email_failed: '⚠ Email failed',
@@ -131,15 +133,15 @@ export function Today({ data, onNavigate }: Props) {
     (l) => now.getTime() - new Date(l.createdAt).getTime() > 2 * DAY_MS
   );
 
-  const proposedLeadIds = new Set(
-    proposals
-      .filter((d) => d.status === 'sent' || d.status === 'accepted')
+  const invoicedLeadIds = new Set(
+    invoices
+      .filter((d) => d.status === 'sent' || d.status === 'paid')
       .map((d) => d.bookingId)
   );
-  const withoutProposal = data.leads.filter(
+  const withoutInvoice = data.leads.filter(
     (l) =>
       (l.status === 'new_enquiry' || l.status === 'contacted') &&
-      !proposedLeadIds.has(l.id)
+      !invoicedLeadIds.has(l.id)
   );
 
   const awaitingAnswer = proposals.filter((d) => d.status === 'sent');
@@ -188,11 +190,11 @@ export function Today({ data, onNavigate }: Props) {
       label: `${plural(newEnquiries.length, 'new enquiry', 'new enquiries')} waiting for a reply`,
     },
     {
-      key: 'proposals-to-send',
+      key: 'invoices-to-send-leads',
       view: 'leads',
       urgent: false,
-      count: withoutProposal.length,
-      label: `${plural(withoutProposal.length, 'lead', 'leads')} without a proposal sent`,
+      count: withoutInvoice.length,
+      label: `${plural(withoutInvoice.length, 'lead', 'leads')} without an invoice sent`,
     },
     {
       key: 'proposals-awaiting',

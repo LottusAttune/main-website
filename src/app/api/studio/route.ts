@@ -7,6 +7,7 @@ import {
   chargeBalance,
   chargeCancellationFee,
   afterPayment,
+  sendBalanceRequest,
   sendBookingConfirmation,
   sendBookingReminder,
 } from '@/lib/bookings';
@@ -188,6 +189,7 @@ const action = z.discriminatedUnion('action', [
   z.object({ action: z.literal('sendConfirmation'), bookingId: z.string().uuid() }),
   z.object({ action: z.literal('sendReminder'), bookingId: z.string().uuid() }),
   z.object({ action: z.literal('chargeBalance'), bookingId: z.string().uuid() }),
+  z.object({ action: z.literal('sendBalanceRequest'), bookingId: z.string().uuid() }),
   z.object({ action: z.literal('chargeCancellationFee'), bookingId: z.string().uuid() }),
   z.object({ action: z.literal('deleteGift'), id: z.string().uuid() }),
   z.object({
@@ -431,6 +433,13 @@ export async function POST(request: Request) {
 
       case 'chargeBalance': {
         const result = await chargeBalance(input.bookingId);
+        revalidatePath('/studio');
+        if (!result.ok) return NextResponse.json({ error: result.error }, { status: 502 });
+        break;
+      }
+
+      case 'sendBalanceRequest': {
+        const result = await sendBalanceRequest(input.bookingId);
         revalidatePath('/studio');
         if (!result.ok) return NextResponse.json({ error: result.error }, { status: 502 });
         break;

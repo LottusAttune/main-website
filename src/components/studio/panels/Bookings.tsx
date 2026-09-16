@@ -153,6 +153,7 @@ function flagsFor(b: BookingRow): string[] {
   if (b.reminderSentAt) flags.push('Reminder sent');
   if (b.cardOnFile) flags.push('Card on file');
   if (b.balanceChargedAt) flags.push('Balance charged');
+  if (b.balanceRequestedAt) flags.push('Balance requested');
   return flags;
 }
 
@@ -343,6 +344,12 @@ export function Bookings({ bookings, documents, integrations, business }: Props)
             void run({ action: 'chargeBalance', bookingId: booking.id });
           }
         },
+      });
+    }
+    if (!booking.cardOnFile && invoice && invoice.paidAmount > 0 && due > 0) {
+      primary.push({
+        label: booking.balanceRequestedAt ? 'Request balance again' : 'Request balance',
+        onClick: () => void run({ action: 'sendBalanceRequest', bookingId: booking.id }),
       });
     }
     if (cancelled && booking.cardOnFile && !booking.cancellationFeeChargedAt) {

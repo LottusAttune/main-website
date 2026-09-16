@@ -5,13 +5,18 @@ import { FAQS, VENUE_COPY } from '@/data/content';
 import { sql } from '@/lib/db';
 import {
   ensureBookingDocument,
+  ensurePaymentLinks,
+  generatePdf,
   getDocument,
+  loadContext,
   logActivity,
+  paymentOptionsHtml,
   publicUrl,
   recordPayment,
   type ActionResult,
 } from '@/lib/documents';
 import {
+  sendBalanceRequestEmail,
   sendBookingConfirmationEmail,
   sendOwnerNotification,
   sendReceiptEmail,
@@ -159,6 +164,13 @@ export async function afterPayment(
   method: string,
   kind: string
 ): Promise<void> {
+  // The invoice goes out again with the receipt, now showing the payment.
+  let pdf: Buffer | null = null;
+  try {
+    pdf = await generatePdf(doc, await loadContext(doc));
+  } catch (error) {
+    console.error('[bookings] receipt PDF failed:', error);
+  }
   await sendReceiptEmail({
     name: doc.clientName,
     email: doc.clientEmail,
@@ -168,6 +180,7 @@ export async function afterPayment(
     kind,
     balanceDue: balanceDue(doc),
     viewUrl: publicUrl(doc),
+    pdf,
   });
   await sendOwnerNotification({
     subject: `Payment received: ${money(amount)} from ${doc.clientName} — ${doc.number}`,
@@ -180,6 +193,49 @@ export async function afterPayment(
 }
 
 /** Charges the deposit plan's remaining balance to the saved card. */
+/**
+ * Asks for the rest of the invoice by email, with fresh card links for
+ * exactly the balance and the e-transfer details. The daily job sends it
+ * N days before the session to anyone whose card is not on file.
+ */
+export async function sendBalanceRequest(bookingId: string): Promise<ActionResult> {
+  const result = await sql`SELECT * FROM bookings WHERE id = ${bookingId}`;
+  const row = result.rows[0];
+  if (!row) return { ok: false, error: 'Booking not found.' };
+  const invoice = await invoiceFor(bookingId);
+  if (!invoice) return { ok: false, error: 'No invoice for this booking.' };
+  const due = balanceDue(invoice);
+  if (due <= 0) return { ok: false, error: 'Nothing outstanding on this invoice.' };
+  const sessionDate = toIso(row.session_date);
+  if (!sessionDate) return { ok: false, error: 'This booking has no session date yet.' };
+
+  const settings = await getSettings();
+  const ready = await ensurePaymentLinks(invoice, settings.business);
+  const sent = await sendBalanceRequestEmail({
+    name: String(row.name),
+    email: String(row.email),
+    number: ready.number,
+    balance: due,
+    sessionDate,
+    sessionTime: row.session_time ? String(row.session_time) : null,
+    dueOn: ready.dueOn,
+    paymentHtml: paymentOptionsHtml(ready, settings.business, { sessionDate }, false),
+    viewUrl: publicUrl(ready),
+  });
+  if (!sent.ok) {
+    await logActivity({ bookingId, documentId: invoice.id, kind: 'email_failed', body: `Balance request: ${sent.error}` });
+    return sent;
+  }
+  await sql`UPDATE bookings SET balance_requested_at = NOW() WHERE id = ${bookingId}`;
+  await logActivity({
+    bookingId,
+    documentId: invoice.id,
+    kind: 'balance_requested',
+    body: `Balance of ${money(due)} requested from ${String(row.email)}`,
+  });
+  return { ok: true };
+}
+
 export async function chargeBalance(bookingId: string): Promise<ActionResult> {
   if (!isStripeConfigured()) return { ok: false, error: 'Stripe is not connected.' };
   const result = await sql`SELECT * FROM bookings WHERE id = ${bookingId}`;
@@ -296,7 +352,18 @@ export async function chargeCancellationFee(bookingId: string): Promise<ActionRe
  * Once a day (Vercel Cron → /api/cron/daily): reminders N days out, deposit
  * balances M days out. Each is idempotent via the *_at stamps.
  */
-export async function runDailyJobs(): Promise<{ reminders: number; balances: number; errors: string[] }> {
+export async function runDailyJobs(): Promise<{
+  reminders: number;
+  balances: number;
+  balanceRequests: number;
+  databasePingedAt: string;
+  errors: string[];
+}> {
+  // A daily round trip is also what keeps the database awake: a hosted
+  // Postgres that sees no traffic for a week is paused by its provider.
+  const ping = await sql`SELECT NOW() AS now`;
+  const databasePingedAt = new Date(String(ping.rows[0]?.now ?? Date.now())).toISOString();
+
   const settings = await getSettings();
   const today = torontoToday();
   const errors: string[] = [];
@@ -328,5 +395,21 @@ export async function runDailyJobs(): Promise<{ reminders: number; balances: num
     else errors.push(`balance ${String(row.id)}: ${r.error}`);
   }
 
-  return { reminders, balances, errors };
+  // Everyone else with a balance still owed gets asked for it by email:
+  // no card on file, or a card that could not be charged just now.
+  const ask = await sql`
+    SELECT b.id FROM bookings b
+    JOIN documents d ON d.booking_id = b.id AND d.kind = 'invoice' AND d.status NOT IN ('void', 'paid')
+    WHERE b.status = 'booked' AND b.session_date <= ${balanceDay} AND b.session_date >= ${today}
+      AND b.balance_requested_at IS NULL AND b.balance_charged_at IS NULL
+      AND d.paid_amount > 0 AND d.paid_amount < d.total
+  `;
+  let balanceRequests = 0;
+  for (const row of ask.rows) {
+    const r = await sendBalanceRequest(String(row.id));
+    if (r.ok) balanceRequests += 1;
+    else errors.push(`balance request ${String(row.id)}: ${r.error}`);
+  }
+
+  return { reminders, balances, balanceRequests, databasePingedAt, errors };
 }

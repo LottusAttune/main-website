@@ -402,6 +402,9 @@ ALTER TABLE bookings ADD COLUMN IF NOT EXISTS stripe_payment_method_id    TEXT;
 ALTER TABLE bookings ADD COLUMN IF NOT EXISTS confirmation_sent_at        TIMESTAMPTZ;
 ALTER TABLE bookings ADD COLUMN IF NOT EXISTS reminder_sent_at            TIMESTAMPTZ;
 ALTER TABLE bookings ADD COLUMN IF NOT EXISTS balance_charged_at          TIMESTAMPTZ;
+ALTER TABLE bookings ADD COLUMN IF NOT EXISTS balance_requested_at        TIMESTAMPTZ;
+-- The client ticked "I agree to the Terms & Conditions" on the booking form.
+ALTER TABLE bookings ADD COLUMN IF NOT EXISTS terms_accepted_at           TIMESTAMPTZ;
 ALTER TABLE bookings ADD COLUMN IF NOT EXISTS cancellation_fee_charged_at TIMESTAMPTZ;
 
 CREATE TABLE IF NOT EXISTS payments (

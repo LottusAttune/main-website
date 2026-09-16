@@ -361,6 +361,9 @@ export async function sendDocumentEmail(input: {
   /** Pre-rendered "how to pay" block for invoices (e-transfer, card links). */
   paymentHtml: string;
   giftCode: string | null;
+  /** Optional overrides for the invoice email's subject and opening line. */
+  subject?: string;
+  introHtml?: string;
 }): Promise<EmailResult> {
   const first = input.name.split(' ')[0] || input.name;
   let subject: string;
@@ -377,10 +380,10 @@ export async function sendDocumentEmail(input: {
       <p style="margin:12px 0 0;font-size:13px;">Questions or changes? Just reply to this email.</p>
       ${mottoHtml()}`;
   } else if (input.kind === 'invoice') {
-    subject = `Invoice ${input.number} from Lotus Attune: ${money(input.total)}`;
+    subject = input.subject ?? `Invoice ${input.number} from Lotus Attune: ${money(input.total)}`;
     body = `
       <p style="margin:0 0 10px;">Hi ${escapeHtml(first)},</p>
-      <p style="margin:0;">Please find your invoice below${input.pdf ? ' and attached as a PDF' : ''}.${input.dueOn ? ` Payment is due by <strong>${formatStudioDate(input.dueOn)}</strong>.` : ''}</p>
+      <p style="margin:0;">${input.introHtml ?? `Please find your invoice below${input.pdf ? ' and attached as a PDF' : ''}.${input.dueOn ? ` Payment is due by <strong>${formatStudioDate(input.dueOn)}</strong>.` : ''}`}</p>
       ${input.summaryHtml}
       <div style="margin:0 0 6px;"><div style="font-family:Arial,Helvetica,sans-serif;font-size:10.5px;letter-spacing:0.22em;text-transform:uppercase;color:#7c5b3b;margin-bottom:6px;">How to pay</div><div style="font-size:14px;">${input.paymentHtml.replace(/<a /g, '<a style="color:#7c5b3b;" ')}</div></div>
       ${BUTTON(input.viewUrl, 'View invoice')}
@@ -436,8 +439,28 @@ export async function sendBookingRequestEmails(input: {
   total: number;
   venue: string;
   studioUrl: string;
+  cancellationPolicy: string;
+  /** The session invoice, when it is ready to ride along in this email. */
+  invoice: {
+    number: string;
+    total: number;
+    deposit: number | null;
+    depositPercent: number;
+    dueOn: string | null;
+    balanceDay: string | null;
+    balanceDaysBefore: number;
+    paymentHtml: string;
+    viewUrl: string;
+    pdf: Buffer | null;
+  } | null;
 }): Promise<{ client: EmailResult; owner: EmailResult }> {
   const first = input.name.split(' ')[0] || input.name;
+  const inv = input.invoice;
+  const invoiceLine = !inv
+    ? 'Your invoice will follow by email.'
+    : inv.deposit !== null
+      ? `Your invoice ${escapeHtml(inv.number)} is ${inv.pdf ? 'attached' : 'below'}. A ${inv.depositPercent}% deposit of <strong>${money(inv.deposit)}</strong> confirms your date${inv.dueOn ? `, due by <strong>${formatStudioDate(inv.dueOn)}</strong>` : ''}. The remaining ${money(inv.total - inv.deposit)} is due ${inv.balanceDaysBefore} calendar days before your session${inv.balanceDay ? `, on ${formatStudioDate(inv.balanceDay)}` : ''}.`
+      : `Your invoice ${escapeHtml(inv.number)} for ${money(inv.total)} is ${inv.pdf ? 'attached' : 'below'}${inv.dueOn ? `, due by <strong>${formatStudioDate(inv.dueOn)}</strong>` : ''}.`;
   const rows: Array<[string, string]> = [
     ['Date', formatStudioDate(input.sessionDate)],
     ['Time', input.sessionTime],
@@ -448,7 +471,7 @@ export async function sendBookingRequestEmails(input: {
   rows.push(
     ['Participants', input.participants === 1 ? 'One-on-one' : String(input.participants)],
     ['Venue', input.venue],
-    ['Estimated total', money(input.total)]
+    inv ? ['Invoice total', money(inv.total)] : ['Estimated total', money(input.total)]
   );
   const details = `
     <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#241b14;margin:16px 0;">
@@ -469,22 +492,25 @@ export async function sendBookingRequestEmails(input: {
 
   const client = sendEmail({
     to: input.email,
-    subject: `Request received: Lotus Attune, ${formatStudioDate(input.sessionDate)}`,
+    subject: `Request confirmed: Lotus Attune, ${formatStudioDate(input.sessionDate)}${inv ? `. Invoice ${inv.number}` : ''}`,
     html: wrapperHtml(`
       <p style="margin:0 0 10px;">Hi ${escapeHtml(first)},</p>
       <p style="margin:0 0 14px;">Thank you for your request. It has been received.</p>
-      <p style="margin:0 0 6px;"><strong>What you can expect</strong><br />We will review your request within 24 hours and come back to you with a proposal by email.</p>
+      <p style="margin:0 0 12px;"><strong>What you can expect</strong><br />We will review your request within 24 hours and come back to you by email. ${invoiceLine}</p>
       <p style="margin:0;"><strong>What you can do</strong><br />You can start preparing. Comfortable clothing and warm socks are all you need. Everything else is provided.</p>
       ${details}
+      ${inv ? `<div style="margin:0 0 6px;">${sectionTitle('How to pay')}<div style="font-size:14px;">${inv.paymentHtml.replace(/<a /g, '<a style="color:#7c5b3b;" ')}</div></div>${BUTTON(inv.viewUrl, 'View invoice')}` : ''}
+      ${input.cancellationPolicy ? `${sectionTitle('Cancellation policy')}<p style="margin:0 0 16px;">${escapeHtml(input.cancellationPolicy).replace(/\n/g, '<br />')}</p>` : ''}
       <p style="margin:0;">Need to reach us sooner? Reply to this email or call ${SITE.phone}.</p>
       ${mottoHtml()}`),
+    attachments: inv?.pdf ? [{ filename: `${inv.number}.pdf`, content: inv.pdf }] : undefined,
   });
 
   const owner = sendEmail({
     to: SITE.email,
     subject: `New booking request: ${input.name}, ${formatStudioDate(input.sessionDate)}, ${money(input.total)}`,
     html: wrapperHtml(`
-      <p style="margin:0 0 10px;">A new booking request just landed in the studio.</p>
+      <p style="margin:0 0 10px;">A new booking request just landed in the studio.${inv ? ` Invoice ${escapeHtml(inv.number)} went to the client with it${inv.deposit !== null ? ` (${money(inv.deposit)} deposit to confirm)` : ''}.` : ''}</p>
       ${details}
       <p style="margin:0 0 6px;"><strong>${escapeHtml(input.name)}</strong>${input.company ? ` · ${escapeHtml(input.company)}` : ''}</p>
       <p style="margin:0 0 6px;"><a href="mailto:${escapeHtml(input.email)}" style="color:#7c5b3b;">${escapeHtml(input.email)}</a>${input.phone ? ` · ${escapeHtml(input.phone)}` : ''}</p>
@@ -616,6 +642,33 @@ export async function sendReminderEmail(input: SessionEmailInput): Promise<Email
   });
 }
 
+/** Sent N days before the session when the rest of the invoice is still owed and there is no card to charge. */
+export async function sendBalanceRequestEmail(input: {
+  name: string;
+  email: string;
+  number: string;
+  balance: number;
+  sessionDate: string;
+  sessionTime: string | null;
+  dueOn: string | null;
+  paymentHtml: string;
+  viewUrl: string;
+}): Promise<EmailResult> {
+  const first = input.name.split(' ')[0] || input.name;
+  const html = wrapperHtml(`
+    <p style="margin:0 0 10px;">Hi ${escapeHtml(first)},</p>
+    <p style="margin:0 0 12px;">Your Lotus Attune experience is coming up on <strong>${formatStudioDate(input.sessionDate)}</strong>${input.sessionTime ? ` at ${escapeHtml(input.sessionTime)}` : ''}. The remaining balance of <strong>${money(input.balance)}</strong> on invoice ${escapeHtml(input.number)} is now due${input.dueOn ? `, by ${formatStudioDate(input.dueOn)}` : ''}.</p>
+    <div style="margin:0 0 6px;">${sectionTitle('How to pay')}<div style="font-size:14px;">${input.paymentHtml.replace(/<a /g, '<a style="color:#7c5b3b;" ')}</div></div>
+    ${BUTTON(input.viewUrl, 'View invoice')}
+    <p style="margin:12px 0 0;font-size:13px;">Already sent it? Thank you, please ignore this note.</p>
+    ${mottoHtml()}`);
+  return sendEmail({
+    to: input.email,
+    subject: `Balance due: ${money(input.balance)} for your Lotus Attune session on ${formatStudioDate(input.sessionDate)}`,
+    html,
+  });
+}
+
 export async function sendReceiptEmail(input: {
   name: string;
   email: string;
@@ -625,6 +678,8 @@ export async function sendReceiptEmail(input: {
   kind: string;
   balanceDue: number;
   viewUrl: string;
+  /** The invoice as it stands after this payment. */
+  pdf?: Buffer | null;
 }): Promise<EmailResult> {
   const first = input.name.split(' ')[0] || input.name;
   const what =
@@ -640,8 +695,9 @@ export async function sendReceiptEmail(input: {
     subject: `Payment received: ${money(input.amount)} for ${input.number}`,
     html: wrapperHtml(`
       <p style="margin:0 0 10px;">Hi ${escapeHtml(first)},</p>
-      <p style="margin:0;">Thank you - we received ${what} of <strong>${money(input.amount)}</strong> by ${escapeHtml(input.method)} against ${escapeHtml(input.number)}.${input.balanceDue > 0 ? ` The remaining balance is ${money(input.balanceDue)}.` : ' Your account is settled.'}</p>
+      <p style="margin:0;">Thank you, we received ${what} of <strong>${money(input.amount)}</strong> by ${escapeHtml(input.method)} against ${escapeHtml(input.number)}.${input.balanceDue > 0 ? ` The remaining balance is ${money(input.balanceDue)}.` : ' Your account is settled.'}${input.pdf ? ' The updated invoice is attached.' : ''}</p>
       ${BUTTON(input.viewUrl, 'View invoice')}
       ${mottoHtml()}`),
+    attachments: input.pdf ? [{ filename: `${input.number}.pdf`, content: input.pdf }] : undefined,
   });
 }

@@ -137,6 +137,58 @@ export async function createPaymentLink(input: PaymentLinkInput): Promise<{ id: 
   return { id: String(link.id), url: String(link.url) };
 }
 
+export type CheckoutInput = {
+  description: string;
+  /** Whole dollars. */
+  amount: number;
+  feeAmount: number;
+  feeLabel: string;
+  currency?: string;
+  customerEmail: string;
+  metadata: Record<string, string>;
+  /** May contain the literal {CHECKOUT_SESSION_ID}, which Stripe fills in. */
+  successUrl: string;
+  cancelUrl: string;
+  saveCard: boolean;
+};
+
+/**
+ * A one-off hosted checkout page for a single payment: the client lands
+ * on it straight from the booking form, with their email filled in, and
+ * comes back to the site when done. Expires on its own after 24 hours.
+ */
+export async function createCheckoutSession(input: CheckoutInput): Promise<{ id: string; url: string }> {
+  const currency = (input.currency ?? 'cad').toLowerCase();
+  const lineItems: Array<Record<string, unknown>> = [
+    {
+      price_data: { currency, unit_amount: Math.round(input.amount * 100), product_data: { name: input.description } },
+      quantity: 1,
+    },
+  ];
+  if (input.feeAmount > 0) {
+    lineItems.push({
+      price_data: { currency, unit_amount: Math.round(input.feeAmount * 100), product_data: { name: input.feeLabel } },
+      quantity: 1,
+    });
+  }
+  const session = await stripe('POST', '/checkout/sessions', {
+    mode: 'payment',
+    line_items: lineItems,
+    customer_email: input.customerEmail,
+    customer_creation: 'always',
+    billing_address_collection: 'auto',
+    metadata: input.metadata,
+    payment_intent_data: {
+      metadata: input.metadata,
+      description: input.description,
+      ...(input.saveCard ? { setup_future_usage: 'off_session' } : {}),
+    },
+    success_url: input.successUrl,
+    cancel_url: input.cancelUrl,
+  });
+  return { id: String(session.id), url: String(session.url) };
+}
+
 export async function deactivatePaymentLink(id: string): Promise<void> {
   await stripe('POST', `/payment_links/${id}`, { active: false }).catch(() => {});
 }

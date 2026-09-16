@@ -234,6 +234,19 @@ async function loadBooking(id: string): Promise<BookingCtx | null> {
   return row ? bookingCtx(row) : null;
 }
 
+/**
+ * The website's quote labels, spelled out for paperwork: the session line
+ * names the experience the client chose, and dashes become plain punctuation.
+ */
+function invoiceLabel(label: string): string {
+  const plain = label.replace(/\s+[\u2014\u2013-]\s+/g, ': ');
+  const group = /^(\d+) participants$/.exec(plain);
+  if (group) return `Immersive Soma Sound Experience, ${group[1]} participants`;
+  if (/^(one|1) private session$/i.test(plain)) return 'Immersive Soma Sound Experience, one private session';
+  if (/^package of four sessions$/i.test(plain)) return 'Immersive Soma Sound Experience, package of four private sessions';
+  return plain;
+}
+
 export function bookingLines(booking: BookingCtx, settings: SiteSettings): DocumentLine[] {
   const code = booking.discountCode
     ? settings.codes.find((c) => c.code === booking.discountCode)
@@ -254,7 +267,7 @@ export function bookingLines(booking: BookingCtx, settings: SiteSettings): Docum
     settings.pricing
   );
   const lines: DocumentLine[] = quote.lines.map((line) => ({
-    label: line.label,
+    label: invoiceLabel(line.label),
     amount: parseMoney(line.value),
   }));
   // The booking's stored total is what the client saw and agreed to. If the
@@ -366,7 +379,9 @@ export function totalsFor(lines: DocumentLine[], taxRatePercent: number) {
 export async function ensureBookingDocument(
   bookingId: string,
   kind: 'proposal' | 'invoice',
-  settings?: SiteSettings
+  settings?: SiteSettings,
+  /** Card links are minted with the invoice unless the caller will do it later. */
+  options: { mintLinks?: boolean } = {}
 ): Promise<DocumentRow> {
   const existing = await selectDocuments(
     `booking_id = $1 AND kind = $2 AND status != 'void' ORDER BY created_at DESC LIMIT 1`,
@@ -383,9 +398,13 @@ export async function ensureBookingDocument(
 
   const number = await nextNumber(kind, s.business.invoicePrefix || 'LA');
   const issued = todayIso();
+  // The deposit is due within the usual window, or sooner if the session
+  // itself is close: the balance date is the latest the deposit makes sense.
+  const invoiceDue = addDays(issued, s.business.invoiceDueDays);
+  const balanceDay = balanceDueOn(booking.sessionDate, s.business);
   const dueOn =
     kind === 'invoice'
-      ? addDays(issued, s.business.invoiceDueDays)
+      ? balanceDay && balanceDay < invoiceDue ? balanceDay : invoiceDue
       : addDays(issued, s.business.proposalValidDays);
 
   const inserted = await sql`
@@ -407,7 +426,7 @@ export async function ensureBookingDocument(
     body: `${doc.number} · ${money(doc.total)}`,
   });
   // The card links are minted as soon as the price exists.
-  if (kind === 'invoice') doc = await ensurePaymentLinks(doc, s.business);
+  if (kind === 'invoice' && options.mintLinks !== false) doc = await ensurePaymentLinks(doc, s.business);
   return doc;
 }
 
@@ -491,6 +510,25 @@ export function cardFee(amount: number, feePercent: number): number {
 
 export function depositAmount(doc: DocumentRow, depositPercent: number): number {
   return Math.round((doc.total * depositPercent) / 100);
+}
+
+/**
+ * The deposit that confirms a session: what a booking invoice asks for
+ * first, until any money has arrived on it. Null for gift and stand-alone
+ * invoices, which are paid in full.
+ */
+export function depositDue(doc: DocumentRow, business: BusinessSettings): number | null {
+  if (doc.kind !== 'invoice' || !doc.bookingId || doc.paidAmount > 0) return null;
+  if (!(business.depositPercent > 0 && business.depositPercent < 100)) return null;
+  return depositAmount(doc, business.depositPercent);
+}
+
+/** The day the rest of a session invoice is due: N calendar days before the session, never in the past. */
+export function balanceDueOn(sessionDate: string | null, business: BusinessSettings): string | null {
+  if (!sessionDate) return null;
+  const day = addDays(sessionDate, -business.balanceDaysBefore);
+  const today = todayIso();
+  return day < today ? today : day;
 }
 
 /**
@@ -638,10 +676,21 @@ export async function recordPayment(input: {
   const paid = doc.paidAmount + input.amount;
   const settled = paid >= doc.total;
   const plan = doc.paymentPlan ?? (settled ? 'full' : 'deposit');
+  // Once the deposit is in, the invoice's due date becomes the balance date.
+  let nextDue: string | null = null;
+  if (!settled && doc.bookingId) {
+    const b = await sql`SELECT session_date FROM bookings WHERE id = ${doc.bookingId}`;
+    const s = await getSettings();
+    nextDue = balanceDueOn(toIso(b.rows[0]?.session_date), s.business);
+  }
+  // The PDF is re-rendered on the next send or download so it shows what
+  // was paid, not the pre-payment ask.
   await sql`
     UPDATE documents SET
       paid_amount = ${paid},
       payment_plan = ${plan},
+      pdf = NULL, pdf_generated_at = NULL,
+      due_on = COALESCE(${nextDue}::date, due_on),
       status = ${settled ? 'paid' : doc.status === 'draft' ? 'sent' : doc.status},
       paid_at = ${settled ? new Date() : null},
       paid_method = ${settled ? input.method : doc.paidMethod},
@@ -702,7 +751,7 @@ const PAGE_CSS = `
   .box .eyebrow { color: #c6a97a; }
   .box .k { font-size: 9.5px; letter-spacing: 0.2em; text-transform: uppercase; color: rgba(239,230,218,0.6); padding: 6px 0 2px; }
   .box .v { font-size: 13.5px; color: #f6efe5; text-align: right; padding: 6px 0 2px; }
-  .foot { position: absolute; left: 0.75in; right: 0.75in; bottom: 0.45in; font-size: 10.5px; color: #6f5f52; border-top: 1px solid rgba(59,46,36,0.14); padding-top: 10px; display: flex; justify-content: space-between; }
+  .foot { margin-top: 34px; font-size: 10.5px; color: #6f5f52; border-top: 1px solid rgba(59,46,36,0.14); padding-top: 10px; display: flex; justify-content: space-between; }
   a { color: #7c5b3b; }
 `;
 
@@ -752,6 +801,7 @@ function sessionBox(booking: BookingCtx): string {
         ? `Corporate introductory experience — ${booking.participants} participants`
         : `${booking.participants} participants`;
   const rows: Array<[string, string]> = [
+    ['Experience', 'Immersive Soma Sound Experience, two hours'],
     ['Format', format],
     ['Date', formatStudioDate(booking.sessionDate)],
     ['Time', booking.sessionTime ?? '—'],
@@ -760,6 +810,8 @@ function sessionBox(booking: BookingCtx): string {
     rows.push(['Second session', `${formatStudioDate(booking.sessionDate2)} · ${booking.sessionTime2 ?? ''}`]);
   }
   rows.push(['Venue', venue]);
+  if (booking.teamAddon) rows.push(['Add-on', 'Team-building activity']);
+  if (booking.refreshments) rows.push(['Refreshments', 'Included']);
   return `
     <div class="box">
       <div class="eyebrow" style="margin-bottom:6px;">The experience</div>
@@ -796,41 +848,81 @@ function footer(business: BusinessSettings, doc: DocumentRow): string {
 }
 
 /**
- * E-transfer first (no fees), card second. The card lines only appear once
- * Stripe is connected and the links exist.
+ * How to pay, in the client's terms. On a session invoice before any money
+ * has arrived, the ask is the deposit that confirms the date, with the
+ * balance date spelled out; afterwards (and on gift or stand-alone
+ * invoices) it is whatever is still owed. E-transfer first (no fees), card
+ * second; the card lines only appear once Stripe is connected and the links
+ * exist.
  */
-export function paymentOptionsHtml(doc: DocumentRow, business: BusinessSettings): string {
+export function paymentOptionsHtml(
+  doc: DocumentRow,
+  business: BusinessSettings,
+  booking?: { sessionDate: string | null } | null,
+  /** The opening "what is due and when" paragraph; off where the email already said it. */
+  withIntro = true
+): string {
+  const deposit = depositDue(doc, business);
+  const outstanding = doc.total - doc.paidAmount;
+  const askNow = deposit ?? outstanding;
+  const balanceDay = balanceDueOn(booking?.sessionDate ?? null, business);
   const parts: string[] = [];
+
+  if (!withIntro) {
+    // no intro
+  } else if (deposit !== null) {
+    parts.push(
+      `<p style="margin:0 0 10px;">A ${business.depositPercent}% deposit of <strong>${money(deposit)}</strong> confirms your date. ` +
+        `The remaining ${money(doc.total - deposit)} is due ${business.balanceDaysBefore} calendar days before the session${balanceDay ? `, on ${formatStudioDate(balanceDay)}` : ''}.</p>`
+    );
+  } else if (doc.paidAmount > 0 && outstanding > 0) {
+    parts.push(
+      `<p style="margin:0 0 10px;">${money(doc.paidAmount)} received. The remaining <strong>${money(outstanding)}</strong> is due${doc.dueOn ? ` by ${formatStudioDate(doc.dueOn)}` : ''}.</p>`
+    );
+  }
+
   parts.push(
-    `<p style="margin:0 0 8px;"><strong>E-transfer</strong> — full payment, no processing fee.</p>` +
+    `<p style="margin:0 0 8px;"><strong>E-transfer</strong>: send ${money(askNow)}${deposit !== null ? ' (the deposit)' : ''}, no processing fee.</p>` +
       (business.paymentInstructions
         ? paragraphs(business.paymentInstructions)
         : `<p class="muted" style="margin:0 0 8px;">Reply to this email for e-transfer details.</p>`)
   );
+
   if (doc.payFullUrl) {
-    const fee = cardFee(doc.total, business.cardFeePercent);
     parts.push(
-      `<p style="margin:10px 0 4px;"><strong>Credit card</strong> — a ${business.cardFeePercent}% processing fee applies.</p>` +
-        `<p style="margin:0 0 4px;"><a href="${doc.payFullUrl}">Pay ${money(doc.total + fee)} in full by card</a></p>`
+      `<p style="margin:10px 0 4px;"><strong>Credit card</strong>: a ${business.cardFeePercent}% processing fee applies.</p>`
     );
-    if (doc.payDepositUrl) {
-      const deposit = depositAmount(doc, business.depositPercent);
+    if (deposit !== null && doc.payDepositUrl) {
       const depositFee = cardFee(deposit, business.cardFeePercent);
       parts.push(
-        `<p style="margin:0;"><a href="${doc.payDepositUrl}">Pay a ${business.depositPercent}% deposit (${money(deposit + depositFee)}) by card</a> — the remaining ${money(doc.total - deposit)} plus fee is charged to the same card ${business.balanceDaysBefore} calendar days before the session.</p>`
+        `<p style="margin:0 0 4px;"><a href="${doc.payDepositUrl}">Pay the ${money(deposit + depositFee)} deposit by card</a></p>` +
+          `<p class="muted" style="margin:0 0 6px;">The remaining ${money(doc.total - deposit)} plus fee is charged to the same card ${business.balanceDaysBefore} calendar days before the session.</p>`
       );
     }
+    const fee = cardFee(outstanding, business.cardFeePercent);
+    parts.push(
+      `<p style="margin:0;"><a href="${doc.payFullUrl}">${deposit !== null ? 'Or pay' : 'Pay'} ${money(outstanding + fee)} ${doc.paidAmount > 0 ? 'balance' : 'in full'} by card</a></p>`
+    );
   }
   return parts.join('');
 }
 
-function paymentStatusHtml(doc: DocumentRow): string {
+function paymentStatusHtml(
+  doc: DocumentRow,
+  business: BusinessSettings,
+  booking?: { sessionDate: string | null } | null
+): string {
   if (doc.status === 'paid') {
     return `Paid ${doc.paidAt ? formatStudioDate(doc.paidAt.slice(0, 10)) : ''}${doc.paidMethod ? ` · ${escapeHtml(doc.paidMethod)}` : ''}`;
   }
   if (doc.status === 'void') return 'Void';
   if (doc.paidAmount > 0) {
-    return `Deposit of ${money(doc.paidAmount)} received<br />Balance ${money(doc.total - doc.paidAmount)} outstanding`;
+    return `Deposit of ${money(doc.paidAmount)} received<br />Balance ${money(doc.total - doc.paidAmount)} due ${doc.dueOn ? formatStudioDate(doc.dueOn) : 'before the session'}`;
+  }
+  const deposit = depositDue(doc, business);
+  if (deposit !== null) {
+    const balanceDay = balanceDueOn(booking?.sessionDate ?? null, business);
+    return `Deposit ${money(deposit)} due ${formatStudioDate(doc.dueOn)}<br />Balance ${money(doc.total - deposit)} due ${balanceDay ? formatStudioDate(balanceDay) : `${business.balanceDaysBefore} days before the session`}`;
   }
   return `Due ${formatStudioDate(doc.dueOn)}`;
 }
@@ -945,11 +1037,11 @@ export function documentHtml(doc: DocumentRow, ctx: DocumentContext): string {
       <table><tr>
         <td style="vertical-align:top;width:55%;padding-right:20px;">
           <div class="eyebrow" style="margin-bottom:6px;">How to pay</div>
-          <div style="font-size:12.5px;">${paymentOptionsHtml(doc, business)}</div>
+          <div style="font-size:12.5px;">${paymentOptionsHtml(doc, business, ctx.booking)}</div>
         </td>
         <td style="vertical-align:top;">
           <div class="eyebrow" style="margin-bottom:6px;">Status</div>
-          <div style="font-size:12.5px;">${paymentStatusHtml(doc)}</div>
+          <div style="font-size:12.5px;">${paymentStatusHtml(doc, business, ctx.booking)}</div>
         </td>
       </tr></table>`;
   }
@@ -1050,6 +1142,16 @@ export async function sendDocument(id: string): Promise<ActionResult> {
   }
   const pdf = (await getDocumentPdf(id)) ?? (await generatePdf(ready, ctx));
 
+  // A session invoice opens with the deposit that confirms the date.
+  const deposit = ready.kind === 'invoice' ? depositDue(ready, ctx.business) : null;
+  const balanceDay = balanceDueOn(ctx.booking?.sessionDate ?? null, ctx.business);
+  const depositIntro =
+    deposit !== null
+      ? `Thank you for your booking request. Your invoice is below${pdf ? ' and attached as a PDF' : ''}. ` +
+        `A ${ctx.business.depositPercent}% deposit of <strong>${money(deposit)}</strong> confirms your date${ready.dueOn ? `, due by <strong>${formatStudioDate(ready.dueOn)}</strong>` : ''}. ` +
+        `The remaining ${money(ready.total - deposit)} is due ${ctx.business.balanceDaysBefore} calendar days before your session${balanceDay ? `, on ${formatStudioDate(balanceDay)}` : ''}.`
+      : undefined;
+
   const result = await sendDocumentEmail({
     kind: ready.kind,
     to: ready.clientEmail,
@@ -1060,8 +1162,10 @@ export async function sendDocument(id: string): Promise<ActionResult> {
     summaryHtml: emailBodyHtml(ready, ctx.business),
     viewUrl: publicUrl(ready),
     pdf,
-    paymentHtml: ready.kind === 'invoice' ? paymentOptionsHtml(ready, ctx.business) : '',
+    paymentHtml: ready.kind === 'invoice' ? paymentOptionsHtml(ready, ctx.business, ctx.booking) : '',
     giftCode: ctx.gift?.code ?? null,
+    subject: deposit !== null ? `Invoice ${ready.number} from Lotus Attune: ${money(deposit)} deposit to confirm your date` : undefined,
+    introHtml: depositIntro,
   });
 
   if (!result.ok) {
@@ -1075,22 +1179,27 @@ export async function sendDocument(id: string): Promise<ActionResult> {
     return result;
   }
 
-  const nextStatus: DocumentStatus =
-    doc.status === 'draft' ? 'sent' : doc.status;
+  await markDocumentSent(doc, Boolean(pdf));
+  return { ok: true };
+}
+
+/** Records that a document went out and moves the lead or gift along with it. */
+export async function markDocumentSent(doc: DocumentRow, withPdf: boolean): Promise<void> {
+  const nextStatus: DocumentStatus = doc.status === 'draft' ? 'sent' : doc.status;
   await sql`
     UPDATE documents SET status = ${nextStatus}, sent_at = NOW(), sent_to = ${doc.clientEmail}, updated_at = NOW()
-    WHERE id = ${id}
+    WHERE id = ${doc.id}
   `;
   await logActivity({
     bookingId: doc.bookingId,
     giftId: doc.giftId,
     documentId: doc.id,
     kind: `${doc.kind}_sent`,
-    body: `${doc.number} sent to ${doc.clientEmail}${pdf ? '' : ' (no PDF - PDFShift not configured)'}`,
+    body: `${doc.number} sent to ${doc.clientEmail}${withPdf ? '' : ' (no PDF - PDFShift not configured)'}`,
   });
 
   // Sending paperwork moves the lead along without a second click.
-  if (doc.bookingId && doc.kind === 'proposal') {
+  if (doc.bookingId && (doc.kind === 'proposal' || doc.kind === 'invoice')) {
     await sql`
       UPDATE bookings SET status = 'proposal_sent'
       WHERE id = ${doc.bookingId} AND status IN ('new_enquiry', 'contacted')
@@ -1099,7 +1208,48 @@ export async function sendDocument(id: string): Promise<ActionResult> {
   if (doc.giftId && doc.kind === 'certificate') {
     await sql`UPDATE gift_requests SET status = 'active' WHERE id = ${doc.giftId} AND status = 'requested'`;
   }
-  return { ok: true };
+}
+
+/** What the booking confirmation email needs to carry the invoice itself. */
+export type InvoiceEmailPart = {
+  doc: DocumentRow;
+  number: string;
+  total: number;
+  deposit: number | null;
+  depositPercent: number;
+  dueOn: string | null;
+  balanceDay: string | null;
+  balanceDaysBefore: number;
+  paymentHtml: string;
+  viewUrl: string;
+  pdf: Buffer | null;
+};
+
+/**
+ * The session invoice, ready to ride along in the booking confirmation:
+ * card links minted, PDF rendered, the deposit worked out.
+ */
+export async function prepareBookingInvoice(bookingId: string, settings: SiteSettings): Promise<InvoiceEmailPart> {
+  const doc = await ensureBookingDocument(bookingId, 'invoice', settings);
+  const ctx = await loadContext(doc);
+  const ready = await ensurePaymentLinks(doc, ctx.business);
+  if (ready.payFullUrl !== doc.payFullUrl) {
+    await sql`UPDATE documents SET pdf = NULL, pdf_generated_at = NULL WHERE id = ${doc.id}`;
+  }
+  const pdf = (await getDocumentPdf(doc.id)) ?? (await generatePdf(ready, ctx));
+  return {
+    doc: ready,
+    number: ready.number,
+    total: ready.total,
+    deposit: depositDue(ready, ctx.business),
+    depositPercent: ctx.business.depositPercent,
+    dueOn: ready.dueOn,
+    balanceDay: balanceDueOn(ctx.booking?.sessionDate ?? null, ctx.business),
+    balanceDaysBefore: ctx.business.balanceDaysBefore,
+    paymentHtml: paymentOptionsHtml(ready, ctx.business, ctx.booking, false),
+    viewUrl: publicUrl(ready),
+    pdf,
+  };
 }
 
 export async function markViewed(token: string): Promise<void> {

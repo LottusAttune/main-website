@@ -133,6 +133,8 @@ export async function getStudioData(): Promise<StudioData> {
       confirmationSentAt: toStamp(row.confirmation_sent_at),
       reminderSentAt: toStamp(row.reminder_sent_at),
       balanceChargedAt: toStamp(row.balance_charged_at),
+      balanceRequestedAt: toStamp(row.balance_requested_at),
+      termsAcceptedAt: toStamp(row.terms_accepted_at),
       cancellationFeeChargedAt: toStamp(row.cancellation_fee_charged_at),
     };
   });

@@ -8,7 +8,7 @@
 export const STAGES = [
   { key: 'new_enquiry', label: 'New enquiry' },
   { key: 'contacted', label: 'Contacted' },
-  { key: 'proposal_sent', label: 'Proposal sent' },
+  { key: 'proposal_sent', label: 'Invoice sent' },
   { key: 'booked', label: 'Booked' },
   { key: 'complete', label: 'Complete' },
 ] as const;
@@ -51,6 +51,8 @@ export type Lead = {
   confirmationSentAt: string | null;
   reminderSentAt: string | null;
   balanceChargedAt: string | null;
+  balanceRequestedAt: string | null;
+  termsAcceptedAt: string | null;
   cancellationFeeChargedAt: string | null;
 };
 

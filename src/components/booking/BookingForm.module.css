@@ -477,3 +477,51 @@
 .successNote a {
   color: var(--color-gold-text);
 }
+
+/* "Pay the deposit now" block on the confirmation card. */
+.successPay {
+  max-width: 760px;
+  margin: 30px auto 0;
+  padding: 24px clamp(18px, 3vw, 28px);
+  border: 1px solid var(--hairline-light);
+  background: var(--color-cream-raised);
+  text-align: left;
+}
+
+.successActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 18px;
+}
+
+.successPay .successNote {
+  margin-top: 16px;
+}
+
+/* Terms agreement above the submit button: a real checkbox, the client has
+   to tick it before the deposit checkout. */
+.agree {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin: 0 0 14px;
+  font-size: var(--text-body-sm);
+  line-height: 1.6;
+  color: var(--color-ink-body);
+  cursor: pointer;
+}
+
+.agreeBox {
+  flex: none;
+  width: 18px;
+  height: 18px;
+  margin: 3px 0 0;
+  accent-color: var(--color-ink-strong);
+  cursor: pointer;
+}
+
+.agreeBox[aria-invalid='true'] {
+  outline: 2px solid var(--status-alert);
+  outline-offset: 2px;
+}

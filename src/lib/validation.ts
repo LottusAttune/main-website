@@ -32,6 +32,11 @@ export const bookingSchema = z
     discountCode: z.string().trim().max(40).optional().nullable(),
     gratuityPercent: z.coerce.number().int().min(0).max(100).optional().nullable(),
     gratuityAmount: z.coerce.number().min(0).max(100_000).optional().nullable(),
+    acceptTerms: z
+      .boolean()
+      .refine((v) => v === true, {
+        message: 'Please confirm you have read and agree to the Terms & Conditions.',
+      }),
   })
   .refine(
     (value) =>

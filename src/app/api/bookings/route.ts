@@ -2,7 +2,16 @@ import { after, NextResponse } from 'next/server';
 
 import { createCalendarEvent, sessionSlotWindow } from '@/lib/calendar';
 import { isDatabaseConfigured, sql } from '@/lib/db';
-import { ensureBookingDocument, logActivity, sendDocument } from '@/lib/documents';
+import { FAQS } from '@/data/content';
+import { createBookingCheckout } from '@/lib/checkout';
+import {
+  ensureBookingDocument,
+  logActivity,
+  markDocumentSent,
+  prepareBookingInvoice,
+  publicUrl,
+  type InvoiceEmailPart,
+} from '@/lib/documents';
 import { sendBookingRequestEmails } from '@/lib/email';
 import { quoteFor } from '@/lib/quote';
 import { getSettings } from '@/lib/settings';
@@ -93,23 +102,51 @@ export async function POST(request: Request) {
         name, email, phone, company, message, participants,
         session_date, session_time, session_date_2, session_time_2,
         team_addon, refreshments, is_package, is_corporate_intro,
-        discount_code, gratuity, estimated_total
+        discount_code, gratuity, estimated_total, terms_accepted_at
       ) VALUES (
         ${input.name}, ${input.email}, ${input.phone ?? null}, ${input.company ?? null}, ${input.message ?? null},
         ${input.participants},
         ${input.sessionDate}, ${input.sessionTime},
         ${input.sessionDate2 ?? null}, ${input.sessionTime2 ?? null},
         ${input.teamAddon}, ${input.refreshments}, ${input.isPackage}, ${input.isCorporateIntro},
-        ${eligibleDiscount?.code ?? null}, ${gratuity}, ${total}
+        ${eligibleDiscount?.code ?? null}, ${gratuity}, ${total}, NOW()
       )
       RETURNING id
     `;
 
     const bookingId = String(result.rows[0]?.id);
 
-    // Everything below is best-effort and slow (calendar, three emails, a
-    // PDF render): it runs after the response so the form confirms in a
-    // second instead of thirty. The row above is already saved regardless.
+    // The invoice and a checkout page for its deposit are made before
+    // answering, so the client goes straight on to pay. One Stripe call and
+    // two inserts; if anything fails they still get the invoice by email.
+    let payment: {
+      invoiceNumber: string;
+      invoiceTotal: number;
+      deposit: number | null;
+      depositPercent: number;
+      checkoutUrl: string | null;
+      invoiceUrl: string;
+    } | null = null;
+    if (settings.business.autoSendInvoices) {
+      try {
+        const doc = await ensureBookingDocument(bookingId, 'invoice', settings, { mintLinks: false });
+        const checkout = await createBookingCheckout(doc, settings.business);
+        payment = {
+          invoiceNumber: doc.number,
+          invoiceTotal: doc.total,
+          deposit: checkout?.plan === 'deposit' ? checkout.amount : null,
+          depositPercent: settings.business.depositPercent,
+          checkoutUrl: checkout?.url ?? null,
+          invoiceUrl: publicUrl(doc),
+        };
+      } catch (error) {
+        console.error('[bookings] invoice failed:', error);
+      }
+    }
+
+    // Everything below is best-effort and slow (calendar, emails, a PDF
+    // render): it runs after the response so the form confirms in seconds
+    // instead of thirty. The row above is already saved regardless.
     after(async () => {
       const venue = venueFor(input.participants);
       const description = [
@@ -127,6 +164,19 @@ export async function POST(request: Request) {
         .join('\n');
 
       await logActivity({ bookingId, kind: 'received', body: 'Booking request received from the website' });
+      await logActivity({ bookingId, kind: 'terms_accepted', body: 'Terms & Conditions and cancellation policy accepted on the booking form' });
+
+      // The invoice (deposit to confirm the date) travels in the same email
+      // as the confirmation, so the client gets exactly one message.
+      let invoice: InvoiceEmailPart | null = null;
+      if (settings.business.autoSendInvoices) {
+        try {
+          invoice = await prepareBookingInvoice(bookingId, settings);
+        } catch (error) {
+          console.error('[bookings] invoice failed:', error);
+          await logActivity({ bookingId, kind: 'email_failed', body: `Invoice could not be prepared: ${error instanceof Error ? error.message : 'unknown error'}` });
+        }
+      }
 
       const emails = await sendBookingRequestEmails({
         name: input.name,
@@ -142,16 +192,14 @@ export async function POST(request: Request) {
         total,
         venue,
         studioUrl: `${SITE.url}/studio`,
+        cancellationPolicy:
+          settings.business.cancellationPolicy || (FAQS.find((f) => f.q === 'Cancellation Policy')?.a ?? ''),
+        invoice,
       });
       if (!emails.client.ok) {
-        await logActivity({ bookingId, kind: 'email_failed', body: `Request received email: ${emails.client.error}` });
-      }
-
-      try {
-        const proposal = await ensureBookingDocument(bookingId, 'proposal', settings);
-        if (settings.business.autoSendProposals) await sendDocument(proposal.id);
-      } catch (error) {
-        console.error('[bookings] proposal draft failed:', error);
+        await logActivity({ bookingId, kind: 'email_failed', body: `Request confirmation email: ${emails.client.error}` });
+      } else if (invoice) {
+        await markDocumentSent(invoice.doc, Boolean(invoice.pdf));
       }
 
       try {
@@ -186,10 +234,7 @@ export async function POST(request: Request) {
       }
     });
 
-    return NextResponse.json(
-      { id: result.rows[0]?.id, total },
-      { status: 201 }
-    );
+    return NextResponse.json({ id: result.rows[0]?.id, total, payment }, { status: 201 });
   } catch (error) {
     console.error('[bookings] insert failed:', error);
     return NextResponse.json(

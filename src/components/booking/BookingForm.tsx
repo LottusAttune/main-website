@@ -37,6 +37,16 @@ const QUICK_PARTY = [1, 2, 3, 4, 5, 6];
 const GRATUITY_PERCENTS = [10, 15, 18, 20] as const;
 type GratuityChoice = (typeof GRATUITY_PERCENTS)[number] | 'custom';
 
+/** What the booking API hands back so the client can pay the deposit on the spot. */
+type BookingPayment = {
+  invoiceNumber: string;
+  invoiceTotal: number;
+  deposit: number | null;
+  depositPercent: number;
+  checkoutUrl: string | null;
+  invoiceUrl: string;
+};
+
 export function BookingForm({
   pricing,
   slots,
@@ -70,6 +80,9 @@ export function BookingForm({
     Record<string, string[] | undefined>
   >({});
   const [submitted, setSubmitted] = useState(false);
+  const [payment, setPayment] = useState<BookingPayment | null>(null);
+  const [redirecting, setRedirecting] = useState(false);
+  const [agreed, setAgreed] = useState(false);
 
   const invalid = (field: string) => Boolean(fieldErrors[field]?.length);
 
@@ -215,6 +228,7 @@ export function BookingForm({
           discountCode: code.applied?.code ?? null,
           gratuityPercent: gratuityPercent ?? null,
           gratuityAmount: gratuityAmount ?? null,
+          acceptTerms: agreed,
         }),
       });
 
@@ -235,6 +249,18 @@ export function BookingForm({
         return;
       }
 
+      const created = (await response.json().catch(() => null)) as { payment?: BookingPayment | null } | null;
+      const pay = created?.payment ?? null;
+      setPayment(pay);
+      // Straight to the secure deposit page: the request is saved and the
+      // confirmation email is on its way whatever happens next. Without a
+      // card link (Stripe not connected, or no deposit on this booking) the
+      // confirmation card below takes over.
+      if (pay?.checkoutUrl) {
+        setRedirecting(true);
+        window.location.assign(pay.checkoutUrl);
+        return;
+      }
       setSubmitted(true);
       // The confirmation replaces a long form; bring it into view rather
       // than leaving the reader where the button used to be.
@@ -260,7 +286,9 @@ export function BookingForm({
             <div className={styles.successLabel}>What you can expect</div>
             <p className={styles.successBody}>
               We&rsquo;ll review your request within 24 hours and come back to you
-              with a proposal by email.
+              by email. Your confirmation email is on its way
+              {payment ? ` with invoice ${payment.invoiceNumber} attached` : ''}.
+              {payment?.deposit != null ? ` A ${payment.depositPercent}% deposit confirms your date.` : ''}
             </p>
           </div>
           <div>
@@ -271,6 +299,28 @@ export function BookingForm({
             </p>
           </div>
         </div>
+        {payment ? (
+          <div className={styles.successPay}>
+            <div className={styles.successLabel}>
+              {payment.deposit != null ? 'Confirm your date now' : 'Pay now'}
+            </div>
+            <p className={styles.successBody}>
+              {payment.deposit != null
+                ? `A ${payment.depositPercent}% deposit of ${money(payment.deposit)} confirms your date. The remaining ${money(payment.invoiceTotal - payment.deposit)} is due four calendar days before your session.`
+                : `Your invoice comes to ${money(payment.invoiceTotal)}.`}
+            </p>
+            <div className={styles.successActions}>
+              <a className="btn btn--dark" href={payment.invoiceUrl}>
+                View invoice and pay
+              </a>
+            </div>
+            <p className={styles.successNote}>
+              Send {money(payment.deposit ?? payment.invoiceTotal)} by e-transfer to{' '}
+              <a href={`mailto:${SITE.email}`}>{SITE.email}</a>, or pay by card from the invoice.
+              The details are in your email.
+            </p>
+          </div>
+        ) : null}
         <p className={styles.successNote}>
           Need to reach us sooner? Write to{' '}
           <a href={`mailto:${SITE.email}`}>{SITE.email}</a> or call {SITE.phone}.
@@ -700,17 +750,38 @@ export function BookingForm({
           triggerClassName={`btn btn--outline btn--wide ${styles.includedBtn}`}
         />
 
-        <p className={styles.policyNote}>
-          By requesting this booking, you agree to our{' '}
-          <PolicyModal triggerClassName={styles.policyLink} />.
-        </p>
+        <label className={styles.agree}>
+          <input
+            type="checkbox"
+            className={styles.agreeBox}
+            checked={agreed}
+            onChange={(e) => {
+              setAgreed(e.target.checked);
+              if (e.target.checked) setFieldErrors((f) => ({ ...f, acceptTerms: undefined }));
+            }}
+            aria-invalid={Boolean(fieldErrors.acceptTerms)}
+            required
+          />
+          <span>
+            I have read and agree to the{' '}
+            <a href="/terms" target="_blank" rel="noopener" className={styles.policyLink}>
+              Terms &amp; Conditions
+            </a>{' '}
+            and the <PolicyModal triggerClassName={styles.policyLink} />.
+          </span>
+        </label>
+        {fieldErrors.acceptTerms ? (
+          <div className={styles.formError} style={{ margin: '0 0 14px' }} role="alert">
+            {fieldErrors.acceptTerms[0]}
+          </div>
+        ) : null}
 
         <button
           type="submit"
           className="btn btn--dark btn--wide"
-          disabled={submitting}
+          disabled={submitting || redirecting}
         >
-          {submitting ? 'Sending…' : 'Request booking'}
+          {redirecting ? 'Taking you to the secure payment page…' : submitting ? 'Sending…' : 'Request booking'}
         </button>
 
         {submitError ? (

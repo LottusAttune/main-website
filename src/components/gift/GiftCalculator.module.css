@@ -347,6 +347,7 @@
   padding: 12px 24px;
   min-height: 42px;
   margin-bottom: 10px;
+  border-radius: 0;
 }
 
 .includedBtn.includedBtn:hover {
@@ -363,6 +364,7 @@
   background: transparent;
   padding: 12px 24px;
   min-height: 42px;
+  border-radius: 0;
 }
 
 .previewBtn.previewBtn:hover {

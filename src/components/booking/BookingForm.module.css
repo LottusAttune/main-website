@@ -397,8 +397,17 @@
 /* Someone landing on /book directly (skipping Offerings) had no way to
    check what's actually included before requesting a session - same link
    Offerings' own estimate box already has. */
-.includedBtn {
+.includedBtn.includedBtn {
+  background: var(--color-cream-raised);
+  border-width: 1.5px;
+  border-color: var(--gold-rim);
+  color: var(--color-ink);
   margin: 16px 0 10px;
+  border-radius: 0;
+}
+
+.includedBtn.includedBtn:hover {
+  background: rgba(198, 169, 122, 0.2);
 }
 
 .policyNote {

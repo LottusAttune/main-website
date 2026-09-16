@@ -498,10 +498,15 @@
    cream text keep it distinct from the aside's own near-black background.
    Doubled to outrank .btn--outline-dark's own background/border-color
    regardless of stylesheet order. */
-.includedBtn.includedBtn {
+/* Scoped with .summaryActions so this outranks
+   ".summaryActions :global(.btn--sm)" below, which would otherwise win the
+   border-radius tie (equal specificity, later in the file) and keep this
+   button rounded like its two siblings. */
+.summaryActions .includedBtn.includedBtn {
   background: var(--color-ink-deepest);
   border-width: 1.5px;
   border-color: var(--color-gold-light);
+  border-radius: 0;
   color: var(--color-cream-text);
   box-shadow: var(--shadow-pill-dark);
 }

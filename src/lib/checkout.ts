@@ -2,16 +2,18 @@ import 'server-only';
 
 import { afterPayment } from '@/lib/bookings';
 import {
+  balanceDueOn,
   cardFee,
   depositAmount,
   depositDue,
   getDocument,
+  loadContext,
   publicUrl,
   recordPayment,
 } from '@/lib/documents';
-import type { DocumentRow } from '@/lib/pipeline';
+import { formatStudioDate, type DocumentRow } from '@/lib/pipeline';
 import type { BusinessSettings } from '@/lib/settings';
-import { SITE } from '@/lib/site';
+import { LOUNGE_MAX, money, SITE } from '@/lib/site';
 import { createCheckoutSession, getCheckoutSession, getPaymentIntent, isStripeConfigured } from '@/lib/stripe';
 
 /**
@@ -29,12 +31,44 @@ export async function createBookingCheckout(
   if (amount <= 0) return null;
   const plan = deposit !== null ? 'deposit' : 'full';
   const feeLabel = `Card processing fee (${business.cardFeePercent}%)`;
+
+  // Spell out on Stripe's page what the money is for: the session, the
+  // invoice and what happens with the rest.
+  const booking = (await loadContext(doc)).booking;
+  const when = booking?.sessionDate
+    ? `${formatStudioDate(booking.sessionDate)}${booking.sessionTime ? `, ${booking.sessionTime}` : ''}`
+    : null;
+  const who = booking
+    ? booking.participants === 1
+      ? 'private session'
+      : `${booking.participants} participants`
+    : null;
+  const venue = booking ? (booking.participants <= LOUNGE_MAX ? 'Private Wellness Lounge' : 'Premium Signature Venue') : null;
+  const balanceDay = balanceDueOn(booking?.sessionDate ?? null, business);
+  const remaining = doc.total - amount;
+  const details = [
+    `Immersive Soma Sound Experience${who ? `, ${who}` : ''}${when ? `. ${when}` : ''}${venue ? `, ${venue}` : ''}.`,
+    `Invoice ${doc.number}, total ${money(doc.total)}.`,
+    plan === 'deposit'
+      ? `The remaining ${money(remaining)} is charged to this card ${business.balanceDaysBefore} days before the session${balanceDay ? `, on ${formatStudioDate(balanceDay)}` : ''}.`
+      : '',
+  ]
+    .filter(Boolean)
+    .join(' ');
+
   try {
     const session = await createCheckoutSession({
       description:
         plan === 'deposit'
-          ? `${business.businessName} ${doc.number} (${business.depositPercent}% deposit)`
-          : `${business.businessName} ${doc.number}`,
+          ? `${business.depositPercent}% deposit to confirm your date`
+          : `Your Lotus Attune experience`,
+      details,
+      imageUrl: `${SITE.url}/assets/logo-circle.webp`,
+      submitType: 'book',
+      submitMessage:
+        plan === 'deposit'
+          ? `Paying this ${business.depositPercent}% deposit confirms your date. The remaining ${money(remaining)} is charged to the same card ${business.balanceDaysBefore} days before your session. A receipt and your booking confirmation follow by email.`
+          : 'A receipt and your booking confirmation follow by email.',
       amount,
       feeAmount: cardFee(amount, business.cardFeePercent),
       feeLabel,

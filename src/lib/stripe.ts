@@ -138,7 +138,15 @@ export async function createPaymentLink(input: PaymentLinkInput): Promise<{ id: 
 }
 
 export type CheckoutInput = {
+  /** The line item's name, e.g. "50% deposit to confirm your date". */
   description: string;
+  /** Shown under the name on the checkout page: what, when, what remains. */
+  details?: string;
+  imageUrl?: string;
+  /** Text under the pay button. */
+  submitMessage?: string;
+  /** Wording of the pay button itself. */
+  submitType?: 'auto' | 'pay' | 'book';
   /** Whole dollars. */
   amount: number;
   feeAmount: number;
@@ -161,7 +169,15 @@ export async function createCheckoutSession(input: CheckoutInput): Promise<{ id:
   const currency = (input.currency ?? 'cad').toLowerCase();
   const lineItems: Array<Record<string, unknown>> = [
     {
-      price_data: { currency, unit_amount: Math.round(input.amount * 100), product_data: { name: input.description } },
+      price_data: {
+        currency,
+        unit_amount: Math.round(input.amount * 100),
+        product_data: {
+          name: input.description,
+          ...(input.details ? { description: input.details } : {}),
+          ...(input.imageUrl ? { images: [input.imageUrl] } : {}),
+        },
+      },
       quantity: 1,
     },
   ];
@@ -174,6 +190,8 @@ export async function createCheckoutSession(input: CheckoutInput): Promise<{ id:
   const session = await stripe('POST', '/checkout/sessions', {
     mode: 'payment',
     line_items: lineItems,
+    submit_type: input.submitType ?? 'pay',
+    ...(input.submitMessage ? { custom_text: { submit: { message: input.submitMessage } } } : {}),
     customer_email: input.customerEmail,
     customer_creation: 'always',
     billing_address_collection: 'auto',

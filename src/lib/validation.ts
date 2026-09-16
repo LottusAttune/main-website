@@ -17,7 +17,7 @@ export const bookingSchema = z
   .object({
     name: trimmed(120),
     email: z.string().trim().email().max(200),
-    phone: z.string().trim().max(60).optional().nullable(),
+    phone: trimmed(60),
     company: z.string().trim().max(160).optional().nullable(),
     message: z.string().trim().max(2000).optional().nullable(),
     participants: z.coerce.number().int().min(1).max(MAX_PARTICIPANTS),

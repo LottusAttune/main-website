@@ -706,6 +706,7 @@ export function BookingForm({
               className={`field ${invalid('phone') ? 'field--invalid' : ''}`}
               type="tel"
               name="phone"
+              required
               placeholder="Phone | WhatsApp"
               aria-label="Phone or WhatsApp"
               aria-invalid={invalid('phone') || undefined}

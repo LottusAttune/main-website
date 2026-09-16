@@ -402,7 +402,7 @@ export function SessionConfigurator({ pricing, footnote }: Props) {
             </div>
           ))}
           <div className={styles.totalRow}>
-            <span className={styles.totalLabel}>Total</span>
+            <span className={styles.totalLabel}>Total Estimate</span>
             <span className={styles.totalValue}>{money(quote.total)}</span>
           </div>
         </div>

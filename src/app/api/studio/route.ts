@@ -18,17 +18,23 @@ import {
 } from '@/lib/calendar';
 import { isDatabaseConfigured, sql } from '@/lib/db';
 import {
+  createStandaloneDocument,
   ensureBookingDocument,
   ensureGiftDocument,
   generatePdf,
   getDocument,
   logActivity,
   markDocument,
+  publicUrl,
   recordPayment,
   sendDocument,
   updateDocument,
 } from '@/lib/documents';
+import { sendReceiptEmail } from '@/lib/email';
+import { createAdhocPaymentLink, deactivateAdhocPaymentLink } from '@/lib/paymentLinks';
 import { balanceDue, STAGE_KEYS, STAGES } from '@/lib/pipeline';
+import { money } from '@/lib/site';
+import { StripeError } from '@/lib/stripe';
 
 export const runtime = 'nodejs';
 
@@ -131,6 +137,29 @@ const action = z.discriminatedUnion('action', [
     giftId: z.string().uuid(),
     kind: z.enum(['invoice', 'certificate']),
   }),
+  z.object({
+    action: z.literal('createStandaloneDocument'),
+    kind: z.enum(['proposal', 'invoice']),
+    clientName: z.string().trim().min(1).max(120),
+    clientEmail: z.string().trim().email().max(200),
+    clientCompany: z.string().trim().max(160).nullable().optional(),
+    lines: z
+      .array(z.object({ label: z.string().trim().min(1).max(200), amount: z.coerce.number().int().min(-100_000).max(100_000) }))
+      .min(1)
+      .max(30),
+    notes: z.string().trim().max(2000).nullable().optional(),
+    send: z.boolean().optional(),
+  }),
+  z.object({
+    action: z.literal('createPaymentLink'),
+    description: z.string().trim().min(1).max(160),
+    amount: z.coerce.number().int().min(1).max(100_000),
+    clientName: z.string().trim().max(120).nullable().optional(),
+    clientEmail: z.string().trim().email().max(200).nullable().optional().or(z.literal('')),
+    addCardFee: z.boolean().optional(),
+  }),
+  z.object({ action: z.literal('deactivatePaymentLink'), id: z.string().uuid() }),
+  z.object({ action: z.literal('resendReceipt'), paymentId: z.string().uuid() }),
   z.object({ action: z.literal('sendDocument'), id: z.string().uuid() }),
   z.object({ action: z.literal('regeneratePdf'), id: z.string().uuid() }),
   z.object({
@@ -272,6 +301,68 @@ export async function POST(request: Request) {
         const doc = await ensureGiftDocument(input.giftId, input.kind);
         revalidatePath('/studio');
         return NextResponse.json({ ok: true, id: doc.id });
+      }
+
+      case 'createStandaloneDocument': {
+        const doc = await createStandaloneDocument({
+          kind: input.kind,
+          clientName: input.clientName,
+          clientEmail: input.clientEmail,
+          clientCompany: input.clientCompany ?? null,
+          lines: input.lines,
+          notes: input.notes ?? null,
+        });
+        if (input.send) {
+          const sent = await sendDocument(doc.id);
+          revalidatePath('/studio');
+          if (!sent.ok) {
+            return NextResponse.json({ error: `${doc.number} was created but not sent: ${sent.error}`, id: doc.id }, { status: 502 });
+          }
+        }
+        revalidatePath('/studio');
+        return NextResponse.json({ ok: true, id: doc.id, number: doc.number, url: `/d/${doc.token}` });
+      }
+
+      case 'createPaymentLink': {
+        try {
+          const link = await createAdhocPaymentLink({
+            description: input.description,
+            amount: input.amount,
+            clientName: input.clientName || null,
+            clientEmail: input.clientEmail || null,
+            addCardFee: input.addCardFee ?? true,
+          });
+          revalidatePath('/studio');
+          return NextResponse.json({ ok: true, id: link.id, url: link.url });
+        } catch (error) {
+          const message = error instanceof StripeError ? error.message : 'Stripe could not create the link.';
+          return NextResponse.json({ error: message }, { status: 502 });
+        }
+      }
+
+      case 'deactivatePaymentLink':
+        await deactivateAdhocPaymentLink(input.id);
+        break;
+
+      case 'resendReceipt': {
+        const p = await sql`SELECT * FROM payments WHERE id = ${input.paymentId}`;
+        const row = p.rows[0];
+        if (!row?.document_id) return NextResponse.json({ error: 'No invoice on this payment.' }, { status: 400 });
+        const doc = await getDocument(String(row.document_id));
+        if (!doc) return NextResponse.json({ error: 'Invoice not found.' }, { status: 404 });
+        const sent = await sendReceiptEmail({
+          name: doc.clientName,
+          email: doc.clientEmail,
+          number: doc.number,
+          amount: Number(row.amount),
+          method: String(row.method),
+          kind: String(row.kind),
+          balanceDue: balanceDue(doc),
+          viewUrl: publicUrl(doc),
+        });
+        if (!sent.ok) return NextResponse.json({ error: sent.error }, { status: 502 });
+        await logActivity({ bookingId: doc.bookingId, giftId: doc.giftId, documentId: doc.id, kind: 'receipt_sent', body: `Receipt for ${money(Number(row.amount))} resent to ${doc.clientEmail}` });
+        break;
       }
 
       case 'sendDocument': {

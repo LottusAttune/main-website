@@ -12,7 +12,7 @@ import { Bookings } from './panels/Bookings';
 import { Clients } from './panels/Clients';
 import { DiscoveryCalls } from './panels/DiscoveryCalls';
 import { GiftCards } from './panels/GiftCards';
-import { Invoices } from './panels/Invoices';
+import { GettingPaid } from './panels/GettingPaid';
 import { Leads } from './panels/Leads';
 import { Reviews } from './panels/Reviews';
 import { Settings } from './panels/Settings';
@@ -56,7 +56,7 @@ export function StudioShell({ data, settings, databaseReady }: Props) {
     { key: 'today', label: 'Today' },
     { key: 'leads', label: 'Leads', count: openLeads },
     { key: 'bookings', label: 'Bookings', count: upcoming },
-    { key: 'invoices', label: 'Invoices', count: openInvoices.length, alert: overdue > 0 },
+    { key: 'invoices', label: 'Getting paid', count: openInvoices.length, alert: overdue > 0 },
     { key: 'gifts', label: 'Gift cards', count: giftsToDo },
     { key: 'calls', label: 'Discovery calls', count: data.discoveryCalls.filter((c) => c.status !== 'cancelled' && c.callDate >= new Date().toISOString().slice(0, 10)).length },
     { key: 'clients', label: 'Clients', count: data.clients.length },
@@ -69,8 +69,8 @@ export function StudioShell({ data, settings, databaseReady }: Props) {
     leads: { title: 'Leads', context: `${openLeads} awaiting a reply` },
     bookings: { title: 'Bookings', context: `${upcoming} upcoming` },
     invoices: {
-      title: 'Invoices',
-      context: overdue > 0 ? `${overdue} overdue` : `${openInvoices.length} open`,
+      title: 'Getting paid',
+      context: overdue > 0 ? `${overdue} overdue` : `${openInvoices.length} open invoices`,
     },
     gifts: { title: 'Gift cards', context: `${giftsToDo} to issue` },
     calls: { title: 'Discovery calls', context: `${data.discoveryCalls.length} booked` },
@@ -183,9 +183,10 @@ export function StudioShell({ data, settings, databaseReady }: Props) {
           />
         ) : null}
         {view === 'invoices' ? (
-          <Invoices
+          <GettingPaid
             documents={data.documents}
             payments={data.payments}
+            paymentLinks={data.paymentLinks}
             integrations={data.integrations}
           />
         ) : null}

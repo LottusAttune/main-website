@@ -844,34 +844,66 @@ export type DocumentContext = {
   gift: GiftCtx | null;
   /** PNG data URL of the drawn signature, once a proposal is accepted. */
   signaturePng?: string | null;
+  acceptance?: Acceptance | null;
 };
+
+type Acceptance = { signerName: string; acceptedAt: string; signaturePng: string | null; number: string };
+
+/** The signed acceptance behind a document: the proposal itself, or for an
+ *  invoice, the accepted proposal it came from (same booking, or same
+ *  client and lines for studio-written ones). */
+async function loadAcceptance(doc: DocumentRow): Promise<Acceptance | null> {
+  let row: Record<string, unknown> | undefined;
+  if (doc.kind === 'proposal' && doc.acceptedAt) {
+    row = (await sql`SELECT number, signer_name, signature_png, accepted_at, client_name FROM documents WHERE id = ${doc.id}`).rows[0];
+  } else if (doc.kind === 'invoice') {
+    row = doc.bookingId
+      ? (await sql`
+          SELECT number, signer_name, signature_png, accepted_at, client_name FROM documents
+          WHERE booking_id = ${doc.bookingId} AND kind = 'proposal' AND status = 'accepted'
+          ORDER BY accepted_at DESC LIMIT 1`).rows[0]
+      : (await sql`
+          SELECT number, signer_name, signature_png, accepted_at, client_name FROM documents
+          WHERE kind = 'proposal' AND status = 'accepted' AND client_email = ${doc.clientEmail}
+            AND lines::text = ${JSON.stringify(doc.lines)}
+          ORDER BY accepted_at DESC LIMIT 1`).rows[0];
+  }
+  if (!row?.accepted_at) return null;
+  return {
+    number: String(row.number),
+    signerName: String(row.signer_name ?? row.client_name),
+    acceptedAt: new Date(String(row.accepted_at)).toISOString(),
+    signaturePng: row.signature_png ? String(row.signature_png) : null,
+  };
+}
 
 export async function loadContext(doc: DocumentRow): Promise<DocumentContext> {
   const settings = await getSettings();
-  const signature = doc.acceptedAt
-    ? await sql`SELECT signature_png FROM documents WHERE id = ${doc.id}`
-    : null;
+  const acceptance = await loadAcceptance(doc);
   return {
     business: settings.business,
     booking: doc.bookingId ? await loadBooking(doc.bookingId) : null,
     gift: doc.giftId ? await loadGift(doc.giftId) : null,
-    signaturePng: signature?.rows[0]?.signature_png ? String(signature.rows[0].signature_png) : null,
+    signaturePng: acceptance?.signaturePng ?? null,
+    acceptance,
   };
 }
 
 function acceptanceHtml(doc: DocumentRow, ctx: DocumentContext): string {
-  if (!doc.acceptedAt) return '';
-  const when = formatStudioDate(doc.acceptedAt.slice(0, 10));
-  const sig = ctx.signaturePng && ctx.signaturePng.startsWith('data:image/png;base64,')
-    ? `<img src="${ctx.signaturePng}" alt="Signature" style="display:block;height:64px;margin:6px 0 4px;" />`
+  const a = ctx.acceptance;
+  if (!a) return '';
+  const when = formatStudioDate(a.acceptedAt.slice(0, 10));
+  const sig = a.signaturePng && a.signaturePng.startsWith('data:image/png;base64,')
+    ? `<img src="${a.signaturePng}" alt="Signature" style="display:block;height:64px;margin:6px 0 4px;" />`
     : '';
+  const heading = doc.kind === 'invoice' ? `Accepted · proposal ${escapeHtml(a.number)}` : 'Accepted';
   return `
     <div class="rule"></div>
     <table><tr>
       <td style="vertical-align:bottom;width:55%;padding-right:20px;">
-        <div class="eyebrow" style="margin-bottom:6px;">Accepted</div>
+        <div class="eyebrow" style="margin-bottom:6px;">${heading}</div>
         ${sig}
-        <div style="font-size:13px;border-top:1px solid rgba(59,46,36,0.35);padding-top:6px;max-width:300px;">${escapeHtml(doc.signerName ?? doc.clientName)}</div>
+        <div style="font-size:13px;border-top:1px solid rgba(59,46,36,0.35);padding-top:6px;max-width:300px;">${escapeHtml(a.signerName)}</div>
         <div class="muted" style="font-size:11.5px;">Signed electronically on ${when}</div>
       </td>
       <td style="vertical-align:bottom;">
@@ -895,7 +927,7 @@ export function documentHtml(doc: DocumentRow, ctx: DocumentContext): string {
     body += `<div style="font-size:13.5px;line-height:1.7;margin:22px 0 6px;">${paragraphs(business.proposalIntro || DEFAULT_PROPOSAL_INTRO)}</div>`;
     if (ctx.booking) body += sessionBox(ctx.booking);
     body += linesTable(doc, business);
-    body += doc.acceptedAt
+    body += ctx.acceptance
       ? acceptanceHtml(doc, ctx)
       : `
       <div class="rule"></div>
@@ -922,6 +954,7 @@ export function documentHtml(doc: DocumentRow, ctx: DocumentContext): string {
       </tr></table>`;
   }
 
+  if (doc.kind === 'invoice' && ctx.acceptance) body += acceptanceHtml(doc, ctx);
   if (doc.notes) {
     body += `<div class="rule"></div><div class="eyebrow" style="margin-bottom:6px;">Notes</div><div style="font-size:12.5px;">${paragraphs(doc.notes)}</div>`;
   }
@@ -1076,21 +1109,98 @@ export async function markViewed(token: string): Promise<void> {
 }
 
 /** The client clicked "Accept" on their proposal. */
-export async function acceptProposal(token: string): Promise<ActionResult> {
+/**
+ * A proposal or invoice written from scratch in the studio - someone met at
+ * a café, a workshop, a custom package - with no website booking behind it.
+ * Numbered like the rest, and an invoice gets its card links straight away.
+ */
+export async function createStandaloneDocument(input: {
+  kind: 'proposal' | 'invoice';
+  clientName: string;
+  clientEmail: string;
+  clientCompany?: string | null;
+  lines: DocumentLine[];
+  notes?: string | null;
+}): Promise<DocumentRow> {
+  const s = await getSettings();
+  const rate = s.business.taxRatePercent;
+  const { subtotal, tax, total } = totalsFor(input.lines, rate);
+  const number = await nextNumber(input.kind, s.business.invoicePrefix || 'LA');
+  const issued = todayIso();
+  const dueOn = addDays(
+    issued,
+    input.kind === 'invoice' ? s.business.invoiceDueDays : s.business.proposalValidDays
+  );
+  const inserted = await sql`
+    INSERT INTO documents (
+      kind, number, client_name, client_email, client_company,
+      lines, subtotal, tax_rate, tax, total, issued_on, due_on, notes
+    ) VALUES (
+      ${input.kind}, ${number}, ${input.clientName}, ${input.clientEmail}, ${input.clientCompany ?? null},
+      ${JSON.stringify(input.lines)}::jsonb, ${subtotal}, ${rate}, ${tax}, ${total},
+      ${issued}, ${dueOn}, ${input.notes ?? null}
+    )
+    RETURNING id
+  `;
+  let doc = (await getDocument(String(inserted.rows[0].id)))!;
+  await logActivity({
+    documentId: doc.id,
+    kind: `${input.kind}_created`,
+    body: `${doc.number} · ${money(doc.total)} · ${doc.clientName} (created in the studio)`,
+  });
+  if (input.kind === 'invoice') doc = await ensurePaymentLinks(doc, s.business);
+  return doc;
+}
+
+/** The invoice that follows an accepted proposal: same client, same lines. */
+async function invoiceFromProposal(proposal: DocumentRow, settings: SiteSettings): Promise<DocumentRow> {
+  if (proposal.bookingId) return ensureBookingDocument(proposal.bookingId, 'invoice', settings);
+  const existing = await selectDocuments(
+    `kind = 'invoice' AND status != 'void' AND client_email = $1 AND notes IS NOT DISTINCT FROM $2
+       AND lines::text = $3 ORDER BY created_at DESC LIMIT 1`,
+    [proposal.clientEmail, proposal.notes, JSON.stringify(proposal.lines)]
+  );
+  if (existing[0]) return existing[0];
+  return createStandaloneDocument({
+    kind: 'invoice',
+    clientName: proposal.clientName,
+    clientEmail: proposal.clientEmail,
+    clientCompany: proposal.clientCompany,
+    lines: proposal.lines,
+    notes: proposal.notes,
+  });
+}
+
+export async function acceptProposal(
+  token: string,
+  signature?: { name: string; png: string | null; ip: string | null }
+): Promise<ActionResult> {
   const doc = await getDocumentByToken(token);
   if (!doc || doc.kind !== 'proposal') return { ok: false, error: 'Proposal not found.' };
-  if (doc.status === 'void') return { ok: false, error: 'This proposal is no longer valid.' };
+  if (doc.status === 'void' || doc.status === 'declined') {
+    return { ok: false, error: 'This proposal is no longer valid.' };
+  }
   if (doc.status === 'accepted') return { ok: true };
+  if (doc.dueOn && doc.dueOn < todayIso()) {
+    return { ok: false, error: 'This proposal has expired - reply to the email for a fresh one.' };
+  }
 
+  const png =
+    signature?.png && /^data:image\/png;base64,[A-Za-z0-9+/=]+$/.test(signature.png) && signature.png.length < 400_000
+      ? signature.png
+      : null;
   await sql`
-    UPDATE documents SET status = 'accepted', accepted_at = NOW(), updated_at = NOW()
+    UPDATE documents SET
+      status = 'accepted', accepted_at = NOW(), updated_at = NOW(),
+      signer_name = ${signature?.name ?? null}, signature_png = ${png}, accepted_ip = ${signature?.ip ?? null},
+      pdf = NULL, pdf_generated_at = NULL
     WHERE id = ${doc.id}
   `;
   await logActivity({
     bookingId: doc.bookingId,
     documentId: doc.id,
     kind: 'proposal_accepted',
-    body: `${doc.number} accepted by ${doc.clientName}`,
+    body: `${doc.number} accepted${signature?.name ? ` and signed by ${signature.name}` : ` by ${doc.clientName}`}`,
   });
 
   if (doc.bookingId) {
@@ -1098,17 +1208,17 @@ export async function acceptProposal(token: string): Promise<ActionResult> {
       UPDATE bookings SET status = 'booked'
       WHERE id = ${doc.bookingId} AND status IN ('new_enquiry', 'contacted', 'proposal_sent')
     `;
-    const settings = await getSettings();
-    const invoice = await ensureBookingDocument(doc.bookingId, 'invoice', settings);
-    if (settings.business.autoSendInvoices) {
-      await sendDocument(invoice.id);
-    }
-    await sendOwnerNotification({
-      subject: `Proposal accepted: ${doc.clientName} — ${doc.number}`,
-      html: `<p style="margin:0 0 10px;">${escapeHtml(doc.clientName)} accepted proposal ${escapeHtml(doc.number)} (${money(doc.total)}).</p>
-             <p style="margin:0;">Invoice ${escapeHtml(invoice.number)} is ${settings.business.autoSendInvoices ? 'on its way to them' : 'ready to send from the studio'}.</p>`,
-    });
   }
+  const settings = await getSettings();
+  const invoice = await invoiceFromProposal(doc, settings);
+  if (settings.business.autoSendInvoices) {
+    await sendDocument(invoice.id);
+  }
+  await sendOwnerNotification({
+    subject: `Proposal accepted: ${doc.clientName} — ${doc.number}`,
+    html: `<p style="margin:0 0 10px;">${escapeHtml(signature?.name ?? doc.clientName)} accepted proposal ${escapeHtml(doc.number)} (${money(doc.total)}).</p>
+           <p style="margin:0;">Invoice ${escapeHtml(invoice.number)} is ${settings.business.autoSendInvoices ? 'on its way to them' : 'ready to send from the studio'}.</p>`,
+  });
   return { ok: true };
 }
 

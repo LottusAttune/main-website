@@ -45,11 +45,32 @@ export async function GET(request: Request, { params }: { params: Promise<{ toke
     } else if (accepted) {
       banner = `<div class="bar ok">Thank you - your proposal is accepted. Silvana will be in touch with your invoice and confirmation.</div>`;
     } else {
+      const err = url.searchParams.get('error');
       banner = `
-        <form class="bar" method="post" action="/d/${escapeHtml(token)}/accept">
-          <span>Ready to go ahead? Accepting confirms your date${doc.dueOn ? ` (valid until ${formatStudioDate(doc.dueOn)})` : ''}.</span>
-          <button type="submit">Accept proposal</button>
-        </form>`;
+        <form class="bar sign" method="post" action="/d/${escapeHtml(token)}/accept" id="signForm">
+          <div class="signIntro">Ready to go ahead? Type your name and sign below${doc.dueOn ? ` (valid until ${formatStudioDate(doc.dueOn)})` : ''}.${err === 'name' ? ' <strong>Please type your name.</strong>' : err === 'accept' ? ' <strong>This proposal could not be accepted - please reply to the email.</strong>' : ''}</div>
+          <label class="signLabel">Full name<input type="text" name="name" required maxlength="120" autocomplete="name" value="${escapeHtml(doc.clientName)}" /></label>
+          <div class="signLabel">Signature <span class="signHint">draw with your finger or mouse</span>
+            <canvas id="sigPad" width="600" height="180"></canvas>
+            <button type="button" class="signClear" id="sigClear">Clear</button>
+          </div>
+          <input type="hidden" name="signature" id="sigData" />
+          <button type="submit" id="sigSubmit">Accept &amp; sign</button>
+        </form>
+        <script>
+        (function(){
+          var c=document.getElementById('sigPad'),x=c.getContext('2d'),d=false,drawn=false;
+          x.lineWidth=2.2;x.lineCap='round';x.lineJoin='round';x.strokeStyle='#241b14';
+          function p(e){var r=c.getBoundingClientRect(),t=e.touches?e.touches[0]:e;return[(t.clientX-r.left)*c.width/r.width,(t.clientY-r.top)*c.height/r.height];}
+          function s(e){d=true;drawn=true;var q=p(e);x.beginPath();x.moveTo(q[0],q[1]);e.preventDefault();}
+          function m(e){if(!d)return;var q=p(e);x.lineTo(q[0],q[1]);x.stroke();e.preventDefault();}
+          function u(){d=false;}
+          c.addEventListener('mousedown',s);c.addEventListener('mousemove',m);window.addEventListener('mouseup',u);
+          c.addEventListener('touchstart',s,{passive:false});c.addEventListener('touchmove',m,{passive:false});c.addEventListener('touchend',u);
+          document.getElementById('sigClear').onclick=function(){x.clearRect(0,0,c.width,c.height);drawn=false;};
+          document.getElementById('signForm').onsubmit=function(){document.getElementById('sigData').value=drawn?c.toDataURL('image/png'):'';};
+        })();
+        </script>`;
     }
   } else if (doc.kind === 'invoice') {
     if (doc.status === 'paid') {
@@ -78,12 +99,24 @@ export async function GET(request: Request, { params }: { params: Promise<{ toke
     .bar a { color: #dcc194; } .bar strong { color: #fff; }
     .bar button, .bar a.btn { display: inline-block; background: #f6efe5; color: #241b14; border: 0; border-radius: 999px; padding: 12px 24px; font: 500 11.5px/1 'Jost', Arial, sans-serif; letter-spacing: 0.22em; text-transform: uppercase; cursor: pointer; text-decoration: none; margin: 4px 8px 4px 0; }
     .bar .pay p { margin: 0 0 6px; }
+    .bar.sign { display: block; }
+    .signIntro { margin-bottom: 12px; } .signIntro strong { color: #f3c9b4; }
+    .signLabel { display: block; font-size: 10.5px; letter-spacing: 0.22em; text-transform: uppercase; color: #dcc194; margin: 10px 0 4px; }
+    .signHint { text-transform: none; letter-spacing: 0; color: rgba(239,230,218,0.6); margin-left: 6px; }
+    .signLabel input { display: block; width: 100%; max-width: 420px; margin-top: 6px; padding: 12px 14px; font: 15px 'Jost', Arial, sans-serif; border: 1px solid rgba(239,230,218,0.35); background: #fffdfa; color: #241b14; }
+    #sigPad { display: block; width: 100%; max-width: 600px; height: auto; margin-top: 6px; background: #fffdfa; border: 1px solid rgba(239,230,218,0.35); touch-action: none; cursor: crosshair; }
+    .signClear { background: none; border: 1px solid rgba(239,230,218,0.4); color: #f6efe5; padding: 6px 12px; margin: 6px 0 0; font-size: 10.5px; letter-spacing: 0.18em; }
+    #sigSubmit { margin-top: 14px; }
     .actions { max-width: 8.5in; margin: 0 auto 14px; display: flex; gap: 10px; justify-content: flex-end; }
     .actions a { font: 500 11px/1 'Jost', Arial, sans-serif; letter-spacing: 0.2em; text-transform: uppercase; color: #7c5b3b; text-decoration: none; border: 1px solid rgba(168,135,90,0.55); border-radius: 999px; padding: 11px 18px; }
+    @media print { body { background: #fff; padding: 0; } .bar, .actions { display: none !important; } .page { box-shadow: none; padding: 0.5in 0.6in; } }
     @media (max-width: 640px) { .page { padding: 28px 18px 40px; } .page table td { display: block; width: auto !important; padding-right: 0 !important; } .page .lines td, .page .totals td { display: table-cell; } .page .lines td.amt { width: 30%; } }
   </style></head><body>
     ${banner}
-    <div class="actions"><a href="/d/${escapeHtml(token)}/pdf">Download PDF</a></div>
+    <div class="actions">
+      <a href="#" onclick="window.print();return false;">Print</a>
+      <a href="/d/${escapeHtml(token)}/pdf?download=1">Download PDF</a>
+    </div>
     ${inner}
   </body></html>`;
 

@@ -14,8 +14,9 @@ export function useStudioAction() {
   const [pending, setPending] = useState(false);
   const [error, setError] = useState('');
 
-  const run = useCallback(
-    async (payload: Record<string, unknown>): Promise<boolean> => {
+  /** Like `run`, but hands back the response body (an id, a number, a link). */
+  const runJson = useCallback(
+    async (payload: Record<string, unknown>): Promise<Record<string, unknown> | null> => {
       setPending(true);
       setError('');
       try {
@@ -24,17 +25,15 @@ export function useStudioAction() {
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(payload),
         });
+        const body = (await response.json().catch(() => null)) as Record<string, unknown> | null;
         if (!response.ok) {
-          const body = (await response.json().catch(() => null)) as {
-            error?: string;
-          } | null;
-          throw new Error(body?.error ?? 'That change did not save.');
+          throw new Error((body?.error as string | undefined) ?? 'That change did not save.');
         }
         router.refresh();
-        return true;
+        return body ?? {};
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Something went wrong.');
-        return false;
+        return null;
       } finally {
         setPending(false);
       }
@@ -42,5 +41,10 @@ export function useStudioAction() {
     [router]
   );
 
-  return { run, pending, error };
+  const run = useCallback(
+    async (payload: Record<string, unknown>): Promise<boolean> => (await runJson(payload)) !== null,
+    [runJson]
+  );
+
+  return { run, runJson, pending, error };
 }

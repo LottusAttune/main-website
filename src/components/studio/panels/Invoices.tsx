@@ -26,12 +26,17 @@ type Props = {
   documents: DocumentRow[];
   payments: PaymentRow[];
   integrations: Integrations;
+  /** Which filter pill starts selected; 'proposals' for the Proposals tab. */
+  initialFilter?: FilterKey;
+  /** Hide the money tiles (the Getting paid tab shows its own). */
+  compact?: boolean;
 };
 
-type FilterKey = 'all' | 'open' | 'overdue' | 'paid' | 'proposals' | 'void';
+export type FilterKey = 'all' | 'invoices' | 'open' | 'overdue' | 'paid' | 'proposals' | 'void';
 
 const FILTERS: { key: FilterKey; label: string; test: (doc: DocumentRow) => boolean }[] = [
   { key: 'all', label: 'All', test: () => true },
+  { key: 'invoices', label: 'Invoices', test: (doc) => doc.kind === 'invoice' },
   {
     key: 'open',
     label: 'Open',
@@ -45,6 +50,7 @@ const FILTERS: { key: FilterKey; label: string; test: (doc: DocumentRow) => bool
 
 const EMPTY: Record<FilterKey, string> = {
   all: 'No invoices yet. Accept a proposal, or open a lead and create one.',
+  invoices: 'No invoices yet. Create one above, or accept a proposal.',
   open: 'Nothing open right now.',
   overdue: 'Nothing overdue.',
   paid: 'No paid invoices yet.',
@@ -158,9 +164,9 @@ function paymentAmount(payment: PaymentRow): string {
   return payment.kind === 'refund' ? `−${value}` : value;
 }
 
-export function Invoices({ documents, payments, integrations }: Props) {
+export function Invoices({ documents, payments, integrations, initialFilter = 'all', compact = false }: Props) {
   const { run, pending, error } = useStudioAction();
-  const [filter, setFilter] = useState<FilterKey>('all');
+  const [filter, setFilter] = useState<FilterKey>(initialFilter);
   const [openId, setOpenId] = useState<string | null>(null);
 
   const now = new Date();
@@ -220,6 +226,7 @@ export function Invoices({ documents, payments, integrations }: Props) {
         </div>
       ) : null}
 
+      {compact ? null : (
       <div className={styles.statGrid}>
         <div className={`card ${styles.stat}`}>
           <div className={styles.statLabel}>Outstanding</div>
@@ -259,6 +266,7 @@ export function Invoices({ documents, payments, integrations }: Props) {
           <div className={styles.statNote}>Sent, not yet accepted or declined</div>
         </div>
       </div>
+      )}
 
       <div className={styles.toolbar}>
         <div className={styles.toolbarGroup}>
@@ -420,6 +428,7 @@ export function Invoices({ documents, payments, integrations }: Props) {
         </>
       )}
 
+      {compact ? null : (<>
       <h2 className={styles.subhead}>Recent payments</h2>
 
       {recent.length === 0 ? (
@@ -495,6 +504,7 @@ export function Invoices({ documents, payments, integrations }: Props) {
           </div>
         </>
       )}
+      </>)}
     </>
   );
 }

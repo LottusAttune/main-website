@@ -3,7 +3,10 @@ import { NextResponse } from 'next/server';
 import { afterPayment } from '@/lib/bookings';
 import { isDatabaseConfigured } from '@/lib/db';
 import { depositAmount, getDocument, recordPayment } from '@/lib/documents';
+import { sendOwnerNotification } from '@/lib/email';
+import { recordAdhocPayment } from '@/lib/paymentLinks';
 import { getSettings } from '@/lib/settings';
+import { money } from '@/lib/site';
 import { getPaymentIntent, verifyWebhook } from '@/lib/stripe';
 
 export const runtime = 'nodejs';
@@ -31,9 +34,24 @@ export async function POST(request: Request) {
   const metadata = (session.metadata ?? {}) as Record<string, string>;
   const documentId = metadata.documentId;
   const plan = metadata.plan === 'deposit' ? 'deposit' : 'full';
-  if (!documentId || session.payment_status !== 'paid') {
-    return NextResponse.json({ received: true });
+  if (session.payment_status !== 'paid') return NextResponse.json({ received: true });
+
+  if (!documentId && metadata.paymentLinkId) {
+    try {
+      const link = await recordAdhocPayment(metadata.paymentLinkId, session.id ? String(session.id) : null);
+      if (link) {
+        await sendOwnerNotification({
+          subject: `Payment link paid: ${money(link.amount)} — ${link.description}`,
+          html: `<p style="margin:0;">${link.clientName ?? 'A client'} paid ${money(link.amount)} by card via your payment link "${link.description}".</p>`,
+        });
+      }
+      return NextResponse.json({ received: true });
+    } catch (error) {
+      console.error('[stripe] payment link webhook failed:', error);
+      return NextResponse.json({ error: 'Webhook handling failed.' }, { status: 500 });
+    }
   }
+  if (!documentId) return NextResponse.json({ received: true });
 
   try {
     const doc = await getDocument(documentId);

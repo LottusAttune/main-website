@@ -161,6 +161,8 @@ export type DocumentRow = {
   payDepositUrl: string | null;
   /** Outstanding amount the full-payment link charges; null when no link. */
   linkAmount: number | null;
+  /** Typed name from the e-signature when a proposal was accepted online. */
+  signerName: string | null;
   sentAt: string | null;
   sentTo: string | null;
   viewedAt: string | null;
@@ -168,6 +170,20 @@ export type DocumentRow = {
   paidAt: string | null;
   paidMethod: string | null;
   voidedAt: string | null;
+  createdAt: string;
+};
+
+/** An ad-hoc Stripe payment link made from the studio. */
+export type PaymentLinkRow = {
+  id: string;
+  description: string;
+  amount: number;
+  clientName: string | null;
+  clientEmail: string | null;
+  url: string;
+  isActive: boolean;
+  paidAt: string | null;
+  paidCount: number;
   createdAt: string;
 };
 
@@ -258,6 +274,7 @@ export type StudioData = {
   discoveryCalls: DiscoveryCallRow[];
   documents: DocumentRow[];
   payments: PaymentRow[];
+  paymentLinks: PaymentLinkRow[];
   activity: ActivityEntry[];
   integrations: Integrations;
 };

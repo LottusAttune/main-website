@@ -3,6 +3,7 @@ import 'server-only';
 import { isDatabaseConfigured, sql } from '@/lib/db';
 import { documentFromRow } from '@/lib/documents';
 import { isEmailConfigured } from '@/lib/email';
+import { paymentLinkFromRow } from '@/lib/paymentLinks';
 import { isPdfConfigured } from '@/lib/pdfshift';
 import {
   STAGE_KEYS,
@@ -62,6 +63,7 @@ const EMPTY = (): StudioData => ({
   discoveryCalls: [],
   documents: [],
   payments: [],
+  paymentLinks: [],
   activity: [],
   integrations: integrations(),
 });
@@ -75,7 +77,7 @@ const EMPTY = (): StudioData => ({
 export async function getStudioData(): Promise<StudioData> {
   if (!isDatabaseConfigured()) return EMPTY();
 
-  const [bookingRows, giftRows, reviewRows, discoveryCallRows, documentRows, paymentRows, activityRows] =
+  const [bookingRows, giftRows, reviewRows, discoveryCallRows, documentRows, paymentRows, activityRows, linkRows] =
     await Promise.all([
       sql`SELECT * FROM bookings ORDER BY created_at DESC LIMIT 500`,
       sql`SELECT * FROM gift_requests ORDER BY created_at DESC LIMIT 200`,
@@ -86,12 +88,13 @@ export async function getStudioData(): Promise<StudioData> {
                client_company, status, lines, subtotal, tax_rate, tax, total, issued_on,
                due_on, notes, token, (pdf IS NOT NULL) AS has_pdf, pdf_generated_at,
                paid_amount, payment_plan, stripe_link_full, stripe_link_deposit,
-               stripe_link_amount, sent_at, sent_to, viewed_at, accepted_at, paid_at, paid_method, voided_at,
+               stripe_link_amount, signer_name, sent_at, sent_to, viewed_at, accepted_at, paid_at, paid_method, voided_at,
                created_at
         FROM documents ORDER BY created_at DESC LIMIT 1000
       `,
       sql`SELECT * FROM payments ORDER BY created_at DESC LIMIT 1000`,
       sql`SELECT * FROM activity ORDER BY created_at DESC LIMIT 1000`,
+      sql`SELECT * FROM payment_links ORDER BY created_at DESC LIMIT 300`,
     ]);
 
   const leads: Lead[] = bookingRows.rows.map((row) => {
@@ -255,6 +258,7 @@ export async function getStudioData(): Promise<StudioData> {
     })),
     documents,
     payments,
+    paymentLinks: linkRows.rows.map(paymentLinkFromRow),
     activity,
     integrations: integrations(),
   };

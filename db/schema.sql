@@ -372,6 +372,31 @@ ALTER TABLE documents ADD COLUMN IF NOT EXISTS stripe_link_deposit_id TEXT;
 -- and re-minted the moment the balance changes (deposit paid, lines edited).
 ALTER TABLE documents ADD COLUMN IF NOT EXISTS stripe_link_amount     INTEGER;
 
+-- E-signature captured when a client accepts a proposal online.
+ALTER TABLE documents ADD COLUMN IF NOT EXISTS signer_name   TEXT;
+ALTER TABLE documents ADD COLUMN IF NOT EXISTS signature_png TEXT;
+ALTER TABLE documents ADD COLUMN IF NOT EXISTS accepted_ip   TEXT;
+
+-- Fully automatic by default: proposal on request, invoice on acceptance.
+ALTER TABLE settings ALTER COLUMN auto_send_proposals SET DEFAULT TRUE;
+ALTER TABLE settings ALTER COLUMN auto_send_invoices  SET DEFAULT TRUE;
+
+-- Ad-hoc Stripe payment links Silvana creates from the studio (a deposit
+-- agreed by phone, a custom package, a workshop) - separate from invoices.
+CREATE TABLE IF NOT EXISTS payment_links (
+  id              UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  description     TEXT NOT NULL,
+  amount          INTEGER NOT NULL,
+  client_name     TEXT,
+  client_email    TEXT,
+  stripe_link_id  TEXT NOT NULL,
+  url             TEXT NOT NULL,
+  is_active       BOOLEAN NOT NULL DEFAULT TRUE,
+  paid_at         TIMESTAMPTZ,
+  paid_count      INTEGER NOT NULL DEFAULT 0,
+  created_at      TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
 ALTER TABLE bookings ADD COLUMN IF NOT EXISTS stripe_customer_id          TEXT;
 ALTER TABLE bookings ADD COLUMN IF NOT EXISTS stripe_payment_method_id    TEXT;
 ALTER TABLE bookings ADD COLUMN IF NOT EXISTS confirmation_sent_at        TIMESTAMPTZ;

@@ -105,6 +105,7 @@ export function documentFromRow(row: Row): DocumentRow {
     payFullUrl: row.stripe_link_full ? String(row.stripe_link_full) : null,
     payDepositUrl: row.stripe_link_deposit ? String(row.stripe_link_deposit) : null,
     linkAmount: row.stripe_link_amount == null ? null : Number(row.stripe_link_amount),
+    signerName: row.signer_name ? String(row.signer_name) : null,
     sentAt: toStamp(row.sent_at),
     sentTo: row.sent_to ? String(row.sent_to) : null,
     viewedAt: toStamp(row.viewed_at),
@@ -122,7 +123,7 @@ export const DOC_COLUMNS = `
   client_company, status, lines, subtotal, tax_rate, tax, total, issued_on,
   due_on, notes, token, (pdf IS NOT NULL) AS has_pdf, pdf_generated_at,
   paid_amount, payment_plan, stripe_link_full, stripe_link_deposit,
-  stripe_link_amount,
+  stripe_link_amount, signer_name,
   sent_at, sent_to, viewed_at, accepted_at, paid_at, paid_method, voided_at,
   created_at
 `;
@@ -841,15 +842,43 @@ export type DocumentContext = {
   business: BusinessSettings;
   booking: BookingCtx | null;
   gift: GiftCtx | null;
+  /** PNG data URL of the drawn signature, once a proposal is accepted. */
+  signaturePng?: string | null;
 };
 
 export async function loadContext(doc: DocumentRow): Promise<DocumentContext> {
   const settings = await getSettings();
+  const signature = doc.acceptedAt
+    ? await sql`SELECT signature_png FROM documents WHERE id = ${doc.id}`
+    : null;
   return {
     business: settings.business,
     booking: doc.bookingId ? await loadBooking(doc.bookingId) : null,
     gift: doc.giftId ? await loadGift(doc.giftId) : null,
+    signaturePng: signature?.rows[0]?.signature_png ? String(signature.rows[0].signature_png) : null,
   };
+}
+
+function acceptanceHtml(doc: DocumentRow, ctx: DocumentContext): string {
+  if (!doc.acceptedAt) return '';
+  const when = formatStudioDate(doc.acceptedAt.slice(0, 10));
+  const sig = ctx.signaturePng && ctx.signaturePng.startsWith('data:image/png;base64,')
+    ? `<img src="${ctx.signaturePng}" alt="Signature" style="display:block;height:64px;margin:6px 0 4px;" />`
+    : '';
+  return `
+    <div class="rule"></div>
+    <table><tr>
+      <td style="vertical-align:bottom;width:55%;padding-right:20px;">
+        <div class="eyebrow" style="margin-bottom:6px;">Accepted</div>
+        ${sig}
+        <div style="font-size:13px;border-top:1px solid rgba(59,46,36,0.35);padding-top:6px;max-width:300px;">${escapeHtml(doc.signerName ?? doc.clientName)}</div>
+        <div class="muted" style="font-size:11.5px;">Signed electronically on ${when}</div>
+      </td>
+      <td style="vertical-align:bottom;">
+        <div class="eyebrow" style="margin-bottom:6px;">On behalf of ${escapeHtml(ctx.business.businessName)}</div>
+        <div style="font-size:13px;border-top:1px solid rgba(59,46,36,0.35);padding-top:6px;max-width:300px;">Silvana Rotti</div>
+      </td>
+    </tr></table>`;
 }
 
 export function publicUrl(doc: DocumentRow): string {
@@ -866,11 +895,13 @@ export function documentHtml(doc: DocumentRow, ctx: DocumentContext): string {
     body += `<div style="font-size:13.5px;line-height:1.7;margin:22px 0 6px;">${paragraphs(business.proposalIntro || DEFAULT_PROPOSAL_INTRO)}</div>`;
     if (ctx.booking) body += sessionBox(ctx.booking);
     body += linesTable(doc, business);
-    body += `
+    body += doc.acceptedAt
+      ? acceptanceHtml(doc, ctx)
+      : `
       <div class="rule"></div>
       <div style="font-size:12.5px;">
         <div class="eyebrow" style="margin-bottom:6px;">Next step</div>
-        <p style="margin:0 0 8px;">To go ahead, accept this proposal online: <a href="${publicUrl(doc)}">${publicUrl(doc)}</a></p>
+        <p style="margin:0 0 8px;">To go ahead, accept and sign this proposal online: <a href="${publicUrl(doc)}">${publicUrl(doc)}</a></p>
         ${business.paymentInstructions ? `<p class="muted" style="margin:0;">Payment: ${escapeHtml(business.paymentInstructions)}</p>` : ''}
       </div>`;
   } else {

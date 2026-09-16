@@ -591,9 +591,18 @@ export function BookingForm({
                 >
                   <span className="toggle-row__dot" />
                   <span style={{ minWidth: 0, textAlign: 'left' }}>
-                    <span style={{ display: 'block', fontSize: 16.5, marginBottom: 4 }}>
-                      Customized mindful team-building activity — for
-                      organizations and corporate teams
+                    <span style={{ display: 'block', fontSize: 16.5, marginBottom: 2 }}>
+                      Customized mindful team-building activity
+                    </span>
+                    <span
+                      style={{
+                        display: 'block',
+                        fontSize: 15,
+                        color: 'var(--color-muted)',
+                        marginBottom: 4,
+                      }}
+                    >
+                      For organizations and corporate teams
                     </span>
                     <span
                       style={{
@@ -605,7 +614,7 @@ export function BookingForm({
                     >
                       45-minute extension, featuring a facilitated activity
                       focused on recognition, values alignment, mindful
-                      communication, and team connection — customized to your
+                      communication, or team connection — customized to your
                       team objectives
                     </span>
                   </span>

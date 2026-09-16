@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 
 import { IncludedModal } from '@/components/common/IncludedModal';
 import { PolicyModal } from '@/components/common/PolicyModal';
@@ -97,6 +97,17 @@ export function BookingForm({
   const [payment, setPayment] = useState<BookingPayment | null>(null);
   const [redirecting, setRedirecting] = useState(false);
   const [agreed, setAgreed] = useState(false);
+  // On phones the summary sits below a long form: a slim bar keeps the total
+  // and the way to pay in reach until the summary itself scrolls into view.
+  const asideRef = useRef<HTMLElement | null>(null);
+  const [asideInView, setAsideInView] = useState(false);
+  useEffect(() => {
+    const node = asideRef.current;
+    if (!node || typeof IntersectionObserver === 'undefined') return;
+    const observer = new IntersectionObserver(([entry]) => setAsideInView(entry.isIntersecting), { threshold: 0.15 });
+    observer.observe(node);
+    return () => observer.disconnect();
+  }, [submitted]);
 
   const invalid = (field: string) => Boolean(fieldErrors[field]?.length);
 
@@ -538,7 +549,7 @@ export function BookingForm({
         </div>
 
         {/* ---------- Add-ons ---------- */}
-        <div className={styles.step}>
+        <div className={`${styles.step} ${party !== null && party >= TEAM_ADDON_MIN_PARTICIPANTS ? '' : styles.stepQuietMobile}`}>
           <div className={styles.stepHead}>
             <div className={styles.stepNumber}>04</div>
             <h2 className={styles.stepTitle}>Optional add-on</h2>
@@ -688,7 +699,7 @@ export function BookingForm({
       </div>
 
       {/* ---------- Summary ---------- */}
-      <aside className={styles.summary}>
+      <aside className={styles.summary} ref={asideRef}>
         <div className={styles.summaryTitle}>Your Session</div>
 
         <div style={{ display: 'flex', flexDirection: 'column' }}>
@@ -859,6 +870,22 @@ export function BookingForm({
           </div>
         ) : null}
       </aside>
+
+      {people >= 1 && !asideInView && !redirecting ? (
+        <div className={styles.mobileBar}>
+          <div className={styles.mobileBarText}>
+            <span className={styles.mobileBarLabel}>Estimated</span>
+            <span className={styles.mobileBarValue}>{money(quote.total)}</span>
+          </div>
+          <button
+            type="button"
+            className={`btn btn--dark ${styles.mobileBarBtn}`}
+            onClick={() => asideRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })}
+          >
+            Review &amp; pay
+          </button>
+        </div>
+      ) : null}
     </form>
   );
 }

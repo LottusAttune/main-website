@@ -546,3 +546,86 @@
   text-align: center;
   color: var(--color-muted);
 }
+
+/* ---------- Phone and tablet only (desktop unchanged) ---------- */
+
+@media (max-width: 1079px) {
+  /* Two time slots do not need a third empty column. */
+  .times {
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  }
+
+  .timeLabel {
+    font-size: 19px;
+    white-space: nowrap;
+  }
+
+  /* The add-on step only matters from 7 participants: below that it is a
+     heading with nothing under it, so it steps aside on small screens. */
+  .stepQuietMobile {
+    display: none;
+  }
+
+  .payToday .tierChoice {
+    grid-template-columns: 1fr;
+  }
+
+  .payToday .timeBtn {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 12px;
+  }
+
+  .payToday .timeNote {
+    text-align: right;
+  }
+
+  /* Slim bar with the running total and a jump to the summary. */
+  .mobileBar {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 120;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    padding: 10px var(--space-gutter);
+    padding-bottom: calc(10px + env(safe-area-inset-bottom));
+    background: var(--color-cream-raised);
+    border-top: 1px solid var(--hairline-light);
+    box-shadow: 0 -12px 30px -18px rgba(59, 46, 36, 0.35);
+  }
+
+  .mobileBarText {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+  }
+
+  .mobileBarLabel {
+    font-size: 10.5px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--color-gold-text);
+  }
+
+  .mobileBarValue {
+    font-family: var(--font-body);
+    font-size: 18px;
+    color: var(--color-ink);
+  }
+
+  .mobileBarBtn {
+    min-height: 44px;
+    padding: 12px 22px;
+  }
+}
+
+@media (min-width: 1080px) {
+  .mobileBar {
+    display: none;
+  }
+}

@@ -695,3 +695,11 @@
   line-height: 1.6;
   color: var(--color-muted);
 }
+
+/* Small supplier: no HST is charged, and that is worth saying once. */
+.taxNote {
+  margin-top: 8px;
+  font-size: 13.5px;
+  line-height: 1.6;
+  color: var(--color-ink-body);
+}

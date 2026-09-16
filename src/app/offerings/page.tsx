@@ -19,7 +19,7 @@ export const metadata: Metadata = {
 export const dynamic = 'force-dynamic';
 
 export default async function OfferingsPage() {
-  const { pricing } = await getSettings();
+  const { pricing, business } = await getSettings();
 
   return (
     <>
@@ -42,6 +42,7 @@ export default async function OfferingsPage() {
 
             <SessionConfigurator
               pricing={pricing}
+              noTaxNote={business.taxRatePercent === 0}
               footnote={
                 <p className={styles.discoveryNote}>
                   Still have a question?{' '}

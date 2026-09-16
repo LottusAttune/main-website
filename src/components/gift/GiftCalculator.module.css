@@ -458,10 +458,3 @@
   font-size: 13px;
   color: var(--color-cream-text);
 }
-
-.taxNote {
-  margin-top: 8px;
-  font-size: 13.5px;
-  line-height: 1.6;
-  color: var(--color-cream-text);
-}

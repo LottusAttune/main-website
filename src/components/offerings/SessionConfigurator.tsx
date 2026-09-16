@@ -27,11 +27,9 @@ type Format = 'private' | 'group' | 'corporateIntro';
 type Props = {
   pricing: Pricing;
   footnote?: ReactNode;
-  /** True while the business charges no HST (small supplier). */
-  noTaxNote?: boolean;
 };
 
-export function SessionConfigurator({ pricing, footnote, noTaxNote = false }: Props) {
+export function SessionConfigurator({ pricing, footnote }: Props) {
   const [format, setFormat] = useState<Format>('group');
   const [isPackage, setIsPackage] = useState(false);
   const [participants, setParticipants] = useState(MIN_PARTICIPANTS);
@@ -407,7 +405,6 @@ export function SessionConfigurator({ pricing, footnote, noTaxNote = false }: Pr
             <span className={styles.totalLabel}>Total</span>
             <span className={styles.totalValue}>{money(quote.total)}</span>
           </div>
-          {noTaxNote ? <div className={styles.taxNote}>No HST added. The price shown is what you pay.</div> : null}
         </div>
         <div className={styles.summaryActions}>
           <IncludedModal

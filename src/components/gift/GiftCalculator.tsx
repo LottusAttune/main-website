@@ -519,7 +519,6 @@ export function GiftCalculator({ pricing, codes, payTerms }: Props) {
                   <span className={styles.totalLabel}>Total</span>
                   <span className={styles.totalValue}>{money(quote.total)}</span>
                 </div>
-                {payTerms.taxRatePercent === 0 ? <div className={styles.taxNote}>No HST added. The price shown is what you pay.</div> : null}
               </div>
             </div>
 

@@ -798,7 +798,6 @@ export function BookingForm({
                 ? `${people} participants${needsSecond ? ' · across two sessions' : ''}`
                 : 'Select the number of participants'}
           </div>
-          {payTerms.taxRatePercent === 0 ? <div className={styles.taxNote}>No HST added. The price shown is what you pay.</div> : null}
         </div>
 
         {people >= 1 ? (

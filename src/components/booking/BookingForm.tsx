@@ -619,7 +619,7 @@ export function BookingForm({
             <div className={styles.stepNumber}>05</div>
             <h2 className={styles.stepTitle}>Would you like to include gratuity?</h2>
           </div>
-          <p className={styles.stepNote}>Entirely optional</p>
+          <p className={styles.stepNote}>Entirely optional — tap again to remove</p>
           <div className={`${styles.gratuityRow} ${styles.indent}`}>
             {GRATUITY_PERCENTS.map((pct) => (
               <button
@@ -730,20 +730,16 @@ export function BookingForm({
               {people === 1 ? '1 person' : people >= 2 ? `${people} people` : '—'}
             </span>
           </div>
-          <div className="summary-line">
-            <span className="summary-line__label">Date</span>
-            <span className="summary-line__value">
-              {date ? formatDay(date) : '—'}
-            </span>
-          </div>
-          <div className="summary-line">
-            <span className="summary-line__label">Time</span>
-            <span className="summary-line__value">{time ?? '—'}</span>
-          </div>
-          {needsSecond ? (
+          {quote.lines[0] ? (
             <div className="summary-line">
-              <span className="summary-line__label">Second time</span>
-              <span className="summary-line__value">{time2 ?? '—'}</span>
+              <span className="summary-line__label">
+                {people === 1
+                  ? quote.lines[0].label
+                  : isCorporateIntro
+                    ? 'Corporate Introductory'
+                    : 'Standard group'}
+              </span>
+              <span className="summary-line__value">{quote.lines[0].value}</span>
             </div>
           ) : null}
           {quote.lines
@@ -754,11 +750,34 @@ export function BookingForm({
                 <span className="summary-line__value">{line.value}</span>
               </div>
             ))}
-          <div className="rule-end" />
+          <div className="summary-line">
+            <span className="summary-line__label">Date &amp; time</span>
+            <span className="summary-line__value">
+              {date ? formatDay(date) : '—'}
+              {time ? ` · ${time}` : ''}
+              {needsSecond && time2 ? ` + ${time2}` : ''}
+            </span>
+          </div>
+          <div className={`summary-line ${styles.totalLine}`}>
+            <span className="summary-line__label">Total</span>
+            <span className="summary-line__value">
+              {people >= 1 ? money(quote.total) : '—'}
+            </span>
+          </div>
         </div>
 
+        {people === 1 || needsSecond || people < 1 ? (
+          <div className={styles.estimateNote}>
+            {people === 1
+              ? `Private session · package of four: ${money(pricing.privatePackage)} – save ${money(pricing.privateSession * 4 - pricing.privatePackage)}`
+              : needsSecond
+                ? 'Split across two sessions'
+                : 'Select the number of participants'}
+          </div>
+        ) : null}
+
         <div className={styles.codeBlock}>
-          <label className={styles.codeLabel} htmlFor="discount-code">
+          <label className="visually-hidden" htmlFor="discount-code">
             Discount code
           </label>
           <div className={styles.codeRow}>
@@ -766,7 +785,7 @@ export function BookingForm({
               id="discount-code"
               className={`field ${styles.codeInput}`}
               type="text"
-              placeholder="Enter code"
+              placeholder="Enter discount code"
               value={codeInput}
               disabled={Boolean(code.applied)}
               onChange={(e) => setCodeInput(e.target.value)}
@@ -789,23 +808,9 @@ export function BookingForm({
           ) : null}
         </div>
 
-        <div className={styles.estimate}>
-          <div className={styles.codeLabel}>Estimated</div>
-          <div className={styles.estimateValue}>
-            {people >= 1 ? money(quote.total) : '—'}
-          </div>
-          <div className={styles.estimateNote}>
-            {people === 1
-              ? `Private session · package of four: ${money(pricing.privatePackage)} – save ${money(pricing.privateSession * 4 - pricing.privatePackage)}`
-              : people >= 2
-                ? `${people} participants${needsSecond ? ' · across two sessions' : ''}`
-                : 'Select the number of participants'}
-          </div>
-        </div>
-
         {people >= 1 ? (
           <div className={styles.payToday}>
-            <div className={styles.codeLabel}>Pay today</div>
+            <div className={styles.payTitle}>Make your payment</div>
 
             <div className={styles.payGroup}>
               <div className={styles.payGroupLabel}>
@@ -929,7 +934,7 @@ export function BookingForm({
       {people >= 1 && !asideInView && !redirecting ? (
         <div className={styles.mobileBar}>
           <div className={styles.mobileBarText}>
-            <span className={styles.mobileBarLabel}>Estimated</span>
+            <span className={styles.mobileBarLabel}>Total</span>
             <span className={styles.mobileBarValue}>{money(quote.total)}</span>
           </div>
           <button

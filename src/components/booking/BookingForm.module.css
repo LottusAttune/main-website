@@ -309,7 +309,7 @@
 }
 
 .codeBlock {
-  margin-top: 18px;
+  margin: 18px 0 30px;
 }
 
 .codeLabel {
@@ -321,6 +321,16 @@
   margin-bottom: 12px;
 }
 
+/* Bigger and heavier than the box's other small eyebrow labels
+   (YOUR SESSION, DISCOUNT CODE) - this is where money actually changes
+   hands, so it earns more visual weight than the descriptive labels. */
+.payTitle {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--color-ink);
+  margin-bottom: 14px;
+}
+
 .codeRow {
   display: flex;
   gap: 8px;
@@ -329,23 +339,25 @@
 .codeInput {
   flex: 1;
   min-width: 0;
-  padding: 14px 16px;
-  min-height: 50px;
-  border-radius: var(--radius-thumb);
-  font-size: 16px;
+  padding: 9px 12px;
+  min-height: 36px;
+  border-radius: 0;
+  background: transparent;
+  border-color: var(--gold-rim);
+  font-size: 13.5px;
   letter-spacing: 0.1em;
   text-transform: uppercase;
 }
 
 .codeApply {
   flex: none;
-  padding: 14px 22px;
-  min-height: 50px;
-  border: 1px solid rgba(59, 46, 36, 0.28);
-  border-radius: var(--radius-thumb);
-  background: var(--color-cream-raised);
+  padding: 9px 16px;
+  min-height: 36px;
+  border: 1px solid var(--gold-rim);
+  border-radius: 0;
+  background: transparent;
   color: var(--color-ink);
-  font-size: 11px;
+  font-size: 10.5px;
   letter-spacing: 0.16em;
   cursor: pointer;
   transition:
@@ -374,24 +386,30 @@
   color: var(--status-alert);
 }
 
-.estimate {
-  margin: 20px 0;
+/* The invoice-style grand total row - same line shape as the items above
+   it, just heavier, so it reads as "sum of everything above" rather than a
+   separate, disconnected block. */
+.totalLine {
+  border-top: 1px solid rgba(59, 46, 36, 0.28);
+  padding-top: 16px;
 }
 
-/* Body font, not the display serif - Cormorant's "1" has no base flag and
-   reads as a capital I at this size, which matters on a price. */
-.estimateValue {
+.totalLine .summary-line__label {
+  color: var(--color-ink);
+  font-weight: 600;
+}
+
+.totalLine .summary-line__value {
   font-family: var(--font-body);
-  font-weight: 400;
+  font-weight: 600;
   font-size: clamp(19px, 1.9vw, 21px);
-  line-height: 1;
 }
 
 .estimateNote {
+  margin: -8px 0 18px;
   font-size: 14px;
   line-height: 1.6;
   color: var(--color-muted);
-  margin-top: 10px;
 }
 
 /* Someone landing on /book directly (skipping Offerings) had no way to
@@ -673,7 +691,7 @@
 
 .payGroupLabel {
   margin: 0 0 8px;
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 500;
   color: var(--color-ink);
 }

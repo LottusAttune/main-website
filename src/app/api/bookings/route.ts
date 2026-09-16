@@ -138,12 +138,15 @@ export async function POST(request: Request) {
     // insert) with the Stripe call running alongside the insert; if anything
     // fails they still get the invoice by email.
     let payment: {
+      method: 'card' | 'etransfer';
       invoiceNumber: string;
       invoiceTotal: number;
       deposit: number | null;
       depositPercent: number;
       checkoutUrl: string | null;
       invoiceUrl: string;
+      portalUrl: string | null;
+      instructions: string;
     } | null = null;
     if (settings.business.autoSendInvoices) {
       try {
@@ -174,22 +177,32 @@ export async function POST(request: Request) {
         const token = randomUUID();
         // The total is known before the insert: the checkout needs it too.
         const { total: invoiceTotal } = totalsFor(bookingLines(booking, settings), settings.business.taxRatePercent);
+        const byCard = input.paymentPlan !== 'etransfer';
         const [, checkout] = await Promise.all([
           insertBookingInvoice({ id, token, number, booking, settings }),
-          createBookingCheckout(
-            { id, kind: 'invoice', number, total: invoiceTotal, paidAmount: 0, bookingId, clientEmail: input.email, token },
-            settings.business,
-            input.paymentPlan,
-            booking
-          ),
+          byCard
+            ? createBookingCheckout(
+                { id, kind: 'invoice', number, total: invoiceTotal, paidAmount: 0, bookingId, clientEmail: input.email, token },
+                settings.business,
+                input.paymentPlan === 'full' ? 'full' : 'deposit',
+                booking
+              )
+            : Promise.resolve(null),
         ]);
+        const depositShare =
+          settings.business.depositPercent > 0 && settings.business.depositPercent < 100
+            ? Math.round((invoiceTotal * settings.business.depositPercent) / 100)
+            : null;
         payment = {
+          method: byCard ? 'card' : 'etransfer',
           invoiceNumber: number,
           invoiceTotal,
-          deposit: checkout?.plan === 'deposit' ? checkout.amount : null,
+          deposit: byCard ? (checkout?.plan === 'deposit' ? checkout.amount : null) : depositShare,
           depositPercent: settings.business.depositPercent,
           checkoutUrl: checkout?.url ?? null,
           invoiceUrl: `${SITE.url}/d/${token}`,
+          portalUrl: portalToken ? `${SITE.url}/portal/${portalToken}` : null,
+          instructions: settings.business.paymentInstructions,
         };
       } catch (error) {
         console.error('[bookings] invoice failed:', error);

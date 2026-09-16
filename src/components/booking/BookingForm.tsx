@@ -50,12 +50,15 @@ type GratuityChoice = (typeof GRATUITY_PERCENTS)[number] | 'custom';
 
 /** What the booking API hands back so the client can pay the deposit on the spot. */
 type BookingPayment = {
+  method: 'card' | 'etransfer';
   invoiceNumber: string;
   invoiceTotal: number;
   deposit: number | null;
   depositPercent: number;
   checkoutUrl: string | null;
   invoiceUrl: string;
+  portalUrl: string | null;
+  instructions: string;
 };
 
 export function BookingForm({
@@ -67,7 +70,7 @@ export function BookingForm({
   terms,
   payTerms,
 }: Props) {
-  const [plan, setPlan] = useState<'deposit' | 'full'>('deposit');
+  const [plan, setPlan] = useState<'deposit' | 'full' | 'etransfer'>('deposit');
   const [party, setParty] = useState<number | null>(null);
   const [date, setDate] = useState<Date | null>(null);
   const [time, setTime] = useState<string | null>(null);
@@ -345,15 +348,28 @@ export function BookingForm({
                 ? `A ${payment.depositPercent}% deposit of ${money(payment.deposit)} confirms your date. The remaining ${money(payment.invoiceTotal - payment.deposit)} is due four calendar days before your session.`
                 : `Your invoice comes to ${money(payment.invoiceTotal)}.`}
             </p>
+            {payment.method === 'etransfer' ? (
+              <div className={styles.etransferBox}>
+                <div className={styles.successLabel}>Send by Interac e-transfer</div>
+                <div className={styles.etransferRow}><span>Amount</span><strong>{money(payment.deposit ?? payment.invoiceTotal)}</strong></div>
+                <div className={styles.etransferRow}><span>Reference</span><strong>{payment.invoiceNumber}</strong></div>
+                <p className={styles.successBody} style={{ whiteSpace: 'pre-line' }}>{payment.instructions}</p>
+              </div>
+            ) : null}
             <div className={styles.successActions}>
               <a className="btn btn--dark" href={payment.invoiceUrl}>
-                View invoice and pay
+                {payment.method === 'etransfer' ? 'View invoice' : 'View invoice and pay'}
               </a>
+              {payment.portalUrl ? (
+                <a className="btn btn--outline" href={payment.portalUrl}>
+                  Your booking page
+                </a>
+              ) : null}
             </div>
             <p className={styles.successNote}>
-              Send {money(payment.deposit ?? payment.invoiceTotal)} by e-transfer to{' '}
-              <a href={`mailto:${SITE.email}`}>{SITE.email}</a>, or pay by card from the invoice.
-              The details are in your email.
+              {payment.method === 'etransfer'
+                ? 'These details are also in your email. Changed your mind? The invoice has a card option too.'
+                : `Or send ${money(payment.deposit ?? payment.invoiceTotal)} by e-transfer using the details in your email.`}
             </p>
           </div>
         ) : null}
@@ -803,18 +819,30 @@ export function BookingForm({
               <button
                 type="button"
                 role="radio"
-                aria-checked={plan === 'full' || !depositOffered}
-                className={`${styles.timeBtn} ${plan === 'full' || !depositOffered ? styles.timeBtnOn : ''}`}
+                aria-checked={plan === 'full' || (!depositOffered && plan !== 'etransfer')}
+                className={`${styles.timeBtn} ${plan === 'full' || (!depositOffered && plan !== 'etransfer') ? styles.timeBtnOn : ''}`}
                 onClick={() => setPlan('full')}
               >
                 <span className={styles.tierLabel}>Pay in full</span>
                 <span className={styles.timeNote}>{money(fullWithFee)} now, nothing more to pay</span>
               </button>
+              <button
+                type="button"
+                role="radio"
+                aria-checked={plan === 'etransfer'}
+                className={`${styles.timeBtn} ${plan === 'etransfer' ? styles.timeBtnOn : ''}`}
+                onClick={() => setPlan('etransfer')}
+              >
+                <span className={styles.tierLabel}>E-transfer</span>
+                <span className={styles.timeNote}>
+                  {money(depositOffered ? depositNow : invoiceTotal)} {depositOffered ? 'deposit' : ''} by Interac, no fee
+                </span>
+              </button>
             </div>
             <div className={styles.estimateNote}>
-              {payTerms.taxRatePercent > 0 ? `Includes ${payTerms.taxLabel} ${payTerms.taxRatePercent}%` : 'Tax included'}
-              {payTerms.cardFeePercent > 0 ? ` and the ${payTerms.cardFeePercent}% card fee. ` : '. '}
-              Prefer e-transfer, with no card fee? The details are on your invoice.
+              {plan === 'etransfer'
+                ? `Includes ${payTerms.taxRatePercent > 0 ? `${payTerms.taxLabel} ${payTerms.taxRatePercent}%` : 'tax'}. You send the e-transfer from your bank; the details follow on the next screen and by email, and your date is confirmed when it arrives.`
+                : `${payTerms.taxRatePercent > 0 ? `Includes ${payTerms.taxLabel} ${payTerms.taxRatePercent}%` : 'Tax included'}${payTerms.cardFeePercent > 0 ? ` and the ${payTerms.cardFeePercent}% card fee.` : '.'} Card, Apple Pay and Google Pay on the secure Stripe page.`}
             </div>
           </div>
         ) : null}
@@ -856,12 +884,16 @@ export function BookingForm({
             ? 'Opening the secure payment page…'
             : submitting
               ? 'Saving your request…'
-              : people >= 1
-                ? `Continue to pay ${money(plan === 'deposit' && depositOffered ? depositWithFee : fullWithFee)}`
-                : 'Continue to payment'}
+              : plan === 'etransfer'
+                ? 'Confirm booking'
+                : people >= 1
+                  ? `Continue to pay ${money(plan === 'deposit' && depositOffered ? depositWithFee : fullWithFee)}`
+                  : 'Continue to payment'}
         </button>
         <p className={styles.nextNote}>
-          Next: the secure card payment page (Stripe). Your date is held once the payment is made.
+          {plan === 'etransfer'
+            ? 'Next: the e-transfer details. Your date is held once the transfer arrives.'
+            : 'Next: the secure card payment page (Stripe). Your date is held once the payment is made.'}
         </p>
 
         {submitError ? (

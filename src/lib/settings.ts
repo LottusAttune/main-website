@@ -1,12 +1,7 @@
 import 'server-only';
 
 import { isDatabaseConfigured, sql } from '@/lib/db';
-import {
-  DEFAULT_LEAD_TIME,
-  DEFAULT_PRICING,
-  DEFAULT_SLOTS,
-  type SlotKey,
-} from '@/lib/site';
+import { DEFAULT_LEAD_TIME, DEFAULT_PRICING, DEFAULT_SLOTS, SITE, type SlotKey } from '@/lib/site';
 
 export type Pricing = {
   privateSession: number;
@@ -81,7 +76,7 @@ export const DEFAULT_BUSINESS: BusinessSettings = {
   taxLabel: 'HST',
   taxNumber: '',
   taxRatePercent: 0,
-  paymentInstructions: '',
+  paymentInstructions: `Send an Interac e-transfer to ${SITE.email}. Auto-deposit is on, so no security question is needed. Please put your invoice number in the message.`,
   invoiceDueDays: 7,
   invoicePrefix: 'LA',
   invoiceFooter: '',

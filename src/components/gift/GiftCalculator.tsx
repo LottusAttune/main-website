@@ -73,6 +73,8 @@ export function GiftCalculator({ pricing, codes, payTerms }: Props) {
   const [issuedCode, setIssuedCode] = useState('');
   const [invoiceUrl, setInvoiceUrl] = useState<string | null>(null);
   const [redirecting, setRedirecting] = useState(false);
+  const [payBy, setPayBy] = useState<'card' | 'etransfer'>('card');
+  const [etransfer, setEtransfer] = useState<{ amount: number; number: string; instructions: string } | null>(null);
   const [hideBuyerName, setHideBuyerName] = useState(false);
   const [previewOpen, setPreviewOpen] = useState(false);
 
@@ -226,6 +228,7 @@ export function GiftCalculator({ pricing, codes, payTerms }: Props) {
           discountCode: code.applied?.code ?? null,
           gratuityPercent: gratuityPercent ?? null,
           gratuityAmount: gratuityAmount ?? null,
+          paymentPlan: payBy === 'etransfer' ? 'etransfer' : 'full',
         }),
       });
       if (!response.ok) {
@@ -242,10 +245,20 @@ export function GiftCalculator({ pricing, codes, payTerms }: Props) {
       }
       const body = (await response.json().catch(() => null)) as {
         code?: string;
-        payment?: { checkoutUrl: string | null; invoiceUrl: string; invoiceNumber: string } | null;
+        payment?: {
+          method: 'card' | 'etransfer';
+          checkoutUrl: string | null;
+          invoiceUrl: string;
+          invoiceNumber: string;
+          invoiceTotal: number;
+          instructions: string;
+        } | null;
       } | null;
       setIssuedCode(body?.code ?? '');
       setInvoiceUrl(body?.payment?.invoiceUrl ?? null);
+      if (body?.payment?.method === 'etransfer') {
+        setEtransfer({ amount: body.payment.invoiceTotal, number: body.payment.invoiceNumber, instructions: body.payment.instructions });
+      }
       // Straight to the secure payment page; the certificate is emailed the
       // moment the payment completes. Without a card checkout the invoice
       // (with e-transfer details) has gone by email instead.
@@ -453,6 +466,13 @@ export function GiftCalculator({ pricing, codes, payTerms }: Props) {
                 </>
               ) : null}
             </p>
+            {etransfer ? (
+              <p className={styles.success} role="status" style={{ whiteSpace: 'pre-line' }}>
+                <strong>Send {money(etransfer.amount)} by Interac e-transfer</strong>
+                {'\n'}Reference: {etransfer.number}
+                {'\n'}{etransfer.instructions}
+              </p>
+            ) : null}
             <div className={styles.sentCert}>
               <CertificatePreview
                 recipientName={recipientName.trim()}
@@ -597,6 +617,29 @@ export function GiftCalculator({ pricing, codes, payTerms }: Props) {
               />
             </div>
 
+            <div className={styles.payChoice} role="radiogroup" aria-label="How would you like to pay?">
+              <button
+                type="button"
+                role="radio"
+                aria-checked={payBy === 'card'}
+                className={`${styles.payChoiceBtn} ${payBy === 'card' ? styles.payChoiceOn : ''}`}
+                onClick={() => setPayBy('card')}
+              >
+                <span>Card, Apple Pay, Google Pay</span>
+                <span className={styles.payChoiceNote}>{money(chargeToday)} now, {payTerms.cardFeePercent}% card fee included</span>
+              </button>
+              <button
+                type="button"
+                role="radio"
+                aria-checked={payBy === 'etransfer'}
+                className={`${styles.payChoiceBtn} ${payBy === 'etransfer' ? styles.payChoiceOn : ''}`}
+                onClick={() => setPayBy('etransfer')}
+              >
+                <span>Interac e-transfer</span>
+                <span className={styles.payChoiceNote}>{money(giftWithTax)}, no fee</span>
+              </button>
+            </div>
+
             <p className={styles.policyNote}>
               By requesting this certificate, you agree to our{' '}
               <PolicyModal triggerClassName={styles.policyLink} />.
@@ -612,12 +655,15 @@ export function GiftCalculator({ pricing, codes, payTerms }: Props) {
                 ? 'Opening the secure payment page…'
                 : submitting
                   ? 'Saving your request…'
-                  : `Continue to pay ${money(chargeToday)}`}
+                  : payBy === 'etransfer'
+                    ? 'Request certificate'
+                    : `Continue to pay ${money(chargeToday)}`}
             </button>
             <p className={styles.policyNote} style={{ marginTop: 12 }}>
-              {payTerms.taxRatePercent > 0 ? `Includes ${payTerms.taxLabel} ${payTerms.taxRatePercent}%` : 'Tax included'}
-              {payTerms.cardFeePercent > 0 ? ` and the ${payTerms.cardFeePercent}% card fee.` : '.'}{' '}
-              Next: the secure card payment page (Stripe). The certificate is emailed the moment the payment completes.
+              {payTerms.taxRatePercent > 0 ? `Includes ${payTerms.taxLabel} ${payTerms.taxRatePercent}%.` : 'Tax included.'}{' '}
+              {payBy === 'etransfer'
+                ? 'Next: the e-transfer details. The certificate is emailed the moment the transfer arrives.'
+                : 'Next: the secure payment page (Stripe). The certificate is emailed the moment the payment completes.'}
             </p>
 
             {error ? (

@@ -99,20 +99,32 @@ export async function POST(request: Request) {
       // The invoice and a full-payment checkout are made before answering,
       // so the buyer goes straight on to pay; the certificate follows the
       // payment automatically.
-      let payment: { invoiceNumber: string; invoiceTotal: number; checkoutUrl: string | null; invoiceUrl: string } | null = null;
+      let payment: {
+        method: 'card' | 'etransfer';
+        invoiceNumber: string;
+        invoiceTotal: number;
+        checkoutUrl: string | null;
+        invoiceUrl: string;
+        instructions: string;
+      } | null = null;
       let invoiceId: string | null = null;
       try {
         const doc = await ensureGiftDocument(giftId, 'invoice', settings, { mintLinks: false });
         invoiceId = doc.id;
-        const checkout = await createGiftCheckout(doc, settings.business, {
-          recipientName: input.recipientName,
-          buyerEmail: input.buyerEmail,
-        });
+        const checkout =
+          input.paymentPlan === 'etransfer'
+            ? null
+            : await createGiftCheckout(doc, settings.business, {
+                recipientName: input.recipientName,
+                buyerEmail: input.buyerEmail,
+              });
         payment = {
+          method: input.paymentPlan === 'etransfer' ? 'etransfer' : 'card',
           invoiceNumber: doc.number,
           invoiceTotal: doc.total,
           checkoutUrl: checkout?.url ?? null,
           invoiceUrl: `${SITE.url}/d/${doc.token}`,
+          instructions: settings.business.paymentInstructions,
         };
       } catch (error) {
         console.error('[gifts] invoice failed:', error);

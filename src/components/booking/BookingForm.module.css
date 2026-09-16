@@ -629,3 +629,25 @@
     display: none;
   }
 }
+
+/* E-transfer details on the confirmation card. */
+.etransferBox {
+  margin-top: 16px;
+  padding: 16px 18px;
+  border: 1px solid var(--hairline-light);
+  background: var(--color-cream);
+}
+
+.etransferRow {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 6px 0;
+  font-size: 15px;
+  color: var(--color-ink-body);
+}
+
+.etransferRow strong {
+  font-weight: 500;
+  color: var(--color-ink);
+}

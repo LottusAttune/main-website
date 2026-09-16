@@ -750,14 +750,6 @@ export function BookingForm({
                 <span className="summary-line__value">{line.value}</span>
               </div>
             ))}
-          <div className="summary-line">
-            <span className="summary-line__label">Date &amp; time</span>
-            <span className="summary-line__value">
-              {date ? formatDay(date) : '—'}
-              {time ? ` · ${time}` : ''}
-              {needsSecond && time2 ? ` + ${time2}` : ''}
-            </span>
-          </div>
           <div className={`summary-line ${styles.totalLine}`}>
             <span className="summary-line__label">Total</span>
             <span className="summary-line__value">
@@ -766,15 +758,38 @@ export function BookingForm({
           </div>
         </div>
 
-        {people === 1 || needsSecond || people < 1 ? (
+        {people === 1 || people < 1 ? (
           <div className={styles.estimateNote}>
             {people === 1
               ? `Private session · package of four: ${money(pricing.privatePackage)} – save ${money(pricing.privateSession * 4 - pricing.privatePackage)}`
-              : needsSecond
-                ? 'Split across two sessions'
-                : 'Select the number of participants'}
+              : 'Select the number of participants'}
           </div>
         ) : null}
+
+        <div className={`summary-line ${needsSecond ? styles.dateTimeStack : ''}`}>
+          <span className="summary-line__label">Date &amp; time</span>
+          {needsSecond ? (
+            <>
+              <span className="summary-line__value">
+                {date
+                  ? date.toLocaleDateString('en-CA', { month: 'short', day: 'numeric' })
+                  : '—'}
+                {' · Split across two sessions'}
+              </span>
+              <span className={styles.dateTimeNote}>
+                {time ?? '—'}
+                {time2 ? ` + ${time2}` : ''}
+              </span>
+            </>
+          ) : (
+            <span className="summary-line__value">
+              {date
+                ? date.toLocaleDateString('en-CA', { month: 'short', day: 'numeric' })
+                : '—'}
+              {time ? ` · ${time}` : ''}
+            </span>
+          )}
+        </div>
 
         <div className={styles.codeBlock}>
           <label className="visually-hidden" htmlFor="discount-code">

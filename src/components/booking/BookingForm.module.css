@@ -386,6 +386,25 @@
   color: var(--status-alert);
 }
 
+/* Two sessions in one day means two dates+times in this one line - too
+   long to sit next to the label on a phone-width row without an awkward
+   mid-word wrap. Stacking only kicks in for that rare case; the normal
+   single-session line stays inline like every other row. */
+.dateTimeStack {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+}
+
+.dateTimeStack :global(.summary-line__value) {
+  text-align: left;
+}
+
+.dateTimeNote {
+  font-size: 13px;
+  color: var(--color-muted);
+}
+
 /* The invoice-style grand total row - same line shape as the items above
    it, just heavier, so it reads as "sum of everything above" rather than a
    separate, disconnected block. */

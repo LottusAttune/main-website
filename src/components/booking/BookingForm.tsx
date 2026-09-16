@@ -619,7 +619,7 @@ export function BookingForm({
             <div className={styles.stepNumber}>05</div>
             <h2 className={styles.stepTitle}>Would you like to include gratuity?</h2>
           </div>
-          <p className={styles.stepNote}>Entirely optional — tap again to remove</p>
+          <p className={styles.stepNote}>Optional — tap again to remove</p>
           <div className={`${styles.gratuityRow} ${styles.indent}`}>
             {GRATUITY_PERCENTS.map((pct) => (
               <button

@@ -3,7 +3,6 @@ import type { Metadata } from 'next';
 import { Reveal } from '@/components/common/Reveal';
 import { SiteFooter } from '@/components/chrome/SiteFooter';
 import { SiteNav } from '@/components/chrome/SiteNav';
-import { StickyBookBar } from '@/components/chrome/StickyBookBar';
 import { BookingForm } from '@/components/booking/BookingForm';
 import { assetUrl } from '@/lib/images';
 import { getSettings } from '@/lib/settings';
@@ -97,7 +96,6 @@ export default async function BookPage() {
       </main>
 
       <SiteFooter />
-      <StickyBookBar hideAction="book" />
     </>
   );
 }

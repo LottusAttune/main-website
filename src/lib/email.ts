@@ -236,7 +236,7 @@ export async function sendDiscoveryCallEmails(input: {
       Join Silvana with this link when it's time: <a href="${DISCOVERY_CALL_MEET_LINK}" style="color:#7c5b3b;">${DISCOVERY_CALL_MEET_LINK}</a>
     </p>
     <p style="margin:18px 0 0;">
-      <a href="${googleCalendarUrl}" style="color:#7c5b3b;">Add to Google Calendar</a> — or open the attached invite for Outlook, Apple Calendar and others.
+      <a href="${googleCalendarUrl}" style="color:#7c5b3b;">Add to Google Calendar</a>, or open the attached invite for Outlook, Apple Calendar and others.
     </p>
     <p style="margin:18px 0 0;">
       Need a different time? <a href="${rescheduleUrl}" style="color:#7c5b3b;">Reschedule your call</a>
@@ -367,7 +367,7 @@ export async function sendDocumentEmail(input: {
   let body: string;
 
   if (input.kind === 'proposal') {
-    subject = `Your Lotus Attune proposal — ${input.number}`;
+    subject = `Your Lotus Attune proposal, ${input.number}`;
     body = `
       <p style="margin:0 0 10px;">Hi ${escapeHtml(first)},</p>
       <p style="margin:0;">Thank you for your booking request. Your proposal is below${input.pdf ? ' and attached as a PDF' : ''}. When you're ready, accept it online and Silvana will confirm your date.</p>
@@ -377,7 +377,7 @@ export async function sendDocumentEmail(input: {
       <p style="margin:12px 0 0;font-size:13px;">Questions or changes? Just reply to this email.</p>
       ${mottoHtml()}`;
   } else if (input.kind === 'invoice') {
-    subject = `Invoice ${input.number} from Lotus Attune — ${money(input.total)}`;
+    subject = `Invoice ${input.number} from Lotus Attune: ${money(input.total)}`;
     body = `
       <p style="margin:0 0 10px;">Hi ${escapeHtml(first)},</p>
       <p style="margin:0;">Please find your invoice below${input.pdf ? ' and attached as a PDF' : ''}.${input.dueOn ? ` Payment is due by <strong>${formatStudioDate(input.dueOn)}</strong>.` : ''}</p>
@@ -389,7 +389,7 @@ export async function sendDocumentEmail(input: {
     subject = `A Lotus Attune gift certificate for you`;
     body = `
       <p style="margin:0 0 10px;">Hi ${escapeHtml(first)},</p>
-      <p style="margin:0;">Someone thought of you. Your Lotus Attune gift certificate is ${input.pdf ? 'attached' : 'below'} — a two-hour immersive sound experience in downtown Toronto, ready whenever you are.</p>
+      <p style="margin:0;">Someone thought of you. Your Lotus Attune gift certificate is ${input.pdf ? 'attached' : 'below'}: a two-hour immersive sound experience in downtown Toronto, ready whenever you are.</p>
       ${input.summaryHtml}
       ${input.giftCode ? `<p style="margin:0 0 6px;">Your redemption code: <strong style="letter-spacing:0.12em;">${escapeHtml(input.giftCode)}</strong></p>` : ''}
       <p style="margin:0;">To redeem, book at <a href="${SITE.url}/book" style="color:#7c5b3b;">lotusattune.com/book</a> and enter your code.</p>
@@ -469,18 +469,20 @@ export async function sendBookingRequestEmails(input: {
 
   const client = sendEmail({
     to: input.email,
-    subject: `Your request is with Silvana — ${formatStudioDate(input.sessionDate)}`,
+    subject: `Request received: Lotus Attune, ${formatStudioDate(input.sessionDate)}`,
     html: wrapperHtml(`
       <p style="margin:0 0 10px;">Hi ${escapeHtml(first)},</p>
-      <p style="margin:0;">Thank you — your request has reached Silvana. She confirms every booking personally and will be in touch shortly with a proposal for your review.</p>
+      <p style="margin:0 0 14px;">Thank you for your request. It has been received.</p>
+      <p style="margin:0 0 6px;"><strong>What you can expect</strong><br />We will review your request within 24 hours and come back to you with a proposal by email.</p>
+      <p style="margin:0;"><strong>What you can do</strong><br />You can start preparing. Comfortable clothing and warm socks are all you need. Everything else is provided.</p>
       ${details}
-      <p style="margin:0;">If you need to reach her sooner, reply to this email or call ${SITE.phone}.</p>
+      <p style="margin:0;">Need to reach us sooner? Reply to this email or call ${SITE.phone}.</p>
       ${mottoHtml()}`),
   });
 
   const owner = sendEmail({
     to: SITE.email,
-    subject: `New booking request: ${input.name} — ${formatStudioDate(input.sessionDate)} · ${money(input.total)}`,
+    subject: `New booking request: ${input.name}, ${formatStudioDate(input.sessionDate)}, ${money(input.total)}`,
     html: wrapperHtml(`
       <p style="margin:0 0 10px;">A new booking request just landed in the studio.</p>
       ${details}
@@ -589,7 +591,7 @@ export async function sendBookingConfirmationEmail(input: SessionEmailInput): Pr
 
   return sendEmail({
     to: input.email,
-    subject: `Confirmed: your Lotus Attune experience — ${formatStudioDate(input.sessionDate)}`,
+    subject: `Confirmed: your Lotus Attune experience on ${formatStudioDate(input.sessionDate)}`,
     html,
     attachments: [{ filename: 'lotus-attune-session.ics', content: Buffer.from(input.ics, 'utf8') }],
   });
@@ -608,7 +610,7 @@ export async function sendReminderEmail(input: SessionEmailInput): Promise<Email
 
   return sendEmail({
     to: input.email,
-    subject: `See you soon — ${formatStudioDate(input.sessionDate)} at ${input.sessionTime}`,
+    subject: `See you soon: ${formatStudioDate(input.sessionDate)} at ${input.sessionTime}`,
     html,
     attachments: [{ filename: 'lotus-attune-session.ics', content: Buffer.from(input.ics, 'utf8') }],
   });
@@ -635,7 +637,7 @@ export async function sendReceiptEmail(input: {
           : 'your payment';
   return sendEmail({
     to: input.email,
-    subject: `Payment received — ${money(input.amount)} · ${input.number}`,
+    subject: `Payment received: ${money(input.amount)} for ${input.number}`,
     html: wrapperHtml(`
       <p style="margin:0 0 10px;">Hi ${escapeHtml(first)},</p>
       <p style="margin:0;">Thank you - we received ${what} of <strong>${money(input.amount)}</strong> by ${escapeHtml(input.method)} against ${escapeHtml(input.number)}.${input.balanceDue > 0 ? ` The remaining balance is ${money(input.balanceDue)}.` : ' Your account is settled.'}</p>

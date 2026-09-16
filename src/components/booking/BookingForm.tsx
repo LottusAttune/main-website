@@ -236,6 +236,9 @@ export function BookingForm({
       }
 
       setSubmitted(true);
+      // The confirmation replaces a long form; bring it into view rather
+      // than leaving the reader where the button used to be.
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     } catch (error) {
       setSubmitError(
         error instanceof Error
@@ -249,11 +252,27 @@ export function BookingForm({
 
   if (submitted) {
     return (
-      <div className={`card ${styles.success}`} role="status">
-        <h2 className={styles.successTitle}>Your request is with Silvana</h2>
-        <p className={styles.successBody}>
-          She confirms every booking personally and will be in touch shortly. If
-          you need to reach her sooner, write to{' '}
+      <div className={`card ${styles.success}`} role="status" tabIndex={-1} ref={(el) => el?.focus()}>
+        <h2 className={styles.successTitle}>Request confirmed</h2>
+        <p className={styles.successBody}>Thank you for your request.</p>
+        <div className={styles.successGrid}>
+          <div>
+            <div className={styles.successLabel}>What you can expect</div>
+            <p className={styles.successBody}>
+              We&rsquo;ll review your request within 24 hours and come back to you
+              with a proposal by email.
+            </p>
+          </div>
+          <div>
+            <div className={styles.successLabel}>What you can do</div>
+            <p className={styles.successBody}>
+              You can start preparing: comfortable clothing and warm socks are all
+              you need. Everything else is provided.
+            </p>
+          </div>
+        </div>
+        <p className={styles.successNote}>
+          Need to reach us sooner? Write to{' '}
           <a href={`mailto:${SITE.email}`}>{SITE.email}</a> or call {SITE.phone}.
         </p>
       </div>

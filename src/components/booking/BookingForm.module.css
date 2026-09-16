@@ -444,3 +444,36 @@
   line-height: 1.8;
   color: var(--color-ink-body);
 }
+
+.success:focus {
+  outline: none;
+}
+
+.successGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr));
+  gap: 20px 40px;
+  max-width: 760px;
+  margin: 26px auto 0;
+  text-align: left;
+}
+
+.successLabel {
+  font-size: var(--text-eyebrow);
+  font-weight: 500;
+  letter-spacing: var(--tracking-eyebrow);
+  text-transform: uppercase;
+  color: var(--color-gold-text);
+  margin-bottom: 8px;
+}
+
+.successNote {
+  margin: 26px 0 0;
+  font-size: 14.5px;
+  line-height: 1.7;
+  color: var(--color-ink-body);
+}
+
+.successNote a {
+  color: var(--color-gold-text);
+}

@@ -581,6 +581,10 @@
     text-align: right;
   }
 
+  .payToday .tierLabel {
+    white-space: nowrap;
+  }
+
   /* Slim bar with the running total and a jump to the summary. */
   .mobileBar {
     position: fixed;
@@ -650,4 +654,21 @@
 .etransferRow strong {
   font-weight: 500;
   color: var(--color-ink);
+}
+
+/* The two ways to pay, each under its own heading so the card fee reads as
+   belonging to card only. */
+.payGroup {
+  margin: 0 0 14px;
+}
+
+.payGroupLabel {
+  margin: 0 0 8px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--color-ink);
+}
+
+.payToday .tierChoice {
+  margin-top: 0;
 }

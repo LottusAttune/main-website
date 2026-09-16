@@ -803,46 +803,59 @@ export function BookingForm({
         {people >= 1 ? (
           <div className={styles.payToday}>
             <div className={styles.codeLabel}>Pay today</div>
-            <div className={styles.tierChoice} role="radiogroup" aria-label="Pay today">
-              {depositOffered ? (
+
+            <div className={styles.payGroup}>
+              <div className={styles.payGroupLabel}>
+                By card{payTerms.cardFeePercent > 0 ? ` · ${payTerms.cardFeePercent}% card fee` : ''}
+              </div>
+              <div className={styles.tierChoice} role="radiogroup" aria-label="Pay by card">
+                {depositOffered ? (
+                  <button
+                    type="button"
+                    role="radio"
+                    aria-checked={plan === 'deposit'}
+                    className={`${styles.timeBtn} ${plan === 'deposit' ? styles.timeBtnOn : ''}`}
+                    onClick={() => setPlan('deposit')}
+                  >
+                    <span className={styles.tierLabel}>{payTerms.depositPercent}% deposit</span>
+                    <span className={styles.timeNote}>
+                      {money(depositWithFee)} now, {money(invoiceTotal - depositNow)} {payTerms.balanceDaysBefore} days before
+                    </span>
+                  </button>
+                ) : null}
                 <button
                   type="button"
                   role="radio"
-                  aria-checked={plan === 'deposit'}
-                  className={`${styles.timeBtn} ${plan === 'deposit' ? styles.timeBtnOn : ''}`}
-                  onClick={() => setPlan('deposit')}
+                  aria-checked={plan === 'full' || (!depositOffered && plan !== 'etransfer')}
+                  className={`${styles.timeBtn} ${plan === 'full' || (!depositOffered && plan !== 'etransfer') ? styles.timeBtnOn : ''}`}
+                  onClick={() => setPlan('full')}
                 >
-                  <span className={styles.tierLabel}>{payTerms.depositPercent}% deposit</span>
-                  <span className={styles.timeNote}>
-                    {money(depositWithFee)} now, {money(invoiceTotal - depositNow)} {payTerms.balanceDaysBefore} days before
-                  </span>
+                  <span className={styles.tierLabel}>Pay in full</span>
+                  <span className={styles.timeNote}>{money(fullWithFee)} now, nothing more to pay</span>
                 </button>
-              ) : null}
-              <button
-                type="button"
-                role="radio"
-                aria-checked={plan === 'full' || (!depositOffered && plan !== 'etransfer')}
-                className={`${styles.timeBtn} ${plan === 'full' || (!depositOffered && plan !== 'etransfer') ? styles.timeBtnOn : ''}`}
-                onClick={() => setPlan('full')}
-              >
-                <span className={styles.tierLabel}>Pay in full</span>
-                <span className={styles.timeNote}>{money(fullWithFee)} now, nothing more to pay</span>
-              </button>
-              <button
-                type="button"
-                role="radio"
-                aria-checked={plan === 'etransfer'}
-                className={`${styles.timeBtn} ${plan === 'etransfer' ? styles.timeBtnOn : ''}`}
-                onClick={() => setPlan('etransfer')}
-              >
-                <span className={styles.tierLabel}>E-transfer, in full</span>
-                <span className={styles.timeNote}>{money(invoiceTotal)} by Interac, no card fee</span>
-              </button>
+              </div>
             </div>
+
+            <div className={styles.payGroup}>
+              <div className={styles.payGroupLabel}>By Interac e-transfer · no fee</div>
+              <div className={styles.tierChoice} role="radiogroup" aria-label="Pay by e-transfer">
+                <button
+                  type="button"
+                  role="radio"
+                  aria-checked={plan === 'etransfer'}
+                  className={`${styles.timeBtn} ${plan === 'etransfer' ? styles.timeBtnOn : ''}`}
+                  onClick={() => setPlan('etransfer')}
+                >
+                  <span className={styles.tierLabel}>Pay in full</span>
+                  <span className={styles.timeNote}>{money(invoiceTotal)} now, no card fee</span>
+                </button>
+              </div>
+            </div>
+
             <div className={styles.estimateNote}>
               {plan === 'etransfer'
-                ? `${payTerms.taxRatePercent > 0 ? `Includes ${payTerms.taxLabel} ${payTerms.taxRatePercent}%. ` : ''}E-transfer is paid in full, in one go, with no card fee. You send it from your bank; the details follow on the next screen and by email. Your booking is confirmed as soon as we receive the transfer.`
-                : `${payTerms.taxRatePercent > 0 ? `Includes ${payTerms.taxLabel} ${payTerms.taxRatePercent}%${payTerms.cardFeePercent > 0 ? ` and the ${payTerms.cardFeePercent}% card fee` : ''}. ` : payTerms.cardFeePercent > 0 ? `Includes the ${payTerms.cardFeePercent}% card fee. ` : ''}Card, Apple Pay and Google Pay on the secure Stripe page.`}
+                ? `${payTerms.taxRatePercent > 0 ? `Includes ${payTerms.taxLabel} ${payTerms.taxRatePercent}%. ` : ''}You send the e-transfer from your bank; the details follow on the next screen and by email. Your booking is confirmed as soon as we receive the transfer.`
+                : `${payTerms.taxRatePercent > 0 ? `Includes ${payTerms.taxLabel} ${payTerms.taxRatePercent}%. ` : ''}Card, Apple Pay and Google Pay on the secure Stripe page.${plan === 'deposit' && depositOffered ? ' The balance is charged to the same card automatically.' : ''}`}
             </div>
           </div>
         ) : null}

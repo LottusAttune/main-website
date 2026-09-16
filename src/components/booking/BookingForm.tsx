@@ -10,6 +10,7 @@ import { quoteFor } from '@/lib/quote';
 import type { DiscountCode, Pricing, Slots } from '@/lib/settings';
 import {
   CORPORATE_INTRO_MIN_PARTICIPANTS,
+  corporateIntroPriceFor,
   MAX_PARTICIPANTS,
   SITE,
   TEAM_ADDON_MIN_PARTICIPANTS,
@@ -428,7 +429,7 @@ export function BookingForm({
                 const n = i + 7;
                 return (
                   <option key={n} value={n}>
-                    {n} participants — {money(groupPriceFor(n))}
+                    {n} participants
                   </option>
                 );
               })}
@@ -472,7 +473,9 @@ export function BookingForm({
                 onClick={() => setIsCorporateIntro(false)}
               >
                 <span className={styles.tierLabel}>Standard group</span>
-                <span className={styles.timeNote}>Per-participant group rate</span>
+                <span className={styles.timeNote}>
+                  {money(groupPriceFor(people))} — per-participant group rate
+                </span>
               </button>
               <button
                 type="button"
@@ -482,7 +485,7 @@ export function BookingForm({
               >
                 <span className={styles.tierLabel}>Corporate Introductory</span>
                 <span className={styles.timeNote}>
-                  First-time organizational clients
+                  {money(corporateIntroPriceFor(people))} — first-time organizational clients
                 </span>
               </button>
             </div>

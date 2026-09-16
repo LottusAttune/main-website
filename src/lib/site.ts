@@ -109,6 +109,19 @@ export const CORPORATE_INTRO_MIN_PARTICIPANTS = 7;
 export const CORPORATE_INTRO_BASE_PRICE = 1300;
 export const CORPORATE_INTRO_PER_PARTICIPANT = 100;
 
+/**
+ * The one place this formula is computed - both the quote engine
+ * (src/lib/quote.ts) and the Book page's tier-choice cards call this, so a
+ * displayed price can never drift from what's actually charged.
+ */
+export function corporateIntroPriceFor(participants: number): number {
+  return (
+    CORPORATE_INTRO_BASE_PRICE +
+    Math.max(0, participants - CORPORATE_INTRO_MIN_PARTICIPANTS) *
+      CORPORATE_INTRO_PER_PARTICIPANT
+  );
+}
+
 /** The team-building add-on doesn't make sense for a small group. */
 export const TEAM_ADDON_MIN_PARTICIPANTS = 7;
 

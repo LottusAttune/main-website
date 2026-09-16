@@ -1,8 +1,7 @@
 import type { Pricing } from '@/lib/settings';
 import {
-  CORPORATE_INTRO_BASE_PRICE,
   CORPORATE_INTRO_MIN_PARTICIPANTS,
-  CORPORATE_INTRO_PER_PARTICIPANT,
+  corporateIntroPriceFor,
   groupPriceFor,
   TEAM_ADDON_MIN_PARTICIPANTS,
 } from '@/lib/site';
@@ -80,9 +79,7 @@ export function quoteFor(
     input.isCorporateIntro &&
     people >= CORPORATE_INTRO_MIN_PARTICIPANTS
   ) {
-    subtotal =
-      CORPORATE_INTRO_BASE_PRICE +
-      (people - CORPORATE_INTRO_MIN_PARTICIPANTS) * CORPORATE_INTRO_PER_PARTICIPANT;
+    subtotal = corporateIntroPriceFor(people);
     lines.push({
       label: `Corporate introductory experience — ${people} participants`,
       value: money(subtotal),

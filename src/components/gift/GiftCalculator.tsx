@@ -492,20 +492,14 @@ export function GiftCalculator({ pricing, codes, payTerms }: Props) {
           <>
             <div className={styles.certificateFrame}>
               <div className={styles.asideTitle}>Gift Certificate</div>
-              <div className={styles.presentedTo}>
-                {recipientName.trim() ? (
-                  <>
-                    For <strong>{recipientName.trim()}</strong>
-                  </>
-                ) : (
-                  <span className={styles.presentedToPlaceholder}>
-                    For —
-                  </span>
-                )}
-              </div>
+              {recipientName.trim() ? (
+                <div className={styles.presentedTo}>
+                  For <strong>{recipientName.trim()}</strong>
+                </div>
+              ) : null}
               <div className={styles.lines}>
                 {quote.lines.map((line) => (
-                  <div key={line.label} className="summary-line summary-line--dark">
+                  <div key={line.label} className="summary-line">
                     <span className="summary-line__label">{line.label}</span>
                     <span
                       className="summary-line__value"
@@ -522,29 +516,17 @@ export function GiftCalculator({ pricing, codes, payTerms }: Props) {
               </div>
             </div>
 
-            <IncludedModal
-              triggerClassName={`btn btn--outline-dark btn--wide ${styles.includedBtn}`}
-            />
-
-            <button
-              type="button"
-              className={`btn btn--outline-dark btn--wide ${styles.previewBtn}`}
-              style={{ marginBottom: 12 }}
-              onClick={() => setPreviewOpen(true)}
-            >
-              Preview certificate
-            </button>
-
             <div className={styles.codeBlock}>
-              <label className={styles.codeLabel} htmlFor="gift-discount-code">
+              <label className="visually-hidden" htmlFor="gift-discount-code">
                 Discount code
               </label>
               <div className={styles.codeRow}>
                 <input
                   id="gift-discount-code"
-                  className="field field--dark"
+                  className={`field ${styles.codeInput}`}
                   type="text"
-                  placeholder="Enter code"
+                  placeholder="Enter discount code"
+                  style={{ textTransform: 'uppercase' }}
                   value={codeInput}
                   disabled={Boolean(code.applied)}
                   onChange={(e) => setCodeInput(e.target.value)}
@@ -567,9 +549,13 @@ export function GiftCalculator({ pricing, codes, payTerms }: Props) {
               ) : null}
             </div>
 
+            <IncludedModal
+              triggerClassName={`btn btn--outline btn--wide ${styles.includedBtn}`}
+            />
+
             <div className={styles.fields}>
               <input
-                className={`field field--dark ${invalid('recipientName') ? 'field--invalid' : ''}`}
+                className={`field ${invalid('recipientName') ? 'field--invalid' : ''}`}
                 type="text"
                 placeholder="Recipient name"
                 aria-label="Recipient name"
@@ -578,7 +564,7 @@ export function GiftCalculator({ pricing, codes, payTerms }: Props) {
                 onChange={(e) => setRecipientName(e.target.value)}
               />
               <input
-                className={`field field--dark ${invalid('recipientEmail') ? 'field--invalid' : ''}`}
+                className={`field ${invalid('recipientEmail') ? 'field--invalid' : ''}`}
                 type="email"
                 placeholder="Recipient's email (optional)"
                 aria-label="Recipient's email (optional)"
@@ -588,7 +574,7 @@ export function GiftCalculator({ pricing, codes, payTerms }: Props) {
                 onChange={(e) => setRecipientEmail(e.target.value)}
               />
               <input
-                className={`field field--dark ${invalid('buyerName') ? 'field--invalid' : ''}`}
+                className={`field ${invalid('buyerName') ? 'field--invalid' : ''}`}
                 type="text"
                 placeholder="Your name"
                 aria-label="Your name"
@@ -606,7 +592,7 @@ export function GiftCalculator({ pricing, codes, payTerms }: Props) {
                 Keep my name off the certificate
               </label>
               <input
-                className={`field field--dark ${invalid('buyerEmail') ? 'field--invalid' : ''}`}
+                className={`field ${invalid('buyerEmail') ? 'field--invalid' : ''}`}
                 type="email"
                 placeholder="Your email"
                 aria-label="Your email"
@@ -616,6 +602,17 @@ export function GiftCalculator({ pricing, codes, payTerms }: Props) {
                 onChange={(e) => setBuyerEmail(e.target.value)}
               />
             </div>
+
+            <button
+              type="button"
+              className={`btn btn--outline btn--wide ${styles.previewBtn}`}
+              style={{ marginBottom: 12 }}
+              onClick={() => setPreviewOpen(true)}
+            >
+              Preview certificate
+            </button>
+
+            <div className={styles.payTitle}>Make your payment</div>
 
             <div className={styles.payChoice} role="radiogroup" aria-label="How would you like to pay?">
               <button
@@ -647,7 +644,7 @@ export function GiftCalculator({ pricing, codes, payTerms }: Props) {
 
             <button
               type="button"
-              className="btn btn--cream btn--wide"
+              className="btn btn--dark btn--wide"
               disabled={submitting || redirecting}
               onClick={submit}
             >

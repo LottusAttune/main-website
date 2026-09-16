@@ -124,18 +124,14 @@
 .aside {
   position: sticky;
   top: 110px;
-  background: var(--gradient-deep);
+  background: var(--gradient-beige);
+  border: 1px solid var(--hairline-light);
   border-radius: 0;
   overflow: hidden;
-  box-shadow: var(--shadow-card-dark);
-  color: var(--color-cream-text-soft);
+  box-shadow: var(--shadow-card);
+  color: var(--color-ink-body);
   padding: clamp(16px, 2vw, 22px) clamp(16px, 2.2vw, 24px);
   min-width: 0;
-}
-
-/* Softer than a full pill, matching Booking's Request Booking button. */
-.aside :global(.btn--cream) {
-  border-radius: var(--radius-thumb);
 }
 
 .codeBlock {
@@ -147,8 +143,13 @@
   font-size: 11px;
   letter-spacing: 0.24em;
   text-transform: uppercase;
-  color: var(--color-gold-light);
+  color: var(--color-gold-text);
   margin-bottom: 10px;
+}
+
+.codeInput::placeholder {
+  color: var(--color-gold-text);
+  opacity: 1;
 }
 
 .codeRow {
@@ -160,10 +161,10 @@
   flex: none;
   padding: 14px 20px;
   min-height: 50px;
-  border: 1px solid rgba(239, 230, 218, 0.28);
+  border: 1px solid rgba(59, 46, 36, 0.28);
   border-radius: var(--radius-thumb);
   background: transparent;
-  color: var(--color-cream-text);
+  color: var(--color-gold-text);
   font-size: 11px;
   letter-spacing: 0.16em;
   cursor: pointer;
@@ -173,7 +174,7 @@
 }
 
 .codeApply:hover {
-  border-color: var(--color-gold-light);
+  border-color: var(--color-gold-deep);
   background: rgba(198, 169, 122, 0.14);
 }
 
@@ -184,18 +185,18 @@
 }
 
 .codeOk {
-  color: var(--color-gold-light);
+  color: var(--color-gold-text);
 }
 
 .codeBad {
-  color: #e8a78c;
+  color: var(--status-alert);
 }
 
 .asideTitle {
   font-size: 11px;
   letter-spacing: 0.32em;
   text-transform: uppercase;
-  color: var(--color-gold-light);
+  color: var(--color-gold-text);
   margin-bottom: 12px;
 }
 
@@ -228,13 +229,8 @@
   font-family: var(--font-display);
   font-weight: 400;
   font-size: 19px;
-  color: var(--color-cream-text);
+  color: var(--color-ink);
   margin-bottom: 10px;
-}
-
-.presentedToPlaceholder {
-  color: var(--color-cream-text-soft);
-  font-style: italic;
 }
 
 .lines {
@@ -249,7 +245,7 @@
   justify-content: space-between;
   gap: 18px;
   padding: 10px 0 0;
-  border-top: 1px solid rgba(239, 230, 218, 0.35);
+  border-top: 1px solid var(--hairline-light-strong);
   margin-top: 4px;
 }
 
@@ -257,23 +253,17 @@
   font-size: 11px;
   letter-spacing: 0.24em;
   text-transform: uppercase;
-  color: var(--color-gold-light);
+  color: var(--color-gold-text);
 }
 
 /* Body font, not the display serif - Cormorant's "1" has no base flag and
-   reads as a capital I at this size, which matters on a price.
-
-   Color: bright cream-text at 600 weight read as shouting against this
-   card's dark background - dimmed to the same solid, softer tone already
-   used for dark-background body copy elsewhere on the site (still clears
-   contrast comfortably), so the total is legible without being the
-   loudest thing on the card. */
+   reads as a capital I at this size, which matters on a price. */
 .totalValue {
   font-family: var(--font-body);
   font-weight: 400;
   font-size: clamp(19px, 1.9vw, 21px);
   line-height: 1;
-  color: #d7cbb6;
+  color: var(--color-ink);
 }
 
 .fields {
@@ -293,7 +283,7 @@
   gap: 8px;
   padding: 2px 2px 4px;
   font-size: 13px;
-  color: var(--color-cream-text-soft);
+  color: var(--color-gold-text);
   cursor: pointer;
 }
 
@@ -308,7 +298,7 @@
   margin: 10px 0 0;
   font-size: 13.5px;
   line-height: 1.75;
-  color: var(--color-cream-text-soft);
+  color: var(--color-muted);
 }
 
 @media (max-width: 1079px) {
@@ -318,36 +308,49 @@
 }
 
 .note a {
-  color: var(--color-gold-light);
+  color: var(--color-gold-text);
 }
 
 .error {
   margin-top: 16px;
   font-size: 14px;
   line-height: 1.6;
-  color: #e8a78c;
+  color: var(--status-alert);
 }
 
 .success {
   font-size: 16px;
   line-height: 1.8;
-  color: var(--color-cream-text);
+  color: var(--color-ink);
 }
 
 .sentCert {
   margin-top: 16px;
 }
 
+/* Bigger and heavier than the card's small eyebrow labels (GIFT
+   CERTIFICATE, TOTAL) - this is where money actually changes hands, same
+   treatment as Book's own "Make your payment" title. */
+.payTitle {
+  font-size: 16.5px;
+  font-weight: 500;
+  color: var(--color-ink);
+  margin-bottom: 14px;
+}
+
 /* Someone landing on /gift directly (skipping Offerings) had no way to see
    what's actually in a session before buying one as a gift - same fix as
-   Offerings' own "See What's Included" link, same treatment as
-   Preview certificate just below it. */
+   Offerings' own "See What's Included" link and Book's own, on this same
+   light card. */
 .includedBtn.includedBtn {
-  background: transparent;
+  background: var(--color-cream-raised);
+  border-width: 1.5px;
+  border-color: var(--gold-rim);
   padding: 12px 24px;
   min-height: 42px;
   margin-bottom: 10px;
   border-radius: 0;
+  color: var(--color-ink);
 }
 
 .includedBtn.includedBtn:hover {
@@ -356,29 +359,25 @@
 
 /* ---------- Certificate preview modal ---------- */
 
-/* .btn--outline-dark ships with no background of its own (every existing
-   use supplies one) - here that's genuinely transparent, so it reads as a
-   secondary action against the aside's own dark background rather than a
-   solid pill like Request Gift Certificate below it. */
 .previewBtn.previewBtn {
-  background: transparent;
+  background: var(--color-cream-raised);
+  border-width: 1.5px;
+  border-color: var(--gold-rim);
   padding: 12px 24px;
   min-height: 42px;
   border-radius: 0;
+  color: var(--color-ink);
 }
 
 .previewBtn.previewBtn:hover {
   background: rgba(198, 169, 122, 0.14);
 }
 
-/* Solid white, not a cream token - the whole cream-text ramp
-   (soft/default/bright) clusters within ~10 units of each other, too close
-   to read as an actual fix for "washed out" against this dark gradient. */
 .policyNote {
   margin: 0 0 14px;
   font-size: var(--text-body-sm);
-  font-weight: 500;
-  color: #ffffff;
+  font-weight: 400;
+  color: var(--color-muted);
 }
 
 .policyLink {
@@ -388,7 +387,7 @@
   background: none;
   font: inherit;
   font-weight: 500;
-  color: var(--color-gold-pale);
+  color: var(--color-gold-text);
   text-decoration: underline;
   cursor: pointer;
 }
@@ -435,21 +434,21 @@
   gap: 6px 14px;
   width: 100%;
   padding: 12px 16px;
-  border: 1px solid rgba(243, 236, 226, 0.35);
+  border: 1px solid rgba(59, 46, 36, 0.22);
   border-radius: 0;
-  background: transparent;
-  color: var(--color-cream-text);
+  background: var(--color-cream-raised);
+  color: var(--color-ink);
   font-size: 15px;
   text-align: left;
   cursor: pointer;
 }
 
 .payChoiceOn {
-  border-color: var(--color-gold);
-  background: rgba(198, 169, 122, 0.16);
+  border-color: var(--color-gold-deep);
+  background: rgba(198, 169, 122, 0.22);
 }
 
 .payChoiceNote {
   font-size: 13px;
-  color: var(--color-cream-text);
+  color: var(--color-ink-body);
 }

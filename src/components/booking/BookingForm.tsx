@@ -592,7 +592,8 @@ export function BookingForm({
                   <span className="toggle-row__dot" />
                   <span style={{ minWidth: 0, textAlign: 'left' }}>
                     <span style={{ display: 'block', fontSize: 16.5, marginBottom: 4 }}>
-                      Customized mindful team-building activity
+                      Customized mindful team-building activity — for
+                      organizations and corporate teams
                     </span>
                     <span
                       style={{
@@ -602,8 +603,10 @@ export function BookingForm({
                         color: 'var(--color-muted)',
                       }}
                     >
-                      45-minute session extension — for organizations and corporate
-                      teams
+                      45-minute extension, featuring a facilitated activity
+                      focused on recognition, values alignment, mindful
+                      communication, and team connection — customized to your
+                      team objectives
                     </span>
                   </span>
                 </span>
@@ -766,30 +769,29 @@ export function BookingForm({
           </div>
         ) : null}
 
-        <div className={`summary-line ${needsSecond ? styles.dateTimeStack : ''}`}>
-          <span className="summary-line__label">Date &amp; time</span>
-          {needsSecond ? (
-            <>
+        {date ? (
+          <div className={`summary-line ${needsSecond ? styles.dateTimeStack : ''}`}>
+            <span className="summary-line__label">Date &amp; time</span>
+            {needsSecond ? (
+              <>
+                <span className="summary-line__value">
+                  {date.toLocaleDateString('en-CA', { month: 'short', day: 'numeric' })}
+                  {' · '}
+                  <span className={styles.dateTimeNote}>Split across two sessions</span>
+                </span>
+                <span className={styles.dateTimeNote}>
+                  {time ?? '—'}
+                  {time2 ? ` + ${time2}` : ''}
+                </span>
+              </>
+            ) : (
               <span className="summary-line__value">
-                {date
-                  ? date.toLocaleDateString('en-CA', { month: 'short', day: 'numeric' })
-                  : '—'}
-                {' · Split across two sessions'}
+                {date.toLocaleDateString('en-CA', { month: 'short', day: 'numeric' })}
+                {time ? ` · ${time}` : ''}
               </span>
-              <span className={styles.dateTimeNote}>
-                {time ?? '—'}
-                {time2 ? ` + ${time2}` : ''}
-              </span>
-            </>
-          ) : (
-            <span className="summary-line__value">
-              {date
-                ? date.toLocaleDateString('en-CA', { month: 'short', day: 'numeric' })
-                : '—'}
-              {time ? ` · ${time}` : ''}
-            </span>
-          )}
-        </div>
+            )}
+          </div>
+        ) : null}
 
         <div className={styles.codeBlock}>
           <label className="visually-hidden" htmlFor="discount-code">

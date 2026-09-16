@@ -397,24 +397,8 @@
 /* Someone landing on /book directly (skipping Offerings) had no way to
    check what's actually included before requesting a session - same link
    Offerings' own estimate box already has. */
-/* Same button as the Offerings estimate box: dark fill, gold rim, softer
-   corners, so the three pages read as one. */
-.includedBtn.includedBtn {
+.includedBtn {
   margin: 16px 0 10px;
-  min-height: 38px;
-  padding: 9px 30px;
-  border-radius: var(--radius-thumb);
-  border-width: 1.5px;
-  border-color: var(--color-gold-light);
-  background: var(--color-ink-deepest);
-  color: var(--color-cream-text);
-  box-shadow: var(--shadow-pill-dark);
-}
-
-.includedBtn.includedBtn:hover {
-  border-color: var(--color-gold-light);
-  background: var(--color-ink-deep);
-  color: var(--color-cream-text);
 }
 
 .policyNote {

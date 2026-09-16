@@ -868,7 +868,7 @@ export function BookingForm({
         ) : null}
 
         <IncludedModal
-          triggerClassName={`btn btn--sm btn--outline-dark btn--wide ${styles.includedBtn}`}
+          triggerClassName={`btn btn--outline btn--wide ${styles.includedBtn}`}
         />
 
         <label className={styles.agree}>

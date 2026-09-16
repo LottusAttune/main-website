@@ -523,7 +523,7 @@ export function GiftCalculator({ pricing, codes, payTerms }: Props) {
             </div>
 
             <IncludedModal
-              triggerClassName={`btn btn--sm btn--outline-dark btn--wide ${styles.includedBtn}`}
+              triggerClassName={`btn btn--outline-dark btn--wide ${styles.includedBtn}`}
             />
 
             <button

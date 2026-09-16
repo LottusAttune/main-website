@@ -112,7 +112,7 @@ export function PortalView({ data }: { data: PortalData }) {
                         ? booking.cardOnFile
                           ? `The balance is charged to your card on file ${settings.business.balanceDaysBefore} calendar days before the session${data.balanceDay ? `, on ${formatStudioDate(data.balanceDay)}` : ''}.`
                           : `The balance is due ${settings.business.balanceDaysBefore} calendar days before the session${data.balanceDay ? `, by ${formatStudioDate(data.balanceDay)}` : ''}. Pay by card below, or by e-transfer using the details on your invoice.`
-                        : `A ${settings.business.depositPercent}% deposit confirms your date. Pay by card below, or by e-transfer using the details on your invoice.`}
+                        : `A ${settings.business.depositPercent}% deposit by card confirms your date, or send the full amount by Interac e-transfer using the details on your invoice.`}
                   </p>
                   <div className={styles.actions}>
                     {data.balance > 0 && data.payUrl && !(data.paid > 0 && booking.cardOnFile) ? (

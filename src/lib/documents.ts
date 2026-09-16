@@ -949,7 +949,6 @@ export function paymentOptionsHtml(
 ): string {
   const deposit = depositDue(doc, business);
   const outstanding = doc.total - doc.paidAmount;
-  const askNow = deposit ?? outstanding;
   const balanceDay = balanceDueOn(booking?.sessionDate ?? null, business);
   const parts: string[] = [];
 
@@ -971,7 +970,7 @@ export function paymentOptionsHtml(
   }
 
   parts.push(
-    `<p style="margin:0 0 8px;"><strong>E-transfer</strong>: send ${money(askNow)}${deposit !== null ? ' (the deposit)' : ''}, no processing fee.</p>` +
+    `<p style="margin:0 0 8px;"><strong>Interac e-transfer</strong>: ${money(outstanding)}${deposit !== null ? ' in full (no deposit plan by e-transfer)' : ''}, no fee.</p>` +
       (business.paymentInstructions
         ? paragraphs(business.paymentInstructions)
         : `<p class="muted" style="margin:0 0 8px;">Reply to this email for e-transfer details.</p>`)

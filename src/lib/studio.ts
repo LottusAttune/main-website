@@ -9,6 +9,7 @@ import {
   STAGE_KEYS,
   type ActivityEntry,
   type BookingRow,
+  buildContacts,
   type Client,
   type GiftCard,
   type Lead,
@@ -163,49 +164,6 @@ export async function getStudioData(): Promise<StudioData> {
     createdAt: new Date(String(row.created_at)).toISOString(),
   }));
 
-  // Paid money per client email, from settled invoice payments.
-  const paidByBooking = new Map<string, number>();
-  for (const p of payments) {
-    if (!p.bookingId || p.kind === 'refund' || p.kind === 'cancellation_fee') continue;
-    paidByBooking.set(p.bookingId, (paidByBooking.get(p.bookingId) ?? 0) + p.amount);
-  }
-
-  // Clients are derived, not stored — one row per email that has ever booked.
-  const byEmail = new Map<string, Client>();
-  for (const lead of leads) {
-    if (lead.status !== 'booked' && lead.status !== 'complete') continue;
-    const paid = paidByBooking.get(lead.id) ?? 0;
-    const existing = byEmail.get(lead.email);
-    if (existing) {
-      existing.sessions += 1;
-      existing.lifetimeValue += lead.total;
-      existing.paidValue += paid;
-      existing.totalParticipants += lead.participants;
-      if (lead.teamAddon) existing.teamAddon = true;
-      if (lead.phone) existing.phone = lead.phone;
-      if (lead.company) existing.company = lead.company;
-      if (
-        lead.sessionDate &&
-        (!existing.lastSession || lead.sessionDate > existing.lastSession)
-      ) {
-        existing.lastSession = lead.sessionDate;
-      }
-    } else {
-      byEmail.set(lead.email, {
-        name: lead.name,
-        email: lead.email,
-        phone: lead.phone,
-        company: lead.company,
-        sessions: 1,
-        totalParticipants: lead.participants,
-        teamAddon: lead.teamAddon,
-        lifetimeValue: lead.total,
-        paidValue: paid,
-        lastSession: lead.sessionDate,
-      });
-    }
-  }
-
   const giftCards: GiftCard[] = giftRows.rows.map((row) => ({
     id: String(row.id),
     recipientName: String(row.recipient_name),
@@ -228,8 +186,22 @@ export async function getStudioData(): Promise<StudioData> {
     bookingId: row.booking_id ? String(row.booking_id) : null,
     giftId: row.gift_id ? String(row.gift_id) : null,
     documentId: row.document_id ? String(row.document_id) : null,
+    clientEmail: row.client_email ? String(row.client_email) : null,
     kind: String(row.kind),
     body: row.body ? String(row.body) : null,
+    createdAt: new Date(String(row.created_at)).toISOString(),
+  }));
+
+  const discoveryCalls = discoveryCallRows.rows.map((row) => ({
+    id: String(row.id),
+    name: String(row.name),
+    email: String(row.email),
+    phone: row.phone ? String(row.phone) : null,
+    company: row.company ? String(row.company) : null,
+    callDate: toIso(row.call_date) ?? '',
+    callTime: String(row.call_time),
+    message: row.message ? String(row.message) : null,
+    status: String(row.status),
     createdAt: new Date(String(row.created_at)).toISOString(),
   }));
 
@@ -244,21 +216,8 @@ export async function getStudioData(): Promise<StudioData> {
       body: String(row.body),
       isPublished: Boolean(row.is_published),
     })),
-    clients: [...byEmail.values()].sort(
-      (a, b) => b.lifetimeValue - a.lifetimeValue
-    ),
-    discoveryCalls: discoveryCallRows.rows.map((row) => ({
-      id: String(row.id),
-      name: String(row.name),
-      email: String(row.email),
-      phone: row.phone ? String(row.phone) : null,
-      company: row.company ? String(row.company) : null,
-      callDate: toIso(row.call_date) ?? '',
-      callTime: String(row.call_time),
-      message: row.message ? String(row.message) : null,
-      status: String(row.status),
-      createdAt: new Date(String(row.created_at)).toISOString(),
-    })),
+    clients: buildContacts({ leads, documents, payments, giftCards, discoveryCalls }),
+    discoveryCalls,
     documents,
     payments,
     paymentLinks: linkRows.rows.map(paymentLinkFromRow),

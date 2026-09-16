@@ -190,6 +190,7 @@ const action = z.discriminatedUnion('action', [
   z.object({ action: z.literal('sendReminder'), bookingId: z.string().uuid() }),
   z.object({ action: z.literal('chargeBalance'), bookingId: z.string().uuid() }),
   z.object({ action: z.literal('sendBalanceRequest'), bookingId: z.string().uuid() }),
+  z.object({ action: z.literal('addClientNote'), email: z.string().trim().email().max(200), body: z.string().trim().min(1).max(2000) }),
   z.object({ action: z.literal('chargeCancellationFee'), bookingId: z.string().uuid() }),
   z.object({ action: z.literal('deleteGift'), id: z.string().uuid() }),
   z.object({
@@ -437,6 +438,11 @@ export async function POST(request: Request) {
         if (!result.ok) return NextResponse.json({ error: result.error }, { status: 502 });
         break;
       }
+
+      case 'addClientNote':
+        await logActivity({ clientEmail: input.email, kind: 'note', body: input.body });
+        revalidatePath('/studio');
+        break;
 
       case 'sendBalanceRequest': {
         const result = await sendBalanceRequest(input.bookingId);

@@ -38,6 +38,8 @@ type Props = {
 
 export function StudioShell({ data, settings, databaseReady }: Props) {
   const [view, setView] = useState<ViewKey>('today');
+  /** A booking to open in the Leads drawer when jumping there from a client card. */
+  const [leadToOpen, setLeadToOpen] = useState<string | null>(null);
   const mark = asset('logo-circle');
 
   const openLeads = data.leads.filter(
@@ -172,6 +174,8 @@ export function StudioShell({ data, settings, databaseReady }: Props) {
             activity={data.activity}
             integrations={data.integrations}
             business={settings.business}
+            openId={leadToOpen}
+            onOpened={() => setLeadToOpen(null)}
           />
         ) : null}
         {view === 'bookings' ? (
@@ -194,7 +198,21 @@ export function StudioShell({ data, settings, databaseReady }: Props) {
           <GiftCards cards={data.giftCards} documents={data.documents} integrations={data.integrations} />
         ) : null}
         {view === 'calls' ? <DiscoveryCalls calls={data.discoveryCalls} /> : null}
-        {view === 'clients' ? <Clients clients={data.clients} /> : null}
+        {view === 'clients' ? (
+          <Clients
+            clients={data.clients}
+            leads={data.leads}
+            documents={data.documents}
+            payments={data.payments}
+            giftCards={data.giftCards}
+            discoveryCalls={data.discoveryCalls}
+            activity={data.activity}
+            onOpenLead={(id) => {
+              setLeadToOpen(id);
+              setView('leads');
+            }}
+          />
+        ) : null}
         {view === 'reviews' ? <Reviews reviews={data.reviews} /> : null}
         {view === 'settings' ? <Settings settings={settings} integrations={data.integrations} /> : null}
       </main>

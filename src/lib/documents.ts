@@ -153,12 +153,14 @@ export async function logActivity(entry: {
   bookingId?: string | null;
   giftId?: string | null;
   documentId?: string | null;
+  clientEmail?: string | null;
   kind: string;
   body?: string | null;
 }): Promise<void> {
   await sql`
-    INSERT INTO activity (booking_id, gift_id, document_id, kind, body)
-    VALUES (${entry.bookingId ?? null}, ${entry.giftId ?? null}, ${entry.documentId ?? null}, ${entry.kind}, ${entry.body ?? null})
+    INSERT INTO activity (booking_id, gift_id, document_id, client_email, kind, body)
+    VALUES (${entry.bookingId ?? null}, ${entry.giftId ?? null}, ${entry.documentId ?? null},
+            ${entry.clientEmail?.trim().toLowerCase() ?? null}, ${entry.kind}, ${entry.body ?? null})
   `.catch((error) => console.error('[activity] insert failed:', error));
 }
 

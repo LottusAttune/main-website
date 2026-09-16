@@ -98,19 +98,150 @@ export type ReviewRow = {
 };
 
 export type Client = {
+  /** Lower-cased email: the key everything about a person is grouped by. */
+  key: string;
   name: string;
   email: string;
   phone: string | null;
   company: string | null;
+  /** Booked or completed sessions. */
   sessions: number;
+  /** Every booking request they ever made, whatever became of it. */
+  requests: number;
   totalParticipants: number;
   /** Ever booked the team-building add-on, across any of their sessions. */
   teamAddon: boolean;
+  /** Quoted value of booked or completed sessions. */
   lifetimeValue: number;
-  /** Sum of invoices marked paid for this email. */
+  /** Money actually received, across all their invoices. */
   paidValue: number;
+  /** Still owed on open invoices. */
+  outstanding: number;
   lastSession: string | null;
+  nextSession: string | null;
+  firstSeen: string;
+  cardOnFile: boolean;
+  termsAcceptedAt: string | null;
+  giftCardsBought: number;
+  discoveryCalls: number;
+  /** Ids of their bookings, newest first, for the card's history. */
+  leadIds: string[];
 };
+
+/** Human labels for the activity feed, shared by every panel. */
+export const ACTIVITY_LABELS: Record<string, string> = {
+  received: 'Request received',
+  stage: 'Stage',
+  note: 'Note',
+  proposal_created: 'Proposal drafted',
+  proposal_sent: 'Proposal sent',
+  proposal_accepted: 'Proposal accepted',
+  proposal_declined: 'Proposal declined',
+  proposal_void: 'Proposal voided',
+  invoice_created: 'Invoice drafted',
+  invoice_sent: 'Invoice sent',
+  invoice_paid: 'Invoice paid',
+  invoice_void: 'Invoice voided',
+  deposit_paid: 'Deposit paid',
+  balance_requested: 'Balance requested',
+  terms_accepted: 'Terms accepted',
+  addon_added: 'Add-on added',
+  confirmation_sent: 'Confirmation sent',
+  reminder_sent: 'Reminder sent',
+  cancelled: 'Cancelled',
+  cancellation_fee_charged: 'Cancellation fee charged',
+  payment_on_void: '⚠ Payment on a void invoice',
+  record_failed: '⚠ Payment not recorded',
+  email_failed: '⚠ Email failed',
+  charge_failed: '⚠ Card charge failed',
+};
+
+/**
+ * Everyone the business has dealt with, one card per email: booking
+ * requests (any stage), gift-card buyers and discovery calls, with the
+ * money side worked out from invoices and payments. Derived, not stored.
+ */
+export function buildContacts(input: {
+  leads: Lead[];
+  documents: DocumentRow[];
+  payments: PaymentRow[];
+  giftCards: GiftCard[];
+  discoveryCalls: DiscoveryCallRow[];
+}): Client[] {
+  const today = new Date().toISOString().slice(0, 10);
+  const byKey = new Map<string, Client>();
+  const keyOf = (email: string) => email.trim().toLowerCase();
+
+  const ensure = (email: string, name: string, phone: string | null, company: string | null, seen: string): Client => {
+    const key = keyOf(email);
+    let c = byKey.get(key);
+    if (!c) {
+      c = {
+        key, name, email, phone, company,
+        sessions: 0, requests: 0, totalParticipants: 0, teamAddon: false,
+        lifetimeValue: 0, paidValue: 0, outstanding: 0,
+        lastSession: null, nextSession: null, firstSeen: seen,
+        cardOnFile: false, termsAcceptedAt: null, giftCardsBought: 0, discoveryCalls: 0, leadIds: [],
+      };
+      byKey.set(key, c);
+    } else {
+      if (seen < c.firstSeen) c.firstSeen = seen;
+      if (phone && !c.phone) c.phone = phone;
+      if (company && !c.company) c.company = company;
+    }
+    return c;
+  };
+
+  const paidByDocument = new Map<string, number>();
+  for (const p of input.payments) {
+    if (!p.documentId || p.kind === 'refund' || p.kind === 'cancellation_fee') continue;
+    paidByDocument.set(p.documentId, (paidByDocument.get(p.documentId) ?? 0) + p.amount);
+  }
+
+  const sortedLeads = [...input.leads].sort((a, b) => (a.createdAt < b.createdAt ? 1 : -1));
+  for (const lead of sortedLeads) {
+    const c = ensure(lead.email, lead.name, lead.phone, lead.company, lead.createdAt);
+    c.requests += 1;
+    c.leadIds.push(lead.id);
+    if (lead.cardOnFile) c.cardOnFile = true;
+    if (lead.termsAcceptedAt && (!c.termsAcceptedAt || lead.termsAcceptedAt > c.termsAcceptedAt)) c.termsAcceptedAt = lead.termsAcceptedAt;
+    const live = lead.status === 'booked' || lead.status === 'complete';
+    if (live) {
+      c.sessions += 1;
+      c.totalParticipants += lead.participants;
+      c.lifetimeValue += lead.total;
+      if (lead.teamAddon) c.teamAddon = true;
+      if (lead.sessionDate) {
+        if (lead.sessionDate < today && (!c.lastSession || lead.sessionDate > c.lastSession)) c.lastSession = lead.sessionDate;
+        if (lead.sessionDate >= today && (!c.nextSession || lead.sessionDate < c.nextSession)) c.nextSession = lead.sessionDate;
+      }
+    }
+  }
+
+  for (const doc of input.documents) {
+    if (doc.kind !== 'invoice' || doc.status === 'void') continue;
+    const c = byKey.get(keyOf(doc.clientEmail));
+    if (!c) continue;
+    const paid = Math.max(doc.paidAmount, paidByDocument.get(doc.id) ?? 0);
+    c.paidValue += paid;
+    if (doc.status !== 'paid') c.outstanding += Math.max(0, doc.total - paid);
+  }
+
+  for (const gift of input.giftCards) {
+    const c = ensure(gift.buyerEmail, gift.buyerName ?? gift.buyerEmail, null, null, gift.createdAt);
+    c.giftCardsBought += 1;
+  }
+
+  for (const call of input.discoveryCalls) {
+    const c = ensure(call.email, call.name, call.phone, call.company, call.createdAt);
+    c.discoveryCalls += 1;
+  }
+
+  return [...byKey.values()].sort((a, b) => {
+    if (b.lifetimeValue !== a.lifetimeValue) return b.lifetimeValue - a.lifetimeValue;
+    return a.firstSeen < b.firstSeen ? 1 : -1;
+  });
+}
 
 export type DiscoveryCallRow = {
   id: string;
@@ -196,6 +327,8 @@ export type ActivityEntry = {
   bookingId: string | null;
   giftId: string | null;
   documentId: string | null;
+  /** Set on notes written on the client's card rather than on one booking. */
+  clientEmail: string | null;
   kind: string;
   body: string | null;
   createdAt: string;

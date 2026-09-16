@@ -6,6 +6,7 @@ import { createPortal } from 'react-dom';
 import { money } from '@/lib/site';
 import type { BusinessSettings } from '@/lib/settings';
 import {
+  ACTIVITY_LABELS,
   balanceDue,
   formatShortDate,
   formatStudioDate,
@@ -45,6 +46,9 @@ type Props = {
   activity: ActivityEntry[];
   integrations: Integrations;
   business: BusinessSettings;
+  /** Open this lead's drawer on arrival (from a client card). */
+  openId?: string | null;
+  onOpened?: () => void;
 };
 
 function latest(docs: DocumentRow[], bookingId: string, kind: 'proposal' | 'invoice') {
@@ -60,11 +64,18 @@ function formatLabel(lead: Lead): string {
   return parts.join(' · ');
 }
 
-export function Leads({ leads, documents, activity, integrations, business }: Props) {
+export function Leads({ leads, documents, activity, integrations, business, openId, onOpened }: Props) {
   const { run, pending, error } = useStudioAction();
   const [draggingId, setDraggingId] = useState<string | null>(null);
   const [overStage, setOverStage] = useState<StageKey | null>(null);
-  const [openLeadId, setOpenLeadId] = useState<string | null>(null);
+  const [openLeadId, setOpenLeadId] = useState<string | null>(openId ?? null);
+
+  useEffect(() => {
+    if (openId) {
+      setOpenLeadId(openId);
+      onOpened?.();
+    }
+  }, [openId, onOpened]);
   const [search, setSearch] = useState('');
 
   const move = (id: string, status: StageKey) => {
@@ -289,30 +300,6 @@ function DetailRow({ label, children }: { label: string; children: React.ReactNo
   );
 }
 
-const ACTIVITY_LABELS: Record<string, string> = {
-  received: 'Request received',
-  stage: 'Stage',
-  note: 'Note',
-  proposal_created: 'Proposal drafted',
-  proposal_sent: 'Proposal sent',
-  proposal_accepted: 'Proposal accepted',
-  proposal_declined: 'Proposal declined',
-  proposal_void: 'Proposal voided',
-  invoice_created: 'Invoice drafted',
-  invoice_sent: 'Invoice sent',
-  invoice_paid: 'Invoice paid',
-  invoice_void: 'Invoice voided',
-  deposit_paid: 'Deposit paid',
-  balance_requested: 'Balance requested',
-  terms_accepted: 'Terms accepted',
-  addon_added: 'Add-on added',
-  confirmation_sent: 'Confirmation sent',
-  reminder_sent: 'Reminder sent',
-  cancelled: 'Cancelled',
-  cancellation_fee_charged: 'Cancellation fee charged',
-  email_failed: '⚠ Email failed',
-  charge_failed: '⚠ Card charge failed',
-};
 
 function LeadDrawer({
   lead,

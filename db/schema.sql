@@ -347,6 +347,9 @@ CREATE TABLE IF NOT EXISTS activity (
 
 CREATE INDEX IF NOT EXISTS activity_booking_idx ON activity (booking_id, created_at DESC);
 CREATE INDEX IF NOT EXISTS activity_gift_idx    ON activity (gift_id, created_at DESC);
+-- Notes written on a client's card rather than on one booking.
+ALTER TABLE activity ADD COLUMN IF NOT EXISTS client_email TEXT;
+CREATE INDEX IF NOT EXISTS activity_client_idx  ON activity (client_email, created_at DESC);
 
 -- ---------------------------------------------------------------------------
 -- Payments. E-transfer is the default; card (Stripe) is optional, with a

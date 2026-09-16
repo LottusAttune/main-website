@@ -4,6 +4,7 @@ import Image from 'next/image';
 
 import { asset } from '@/lib/images';
 import {
+  ACTIVITY_LABELS,
   balanceDue,
   formatShortDate,
   formatStudioDate,
@@ -61,21 +62,6 @@ function whenKey(date: string | null, time: string | null): string {
   return `${date ?? '9999-99-99'} ${time ?? ''}`;
 }
 
-const ACTIVITY_LABELS: Record<string, string> = {
-  received: 'New request',
-  proposal_sent: 'Proposal sent',
-  proposal_accepted: 'Proposal accepted',
-  invoice_sent: 'Invoice sent',
-  invoice_paid: 'Invoice paid',
-  deposit_paid: 'Deposit paid',
-  balance_requested: 'Balance requested',
-  terms_accepted: 'Terms accepted',
-  addon_added: 'Add-on added',
-  confirmation_sent: 'Confirmation sent',
-  reminder_sent: 'Reminder sent',
-  email_failed: '⚠ Email failed',
-  charge_failed: 'Card charge failed',
-};
 
 function activityLabel(kind: string): string {
   return ACTIVITY_LABELS[kind] ?? kind.replace(/_/g, ' ');

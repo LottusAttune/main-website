@@ -33,7 +33,7 @@ const ebGaramond = EB_Garamond({
 
 const jost = Jost({
   subsets: ['latin'],
-  weight: ['200', '300', '400'],
+  weight: ['200', '300', '400', '500'],
   display: 'swap',
   variable: '--font-jost',
 });

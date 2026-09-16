@@ -4,7 +4,6 @@ import { Reveal } from '@/components/common/Reveal';
 import { SiteFooter } from '@/components/chrome/SiteFooter';
 import { SiteNav } from '@/components/chrome/SiteNav';
 import { BookingForm } from '@/components/booking/BookingForm';
-import { assetUrl } from '@/lib/images';
 import { getSettings } from '@/lib/settings';
 import { termsSections } from '@/lib/terms';
 import styles from './book.module.css';
@@ -53,30 +52,12 @@ export default async function BookPage() {
 
         <section
           style={{
-            position: 'relative',
-            overflow: 'hidden',
             padding: '0 var(--space-gutter) clamp(20px, 3vw, 32px)',
             maxWidth: 'var(--width-content)',
             margin: '0 auto',
           }}
           aria-label="Booking request"
         >
-          <div
-            data-bg="1"
-            className="photo-wash photo-wash--light"
-            style={{
-              backgroundImage: assetUrl('intention-card'),
-              backgroundPosition: 'center 30%',
-            }}
-          />
-          <div
-            data-bg="1"
-            className="photo-wash photo-wash--light photo-wash--spot"
-            style={{
-              backgroundImage: assetUrl('intention-card'),
-              backgroundPosition: 'center 30%',
-            }}
-          />
           <BookingForm
             pricing={settings.pricing}
             slots={settings.slots}

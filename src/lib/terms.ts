@@ -20,9 +20,9 @@ export function termsSections(business: BusinessSettings): LegalSection[] {
       title: 'Bookings',
       paragraphs: [
         deposit
-          ? `A booking made through this website is confirmed once the ${business.depositPercent}% deposit shown on your invoice has been received. Until then the date is not held.`
+          ? `A booking made through this website is confirmed once payment has been received: the ${business.depositPercent}% deposit shown on your invoice for card payments, or the full amount for Interac e-transfer. Until then the date is not held.`
           : 'A booking made through this website is confirmed once the invoice has been paid. Until then the date is not held.',
-        'Each experience runs approximately two hours for the number of participants stated on your invoice. Groups larger than twelve are split across two sessions on the same day. Please arrive on time so the session can begin as planned.',
+        'Each experience runs two hours for the number of participants stated on your invoice. Groups larger than twelve are split across two sessions on the same day. Please arrive 15 minutes prior to the start of the session to settle in.',
       ],
     },
     {
@@ -42,7 +42,6 @@ export function termsSections(business: BusinessSettings): LegalSection[] {
         business.cancellationFee > 0
           ? `Where a card is on file, a cancellation fee of ${money(business.cancellationFee)} is charged for cancellations made within ${business.cancellationHours} hours of the session start, or for a no-show.`
           : 'Where a card is on file, any applicable cancellation fee is charged to that card.',
-        'If Lotus Attune must cancel a session, you will be offered a new date or a full refund of any amount paid.',
       ],
     },
     {
@@ -59,9 +58,16 @@ export function termsSections(business: BusinessSettings): LegalSection[] {
       ],
     },
     {
+      title: 'Photos & video',
+      paragraphs: [
+        "Photos or videos may occasionally be taken during sessions for promotional use. If you'd prefer not to be identifiable, let us know and we'll review the footage afterward to keep you out of any published material.",
+      ],
+    },
+    {
       title: 'Venue',
       paragraphs: [
         'Sessions take place at the downtown Toronto venue named on your invoice. Please treat the space and other participants with care. Lotus Attune is not responsible for personal belongings brought to the venue.',
+        'Clients are responsible for the cost of repairing or replacing anything damaged or broken at the venue during their session.',
       ],
     },
     {

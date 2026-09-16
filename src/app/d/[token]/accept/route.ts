@@ -1,4 +1,4 @@
-import { NextResponse } from 'next/server';
+import { after, NextResponse } from 'next/server';
 
 import { acceptProposal } from '@/lib/documents';
 
@@ -19,7 +19,14 @@ export async function POST(request: Request, { params }: { params: Promise<{ tok
     return NextResponse.redirect(target, { status: 303 });
   }
   const result = await acceptProposal(token, { name, png: png || null, ip });
-  if (result.ok) target.searchParams.set('accepted', '1');
-  else target.searchParams.set('error', 'accept');
+  if (result.ok) {
+    target.searchParams.set('accepted', '1');
+    if (result.followUp) {
+      const followUp = result.followUp;
+      after(() => followUp().catch((error) => console.error('[accept] follow-up failed:', error)));
+    }
+  } else {
+    target.searchParams.set('error', 'accept');
+  }
   return NextResponse.redirect(target, { status: 303 });
 }

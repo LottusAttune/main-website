@@ -1174,7 +1174,7 @@ async function invoiceFromProposal(proposal: DocumentRow, settings: SiteSettings
 export async function acceptProposal(
   token: string,
   signature?: { name: string; png: string | null; ip: string | null }
-): Promise<ActionResult> {
+): Promise<ActionResult & { followUp?: () => Promise<void> }> {
   const doc = await getDocumentByToken(token);
   if (!doc || doc.kind !== 'proposal') return { ok: false, error: 'Proposal not found.' };
   if (doc.status === 'void' || doc.status === 'declined') {
@@ -1209,17 +1209,22 @@ export async function acceptProposal(
       WHERE id = ${doc.bookingId} AND status IN ('new_enquiry', 'contacted', 'proposal_sent')
     `;
   }
-  const settings = await getSettings();
-  const invoice = await invoiceFromProposal(doc, settings);
-  if (settings.business.autoSendInvoices) {
-    await sendDocument(invoice.id);
-  }
-  await sendOwnerNotification({
-    subject: `Proposal accepted: ${doc.clientName} — ${doc.number}`,
-    html: `<p style="margin:0 0 10px;">${escapeHtml(signature?.name ?? doc.clientName)} accepted proposal ${escapeHtml(doc.number)} (${money(doc.total)}).</p>
-           <p style="margin:0;">Invoice ${escapeHtml(invoice.number)} is ${settings.business.autoSendInvoices ? 'on its way to them' : 'ready to send from the studio'}.</p>`,
-  });
-  return { ok: true };
+
+  // The invoice (with its PDF render and email) is slow; callers run this
+  // after replying to the client so the "accepted" page appears at once.
+  const followUp = async () => {
+    const settings = await getSettings();
+    const invoice = await invoiceFromProposal(doc, settings);
+    if (settings.business.autoSendInvoices) {
+      await sendDocument(invoice.id);
+    }
+    await sendOwnerNotification({
+      subject: `Proposal accepted: ${doc.clientName} — ${doc.number}`,
+      html: `<p style="margin:0 0 10px;">${escapeHtml(signature?.name ?? doc.clientName)} accepted proposal ${escapeHtml(doc.number)} (${money(doc.total)}).</p>
+             <p style="margin:0;">Invoice ${escapeHtml(invoice.number)} is ${settings.business.autoSendInvoices ? 'on its way to them' : 'ready to send from the studio'}.</p>`,
+    });
+  };
+  return { ok: true, followUp };
 }
 
 export async function markDocument(

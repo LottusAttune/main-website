@@ -1,4 +1,4 @@
-import { NextResponse } from 'next/server';
+import { after, NextResponse } from 'next/server';
 
 import { createCalendarEvent, sessionSlotWindow } from '@/lib/calendar';
 import { isDatabaseConfigured, sql } from '@/lib/db';
@@ -105,81 +105,86 @@ export async function POST(request: Request) {
       RETURNING id
     `;
 
-    // Best-effort - the row above is already saved regardless of this.
-    const venue = venueFor(input.participants);
-    const description = [
-      `Email: ${input.email}`,
-      input.phone ? `Phone: ${input.phone}` : null,
-      input.company ? `Company: ${input.company}` : null,
-      `Participants: ${input.participants}`,
-      input.isPackage ? 'Package of four sessions' : null,
-      input.isCorporateIntro ? 'Corporate introductory session' : null,
-      input.teamAddon ? 'Team-building add-on: yes' : null,
-      gratuity > 0 ? `Gratuity: $${gratuity}` : null,
-      input.message ? `Message: ${input.message}` : null,
-    ]
-      .filter(Boolean)
-      .join('\n');
-
-    const firstWindow = sessionSlotWindow(input.sessionDate, input.sessionTime);
-    const eventId = await createCalendarEvent({
-      summary: `Lotus Attune Session — ${input.name}`,
-      description,
-      location: venue,
-      startISO: firstWindow.startISO,
-      endISO: firstWindow.endISO,
-    });
-
-    let eventId2: string | null = null;
-    if (input.sessionDate2 && input.sessionTime2) {
-      const secondWindow = sessionSlotWindow(input.sessionDate2, input.sessionTime2);
-      eventId2 = await createCalendarEvent({
-        summary: `Lotus Attune Session (session 2) — ${input.name}`,
-        description,
-        location: venue,
-        startISO: secondWindow.startISO,
-        endISO: secondWindow.endISO,
-      });
-    }
-
-    if (eventId || eventId2) {
-      await sql`
-        UPDATE bookings
-        SET calendar_event_id = ${eventId}, calendar_event_id_2 = ${eventId2}
-        WHERE id = ${result.rows[0]?.id}
-      `;
-    }
-
-    // The paperwork starts the moment the request lands: a proposal is
-    // drafted from the quoted price (and its card links minted), both
-    // sides get a "received" email, and - if Silvana has switched it on -
-    // the proposal goes straight out.
     const bookingId = String(result.rows[0]?.id);
-    await logActivity({ bookingId, kind: 'received', body: 'Booking request received from the website' });
-    const emails = await sendBookingRequestEmails({
-      name: input.name,
-      email: input.email,
-      phone: input.phone ?? null,
-      company: input.company ?? null,
-      message: input.message ?? null,
-      participants: input.participants,
-      sessionDate: input.sessionDate,
-      sessionTime: input.sessionTime,
-      sessionDate2: input.sessionDate2 ?? null,
-      sessionTime2: input.sessionTime2 ?? null,
-      total,
-      venue,
-      studioUrl: `${SITE.url}/studio`,
+
+    // Everything below is best-effort and slow (calendar, three emails, a
+    // PDF render): it runs after the response so the form confirms in a
+    // second instead of thirty. The row above is already saved regardless.
+    after(async () => {
+      const venue = venueFor(input.participants);
+      const description = [
+        `Email: ${input.email}`,
+        input.phone ? `Phone: ${input.phone}` : null,
+        input.company ? `Company: ${input.company}` : null,
+        `Participants: ${input.participants}`,
+        input.isPackage ? 'Package of four sessions' : null,
+        input.isCorporateIntro ? 'Corporate introductory session' : null,
+        input.teamAddon ? 'Team-building add-on: yes' : null,
+        gratuity > 0 ? `Gratuity: $${gratuity}` : null,
+        input.message ? `Message: ${input.message}` : null,
+      ]
+        .filter(Boolean)
+        .join('\n');
+
+      await logActivity({ bookingId, kind: 'received', body: 'Booking request received from the website' });
+
+      const emails = await sendBookingRequestEmails({
+        name: input.name,
+        email: input.email,
+        phone: input.phone ?? null,
+        company: input.company ?? null,
+        message: input.message ?? null,
+        participants: input.participants,
+        sessionDate: input.sessionDate,
+        sessionTime: input.sessionTime,
+        sessionDate2: input.sessionDate2 ?? null,
+        sessionTime2: input.sessionTime2 ?? null,
+        total,
+        venue,
+        studioUrl: `${SITE.url}/studio`,
+      });
+      if (!emails.client.ok) {
+        await logActivity({ bookingId, kind: 'email_failed', body: `Request received email: ${emails.client.error}` });
+      }
+
+      try {
+        const proposal = await ensureBookingDocument(bookingId, 'proposal', settings);
+        if (settings.business.autoSendProposals) await sendDocument(proposal.id);
+      } catch (error) {
+        console.error('[bookings] proposal draft failed:', error);
+      }
+
+      try {
+        const firstWindow = sessionSlotWindow(input.sessionDate, input.sessionTime);
+        const eventId = await createCalendarEvent({
+          summary: `Lotus Attune Session — ${input.name}`,
+          description,
+          location: venue,
+          startISO: firstWindow.startISO,
+          endISO: firstWindow.endISO,
+        });
+        let eventId2: string | null = null;
+        if (input.sessionDate2 && input.sessionTime2) {
+          const secondWindow = sessionSlotWindow(input.sessionDate2, input.sessionTime2);
+          eventId2 = await createCalendarEvent({
+            summary: `Lotus Attune Session (session 2) — ${input.name}`,
+            description,
+            location: venue,
+            startISO: secondWindow.startISO,
+            endISO: secondWindow.endISO,
+          });
+        }
+        if (eventId || eventId2) {
+          await sql`
+            UPDATE bookings
+            SET calendar_event_id = ${eventId}, calendar_event_id_2 = ${eventId2}
+            WHERE id = ${bookingId}
+          `;
+        }
+      } catch (error) {
+        console.error('[bookings] calendar event failed:', error);
+      }
     });
-    if (!emails.client.ok) {
-      await logActivity({ bookingId, kind: 'email_failed', body: `Request received email: ${emails.client.error}` });
-    }
-    try {
-      const proposal = await ensureBookingDocument(bookingId, 'proposal', settings);
-      if (settings.business.autoSendProposals) await sendDocument(proposal.id);
-    } catch (error) {
-      console.error('[bookings] proposal draft failed:', error);
-    }
 
     return NextResponse.json(
       { id: result.rows[0]?.id, total },

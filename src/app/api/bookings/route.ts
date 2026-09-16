@@ -103,6 +103,14 @@ export async function POST(request: Request) {
   }
 
   try {
+    // The invoice number is claimed while the booking row is being written,
+    // so the two round trips overlap instead of queueing.
+    const numberPromise = settings.business.autoSendInvoices
+      ? nextNumber('invoice', settings.business.invoicePrefix || 'LA').catch((error) => {
+          console.error('[bookings] numbering failed:', error);
+          return null;
+        })
+      : Promise.resolve(null);
     const result = await sql`
       INSERT INTO bookings (
         name, email, phone, company, message, participants,
@@ -160,7 +168,8 @@ export async function POST(request: Request) {
           total,
           status: 'new_enquiry',
         };
-        const number = await nextNumber('invoice', settings.business.invoicePrefix || 'LA');
+        const number = await numberPromise;
+        if (!number) throw new Error('No invoice number.');
         const id = randomUUID();
         const token = randomUUID();
         // The total is known before the insert: the checkout needs it too.

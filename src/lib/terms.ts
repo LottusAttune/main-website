@@ -29,8 +29,8 @@ export function termsSections(business: BusinessSettings): LegalSection[] {
       title: 'Payment',
       paragraphs: [
         deposit
-          ? `The deposit is paid by credit card at the time of booking, or by Interac e-transfer using the details on your invoice. The remaining ${100 - business.depositPercent}% is charged automatically to the same card ${business.balanceDaysBefore} calendar days before the session; if no card is on file, it is due by e-transfer or card by that date.`
-          : 'Payment is made by credit card at the time of booking, or by Interac e-transfer using the details on your invoice.',
+          ? `By card, you may pay a ${business.depositPercent}% deposit at the time of booking, with the remaining ${100 - business.depositPercent}% charged automatically to the same card ${business.balanceDaysBefore} calendar days before the session, or pay in full. By Interac e-transfer, the full amount is paid at the time of booking using the details on your invoice.`
+          : 'Payment is made in full at the time of booking, by credit card or by Interac e-transfer using the details on your invoice.',
         `A ${business.cardFeePercent}% processing fee applies to card payments. E-transfers carry no fee.`,
         `Prices are in Canadian dollars${business.taxRatePercent > 0 ? ` and ${business.taxLabel} of ${business.taxRatePercent}% is added where shown` : ''}.`,
       ],

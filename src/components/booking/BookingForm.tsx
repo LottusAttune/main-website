@@ -341,12 +341,14 @@ export function BookingForm({
         {payment ? (
           <div className={styles.successPay}>
             <div className={styles.successLabel}>
-              {payment.deposit != null ? 'Confirm your date now' : 'Pay now'}
+              {payment.method === 'etransfer' ? 'Confirm your date by e-transfer' : payment.deposit != null ? 'Confirm your date now' : 'Pay now'}
             </div>
             <p className={styles.successBody}>
               {payment.deposit != null
                 ? `A ${payment.depositPercent}% deposit of ${money(payment.deposit)} confirms your date. The remaining ${money(payment.invoiceTotal - payment.deposit)} is due four calendar days before your session.`
-                : `Your invoice comes to ${money(payment.invoiceTotal)}.`}
+                : payment.method === 'etransfer'
+                  ? `Your invoice comes to ${money(payment.invoiceTotal)}, paid in full by e-transfer with no card fee. Your booking is confirmed as soon as we receive the transfer, and you get a confirmation email with all the details.`
+                  : `Your invoice comes to ${money(payment.invoiceTotal)}.`}
             </p>
             {payment.method === 'etransfer' ? (
               <div className={styles.etransferBox}>
@@ -833,15 +835,13 @@ export function BookingForm({
                 className={`${styles.timeBtn} ${plan === 'etransfer' ? styles.timeBtnOn : ''}`}
                 onClick={() => setPlan('etransfer')}
               >
-                <span className={styles.tierLabel}>E-transfer</span>
-                <span className={styles.timeNote}>
-                  {money(depositOffered ? depositNow : invoiceTotal)} {depositOffered ? 'deposit' : ''} by Interac, no fee
-                </span>
+                <span className={styles.tierLabel}>E-transfer, in full</span>
+                <span className={styles.timeNote}>{money(invoiceTotal)} by Interac, no card fee</span>
               </button>
             </div>
             <div className={styles.estimateNote}>
               {plan === 'etransfer'
-                ? `Includes ${payTerms.taxRatePercent > 0 ? `${payTerms.taxLabel} ${payTerms.taxRatePercent}%` : 'tax'}. You send the e-transfer from your bank; the details follow on the next screen and by email, and your date is confirmed when it arrives.`
+                ? `Includes ${payTerms.taxRatePercent > 0 ? `${payTerms.taxLabel} ${payTerms.taxRatePercent}%` : 'tax'}. E-transfer is paid in full, in one go, with no card fee. You send it from your bank; the details follow on the next screen and by email. Your booking is confirmed as soon as we receive the transfer.`
                 : `${payTerms.taxRatePercent > 0 ? `Includes ${payTerms.taxLabel} ${payTerms.taxRatePercent}%` : 'Tax included'}${payTerms.cardFeePercent > 0 ? ` and the ${payTerms.cardFeePercent}% card fee.` : '.'} Card, Apple Pay and Google Pay on the secure Stripe page.`}
             </div>
           </div>
@@ -892,7 +892,7 @@ export function BookingForm({
         </button>
         <p className={styles.nextNote}>
           {plan === 'etransfer'
-            ? 'Next: the e-transfer details. Your date is held once the transfer arrives.'
+            ? 'Next: the e-transfer details. Your booking is confirmed once we receive the transfer.'
             : 'Next: the secure card payment page (Stripe). Your date is held once the payment is made.'}
         </p>
 

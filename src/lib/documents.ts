@@ -443,6 +443,8 @@ export async function insertBookingInvoice(input: {
   number: string;
   booking: BookingCtx;
   settings: SiteSettings;
+  /** "full" when the client chose to pay everything now (e-transfer, or full by card). */
+  paymentPlan?: 'deposit' | 'full';
 }): Promise<{ total: number; dueOn: string }> {
   const { booking, settings: s } = input;
   const lines = bookingLines(booking, s);
@@ -454,11 +456,11 @@ export async function insertBookingInvoice(input: {
   await sql`
     INSERT INTO documents (
       id, token, kind, number, booking_id, client_name, client_email, client_company,
-      lines, subtotal, tax_rate, tax, total, issued_on, due_on
+      lines, subtotal, tax_rate, tax, total, issued_on, due_on, payment_plan
     ) VALUES (
       ${input.id}, ${input.token}, 'invoice', ${input.number}, ${booking.id}, ${booking.name}, ${booking.email}, ${booking.company},
       ${JSON.stringify(lines)}::jsonb, ${subtotal}, ${s.business.taxRatePercent}, ${tax}, ${total},
-      ${issued}, ${dueOn}
+      ${issued}, ${input.paymentPlan === 'full' ? dueOn : dueOn}, ${input.paymentPlan === 'full' ? 'full' : null}
     )
   `;
   return { total, dueOn };
@@ -593,6 +595,8 @@ export function depositAmount(doc: DocumentRow, depositPercent: number): number 
  */
 export function depositDue(doc: DocumentRow, business: BusinessSettings): number | null {
   if (doc.kind !== 'invoice' || !doc.bookingId || doc.paidAmount > 0) return null;
+  // Chosen "pay in full" (e-transfer, or full by card): no deposit plan.
+  if (doc.paymentPlan === 'full') return null;
   if (!(business.depositPercent > 0 && business.depositPercent < 100)) return null;
   return depositAmount(doc, business.depositPercent);
 }
@@ -646,6 +650,7 @@ export async function ensurePaymentLinks(
   const depositWanted =
     Boolean(doc.bookingId) &&
     doc.paidAmount === 0 &&
+    doc.paymentPlan !== 'full' &&
     business.depositPercent > 0 &&
     business.depositPercent < 100;
 
@@ -954,6 +959,10 @@ export function paymentOptionsHtml(
     parts.push(
       `<p style="margin:0 0 10px;">A ${business.depositPercent}% deposit of <strong>${money(deposit)}</strong> confirms your date. ` +
         `The remaining ${money(doc.total - deposit)} is due ${business.balanceDaysBefore} calendar days before the session${balanceDay ? `, on ${formatStudioDate(balanceDay)}` : ''}.</p>`
+    );
+  } else if (doc.bookingId && doc.paidAmount === 0 && doc.paymentPlan === 'full') {
+    parts.push(
+      `<p style="margin:0 0 10px;">The full amount of <strong>${money(outstanding)}</strong> is due${doc.dueOn ? ` by ${formatStudioDate(doc.dueOn)}` : ''}. Your booking is confirmed as soon as it is received.</p>`
     );
   } else if (doc.paidAmount > 0 && outstanding > 0) {
     parts.push(

@@ -179,7 +179,7 @@ export async function POST(request: Request) {
         const { total: invoiceTotal } = totalsFor(bookingLines(booking, settings), settings.business.taxRatePercent);
         const byCard = input.paymentPlan !== 'etransfer';
         const [, checkout] = await Promise.all([
-          insertBookingInvoice({ id, token, number, booking, settings }),
+          insertBookingInvoice({ id, token, number, booking, settings, paymentPlan: input.paymentPlan === 'deposit' ? 'deposit' : 'full' }),
           byCard
             ? createBookingCheckout(
                 { id, kind: 'invoice', number, total: invoiceTotal, paidAmount: 0, bookingId, clientEmail: input.email, token },
@@ -189,15 +189,12 @@ export async function POST(request: Request) {
               )
             : Promise.resolve(null),
         ]);
-        const depositShare =
-          settings.business.depositPercent > 0 && settings.business.depositPercent < 100
-            ? Math.round((invoiceTotal * settings.business.depositPercent) / 100)
-            : null;
         payment = {
           method: byCard ? 'card' : 'etransfer',
           invoiceNumber: number,
           invoiceTotal,
-          deposit: byCard ? (checkout?.plan === 'deposit' ? checkout.amount : null) : depositShare,
+          // E-transfer is always the full amount: nothing left to chase later.
+          deposit: byCard && checkout?.plan === 'deposit' ? checkout.amount : null,
           depositPercent: settings.business.depositPercent,
           checkoutUrl: checkout?.url ?? null,
           invoiceUrl: `${SITE.url}/d/${token}`,

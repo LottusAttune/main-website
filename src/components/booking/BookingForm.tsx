@@ -4,6 +4,8 @@ import { useEffect, useMemo, useState } from 'react';
 
 import { IncludedModal } from '@/components/common/IncludedModal';
 import { PolicyModal } from '@/components/common/PolicyModal';
+import { TermsModal } from '@/components/common/TermsModal';
+import type { LegalSection } from '@/components/legal/LegalPage';
 import { quoteFor } from '@/lib/quote';
 import type { DiscountCode, Pricing, Slots } from '@/lib/settings';
 import {
@@ -25,6 +27,7 @@ type Props = {
   blockedDates: string[];
   codes: DiscountCode[];
   leadTimeDays: number;
+  terms: LegalSection[];
 };
 
 type CodeState = {
@@ -53,6 +56,7 @@ export function BookingForm({
   blockedDates,
   codes,
   leadTimeDays,
+  terms,
 }: Props) {
   const [party, setParty] = useState<number | null>(null);
   const [date, setDate] = useState<Date | null>(null);
@@ -764,9 +768,7 @@ export function BookingForm({
           />
           <span>
             I have read and agree to the{' '}
-            <a href="/terms" target="_blank" rel="noopener" className={styles.policyLink}>
-              Terms &amp; Conditions
-            </a>{' '}
+            <TermsModal triggerClassName={styles.policyLink} sections={terms} />{' '}
             and the <PolicyModal triggerClassName={styles.policyLink} />.
           </span>
         </label>

@@ -7,6 +7,7 @@ import { StickyBookBar } from '@/components/chrome/StickyBookBar';
 import { BookingForm } from '@/components/booking/BookingForm';
 import { assetUrl } from '@/lib/images';
 import { getSettings } from '@/lib/settings';
+import { termsSections } from '@/lib/terms';
 import styles from './book.module.css';
 
 export const metadata: Metadata = {
@@ -83,6 +84,7 @@ export default async function BookPage() {
             blockedDates={settings.blockedDates}
             codes={settings.codes}
             leadTimeDays={settings.leadTimeDays}
+            terms={termsSections(settings.business)}
           />
         </section>
       </main>

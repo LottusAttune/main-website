@@ -3,13 +3,18 @@ import { after, NextResponse } from 'next/server';
 import { createCalendarEvent, sessionSlotWindow } from '@/lib/calendar';
 import { isDatabaseConfigured, sql } from '@/lib/db';
 import { FAQS } from '@/data/content';
+import { randomUUID } from 'node:crypto';
+
 import { createBookingCheckout } from '@/lib/checkout';
 import {
-  ensureBookingDocument,
+  bookingLines,
+  insertBookingInvoice,
   logActivity,
   markDocumentSent,
+  nextNumber,
   prepareBookingInvoice,
-  publicUrl,
+  totalsFor,
+  type BookingCtx,
   type InvoiceEmailPart,
 } from '@/lib/documents';
 import { sendBookingRequestEmails } from '@/lib/email';
@@ -46,6 +51,7 @@ export async function POST(request: Request) {
   }
 
   const input = parsed.data;
+  const startedAt = Date.now();
   const settings = await getSettings();
 
   // Never trust the total the browser calculated — recompute it here, and only
@@ -116,10 +122,13 @@ export async function POST(request: Request) {
 
     const bookingId = String(result.rows[0]?.id);
     const portalToken = result.rows[0]?.portal_token ? String(result.rows[0].portal_token) : null;
+    const savedAt = Date.now();
 
     // The invoice and a checkout page for its deposit are made before
-    // answering, so the client goes straight on to pay. One Stripe call and
-    // two inserts; if anything fails they still get the invoice by email.
+    // answering, so the client goes straight on to pay. The database is far
+    // from the server, so this is kept to two round trips (the number, the
+    // insert) with the Stripe call running alongside the insert; if anything
+    // fails they still get the invoice by email.
     let payment: {
       invoiceNumber: string;
       invoiceTotal: number;
@@ -130,20 +139,54 @@ export async function POST(request: Request) {
     } | null = null;
     if (settings.business.autoSendInvoices) {
       try {
-        const doc = await ensureBookingDocument(bookingId, 'invoice', settings, { mintLinks: false });
-        const checkout = await createBookingCheckout(doc, settings.business, input.paymentPlan);
+        const booking: BookingCtx = {
+          id: bookingId,
+          name: input.name,
+          email: input.email,
+          phone: input.phone ?? null,
+          company: input.company ?? null,
+          message: input.message ?? null,
+          participants: input.participants,
+          sessionDate: input.sessionDate,
+          sessionTime: input.sessionTime,
+          sessionDate2: input.sessionDate2 ?? null,
+          sessionTime2: input.sessionTime2 ?? null,
+          teamAddon: input.teamAddon,
+          refreshments: input.refreshments,
+          isPackage: input.isPackage,
+          isCorporateIntro: input.isCorporateIntro,
+          discountCode: eligibleDiscount?.code ?? null,
+          gratuity,
+          total,
+          status: 'new_enquiry',
+        };
+        const number = await nextNumber('invoice', settings.business.invoicePrefix || 'LA');
+        const id = randomUUID();
+        const token = randomUUID();
+        // The total is known before the insert: the checkout needs it too.
+        const { total: invoiceTotal } = totalsFor(bookingLines(booking, settings), settings.business.taxRatePercent);
+        const [, checkout] = await Promise.all([
+          insertBookingInvoice({ id, token, number, booking, settings }),
+          createBookingCheckout(
+            { id, kind: 'invoice', number, total: invoiceTotal, paidAmount: 0, bookingId, clientEmail: input.email, token },
+            settings.business,
+            input.paymentPlan,
+            booking
+          ),
+        ]);
         payment = {
-          invoiceNumber: doc.number,
-          invoiceTotal: doc.total,
+          invoiceNumber: number,
+          invoiceTotal,
           deposit: checkout?.plan === 'deposit' ? checkout.amount : null,
           depositPercent: settings.business.depositPercent,
           checkoutUrl: checkout?.url ?? null,
-          invoiceUrl: publicUrl(doc),
+          invoiceUrl: `${SITE.url}/d/${token}`,
         };
       } catch (error) {
         console.error('[bookings] invoice failed:', error);
       }
     }
+    console.log(`[bookings] saved in ${savedAt - startedAt}ms, invoice+checkout in ${Date.now() - savedAt}ms`);
 
     // Everything below is best-effort and slow (calendar, emails, a PDF
     // render): it runs after the response so the form confirms in seconds

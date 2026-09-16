@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { createPortal } from 'react-dom';
 
 import { FAQS } from '@/data/content';
 import styles from './IncludedModal.module.css';
@@ -43,7 +44,9 @@ export function PolicyModal({ triggerClassName }: Props) {
         Cancellation Policy
       </button>
 
-      {open ? (
+      {open
+        ? createPortal(
+
         <div
           className={styles.overlay}
           role="dialog"
@@ -51,14 +54,24 @@ export function PolicyModal({ triggerClassName }: Props) {
           aria-label="Cancellation policy"
           onClick={() => setOpen(false)}
         >
-          <div className={styles.shell} onClick={(e) => e.stopPropagation()}>
-            <div className={styles.title}>Cancellation Policy</div>
+          <div className={`${styles.shell} ${styles.shellCompact}`} onClick={(e) => e.stopPropagation()}>
+            <div className={styles.head}>
+              <div className={styles.title} style={{ margin: 0 }}>Cancellation Policy</div>
+              <button type="button" className={styles.close} aria-label="Close" onClick={() => setOpen(false)}>
+                ✕
+              </button>
+            </div>
             <p>{CANCELLATION_POLICY.a}</p>
-            <div className="rule-end" />
+            <button type="button" className="btn btn--dark" onClick={() => setOpen(false)}>
+              Close
+            </button>
             <p className={styles.hint}>Click outside or press Esc to close</p>
           </div>
         </div>
-      ) : null}
+          ,
+          document.body
+        )
+        : null}
     </>
   );
 }

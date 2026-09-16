@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { createPortal } from 'react-dom';
 
 import { INCLUDED_FULL } from '@/data/content';
 import styles from './IncludedModal.module.css';
@@ -37,7 +38,9 @@ export function IncludedModal({ triggerClassName }: Props) {
         See What&apos;s Included
       </button>
 
-      {open ? (
+      {open
+        ? createPortal(
+
         <div
           className={styles.overlay}
           role="dialog"
@@ -45,8 +48,13 @@ export function IncludedModal({ triggerClassName }: Props) {
           aria-label="What's included"
           onClick={() => setOpen(false)}
         >
-          <div className={styles.shell} onClick={(e) => e.stopPropagation()}>
-            <div className={styles.title}>What&apos;s Included</div>
+          <div className={`${styles.shell} ${styles.shellCompact}`} onClick={(e) => e.stopPropagation()}>
+            <div className={styles.head}>
+              <div className={styles.title} style={{ margin: 0 }}>What&apos;s Included</div>
+              <button type="button" className={styles.close} aria-label="Close" onClick={() => setOpen(false)}>
+                ✕
+              </button>
+            </div>
             {INCLUDED_FULL.map((text, i) => (
               <div key={text} className="numbered-row">
                 <span className="numbered-row__n">
@@ -59,7 +67,10 @@ export function IncludedModal({ triggerClassName }: Props) {
             <p className={styles.hint}>Click outside or press Esc to close</p>
           </div>
         </div>
-      ) : null}
+          ,
+          document.body
+        )
+        : null}
     </>
   );
 }

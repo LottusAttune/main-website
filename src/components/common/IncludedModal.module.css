@@ -48,3 +48,48 @@
   text-align: center;
   color: var(--color-ink-body);
 }
+
+/* Long popups (the terms) keep a close control in view at the top of the
+   card while the text scrolls underneath it. */
+.head {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin: 0 0 12px;
+  padding: 0 0 10px;
+  background: var(--color-cream-raised);
+  border-bottom: 1px solid var(--hairline-light);
+}
+
+.close {
+  flex: none;
+  width: 40px;
+  height: 40px;
+  border: 1px solid var(--hairline-light);
+  border-radius: 0;
+  background: var(--color-cream-raised);
+  color: var(--color-ink);
+  font-size: 16px;
+  cursor: pointer;
+}
+
+/* The terms are long: cap the card well short of the screen so the page is
+   visibly behind it and the close control is always within reach. */
+.shellCompact {
+  max-height: min(68vh, 640px);
+  padding: 18px 20px 22px;
+}
+
+@media (max-width: 480px) {
+  .overlay {
+    padding: 16px;
+  }
+
+  .shellCompact {
+    max-height: 62vh;
+  }
+}

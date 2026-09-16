@@ -7,9 +7,9 @@ import {
   depositAmount,
   depositDue,
   getDocument,
-  loadContext,
-  publicUrl,
+  loadBooking,
   recordPayment,
+  type BookingCtx,
 } from '@/lib/documents';
 import { formatStudioDate, type DocumentRow } from '@/lib/pipeline';
 import type { BusinessSettings } from '@/lib/settings';
@@ -21,14 +21,19 @@ import { createCheckoutSession, getCheckoutSession, getPaymentIntent, isStripeCo
  * the deposit (or the whole invoice when no deposit applies), the card
  * kept for the balance, and a thank-you page on the site afterwards.
  */
+/** The few invoice fields the checkout needs, so a just-inserted row qualifies. */
+export type CheckoutDoc = Pick<DocumentRow, 'id' | 'kind' | 'number' | 'total' | 'paidAmount' | 'bookingId' | 'clientEmail' | 'token'>;
+
 export async function createBookingCheckout(
-  doc: DocumentRow,
+  doc: CheckoutDoc,
   business: BusinessSettings,
   /** What the client chose on the form: the deposit, or everything now. */
-  wanted: 'deposit' | 'full' = 'deposit'
+  wanted: 'deposit' | 'full' = 'deposit',
+  /** The booking, when the caller already has it; otherwise it is loaded. */
+  known?: BookingCtx | null
 ): Promise<{ url: string; amount: number; plan: 'deposit' | 'full' } | null> {
   if (!isStripeConfigured() || doc.kind !== 'invoice') return null;
-  const deposit = wanted === 'deposit' ? depositDue(doc, business) : null;
+  const deposit = wanted === 'deposit' ? depositDue(doc as DocumentRow, business) : null;
   const amount = deposit ?? doc.total - doc.paidAmount;
   if (amount <= 0) return null;
   const plan = deposit !== null ? 'deposit' : 'full';
@@ -36,7 +41,7 @@ export async function createBookingCheckout(
 
   // Spell out on Stripe's page what the money is for: the session, the
   // invoice and what happens with the rest.
-  const booking = (await loadContext(doc)).booking;
+  const booking = known !== undefined ? known : doc.bookingId ? await loadBooking(doc.bookingId) : null;
   const when = booking?.sessionDate
     ? `${formatStudioDate(booking.sessionDate)}${booking.sessionTime ? `, ${booking.sessionTime}` : ''}`
     : null;
@@ -77,7 +82,7 @@ export async function createBookingCheckout(
       customerEmail: doc.clientEmail,
       metadata: { documentId: doc.id, number: doc.number, plan, amount: String(amount) },
       successUrl: `${SITE.url}/book/confirmed?session_id={CHECKOUT_SESSION_ID}`,
-      cancelUrl: publicUrl(doc),
+      cancelUrl: `${SITE.url}/d/${doc.token}`,
       saveCard: Boolean(doc.bookingId),
     });
     return { url: session.url, amount, plan };

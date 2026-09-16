@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { createPortal } from 'react-dom';
 
 import type { LegalSection } from '@/components/legal/LegalPage';
 import styles from './IncludedModal.module.css';
@@ -29,7 +30,9 @@ export function TermsModal({ triggerClassName, sections }: Props) {
         Terms &amp; Conditions
       </button>
 
-      {open ? (
+      {open
+        ? createPortal(
+
         <div
           className={styles.overlay}
           role="dialog"
@@ -37,8 +40,13 @@ export function TermsModal({ triggerClassName, sections }: Props) {
           aria-label="Terms and Conditions"
           onClick={() => setOpen(false)}
         >
-          <div className={styles.shell} onClick={(e) => e.stopPropagation()}>
-            <div className={styles.title}>Terms &amp; Conditions</div>
+          <div className={`${styles.shell} ${styles.shellCompact}`} onClick={(e) => e.stopPropagation()}>
+            <div className={styles.head}>
+              <div className={styles.title} style={{ margin: 0 }}>Terms &amp; Conditions</div>
+              <button type="button" className={styles.close} aria-label="Close" onClick={() => setOpen(false)}>
+                ✕
+              </button>
+            </div>
             {sections.map((section) => (
               <section key={section.title} style={{ margin: '0 0 16px' }}>
                 <h3
@@ -65,7 +73,10 @@ export function TermsModal({ triggerClassName, sections }: Props) {
             <p className={styles.hint}>Click outside or press Esc to close</p>
           </div>
         </div>
-      ) : null}
+          ,
+          document.body
+        )
+        : null}
     </>
   );
 }

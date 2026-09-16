@@ -168,7 +168,7 @@ export async function logActivity(entry: {
 // Numbering
 // ---------------------------------------------------------------------------
 
-async function nextNumber(kind: DocumentKind, prefix: string): Promise<string> {
+export async function nextNumber(kind: DocumentKind, prefix: string): Promise<string> {
   const year = new Date().getFullYear();
   const result = await sql`
     INSERT INTO document_counters (kind, year, last) VALUES (${kind}, ${year}, 1)
@@ -430,6 +430,38 @@ export async function ensureBookingDocument(
   // The card links are minted as soon as the price exists.
   if (kind === 'invoice' && options.mintLinks !== false) doc = await ensurePaymentLinks(doc, s.business);
   return doc;
+}
+
+/**
+ * The booking's invoice in a single INSERT, for the request path where every
+ * database round trip is felt: the caller already holds the booking, the
+ * settings and a fresh number, so nothing is looked up.
+ */
+export async function insertBookingInvoice(input: {
+  id: string;
+  token: string;
+  number: string;
+  booking: BookingCtx;
+  settings: SiteSettings;
+}): Promise<{ total: number; dueOn: string }> {
+  const { booking, settings: s } = input;
+  const lines = bookingLines(booking, s);
+  const { subtotal, tax, total } = totalsFor(lines, s.business.taxRatePercent);
+  const issued = todayIso();
+  const invoiceDue = addDays(issued, s.business.invoiceDueDays);
+  const balanceDay = balanceDueOn(booking.sessionDate, s.business);
+  const dueOn = balanceDay && balanceDay < invoiceDue ? balanceDay : invoiceDue;
+  await sql`
+    INSERT INTO documents (
+      id, token, kind, number, booking_id, client_name, client_email, client_company,
+      lines, subtotal, tax_rate, tax, total, issued_on, due_on
+    ) VALUES (
+      ${input.id}, ${input.token}, 'invoice', ${input.number}, ${booking.id}, ${booking.name}, ${booking.email}, ${booking.company},
+      ${JSON.stringify(lines)}::jsonb, ${subtotal}, ${s.business.taxRatePercent}, ${tax}, ${total},
+      ${issued}, ${dueOn}
+    )
+  `;
+  return { total, dueOn };
 }
 
 export async function ensureGiftDocument(

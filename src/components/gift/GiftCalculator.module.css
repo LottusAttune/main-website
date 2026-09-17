@@ -345,14 +345,27 @@
 
 /* Someone landing on /gift directly (skipping Offerings) had no way to see
    what's actually in a session before buying one as a gift - same fix as
-   Offerings' own "See What's Included" link, same exact treatment. */
+   Offerings' own "See What's Included" link, same exact treatment. Paired
+   next to Preview certificate rather than as two separate full-width
+   bars. */
+.summaryActionsRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.summaryActionsRow > * {
+  flex: 1;
+  min-width: 160px;
+}
+
 .includedBtn.includedBtn {
   background: var(--color-ink-deepest);
   border-width: 1.5px;
   border-color: var(--color-gold-light);
-  padding: 12px 24px;
+  padding: 12px 20px;
   min-height: 42px;
-  margin-bottom: 10px;
   border-radius: 0;
   color: var(--color-cream-text);
   box-shadow: var(--shadow-pill-dark);
@@ -370,7 +383,7 @@
   background: var(--color-ink-deepest);
   border-width: 1.5px;
   border-color: var(--color-gold-light);
-  padding: 12px 24px;
+  padding: 12px 20px;
   min-height: 42px;
   border-radius: 0;
   color: var(--color-cream-text);

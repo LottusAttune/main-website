@@ -543,9 +543,18 @@ export function GiftCalculator({ pricing, codes, payTerms }: Props) {
               ) : null}
             </div>
 
-            <IncludedModal
-              triggerClassName={`btn btn--outline btn--wide ${styles.includedBtn}`}
-            />
+            <div className={styles.summaryActionsRow}>
+              <IncludedModal
+                triggerClassName={`btn btn--outline btn--wide ${styles.includedBtn}`}
+              />
+              <button
+                type="button"
+                className={`btn btn--outline btn--wide ${styles.previewBtn}`}
+                onClick={() => setPreviewOpen(true)}
+              >
+                Preview certificate
+              </button>
+            </div>
 
             <div className={styles.fields}>
               <input
@@ -596,15 +605,6 @@ export function GiftCalculator({ pricing, codes, payTerms }: Props) {
                 onChange={(e) => setBuyerEmail(e.target.value)}
               />
             </div>
-
-            <button
-              type="button"
-              className={`btn btn--outline btn--wide ${styles.previewBtn}`}
-              style={{ marginBottom: 12 }}
-              onClick={() => setPreviewOpen(true)}
-            >
-              Preview certificate
-            </button>
 
             <div className={styles.payTitle}>Make your payment</div>
 

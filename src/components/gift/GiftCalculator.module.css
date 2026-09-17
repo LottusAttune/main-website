@@ -134,6 +134,11 @@
   min-width: 0;
 }
 
+/* Softer than a full pill, matching Book's own "Continue to payment". */
+.aside :global(.btn--dark) {
+  border-radius: var(--radius-thumb);
+}
+
 .codeBlock {
   margin-bottom: 14px;
 }
@@ -145,6 +150,12 @@
   text-transform: uppercase;
   color: var(--color-gold-text);
   margin-bottom: 10px;
+}
+
+.codeInput {
+  flex: 1;
+  min-width: 0;
+  background: transparent;
 }
 
 .codeInput::placeholder {
@@ -225,14 +236,6 @@
   margin-bottom: 0;
 }
 
-.presentedTo {
-  font-family: var(--font-display);
-  font-weight: 400;
-  font-size: 19px;
-  color: var(--color-ink);
-  margin-bottom: 10px;
-}
-
 .lines {
   display: flex;
   flex-direction: column;
@@ -283,7 +286,7 @@
   gap: 8px;
   padding: 2px 2px 4px;
   font-size: 13px;
-  color: var(--color-gold-text);
+  color: var(--color-muted);
   cursor: pointer;
 }
 
@@ -340,37 +343,42 @@
 
 /* Someone landing on /gift directly (skipping Offerings) had no way to see
    what's actually in a session before buying one as a gift - same fix as
-   Offerings' own "See What's Included" link and Book's own, on this same
-   light card. */
+   Offerings' own "See What's Included" link, same exact treatment. */
 .includedBtn.includedBtn {
-  background: var(--color-cream-raised);
+  background: var(--color-ink-deepest);
   border-width: 1.5px;
-  border-color: var(--gold-rim);
+  border-color: var(--color-gold-light);
   padding: 12px 24px;
   min-height: 42px;
   margin-bottom: 10px;
   border-radius: 0;
-  color: var(--color-ink);
+  color: var(--color-cream-text);
+  box-shadow: var(--shadow-pill-dark);
 }
 
 .includedBtn.includedBtn:hover {
-  background: rgba(198, 169, 122, 0.14);
+  border-color: var(--color-gold-light);
+  background: var(--color-ink-deep);
+  color: var(--color-cream-text);
 }
 
 /* ---------- Certificate preview modal ---------- */
 
 .previewBtn.previewBtn {
-  background: var(--color-cream-raised);
+  background: var(--color-ink-deepest);
   border-width: 1.5px;
-  border-color: var(--gold-rim);
+  border-color: var(--color-gold-light);
   padding: 12px 24px;
   min-height: 42px;
   border-radius: 0;
-  color: var(--color-ink);
+  color: var(--color-cream-text);
+  box-shadow: var(--shadow-pill-dark);
 }
 
 .previewBtn.previewBtn:hover {
-  background: rgba(198, 169, 122, 0.14);
+  border-color: var(--color-gold-light);
+  background: var(--color-ink-deep);
+  color: var(--color-cream-text);
 }
 
 .policyNote {
@@ -380,17 +388,6 @@
   color: var(--color-muted);
 }
 
-.policyLink {
-  display: inline;
-  padding: 0;
-  border: none;
-  background: none;
-  font: inherit;
-  font-weight: 500;
-  color: var(--color-gold-text);
-  text-decoration: underline;
-  cursor: pointer;
-}
 
 .previewOverlay {
   position: fixed;

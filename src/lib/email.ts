@@ -2,6 +2,7 @@ import 'server-only';
 
 import { Resend } from 'resend';
 
+import { FAQS } from '@/data/content';
 import { buildDiscoveryCallIcs, buildGoogleCalendarLink } from '@/lib/ics';
 import type { DocumentKind, DocumentRow } from '@/lib/pipeline';
 import type { BusinessSettings } from '@/lib/settings';
@@ -15,6 +16,12 @@ import { money, SITE } from '@/lib/site';
  * client component imports, so it is never shipped in the browser bundle.
  */
 export const DISCOVERY_CALL_MEET_LINK = 'https://meet.google.com/eyu-jxag-asc';
+
+const GIFT_CANCELLATION_POLICY = (() => {
+  const faq = FAQS.find((f) => f.q === 'Cancellation Policy');
+  if (!faq) throw new Error('"Cancellation Policy" FAQ not found in FAQS');
+  return faq;
+})();
 
 const FROM = 'Lotus Attune <info@lotusattune.com>';
 // PNG, not the site's usual WebP - many email clients (older Outlook among
@@ -397,6 +404,7 @@ export async function sendDocumentEmail(input: {
       ${input.giftCode ? `<p style="margin:0 0 6px;">Your redemption code: <strong style="letter-spacing:0.12em;">${escapeHtml(input.giftCode)}</strong></p>` : ''}
       <p style="margin:0;">To redeem, book at <a href="${SITE.url}/book" style="color:#7c5b3b;">lotusattune.com/book</a> and enter your code.</p>
       ${BUTTON(input.viewUrl, 'View certificate')}
+      <p style="margin:14px 0 0;font-size:12.5px;color:#8a7a63;">${escapeHtml(GIFT_CANCELLATION_POLICY.a)}</p>
       ${mottoHtml()}`;
   }
 

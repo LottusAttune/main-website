@@ -3,7 +3,6 @@
 import { useEffect, useId, useState } from 'react';
 
 import { IncludedModal } from '@/components/common/IncludedModal';
-import { PolicyModal } from '@/components/common/PolicyModal';
 import { giftQuoteFor } from '@/lib/quote';
 import type { DiscountCode, Pricing } from '@/lib/settings';
 import {
@@ -492,11 +491,6 @@ export function GiftCalculator({ pricing, codes, payTerms }: Props) {
           <>
             <div className={styles.certificateFrame}>
               <div className={styles.asideTitle}>Gift Certificate</div>
-              {recipientName.trim() ? (
-                <div className={styles.presentedTo}>
-                  For <strong>{recipientName.trim()}</strong>
-                </div>
-              ) : null}
               <div className={styles.lines}>
                 {quote.lines.map((line) => (
                   <div key={line.label} className="summary-line">
@@ -636,11 +630,6 @@ export function GiftCalculator({ pricing, codes, payTerms }: Props) {
                 <span className={styles.payChoiceNote}>{money(giftWithTax)}, no fee</span>
               </button>
             </div>
-
-            <p className={styles.policyNote}>
-              By requesting this certificate, you agree to our{' '}
-              <PolicyModal triggerClassName={styles.policyLink} />.
-            </p>
 
             <button
               type="button"

@@ -71,7 +71,7 @@ export async function createBookingCheckout(
           : `Your Lotus Attune experience: ${money(amount)} in full`,
       details,
       imageUrl: `${SITE.url}/assets/logo-circle.webp`,
-      submitType: 'book',
+      submitType: 'pay',
       submitMessage:
         plan === 'deposit'
           ? `Paying this ${business.depositPercent}% deposit confirms your date. The remaining ${money(remaining)} is charged to the same card ${business.balanceDaysBefore} days before your session. A receipt and your booking confirmation follow by email.`

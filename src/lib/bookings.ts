@@ -103,6 +103,10 @@ async function sessionEmailInput(
     venue,
     venueCopy: VENUE_COPY,
     venueDetails: settings.business.venueDetails,
+    venueDirections:
+      participants <= LOUNGE_MAX
+        ? settings.business.venueDirectionsLounge
+        : settings.business.venueDirectionsSignature,
     cancellationPolicy: settings.business.cancellationPolicy || DEFAULT_CANCELLATION_POLICY,
     faqs: CONFIRMATION_FAQS,
     googleCalendarUrl: googleCalendarUrl(event),

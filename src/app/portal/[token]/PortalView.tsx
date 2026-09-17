@@ -161,6 +161,11 @@ export function PortalView({ data }: { data: PortalData }) {
               ) : !booking.confirmed ? (
                 <p className={styles.body}>The exact address and arrival details follow with your booking confirmation.</p>
               ) : null}
+              {booking.confirmed && data.venueDirections ? (
+                <p className={styles.body} style={{ whiteSpace: 'pre-line' }}>
+                  {data.venueDirections}
+                </p>
+              ) : null}
             </div>
           ) : null}
 

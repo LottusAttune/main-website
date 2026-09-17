@@ -43,6 +43,8 @@ export type PortalData = {
   settings: SiteSettings;
   venue: string;
   venueCopy: readonly string[];
+  /** How to find this specific venue once inside the building. */
+  venueDirections: string;
   faqs: ReadonlyArray<{ q: string; a: string }>;
   cancellationPolicy: string;
   /** Absolute start/end of the (first) session, for the countdown. */
@@ -157,6 +159,10 @@ export async function loadPortal(token: string): Promise<PortalData | null> {
     settings,
     venue,
     venueCopy: VENUE_COPY,
+    venueDirections:
+      venue === 'Private Wellness Lounge'
+        ? settings.business.venueDirectionsLounge
+        : settings.business.venueDirectionsSignature,
     faqs: FAQS.filter((f) => f.q !== 'Cancellation Policy'),
     cancellationPolicy:
       settings.business.cancellationPolicy || (FAQS.find((f) => f.q === 'Cancellation Policy')?.a ?? ''),

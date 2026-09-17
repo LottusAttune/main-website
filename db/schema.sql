@@ -364,6 +364,12 @@ ALTER TABLE settings ADD COLUMN IF NOT EXISTS cancellation_hours   INTEGER NOT N
 ALTER TABLE settings ADD COLUMN IF NOT EXISTS cancellation_policy  TEXT NOT NULL DEFAULT '';
 ALTER TABLE settings ADD COLUMN IF NOT EXISTS venue_details        TEXT NOT NULL DEFAULT '';
 ALTER TABLE settings ADD COLUMN IF NOT EXISTS reminder_days_before INTEGER NOT NULL DEFAULT 2;
+-- Once inside the building, the two venues are reached differently. The
+-- building itself (address, buzzer, parking) is shared and stays in
+-- venue_details above; these two are the "which way once you're in the
+-- lobby" instructions, specific to the venue booked.
+ALTER TABLE settings ADD COLUMN IF NOT EXISTS venue_directions_lounge     TEXT NOT NULL DEFAULT '';
+ALTER TABLE settings ADD COLUMN IF NOT EXISTS venue_directions_signature  TEXT NOT NULL DEFAULT '';
 
 ALTER TABLE documents ADD COLUMN IF NOT EXISTS paid_amount            INTEGER NOT NULL DEFAULT 0;
 ALTER TABLE documents ADD COLUMN IF NOT EXISTS payment_plan           TEXT;

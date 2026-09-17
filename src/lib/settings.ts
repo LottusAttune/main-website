@@ -62,8 +62,13 @@ export type BusinessSettings = {
   cancellationHours: number;
   /** Printed in the confirmation email; defaults to the website FAQ text. */
   cancellationPolicy: string;
-  /** Address, directions, parking - printed in the confirmation email. */
+  /** Building address, buzzer, parking - shared by both venues, printed in
+   *  the confirmation email and the client portal. */
   venueDetails: string;
+  /** Once inside the building: how to find the Private Wellness Lounge. */
+  venueDirectionsLounge: string;
+  /** Once inside the building: how to find the Premium Signature Venue. */
+  venueDirectionsSignature: string;
   reminderDaysBefore: number;
 };
 
@@ -90,6 +95,8 @@ export const DEFAULT_BUSINESS: BusinessSettings = {
   cancellationHours: 72,
   cancellationPolicy: '',
   venueDetails: '',
+  venueDirectionsLounge: '',
+  venueDirectionsSignature: '',
   reminderDaysBefore: 2,
 };
 
@@ -158,6 +165,8 @@ export function businessFromRow(row: Record<string, unknown>): BusinessSettings 
     cancellationHours: num('cancellation_hours', d.cancellationHours),
     cancellationPolicy: text('cancellation_policy', d.cancellationPolicy),
     venueDetails: text('venue_details', d.venueDetails),
+    venueDirectionsLounge: text('venue_directions_lounge', d.venueDirectionsLounge),
+    venueDirectionsSignature: text('venue_directions_signature', d.venueDirectionsSignature),
     reminderDaysBefore: num('reminder_days_before', d.reminderDaysBefore),
   };
 }

@@ -216,6 +216,8 @@ const action = z.discriminatedUnion('action', [
     cancellationHours: z.coerce.number().int().min(0).max(720),
     cancellationPolicy: z.string().trim().max(3000),
     venueDetails: z.string().trim().max(3000),
+    venueDirectionsLounge: z.string().trim().max(3000),
+    venueDirectionsSignature: z.string().trim().max(3000),
     reminderDaysBefore: z.coerce.number().int().min(0).max(30),
   }),
   z.object({ action: z.literal('deleteBooking'), id: z.string().uuid() }),
@@ -486,6 +488,8 @@ export async function POST(request: Request) {
             cancellation_hours = ${input.cancellationHours},
             cancellation_policy = ${input.cancellationPolicy},
             venue_details = ${input.venueDetails},
+            venue_directions_lounge = ${input.venueDirectionsLounge},
+            venue_directions_signature = ${input.venueDirectionsSignature},
             reminder_days_before = ${input.reminderDaysBefore},
             updated_at = NOW()
           WHERE id = TRUE

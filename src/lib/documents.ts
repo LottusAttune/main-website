@@ -991,24 +991,65 @@ export function paymentOptionsHtml(
   return parts.join('');
 }
 
-function paymentStatusHtml(
+/**
+ * The invoice document's own "what's happening with this payment" block -
+ * one plain-language summary instead of a separate "How to pay" and
+ * "Status" column that ended up repeating the same due date twice. Once
+ * any money has arrived, only the method actually used is shown (a card
+ * deposit auto-charges the balance later; e-transfer is always paid in
+ * full up front, so there is never a balance left to explain there).
+ */
+const PAYMENT_KIND_LABEL: Record<string, string> = {
+  deposit: 'Deposit',
+  balance: 'Balance',
+  cancellation_fee: 'Cancellation fee',
+};
+
+/** One line per payment actually recorded, oldest first - "Deposit $1 paid
+ *  Sept 12, 2026" rather than making the reader infer it from the total. */
+function paymentHistoryHtml(payments: { amount: number; method: string; kind: string; createdAt: string }[]): string {
+  if (!payments.length) return '';
+  return payments
+    .map((p) => {
+      const label = PAYMENT_KIND_LABEL[p.kind] ?? 'Payment';
+      return `${label} <strong>${money(p.amount)}</strong> paid ${formatStudioDate(p.createdAt.slice(0, 10))}`;
+    })
+    .join('<br />');
+}
+
+function paymentSummaryHtml(
   doc: DocumentRow,
   business: BusinessSettings,
-  booking?: { sessionDate: string | null } | null
+  booking?: { sessionDate: string | null } | null,
+  payments: { amount: number; method: string; kind: string; createdAt: string }[] = []
 ): string {
+  const history = paymentHistoryHtml(payments);
+
+  if (doc.status === 'void') {
+    return '<p style="margin:0;">This invoice has been voided.</p>';
+  }
   if (doc.status === 'paid') {
-    return `Paid ${doc.paidAt ? formatStudioDate(doc.paidAt.slice(0, 10)) : ''}${doc.paidMethod ? ` · ${escapeHtml(doc.paidMethod)}` : ''}`;
+    return `<p style="margin:0;">${history || `Paid in full${doc.paidAt ? ` ${formatStudioDate(doc.paidAt.slice(0, 10))}` : ''}${doc.paidMethod ? ` by ${escapeHtml(doc.paidMethod)}` : ''}`}.</p>`;
   }
-  if (doc.status === 'void') return 'Void';
+
+  const outstanding = doc.total - doc.paidAmount;
+
   if (doc.paidAmount > 0) {
-    return `Deposit of ${money(doc.paidAmount)} received<br />Balance ${money(doc.total - doc.paidAmount)} due ${doc.dueOn ? formatStudioDate(doc.dueOn) : 'before the session'}`;
+    const balanceDay = doc.dueOn ? formatStudioDate(doc.dueOn) : `${business.balanceDaysBefore} days before the session`;
+    const parts = [
+      `<p style="margin:0 0 10px;">${history || `Deposit of <strong>${money(doc.paidAmount)}</strong> received`}. Balance <strong>${money(outstanding)}</strong> due ${balanceDay} will be automatically charged to your card on file.</p>`,
+    ];
+    if (doc.payFullUrl) {
+      const fee = cardFee(outstanding, business.cardFeePercent);
+      parts.push(
+        `<p style="margin:0;"><a href="${doc.payFullUrl}">Pay the ${money(outstanding + fee)} balance now instead</a></p>`
+      );
+    }
+    return parts.join('');
   }
-  const deposit = depositDue(doc, business);
-  if (deposit !== null) {
-    const balanceDay = balanceDueOn(booking?.sessionDate ?? null, business);
-    return `Deposit ${money(deposit)} due ${formatStudioDate(doc.dueOn)}<br />Balance ${money(doc.total - deposit)} due ${balanceDay ? formatStudioDate(balanceDay) : `${business.balanceDaysBefore} days before the session`}`;
-  }
-  return `Due ${formatStudioDate(doc.dueOn)}`;
+
+  // Nothing paid yet - the client hasn't chosen a method, so both stay visible.
+  return paymentOptionsHtml(doc, business, booking);
 }
 
 const DEFAULT_PROPOSAL_INTRO =
@@ -1021,6 +1062,9 @@ export type DocumentContext = {
   /** PNG data URL of the drawn signature, once a proposal is accepted. */
   signaturePng?: string | null;
   acceptance?: Acceptance | null;
+  /** Every payment recorded against this document, oldest first - the
+   *  invoice's own "what's been paid, and when" breakdown. */
+  payments?: { amount: number; method: string; kind: string; createdAt: string }[];
 };
 
 type Acceptance = { signerName: string; acceptedAt: string; signaturePng: string | null; number: string };
@@ -1056,12 +1100,23 @@ async function loadAcceptance(doc: DocumentRow): Promise<Acceptance | null> {
 export async function loadContext(doc: DocumentRow): Promise<DocumentContext> {
   const settings = await getSettings();
   const acceptance = await loadAcceptance(doc);
+  const paymentRows = await sql`
+    SELECT amount, method, kind, created_at FROM payments
+    WHERE document_id = ${doc.id} AND kind != 'refund'
+    ORDER BY created_at ASC
+  `;
   return {
     business: settings.business,
     booking: doc.bookingId ? await loadBooking(doc.bookingId) : null,
     gift: doc.giftId ? await loadGift(doc.giftId) : null,
     signaturePng: acceptance?.signaturePng ?? null,
     acceptance,
+    payments: paymentRows.rows.map((r) => ({
+      amount: Number(r.amount),
+      method: String(r.method),
+      kind: String(r.kind),
+      createdAt: String(r.created_at),
+    })),
   };
 }
 
@@ -1118,16 +1173,8 @@ export function documentHtml(doc: DocumentRow, ctx: DocumentContext): string {
     body += linesTable(doc, business);
     body += `
       <div class="rule"></div>
-      <table><tr>
-        <td style="vertical-align:top;width:55%;padding-right:20px;">
-          <div class="eyebrow" style="margin-bottom:6px;">How to pay</div>
-          <div style="font-size:12.5px;">${paymentOptionsHtml(doc, business, ctx.booking)}</div>
-        </td>
-        <td style="vertical-align:top;">
-          <div class="eyebrow" style="margin-bottom:6px;">Status</div>
-          <div style="font-size:12.5px;">${paymentStatusHtml(doc, business, ctx.booking)}</div>
-        </td>
-      </tr></table>`;
+      <div class="eyebrow" style="margin-bottom:6px;">Payment</div>
+      <div style="font-size:12.5px;">${paymentSummaryHtml(doc, business, ctx.booking, ctx.payments ?? [])}</div>`;
   }
 
   if (doc.kind === 'invoice' && ctx.acceptance) body += acceptanceHtml(doc, ctx);

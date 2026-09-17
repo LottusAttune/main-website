@@ -160,6 +160,8 @@
 
 .codeInput::placeholder {
   color: var(--color-gold-text);
+  font-size: 11px;
+  letter-spacing: 0.16em;
   opacity: 1;
 }
 

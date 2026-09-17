@@ -411,7 +411,7 @@
   display: flex;
   flex-direction: column;
   border: none;
-  border-radius: 0 0 6px 6px;
+  border-radius: 0;
   overflow: hidden;
   /* Cleaner and whiter than the shared .card gradient - stands out clearly
      against this section's own warmer background instead of blending into

@@ -349,6 +349,13 @@
   text-transform: uppercase;
 }
 
+.codeInput::placeholder {
+  color: var(--color-ink);
+  font-size: 10.5px;
+  letter-spacing: 0.16em;
+  opacity: 1;
+}
+
 .codeApply {
   flex: none;
   padding: 9px 16px;
@@ -671,6 +678,7 @@
   .mobileBarBtn {
     min-height: 44px;
     padding: 12px 22px;
+    border-radius: 0;
   }
 }
 

@@ -157,7 +157,7 @@ export async function loadPortal(token: string): Promise<PortalData | null> {
     settings,
     venue,
     venueCopy: VENUE_COPY,
-    faqs: FAQS.filter((f) => ['What to expect?', 'What should I bring?', 'What should I wear?'].includes(f.q)),
+    faqs: FAQS.filter((f) => f.q !== 'Cancellation Policy'),
     cancellationPolicy:
       settings.business.cancellationPolicy || (FAQS.find((f) => f.q === 'Cancellation Policy')?.a ?? ''),
     startsAt,

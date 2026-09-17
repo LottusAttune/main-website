@@ -347,7 +347,11 @@ export function Bookings({ bookings, documents, integrations, business }: Props)
     if (!booking.cardOnFile && invoice && invoice.paidAmount > 0 && due > 0) {
       primary.push({
         label: booking.balanceRequestedAt ? 'Request balance again' : 'Request balance',
-        onClick: () => void run({ action: 'sendBalanceRequest', bookingId: booking.id }),
+        onClick: () => {
+          if (window.confirm(`Email the client asking them to pay the ${money(due)} balance now?`)) {
+            void run({ action: 'sendBalanceRequest', bookingId: booking.id });
+          }
+        },
       });
     }
     if (cancelled && booking.cardOnFile && !booking.cancellationFeeChargedAt) {

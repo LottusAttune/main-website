@@ -534,7 +534,15 @@ function LeadDrawer({
                     type="button"
                     className={`btn btn--outline ${styles.smallBtn}`}
                     disabled={pending}
-                    onClick={() => void run({ action: 'sendBalanceRequest', bookingId: lead.id })}
+                    onClick={() => {
+                      if (
+                        window.confirm(
+                          `Email the client asking them to pay the ${money(balanceDue(invoice))} balance now?`
+                        )
+                      ) {
+                        void run({ action: 'sendBalanceRequest', bookingId: lead.id });
+                      }
+                    }}
                   >
                     {lead.balanceRequestedAt ? 'Request balance again' : 'Request balance'}
                   </button>

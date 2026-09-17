@@ -1,13 +1,21 @@
 'use client';
 
+import Image from 'next/image';
 import { useEffect, useState } from 'react';
 
+import { asset } from '@/lib/images';
 import styles from './portal.module.css';
 
 type Props = {
   startsAt: string;
   endsAt: string;
 };
+
+const mark = asset('logo-mark-transparent');
+
+function CountdownMark() {
+  return <Image src={mark.src} alt="" width={36} height={32} className={styles.countdownMark} />;
+}
 
 function parts(ms: number) {
   const total = Math.max(0, Math.floor(ms / 1000));
@@ -37,6 +45,7 @@ export function Countdown({ startsAt, endsAt }: Props) {
   if (now >= end) {
     return (
       <div className={styles.countdown}>
+        <CountdownMark />
         <div className={styles.countdownLabel}>Your experience</div>
         <div className={styles.countdownWord}>We hope you left feeling renewed.</div>
       </div>
@@ -45,6 +54,7 @@ export function Countdown({ startsAt, endsAt }: Props) {
   if (now >= start) {
     return (
       <div className={styles.countdown}>
+        <CountdownMark />
         <div className={styles.countdownLabel}>Right now</div>
         <div className={styles.countdownWord}>Your experience is underway.</div>
       </div>
@@ -53,6 +63,7 @@ export function Countdown({ startsAt, endsAt }: Props) {
   const { days, hours, minutes } = parts(start - now);
   return (
     <div className={styles.countdown} role="timer" aria-live="off">
+      <CountdownMark />
       <div className={styles.countdownLabel}>Until your experience</div>
       <div className={styles.countdownRow}>
         <div className={styles.countdownCell}>

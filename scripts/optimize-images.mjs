@@ -45,6 +45,7 @@ const SMALL_ASSETS = new Set([
   'logo-circle',
   'logo-lockup',
   'logo-mark',
+  'logo-mark-transparent',
   'logo-wordmark',
 ]);
 
@@ -53,6 +54,7 @@ const NEEDS_ALPHA = new Set([
   'icon-neuroscience',
   'icon-practice',
   'icon-reintegration',
+  'logo-mark-transparent',
   'icon-senses',
   'icon-sound',
   'logo-circle',

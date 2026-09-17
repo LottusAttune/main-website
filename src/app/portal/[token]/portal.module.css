@@ -28,6 +28,13 @@
   text-align: center;
 }
 
+.countdownMark {
+  display: block;
+  width: 36px;
+  height: 32px;
+  margin: 0 auto 12px;
+}
+
 .countdownLabel {
   font-size: var(--text-eyebrow);
   letter-spacing: var(--tracking-eyebrow);

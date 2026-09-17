@@ -224,7 +224,6 @@ function ClientCard({
                         <div className={styles.recordSub}>
                           {lead.participants === 1 ? 'Private session' : `${lead.participants} participants`} · {lead.venue}
                           {lead.teamAddon ? ' · Team-building' : ''}
-                          {lead.refreshments ? ' · Refreshments' : ''}
                         </div>
                       </div>
                       <div className={styles.recordValue}>{money(lead.total)}</div>

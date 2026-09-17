@@ -51,7 +51,6 @@ const COLUMNS = [
     header: 'Team-building add-on',
     value: (b: BookingRow) => (b.teamAddon ? 'Yes' : 'No'),
   },
-  { header: 'Refreshments', value: (b: BookingRow) => (b.refreshments ? 'Yes' : 'No') },
   { header: 'Package of four', value: (b: BookingRow) => (b.isPackage ? 'Yes' : 'No') },
   { header: 'Corporate intro', value: (b: BookingRow) => (b.isCorporateIntro ? 'Yes' : 'No') },
   { header: 'Venue', value: (b: BookingRow) => b.venue },
@@ -141,7 +140,6 @@ function formatLabel(b: BookingRow): string {
     b.participants === 1 ? 'One-on-one' : `${b.participants} participants`,
   ];
   if (b.teamAddon) parts.push('Team-building');
-  if (b.refreshments) parts.push('Refreshments');
   if (b.isPackage) parts.push('Package of four');
   if (b.isCorporateIntro) parts.push('Corporate intro');
   return parts.join(' · ');

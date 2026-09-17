@@ -113,7 +113,6 @@ export async function getStudioData(): Promise<StudioData> {
       sessionDate2: toIso(row.session_date_2),
       sessionTime2: row.session_time_2 ? String(row.session_time_2) : null,
       teamAddon: Boolean(row.team_addon),
-      refreshments: Boolean(row.refreshments),
       isPackage: Boolean(row.is_package),
       isCorporateIntro: Boolean(row.is_corporate_intro),
       discountCode: row.discount_code ? String(row.discount_code) : null,

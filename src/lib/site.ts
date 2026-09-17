@@ -83,7 +83,6 @@ export const DEFAULT_PRICING = {
   privatePackage: 1200,
   perParticipant: 250,
   teamAddon: 500,
-  refreshments: 20,
   deposit: 500,
 } as const;
 

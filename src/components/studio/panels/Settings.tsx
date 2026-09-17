@@ -12,7 +12,6 @@ const PRICE_FIELDS: Array<{ key: keyof Pricing; label: string; note: string }> =
   { key: 'privateSession', label: 'Private session', note: 'One-on-one, per session' },
   { key: 'privatePackage', label: 'Package of four', note: 'Private sessions, prepaid' },
   { key: 'teamAddon', label: 'Team-building add-on', note: 'Per corporate event' },
-  { key: 'refreshments', label: 'Refreshments', note: 'Per participant, optional' },
   { key: 'deposit', label: 'Security deposit', note: 'Groups over 6, refundable' },
 ];
 

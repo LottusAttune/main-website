@@ -32,7 +32,6 @@ export type Lead = {
   sessionDate2: string | null;
   sessionTime2: string | null;
   teamAddon: boolean;
-  refreshments: boolean;
   isPackage: boolean;
   isCorporateIntro: boolean;
   discountCode: string | null;

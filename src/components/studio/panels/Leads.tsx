@@ -60,7 +60,6 @@ function formatLabel(lead: Lead): string {
   const parts = [`${lead.participants} participants`];
   if (lead.isCorporateIntro) parts.push('corporate intro');
   if (lead.teamAddon) parts.push('team-building');
-  if (lead.refreshments) parts.push('refreshments');
   return parts.join(' · ');
 }
 

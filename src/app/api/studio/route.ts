@@ -58,7 +58,6 @@ const action = z.discriminatedUnion('action', [
       privatePackage: z.coerce.number().int().min(0).max(100_000),
       perParticipant: z.coerce.number().int().min(0).max(100_000),
       teamAddon: z.coerce.number().int().min(0).max(100_000),
-      refreshments: z.coerce.number().int().min(0).max(100_000),
       deposit: z.coerce.number().int().min(0).max(100_000),
     }),
     slots: z.object({
@@ -500,7 +499,6 @@ export async function POST(request: Request) {
             private_package = ${input.pricing.privatePackage},
             per_participant = ${input.pricing.perParticipant},
             team_addon      = ${input.pricing.teamAddon},
-            refreshments    = ${input.pricing.refreshments},
             deposit         = ${input.pricing.deposit},
             slot_midday     = ${input.slots.midday},
             slot_evening    = ${input.slots.evening},

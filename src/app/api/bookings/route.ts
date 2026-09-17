@@ -71,7 +71,6 @@ export async function POST(request: Request) {
       isPackage: input.isPackage,
       isCorporateIntro: input.isCorporateIntro,
       teamAddon: input.teamAddon,
-      refreshments: input.refreshments,
       percentOff: eligibleDiscount?.percentOff,
       amountOff: eligibleDiscount?.amountOff,
       discountLabel: eligibleDiscount?.code,
@@ -115,14 +114,14 @@ export async function POST(request: Request) {
       INSERT INTO bookings (
         name, email, phone, company, message, participants,
         session_date, session_time, session_date_2, session_time_2,
-        team_addon, refreshments, is_package, is_corporate_intro,
+        team_addon, is_package, is_corporate_intro,
         discount_code, gratuity, estimated_total, terms_accepted_at
       ) VALUES (
         ${input.name}, ${input.email}, ${input.phone ?? null}, ${input.company ?? null}, ${input.message ?? null},
         ${input.participants},
         ${input.sessionDate}, ${input.sessionTime},
         ${input.sessionDate2 ?? null}, ${input.sessionTime2 ?? null},
-        ${input.teamAddon}, ${input.refreshments}, ${input.isPackage}, ${input.isCorporateIntro},
+        ${input.teamAddon}, ${input.isPackage}, ${input.isCorporateIntro},
         ${eligibleDiscount?.code ?? null}, ${gratuity}, ${total}, NOW()
       )
       RETURNING id, portal_token
@@ -163,7 +162,6 @@ export async function POST(request: Request) {
           sessionDate2: input.sessionDate2 ?? null,
           sessionTime2: input.sessionTime2 ?? null,
           teamAddon: input.teamAddon,
-          refreshments: input.refreshments,
           isPackage: input.isPackage,
           isCorporateIntro: input.isCorporateIntro,
           discountCode: eligibleDiscount?.code ?? null,

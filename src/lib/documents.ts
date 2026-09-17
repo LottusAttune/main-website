@@ -197,7 +197,6 @@ export type BookingCtx = {
   sessionDate2: string | null;
   sessionTime2: string | null;
   teamAddon: boolean;
-  refreshments: boolean;
   isPackage: boolean;
   isCorporateIntro: boolean;
   discountCode: string | null;
@@ -220,7 +219,6 @@ function bookingCtx(row: Row): BookingCtx {
     sessionDate2: toIso(row.session_date_2),
     sessionTime2: row.session_time_2 ? String(row.session_time_2) : null,
     teamAddon: Boolean(row.team_addon),
-    refreshments: Boolean(row.refreshments),
     isPackage: Boolean(row.is_package),
     isCorporateIntro: Boolean(row.is_corporate_intro),
     discountCode: row.discount_code ? String(row.discount_code) : null,
@@ -259,7 +257,6 @@ export function bookingLines(booking: BookingCtx, settings: SiteSettings): Docum
       isPackage: booking.isPackage,
       isCorporateIntro: booking.isCorporateIntro,
       teamAddon: booking.teamAddon,
-      refreshments: booking.refreshments,
       percentOff: code?.percentOff,
       amountOff: code?.amountOff,
       discountLabel: code?.code,
@@ -896,7 +893,6 @@ function sessionBox(booking: BookingCtx): string {
   }
   rows.push(['Venue', venue]);
   if (booking.teamAddon) rows.push(['Add-on', 'Team-building activity']);
-  if (booking.refreshments) rows.push(['Refreshments', 'Included']);
   return `
     <div class="box">
       <div class="eyebrow" style="margin-bottom:6px;">The experience</div>

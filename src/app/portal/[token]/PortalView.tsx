@@ -22,7 +22,7 @@ export function PortalView({ data }: { data: PortalData }) {
       : booking.isCorporateIntro
         ? `Corporate introductory experience, ${booking.participants} participants`
         : `${booking.participants} participants`;
-  const extras = [booking.teamAddon ? 'Team-building add-on' : null, booking.refreshments ? 'Refreshments' : null].filter(Boolean);
+  const extras = [booking.teamAddon ? 'Team-building add-on' : null].filter(Boolean);
 
   return (
     <>

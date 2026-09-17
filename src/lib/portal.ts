@@ -26,7 +26,7 @@ import { LOUNGE_MAX, money, SITE, TEAM_ADDON_MIN_PARTICIPANTS } from '@/lib/site
  * money side, and the add-ons they can still put on the booking themselves.
  */
 
-export type UpsellKey = 'teamAddon' | 'refreshments';
+export type UpsellKey = 'teamAddon';
 
 export type Upsell = {
   key: UpsellKey;
@@ -85,7 +85,6 @@ function ctxFromRow(row: Record<string, unknown>): BookingCtx {
     sessionDate2: toIso(row.session_date_2),
     sessionTime2: row.session_time_2 ? String(row.session_time_2) : null,
     teamAddon: Boolean(row.team_addon),
-    refreshments: Boolean(row.refreshments),
     isPackage: Boolean(row.is_package),
     isCorporateIntro: Boolean(row.is_corporate_intro),
     discountCode: row.discount_code ? String(row.discount_code) : null,
@@ -116,15 +115,6 @@ export function upsellsFor(booking: BookingCtx, settings: SiteSettings): Upsell[
       blurb: CORPORATE_ADDON_COPY,
       price: settings.pricing.teamAddon,
       priceNote: 'per event',
-    });
-  }
-  if (people >= MIN_GROUP_SIZE && !booking.refreshments) {
-    list.push({
-      key: 'refreshments',
-      title: 'Refreshments',
-      blurb: 'Light refreshments for your group, served in the Arrival Lounge before and after the experience.',
-      price: settings.pricing.refreshments * people,
-      priceNote: `${money(settings.pricing.refreshments)} per person`,
     });
   }
   return list;
@@ -216,7 +206,7 @@ export async function addUpsell(
   if (!upsell) return { ok: false, error: 'That add-on is not available on this booking.' };
 
   const { booking, settings } = data;
-  const next: BookingCtx = { ...booking, teamAddon: booking.teamAddon || key === 'teamAddon', refreshments: booking.refreshments || key === 'refreshments' };
+  const next: BookingCtx = { ...booking, teamAddon: booking.teamAddon || key === 'teamAddon' };
   const code = next.discountCode ? settings.codes.find((c) => c.code === next.discountCode) : undefined;
   const quote = quoteFor(
     {
@@ -224,7 +214,6 @@ export async function addUpsell(
       isPackage: next.isPackage,
       isCorporateIntro: next.isCorporateIntro,
       teamAddon: next.teamAddon,
-      refreshments: next.refreshments,
       percentOff: code?.percentOff,
       amountOff: code?.amountOff,
       discountLabel: code?.code,
@@ -237,7 +226,7 @@ export async function addUpsell(
 
   await sql`
     UPDATE bookings SET
-      team_addon = ${next.teamAddon}, refreshments = ${next.refreshments},
+      team_addon = ${next.teamAddon},
       estimated_total = ${quote.total}
     WHERE id = ${booking.id}
   `;

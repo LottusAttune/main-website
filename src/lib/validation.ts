@@ -26,7 +26,6 @@ export const bookingSchema = z
     sessionDate2: isoDay.optional().nullable(),
     sessionTime2: z.enum(TIME_LABELS).optional().nullable(),
     teamAddon: z.boolean().default(false),
-    refreshments: z.boolean().default(false),
     isPackage: z.boolean().default(false),
     isCorporateIntro: z.boolean().default(false),
     discountCode: z.string().trim().max(40).optional().nullable(),

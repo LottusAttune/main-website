@@ -32,7 +32,6 @@ export type BookingInput = {
   /** First-time organizational clients only, minimum 7 participants. */
   isCorporateIntro?: boolean;
   teamAddon?: boolean;
-  refreshments?: boolean;
   /** A code is either percent-off or a flat amount-off, never both -
    *  already validated as active and meeting its own participant minimum. */
   percentOff?: number;
@@ -98,15 +97,6 @@ export function quoteFor(
     lines.push({
       label: 'Team-building add-on',
       value: money(pricing.teamAddon),
-    });
-  }
-
-  if (people >= MIN_GROUP_SIZE && input.refreshments) {
-    const amount = pricing.refreshments * people;
-    subtotal += amount;
-    lines.push({
-      label: `Refreshments — ${money(pricing.refreshments)} pp`,
-      value: money(amount),
     });
   }
 

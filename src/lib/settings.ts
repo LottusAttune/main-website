@@ -8,7 +8,6 @@ export type Pricing = {
   privatePackage: number;
   perParticipant: number;
   teamAddon: number;
-  refreshments: number;
   deposit: number;
 };
 
@@ -212,7 +211,6 @@ export async function getSettings(): Promise<SiteSettings> {
         privatePackage: Number(row.private_package),
         perParticipant: Number(row.per_participant),
         teamAddon: Number(row.team_addon),
-        refreshments: Number(row.refreshments),
         deposit: Number(row.deposit),
       },
       slots: {

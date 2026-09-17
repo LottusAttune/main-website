@@ -6,7 +6,7 @@ import { addUpsell } from '@/lib/portal';
 
 export const runtime = 'nodejs';
 
-const schema = z.object({ addon: z.enum(['teamAddon', 'refreshments']) });
+const schema = z.object({ addon: z.enum(['teamAddon']) });
 
 /** The portal's "add to your experience" buttons post here. */
 export async function POST(request: Request, { params }: { params: Promise<{ token: string }> }) {

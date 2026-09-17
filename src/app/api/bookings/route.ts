@@ -2,7 +2,6 @@ import { after, NextResponse } from 'next/server';
 
 import { createCalendarEvent, sessionSlotWindow } from '@/lib/calendar';
 import { isDatabaseConfigured, sql } from '@/lib/db';
-import { FAQS } from '@/data/content';
 import { randomUUID } from 'node:crypto';
 
 import { createBookingCheckout } from '@/lib/checkout';
@@ -10,14 +9,12 @@ import {
   bookingLines,
   insertBookingInvoice,
   logActivity,
-  markDocumentSent,
   nextNumber,
   prepareBookingInvoice,
   totalsFor,
   type BookingCtx,
-  type InvoiceEmailPart,
 } from '@/lib/documents';
-import { sendBookingRequestEmails } from '@/lib/email';
+import { sendNewBookingOwnerNotification } from '@/lib/email';
 import { quoteFor } from '@/lib/quote';
 import { getSettings } from '@/lib/settings';
 import { LOUNGE_MAX, SITE } from '@/lib/site';
@@ -227,19 +224,22 @@ export async function POST(request: Request) {
       await logActivity({ bookingId, kind: 'received', body: 'Booking request received from the website' });
       await logActivity({ bookingId, kind: 'terms_accepted', body: 'Terms & Conditions and cancellation policy accepted on the booking form' });
 
-      // The invoice (deposit to confirm the date) travels in the same email
-      // as the confirmation, so the client gets exactly one message.
-      let invoice: InvoiceEmailPart | null = null;
+      // No email goes to the client yet — they only hear from us once
+      // payment actually lands (see afterPayment in lib/bookings.ts). This
+      // just warms the invoice's payment links and PDF cache so the Stripe
+      // receipt and the invoice page are both ready the moment they pay.
+      let invoiceSummary: { number: string; total: number; deposit: number | null } | null = null;
       if (settings.business.autoSendInvoices) {
         try {
-          invoice = await prepareBookingInvoice(bookingId, settings);
+          const prepared = await prepareBookingInvoice(bookingId, settings);
+          invoiceSummary = { number: prepared.number, total: prepared.total, deposit: prepared.deposit };
         } catch (error) {
           console.error('[bookings] invoice failed:', error);
           await logActivity({ bookingId, kind: 'email_failed', body: `Invoice could not be prepared: ${error instanceof Error ? error.message : 'unknown error'}` });
         }
       }
 
-      const emails = await sendBookingRequestEmails({
+      const ownerEmail = await sendNewBookingOwnerNotification({
         name: input.name,
         email: input.email,
         phone: input.phone ?? null,
@@ -253,15 +253,10 @@ export async function POST(request: Request) {
         total,
         venue,
         studioUrl: `${SITE.url}/studio`,
-        portalUrl: portalToken ? `${SITE.url}/portal/${portalToken}` : null,
-        cancellationPolicy:
-          settings.business.cancellationPolicy || (FAQS.find((f) => f.q === 'Cancellation Policy')?.a ?? ''),
-        invoice,
+        invoice: invoiceSummary,
       });
-      if (!emails.client.ok) {
-        await logActivity({ bookingId, kind: 'email_failed', body: `Request confirmation email: ${emails.client.error}` });
-      } else if (invoice) {
-        await markDocumentSent(invoice.doc, Boolean(invoice.pdf));
+      if (!ownerEmail.ok) {
+        await logActivity({ bookingId, kind: 'email_failed', body: `Owner notification: ${ownerEmail.error}` });
       }
 
       try {

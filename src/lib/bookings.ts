@@ -117,8 +117,15 @@ async function sessionEmailInput(
   };
 }
 
-/** Confirmation email with venue, FAQs, policy and calendar file. */
-export async function sendBookingConfirmation(bookingId: string): Promise<ActionResult> {
+/**
+ * Confirmation email with venue, FAQs, policy and calendar file. When
+ * `payment` is given, this is also the receipt for the payment that
+ * triggered it, folded into one message instead of two.
+ */
+export async function sendBookingConfirmation(
+  bookingId: string,
+  payment?: { amount: number; method: string; kind: string; pdf: Buffer | null } | null
+): Promise<ActionResult> {
   const result = await sql`SELECT * FROM bookings WHERE id = ${bookingId}`;
   const row = result.rows[0];
   if (!row) return { ok: false, error: 'Booking not found.' };
@@ -127,6 +134,11 @@ export async function sendBookingConfirmation(bookingId: string): Promise<Action
   const invoice = await invoiceFor(bookingId);
   const input = await sessionEmailInput(row, settings, invoice);
   if (!input) return { ok: false, error: 'This booking has no session date yet.' };
+  if (payment) {
+    input.paymentJustReceived = { amount: payment.amount, method: payment.method, kind: payment.kind };
+    input.invoiceNumber = invoice?.number ?? null;
+    input.invoicePdf = payment.pdf;
+  }
 
   const sent = await sendBookingConfirmationEmail(input);
   if (!sent.ok) {
@@ -158,8 +170,10 @@ export async function sendBookingReminder(bookingId: string): Promise<ActionResu
   return { ok: true };
 }
 
-/** After any card payment lands: receipt to the client, heads-up to Silvana,
- *  and the confirmation email the first time money arrives. */
+/** After any card payment lands: the client gets exactly one email — the
+ *  full booking confirmation the first time money arrives (folding in the
+ *  receipt), or a plain receipt for any payment after that — plus a
+ *  heads-up to Silvana either way. */
 export async function afterPayment(
   doc: DocumentRow,
   amount: number,
@@ -173,25 +187,30 @@ export async function afterPayment(
   } catch (error) {
     console.error('[bookings] receipt PDF failed:', error);
   }
-  await sendReceiptEmail({
-    name: doc.clientName,
-    email: doc.clientEmail,
-    number: doc.number,
-    amount,
-    method,
-    kind,
-    balanceDue: balanceDue(doc),
-    viewUrl: publicUrl(doc),
-    pdf,
-  });
+
+  const alreadyConfirmed = doc.bookingId
+    ? Boolean((await sql`SELECT confirmation_sent_at FROM bookings WHERE id = ${doc.bookingId}`).rows[0]?.confirmation_sent_at)
+    : true;
+
+  if (doc.bookingId && kind !== 'cancellation_fee' && !alreadyConfirmed) {
+    await sendBookingConfirmation(doc.bookingId, { amount, method, kind, pdf });
+  } else {
+    await sendReceiptEmail({
+      name: doc.clientName,
+      email: doc.clientEmail,
+      number: doc.number,
+      amount,
+      method,
+      kind,
+      balanceDue: balanceDue(doc),
+      viewUrl: publicUrl(doc),
+      pdf,
+    });
+  }
   await sendOwnerNotification({
     subject: `Payment received: ${money(amount)} from ${doc.clientName} — ${doc.number}`,
     html: `<p style="margin:0;">${doc.clientName} paid ${money(amount)} by ${method} (${kind}) on ${doc.number}.${balanceDue(doc) > 0 ? ` ${money(balanceDue(doc))} remains.` : ' Paid in full.'}</p>`,
   });
-  if (doc.bookingId && kind !== 'cancellation_fee') {
-    const b = await sql`SELECT confirmation_sent_at FROM bookings WHERE id = ${doc.bookingId}`;
-    if (!b.rows[0]?.confirmation_sent_at) await sendBookingConfirmation(doc.bookingId);
-  }
   // A paid gift invoice turns into the certificate itself.
   if (doc.giftId && balanceDue(doc) <= 0 && kind !== 'cancellation_fee' && kind !== 'refund') {
     const issued = await issueGiftCertificate(doc.giftId);

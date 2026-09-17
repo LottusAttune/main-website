@@ -433,7 +433,13 @@ export async function sendOwnerNotification(input: {
 // Booking request received
 // ---------------------------------------------------------------------------
 
-export async function sendBookingRequestEmails(input: {
+/**
+ * A new request needs no email to the client: they go straight from the
+ * form to Stripe, and the client only ever hears from us once payment
+ * actually lands (see sendBookingConfirmationEmail). This is Silvana's own
+ * heads-up that a request came in, with the invoice/deposit it produced.
+ */
+export async function sendNewBookingOwnerNotification(input: {
   name: string;
   email: string;
   phone: string | null;
@@ -447,30 +453,9 @@ export async function sendBookingRequestEmails(input: {
   total: number;
   venue: string;
   studioUrl: string;
-  cancellationPolicy: string;
-  /** The client's private booking page. */
-  portalUrl: string | null;
-  /** The session invoice, when it is ready to ride along in this email. */
-  invoice: {
-    number: string;
-    total: number;
-    deposit: number | null;
-    depositPercent: number;
-    dueOn: string | null;
-    balanceDay: string | null;
-    balanceDaysBefore: number;
-    paymentHtml: string;
-    viewUrl: string;
-    pdf: Buffer | null;
-  } | null;
-}): Promise<{ client: EmailResult; owner: EmailResult }> {
-  const first = input.name.split(' ')[0] || input.name;
+  invoice: { number: string; total: number; deposit: number | null } | null;
+}): Promise<EmailResult> {
   const inv = input.invoice;
-  const invoiceLine = !inv
-    ? 'Your invoice will follow by email.'
-    : inv.deposit !== null
-      ? `Your invoice ${escapeHtml(inv.number)} is ${inv.pdf ? 'attached' : 'below'}. A ${inv.depositPercent}% deposit of <strong>${money(inv.deposit)}</strong> confirms your date${inv.dueOn ? `, due by <strong>${formatStudioDate(inv.dueOn)}</strong>` : ''}. The remaining ${money(inv.total - inv.deposit)} is due ${inv.balanceDaysBefore} calendar days before your session${inv.balanceDay ? `, on ${formatStudioDate(inv.balanceDay)}` : ''}.`
-      : `Your invoice ${escapeHtml(inv.number)} for ${money(inv.total)} is ${inv.pdf ? 'attached' : 'below'}${inv.dueOn ? `, due by <strong>${formatStudioDate(inv.dueOn)}</strong>` : ''}.`;
   const rows: Array<[string, string]> = [
     ['Date', formatStudioDate(input.sessionDate)],
     ['Time', input.sessionTime],
@@ -500,28 +485,11 @@ export async function sendBookingRequestEmails(input: {
       </td></tr>
     </table>`;
 
-  const client = sendEmail({
-    to: input.email,
-    subject: `Request confirmed: Lotus Attune, ${formatStudioDate(input.sessionDate)}${inv ? `. Invoice ${inv.number}` : ''}`,
-    html: wrapperHtml(`
-      <p style="margin:0 0 10px;">Hi ${escapeHtml(first)},</p>
-      <p style="margin:0 0 14px;">Thank you for your request. It has been received.</p>
-      <p style="margin:0 0 12px;"><strong>What you can expect</strong><br />We will review your request within 24 hours and come back to you by email. ${invoiceLine}</p>
-      <p style="margin:0;"><strong>What you can do</strong><br />You can start preparing. Comfortable clothing and warm socks are all you need. Everything else is provided.</p>
-      ${details}
-      ${inv ? `<div style="margin:0 0 6px;">${sectionTitle('How to pay')}<div style="font-size:14px;">${inv.paymentHtml.replace(/<a /g, '<a style="color:#7c5b3b;" ')}</div></div>${BUTTON(inv.viewUrl, 'View invoice')}` : ''}
-      ${input.portalUrl ? portalSection(input.portalUrl) : ''}
-      ${input.cancellationPolicy ? `${sectionTitle('Cancellation policy')}<p style="margin:0 0 16px;">${escapeHtml(input.cancellationPolicy).replace(/\n/g, '<br />')}</p>` : ''}
-      <p style="margin:0;">Need to reach us sooner? Reply to this email or call ${SITE.phone}.</p>
-      ${mottoHtml()}`),
-    attachments: inv?.pdf ? [{ filename: `${inv.number}.pdf`, content: inv.pdf }] : undefined,
-  });
-
-  const owner = sendEmail({
+  return sendEmail({
     to: SITE.email,
     subject: `New booking request: ${input.name}, ${formatStudioDate(input.sessionDate)}, ${money(input.total)}`,
     html: wrapperHtml(`
-      <p style="margin:0 0 10px;">A new booking request just landed in the studio.${inv ? ` Invoice ${escapeHtml(inv.number)} went to the client with it${inv.deposit !== null ? ` (${money(inv.deposit)} deposit to confirm)` : ''}.` : ''}</p>
+      <p style="margin:0 0 10px;">A new booking request just landed in the studio.${inv ? ` Invoice ${escapeHtml(inv.number)} is ready${inv.deposit !== null ? ` (${money(inv.deposit)} deposit to confirm)` : ''} — the client is on their way to pay it now.` : ''}</p>
       ${details}
       <p style="margin:0 0 6px;"><strong>${escapeHtml(input.name)}</strong>${input.company ? ` · ${escapeHtml(input.company)}` : ''}</p>
       <p style="margin:0 0 6px;"><a href="mailto:${escapeHtml(input.email)}" style="color:#7c5b3b;">${escapeHtml(input.email)}</a>${input.phone ? ` · ${escapeHtml(input.phone)}` : ''}</p>
@@ -529,9 +497,6 @@ export async function sendBookingRequestEmails(input: {
       ${BUTTON(input.studioUrl, 'Open in studio')}
       ${mottoHtml()}`),
   });
-
-  const [c, o] = await Promise.all([client, owner]);
-  return { client: c, owner: o };
 }
 
 // ---------------------------------------------------------------------------
@@ -557,7 +522,26 @@ export type SessionEmailInput = {
   balanceDue: number;
   balanceChargeDate: string | null;
   portalUrl: string | null;
+  /** Set when this confirmation is also the receipt for the payment that
+   *  triggered it — folds "payment received" and "you're confirmed" into
+   *  one email instead of two. */
+  paymentJustReceived?: { amount: number; method: string; kind: string } | null;
+  invoiceNumber?: string | null;
+  invoicePdf?: Buffer | null;
 };
+
+function paymentKindLabel(kind: string): string {
+  switch (kind) {
+    case 'deposit':
+      return 'your deposit';
+    case 'balance':
+      return 'the remaining balance';
+    case 'cancellation_fee':
+      return 'the cancellation fee';
+    default:
+      return 'your payment';
+  }
+}
 
 /** "Your booking page": the countdown, the details, add-ons and the invoice, all in one link. */
 function portalSection(url: string): string {
@@ -614,15 +598,19 @@ function venueSection(input: SessionEmailInput): string {
 
 export async function sendBookingConfirmationEmail(input: SessionEmailInput): Promise<EmailResult> {
   const first = input.name.split(' ')[0] || input.name;
+  const received = input.paymentJustReceived;
+  const intro = received
+    ? `Thank you, we received ${paymentKindLabel(received.kind)} of <strong>${money(received.amount)}</strong> by ${escapeHtml(received.method)}${input.invoiceNumber ? ` against ${escapeHtml(input.invoiceNumber)}` : ''}. Your date is confirmed - everything you need is below.`
+    : 'Your Lotus Attune experience is confirmed. Everything you need is below.';
   const payment =
     input.balanceDue > 0
-      ? `<p style="margin:0 0 8px;">Received so far: <strong>${money(input.amountPaid)}</strong>. The remaining <strong>${money(input.balanceDue)}</strong>${input.balanceChargeDate ? ` will be charged to your card on ${formatStudioDate(input.balanceChargeDate)}` : ' is due before your session'}.</p>`
+      ? `<p style="margin:0 0 8px;">Remaining balance: <strong>${money(input.balanceDue)}</strong>${input.balanceChargeDate ? ` will be charged to your card on ${formatStudioDate(input.balanceChargeDate)}` : ' due before your session'}.</p>`
       : input.amountPaid > 0
-        ? `<p style="margin:0 0 8px;">Paid in full: <strong>${money(input.amountPaid)}</strong>. Nothing more to do.</p>`
+        ? `<p style="margin:0 0 8px;">Paid in full. Nothing more to do.</p>`
         : '';
   const html = wrapperHtml(`
     <p style="margin:0 0 10px;">Hi ${escapeHtml(first)},</p>
-    <p style="margin:0;">Your Lotus Attune experience is confirmed. Everything you need is below - we look forward to welcoming you.</p>
+    <p style="margin:0;">${intro}</p>
     ${sessionBoxHtml(input, 'Your session')}
     ${payment}
     ${input.portalUrl ? portalSection(input.portalUrl) : ''}
@@ -633,14 +621,20 @@ export async function sendBookingConfirmationEmail(input: SessionEmailInput): Pr
         (f) => `<p style="margin:0 0 10px;"><strong>${escapeHtml(f.q)}</strong><br />${escapeHtml(f.a)}</p>`
       )
       .join('')}
-    ${input.cancellationPolicy ? `${sectionTitle('Cancellation policy')}<p style="margin:0;">${escapeHtml(input.cancellationPolicy).replace(/\n/g, '<br />')}</p>` : ''}
+    ${input.cancellationPolicy ? `${sectionTitle('Cancellation policy')}<p style="margin:0 0 16px;">${escapeHtml(input.cancellationPolicy).replace(/\n/g, '<br />')}</p>` : ''}
+    <p style="margin:0;">We're looking forward to welcoming you and creating space for a truly restorative reset.</p>
     ${mottoHtml()}`);
 
   return sendEmail({
     to: input.email,
     subject: `Confirmed: your Lotus Attune experience on ${formatStudioDate(input.sessionDate)}`,
     html,
-    attachments: [{ filename: 'lotus-attune-session.ics', content: Buffer.from(input.ics, 'utf8') }],
+    attachments: [
+      { filename: 'lotus-attune-session.ics', content: Buffer.from(input.ics, 'utf8') },
+      ...(input.invoicePdf && input.invoiceNumber
+        ? [{ filename: `${input.invoiceNumber}.pdf`, content: input.invoicePdf }]
+        : []),
+    ],
   });
 }
 
@@ -704,20 +698,12 @@ export async function sendReceiptEmail(input: {
   pdf?: Buffer | null;
 }): Promise<EmailResult> {
   const first = input.name.split(' ')[0] || input.name;
-  const what =
-    input.kind === 'deposit'
-      ? 'your deposit'
-      : input.kind === 'balance'
-        ? 'the remaining balance'
-        : input.kind === 'cancellation_fee'
-          ? 'the cancellation fee'
-          : 'your payment';
   return sendEmail({
     to: input.email,
     subject: `Payment received: ${money(input.amount)} for ${input.number}`,
     html: wrapperHtml(`
       <p style="margin:0 0 10px;">Hi ${escapeHtml(first)},</p>
-      <p style="margin:0;">Thank you, we received ${what} of <strong>${money(input.amount)}</strong> by ${escapeHtml(input.method)} against ${escapeHtml(input.number)}.${input.balanceDue > 0 ? ` The remaining balance is ${money(input.balanceDue)}.` : ' Your account is settled.'}${input.pdf ? ' The updated invoice is attached.' : ''}</p>
+      <p style="margin:0;">Thank you, we received ${paymentKindLabel(input.kind)} of <strong>${money(input.amount)}</strong> by ${escapeHtml(input.method)} against ${escapeHtml(input.number)}.${input.balanceDue > 0 ? ` The remaining balance is ${money(input.balanceDue)}.` : ' Your account is settled.'}${input.pdf ? ' The updated invoice is attached.' : ''}</p>
       ${BUTTON(input.viewUrl, 'View invoice')}
       ${mottoHtml()}`),
     attachments: input.pdf ? [{ filename: `${input.number}.pdf`, content: input.pdf }] : undefined,

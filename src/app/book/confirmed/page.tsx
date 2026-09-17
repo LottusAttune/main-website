@@ -78,9 +78,7 @@ export default async function BookingConfirmedPage({
               </p>
               <p className="body" style={{ fontSize: 16, lineHeight: 1.75, marginBottom: 22 }}>
                 A receipt, the updated invoice and your booking confirmation with venue details are on
-                their way to {doc.clientEmail}, together with the link to your booking page. You can
-                start preparing: comfortable clothing and warm socks are all you need. Everything else
-                is provided.
+                their way to {doc.clientEmail}, together with the link to your booking page.
               </p>
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12 }}>
                 {portal ? (
@@ -88,7 +86,11 @@ export default async function BookingConfirmedPage({
                     Open your booking page
                   </a>
                 ) : null}
-                <a className={portal ? 'btn btn--outline' : 'btn btn--dark'} href={publicUrl(doc)}>
+                <a
+                  className={portal ? 'btn btn--outline' : 'btn btn--dark'}
+                  href={publicUrl(doc)}
+                  target="_blank"
+                >
                   View your invoice
                 </a>
               </div>

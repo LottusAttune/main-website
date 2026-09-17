@@ -118,6 +118,7 @@ export async function GET(request: Request, { params }: { params: Promise<{ toke
     <div class="actions">
       <a href="#" onclick="window.print();return false;">Print</a>
       <a href="/d/${escapeHtml(token)}/pdf?download=1">Download PDF</a>
+      <a href="#" onclick="window.close();return false;">Close</a>
     </div>
     ${inner}
   </body></html>`;

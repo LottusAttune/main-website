@@ -22,7 +22,7 @@ export function termsSections(business: BusinessSettings): LegalSection[] {
         deposit
           ? `A booking made through this website is confirmed once payment has been received: the ${business.depositPercent}% deposit shown on your invoice for card payments, or the full amount for Interac e-transfer. Until then the date is not held.`
           : 'A booking made through this website is confirmed once the invoice has been paid. Until then the date is not held.',
-        'Each experience runs two hours for the number of participants stated on your invoice. Groups larger than twelve are split across two sessions on the same day. Please arrive 15 minutes prior to the start of the session to settle in.',
+        'Each experience runs two hours for the number of participants stated on your invoice. Groups larger than twelve are split across two sessions on the same day.',
       ],
     },
     {

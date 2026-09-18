@@ -8,7 +8,6 @@ import { asset } from '@/lib/images';
 import type { SiteSettings } from '@/lib/settings';
 import { SITE } from '@/lib/site';
 import { isOverdue, type StudioData } from '@/lib/pipeline';
-import { Bookings } from './panels/Bookings';
 import { Clients } from './panels/Clients';
 import { DiscoveryCalls } from './panels/DiscoveryCalls';
 import { GiftCards } from './panels/GiftCards';
@@ -22,7 +21,6 @@ import styles from './studio.module.css';
 export type ViewKey =
   | 'today'
   | 'leads'
-  | 'bookings'
   | 'invoices'
   | 'gifts'
   | 'calls'
@@ -42,8 +40,8 @@ export function StudioShell({ data, settings, databaseReady }: Props) {
   const [leadToOpen, setLeadToOpen] = useState<string | null>(null);
   const mark = asset('logo-circle');
 
-  const openLeads = data.leads.filter(
-    (lead) => lead.status === 'new_enquiry' || lead.status === 'contacted'
+  const awaitingPayment = data.leads.filter(
+    (lead) => lead.status !== 'booked' && lead.status !== 'complete' && lead.status !== 'cancelled'
   ).length;
   const openInvoices = data.documents.filter(
     (d) => d.kind === 'invoice' && (d.status === 'sent' || d.status === 'draft')
@@ -56,8 +54,7 @@ export function StudioShell({ data, settings, databaseReady }: Props) {
 
   const nav: Array<{ key: ViewKey; label: string; count?: number; alert?: boolean }> = [
     { key: 'today', label: 'Today' },
-    { key: 'leads', label: 'Leads', count: openLeads },
-    { key: 'bookings', label: 'Bookings', count: upcoming },
+    { key: 'leads', label: 'Bookings', count: awaitingPayment },
     { key: 'invoices', label: 'Getting paid', count: openInvoices.length, alert: overdue > 0 },
     { key: 'gifts', label: 'Gift cards', count: giftsToDo },
     { key: 'calls', label: 'Discovery calls', count: data.discoveryCalls.filter((c) => c.status !== 'cancelled' && c.callDate >= new Date().toISOString().slice(0, 10)).length },
@@ -68,8 +65,7 @@ export function StudioShell({ data, settings, databaseReady }: Props) {
 
   const HEADINGS: Record<ViewKey, { title: string; context: string }> = {
     today: { title: 'Today', context: 'What needs you' },
-    leads: { title: 'Leads', context: `${openLeads} awaiting a reply` },
-    bookings: { title: 'Bookings', context: `${upcoming} upcoming` },
+    leads: { title: 'Bookings', context: `${awaitingPayment} awaiting payment · ${upcoming} upcoming` },
     invoices: {
       title: 'Getting paid',
       context: overdue > 0 ? `${overdue} overdue` : `${openInvoices.length} open invoices`,
@@ -176,14 +172,6 @@ export function StudioShell({ data, settings, databaseReady }: Props) {
             business={settings.business}
             openId={leadToOpen}
             onOpened={() => setLeadToOpen(null)}
-          />
-        ) : null}
-        {view === 'bookings' ? (
-          <Bookings
-            bookings={data.bookings}
-            documents={data.documents}
-            integrations={data.integrations}
-            business={settings.business}
           />
         ) : null}
         {view === 'invoices' ? (

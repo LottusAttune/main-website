@@ -20,25 +20,8 @@ import {
 } from '@/lib/pipeline';
 import { DocumentCard, DocumentStatusPill } from '../DocumentActions';
 import { useStudioAction } from '../useStudioAction';
-import { ExportButton } from '../ExportButton';
+import { Bookings } from './Bookings';
 import styles from '../studio.module.css';
-
-const LABELS = Object.fromEntries(STAGES.map((s) => [s.key, s.label]));
-
-const COLUMNS = [
-  { header: 'Received', value: (l: Lead) => l.createdAt.slice(0, 10) },
-  { header: 'Name', value: (l: Lead) => l.name },
-  { header: 'Email', value: (l: Lead) => l.email },
-  { header: 'Phone', value: (l: Lead) => l.phone ?? '' },
-  { header: 'Company', value: (l: Lead) => l.company ?? '' },
-  { header: 'Type', value: (l: Lead) => l.type },
-  { header: 'Participants', value: (l: Lead) => l.participants },
-  { header: 'Session date', value: (l: Lead) => l.sessionDate ?? '' },
-  { header: 'Session time', value: (l: Lead) => l.sessionTime ?? '' },
-  { header: 'Value', value: (l: Lead) => l.total },
-  { header: 'Stage', value: (l: Lead) => LABELS[l.status] ?? l.status },
-  { header: 'Message', value: (l: Lead) => l.message ?? '' },
-];
 
 type Props = {
   leads: Lead[];
@@ -63,10 +46,15 @@ function formatLabel(lead: Lead): string {
   return parts.join(' · ');
 }
 
+function friendlyStatus(status: Lead['status']): string {
+  if (status === 'booked') return 'Booked';
+  if (status === 'complete') return 'Complete';
+  if (status === 'cancelled') return 'Cancelled';
+  return 'Awaiting payment';
+}
+
 export function Leads({ leads, documents, activity, integrations, business, openId, onOpened }: Props) {
   const { run, pending, error } = useStudioAction();
-  const [draggingId, setDraggingId] = useState<string | null>(null);
-  const [overStage, setOverStage] = useState<StageKey | null>(null);
   const [openLeadId, setOpenLeadId] = useState<string | null>(openId ?? null);
 
   useEffect(() => {
@@ -75,7 +63,6 @@ export function Leads({ leads, documents, activity, integrations, business, open
       onOpened?.();
     }
   }, [openId, onOpened]);
-  const [search, setSearch] = useState('');
 
   const move = (id: string, status: StageKey) => {
     void run({ action: 'moveLead', id, status });
@@ -83,201 +70,26 @@ export function Leads({ leads, documents, activity, integrations, business, open
 
   const openLead = leads.find((lead) => lead.id === openLeadId) ?? null;
 
-  const visible = useMemo(() => {
-    const q = search.trim().toLowerCase();
-    if (!q) return leads;
-    return leads.filter((l) =>
-      [l.name, l.email, l.company ?? '', l.phone ?? ''].some((v) => v.toLowerCase().includes(q))
-    );
-  }, [leads, search]);
-
-  const pipelineValue = leads
-    .filter((lead) => lead.status !== 'complete' && lead.status !== 'cancelled')
-    .reduce((total, lead) => total + lead.total, 0);
-
   return (
     <>
       {error ? <div className={styles.notice}>{error}</div> : null}
-      {!integrations.email ? (
-        <div className={styles.warn}>
-          Email isn&rsquo;t connected yet (RESEND_API_KEY) &mdash; proposals and invoices can be
-          created and viewed, but Send will fail until it is.
-        </div>
-      ) : null}
 
-      <div className={styles.toolbar}>
-        <div className={styles.toolbarGroup}>
-          <input
-            className="field"
-            type="search"
-            placeholder="Search name, email, company"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            aria-label="Search leads"
-            style={{ minWidth: 220, padding: '10px 14px', minHeight: 42 }}
-          />
-          <ExportButton filename="lotus-leads" rows={leads} columns={COLUMNS} />
-        </div>
-        <div className={styles.pipelineTotal} style={{ marginBottom: 0 }}>
-          <strong>{money(pipelineValue)}</strong> in pipeline across{' '}
-          {leads.filter((l) => l.status !== 'complete' && l.status !== 'cancelled').length} enquiries
-        </div>
-      </div>
-
-      <p className={styles.priceNote} style={{ marginBottom: 16 }}>
-        Tap a card to open it. Flow: reply &rarr; send the proposal &rarr; client accepts online
-        &rarr; invoice goes out &rarr; payment confirms the date.
-      </p>
-
-      {leads.length === 0 ? (
-        <div className={styles.empty}>
-          No enquiries yet. Booking requests from the website land here.
-        </div>
-      ) : (
-        <div className={styles.board}>
-          {STAGES.map((stage, stageIndex) => {
-            const inStage = visible.filter((lead) => lead.status === stage.key);
-            const value = inStage.reduce((total, lead) => total + lead.total, 0);
-
-            return (
-              <div
-                key={stage.key}
-                className={`${styles.column} ${overStage === stage.key ? styles.columnOver : ''}`}
-                onDragOver={(e) => {
-                  e.preventDefault();
-                  setOverStage(stage.key);
-                }}
-                onDragLeave={() => setOverStage(null)}
-                onDrop={(e) => {
-                  e.preventDefault();
-                  setOverStage(null);
-                  const id = e.dataTransfer.getData('text/plain') || draggingId;
-                  if (id) move(id, stage.key);
-                  setDraggingId(null);
-                }}
-              >
-                <div className={styles.columnHead}>
-                  <span className={styles.columnTitle}>{stage.label}</span>
-                  <span className={styles.columnMeta}>
-                    {inStage.length}
-                    {value > 0 ? ` · ${money(value)}` : ''}
-                  </span>
-                </div>
-
-                <div className={styles.columnList}>
-                  {inStage.length === 0 ? (
-                    <div className={styles.dropHint}>Drop here</div>
-                  ) : (
-                    inStage.map((lead) => {
-                      const proposal = latest(documents, lead.id, 'proposal');
-                      const invoice = latest(documents, lead.id, 'invoice');
-                      return (
-                        <div
-                          key={lead.id}
-                          draggable
-                          role="button"
-                          tabIndex={0}
-                          aria-label={`Open details for ${lead.name}`}
-                          className={`${styles.leadCard} ${draggingId === lead.id ? styles.leadCardDragging : ''}`}
-                          onClick={() => setOpenLeadId(lead.id)}
-                          onKeyDown={(e) => {
-                            if (e.key === 'Enter' || e.key === ' ') {
-                              e.preventDefault();
-                              setOpenLeadId(lead.id);
-                            }
-                          }}
-                          onDragStart={(e) => {
-                            e.dataTransfer.setData('text/plain', lead.id);
-                            e.dataTransfer.effectAllowed = 'move';
-                            setDraggingId(lead.id);
-                          }}
-                          onDragEnd={() => {
-                            setDraggingId(null);
-                            setOverStage(null);
-                          }}
-                        >
-                          <div className={styles.leadTop}>
-                            <span className={styles.grip} aria-hidden="true">⠿</span>
-                            <span className={styles.leadName}>{lead.name}</span>
-                            <span className={styles.leadValue}>{money(lead.total)}</span>
-                          </div>
-                          <div className={styles.leadMeta}>
-                            {formatLabel(lead)}
-                            {lead.sessionDate ? ` · ${formatShortDate(lead.sessionDate)}` : ''}
-                            {lead.sessionTime ? ` ${lead.sessionTime}` : ''}
-                          </div>
-                          {lead.company || lead.phone ? (
-                            <div className={styles.leadMeta}>
-                              {[lead.company, lead.phone].filter(Boolean).join(' · ')}
-                            </div>
-                          ) : null}
-                          <div className={styles.leadMeta} style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
-                            <span>{relativeDays(lead.createdAt)}</span>
-                            {lead.message ? <span>· has a message</span> : null}
-                            {invoice && invoice.status === 'paid' ? (
-                              <span className={`${styles.pill} ${styles.pillSuccess}`}>Paid</span>
-                            ) : invoice && invoice.paidAmount > 0 ? (
-                              <span className={`${styles.pill} ${styles.pillPending}`}>Deposit paid</span>
-                            ) : proposal && proposal.status === 'accepted' ? (
-                              <span className={`${styles.pill} ${styles.pillSuccess}`}>Accepted</span>
-                            ) : proposal && proposal.status === 'sent' ? (
-                              <span className={`${styles.pill} ${styles.pillPending}`}>
-                                {proposal.viewedAt ? 'Proposal viewed' : 'Proposal sent'}
-                              </span>
-                            ) : null}
-                          </div>
-                          <div className={styles.leadFoot}>
-                            <a
-                              className={styles.leadEmail}
-                              href={`mailto:${lead.email}`}
-                              onClick={(e) => e.stopPropagation()}
-                            >
-                              {lead.email}
-                            </a>
-                            <span className={styles.stepButtons}>
-                              <button
-                                type="button"
-                                className={styles.stepBtn}
-                                aria-label={`Move ${lead.name} back a stage`}
-                                disabled={stageIndex === 0}
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  move(lead.id, STAGES[stageIndex - 1].key);
-                                }}
-                              >
-                                ‹
-                              </button>
-                              <button
-                                type="button"
-                                className={styles.stepBtn}
-                                aria-label={`Move ${lead.name} forward a stage`}
-                                disabled={stageIndex === STAGES.length - 1}
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  move(lead.id, STAGES[stageIndex + 1].key);
-                                }}
-                              >
-                                ›
-                              </button>
-                            </span>
-                          </div>
-                        </div>
-                      );
-                    })
-                  )}
-                </div>
-              </div>
-            );
-          })}
-        </div>
-      )}
+      <Bookings
+        bookings={leads}
+        documents={documents}
+        integrations={integrations}
+        business={business}
+        onOpenDetails={setOpenLeadId}
+      />
 
       {openLead ? (
         <LeadDrawer
           lead={openLead}
           proposal={latest(documents, openLead.id, 'proposal')}
           invoice={latest(documents, openLead.id, 'invoice')}
-          activity={activity.filter((a) => a.bookingId === openLead.id)}
+          activity={activity.filter(
+            (a) => a.bookingId === openLead.id && a.kind !== 'stage' && a.kind !== 'terms_accepted'
+          )}
           integrations={integrations}
           business={business}
           run={run}
@@ -393,7 +205,7 @@ function LeadDrawer({
           <div>
             <div className={styles.modalTitle}>{lead.name}</div>
             <div className={styles.modalSubtitle}>
-              {LABELS[lead.status] ?? lead.status} · {money(lead.total)}
+              {friendlyStatus(lead.status)} · {money(lead.total)}
             </div>
           </div>
           <button type="button" className={styles.modalClose} aria-label="Close" onClick={onClose}>

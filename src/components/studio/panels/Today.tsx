@@ -208,14 +208,14 @@ export function Today({ data, onNavigate }: Props) {
     },
     {
       key: 'confirmations',
-      view: 'bookings',
+      view: 'leads',
       urgent: false,
       count: unconfirmed.length,
       label: `${plural(unconfirmed.length, 'confirmation', 'confirmations')} to send`,
     },
     {
       key: 'sessions-week',
-      view: 'bookings',
+      view: 'leads',
       urgent: false,
       count: sessionsThisWeek.length,
       label: `${plural(sessionsThisWeek.length, 'session', 'sessions')} in the next 7 days`,
@@ -236,7 +236,7 @@ export function Today({ data, onNavigate }: Props) {
     },
     {
       key: 'complete',
-      view: 'bookings',
+      view: 'leads',
       urgent: false,
       count: toMarkComplete.length,
       label: `${plural(toMarkComplete.length, 'session', 'sessions')} to mark complete`,

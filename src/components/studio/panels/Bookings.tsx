@@ -25,6 +25,8 @@ type Props = {
   documents: DocumentRow[];
   integrations: Integrations;
   business: BusinessSettings;
+  /** Open the full details drawer for a booking that hasn't been paid yet. */
+  onOpenDetails?: (id: string) => void;
 };
 
 type Filter = 'upcoming' | 'past' | 'cancelled' | 'all';
@@ -132,7 +134,8 @@ function statusPill(status: string): string {
 function statusLabel(status: string): string {
   if (status === 'complete') return 'Complete';
   if (status === 'cancelled') return 'Cancelled';
-  return 'Booked';
+  if (status === 'booked') return 'Booked';
+  return 'Awaiting payment';
 }
 
 function formatLabel(b: BookingRow): string {
@@ -183,9 +186,10 @@ type Action = {
   alert?: boolean;
 };
 
-export function Bookings({ bookings, documents, integrations, business }: Props) {
+export function Bookings({ bookings, documents, integrations, business, onOpenDetails }: Props) {
   const { run, pending, error } = useStudioAction();
   const [filter, setFilter] = useState<Filter>('upcoming');
+  const [search, setSearch] = useState('');
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editDate, setEditDate] = useState('');
   const [editTime, setEditTime] = useState('');
@@ -209,13 +213,20 @@ export function Bookings({ bookings, documents, integrations, business }: Props)
 
   const sorted = useMemo(() => sortBookings(bookings, today), [bookings, today]);
 
-  const visible =
+  const byFilter =
     filter === 'all' ? sorted : sorted.filter((b) => bucketOf(b, today) === filter);
+
+  const q = search.trim().toLowerCase();
+  const visible = !q
+    ? byFilter
+    : byFilter.filter((b) =>
+        [b.name, b.email, b.company ?? '', b.phone ?? ''].some((v) => v.toLowerCase().includes(q))
+      );
 
   if (bookings.length === 0) {
     return (
       <div className={styles.empty}>
-        No confirmed bookings yet. Move a lead to “Booked” and it appears here.
+        No bookings yet. Requests from the website land here.
       </div>
     );
   }
@@ -312,10 +323,15 @@ export function Bookings({ bookings, documents, integrations, business }: Props)
   const actionsFor = (booking: BookingRow, invoice: DocumentRow | undefined) => {
     const booked = booking.status === 'booked';
     const cancelled = booking.status === 'cancelled';
+    const awaitingPayment = !booked && !cancelled && booking.status !== 'complete';
     const upcoming = Boolean(booking.sessionDate && booking.sessionDate >= today);
     const due = invoice ? balanceDue(invoice) : 0;
 
     const primary: Action[] = [];
+
+    if (awaitingPayment) {
+      primary.push({ label: 'Open', onClick: () => onOpenDetails?.(booking.id) });
+    }
 
     if (booked) {
       primary.push({
@@ -462,18 +478,29 @@ export function Bookings({ bookings, documents, integrations, business }: Props)
       ) : null}
 
       <div className={styles.toolbar}>
-        <div className={styles.segmented} role="group" aria-label="Filter bookings">
-          {FILTERS.map((f) => (
-            <button
-              key={f.key}
-              type="button"
-              className={`${styles.segment} ${local.tap} ${filter === f.key ? styles.segmentOn : ''}`}
-              aria-pressed={filter === f.key}
-              onClick={() => setFilter(f.key)}
-            >
-              {f.label}
-            </button>
-          ))}
+        <div className={styles.toolbarGroup}>
+          <div className={styles.segmented} role="group" aria-label="Filter bookings">
+            {FILTERS.map((f) => (
+              <button
+                key={f.key}
+                type="button"
+                className={`${styles.segment} ${local.tap} ${filter === f.key ? styles.segmentOn : ''}`}
+                aria-pressed={filter === f.key}
+                onClick={() => setFilter(f.key)}
+              >
+                {f.label}
+              </button>
+            ))}
+          </div>
+          <input
+            className="field"
+            type="search"
+            placeholder="Search name, email, company"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            aria-label="Search bookings"
+            style={{ minWidth: 220, padding: '10px 14px', minHeight: 42 }}
+          />
         </div>
         <ExportButton filename="lotus-bookings" rows={visible} columns={COLUMNS} />
       </div>

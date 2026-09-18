@@ -327,6 +327,14 @@
   border-bottom: none;
 }
 
+.clickableRow {
+  cursor: pointer;
+}
+
+.clickableRow:hover td {
+  background: var(--color-cream-raised);
+}
+
 .numeric {
   font-family: var(--font-display);
   font-weight: 400;

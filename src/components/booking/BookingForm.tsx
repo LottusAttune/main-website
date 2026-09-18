@@ -326,17 +326,10 @@ export function BookingForm({
           <div>
             <div className={styles.successLabel}>What you can expect</div>
             <p className={styles.successBody}>
-              We&rsquo;ll review your request within 24 hours and come back to you
-              by email. Your confirmation email is on its way
-              {payment ? ` with invoice ${payment.invoiceNumber} attached` : ''}.
-              {payment?.deposit != null ? ` A ${payment.depositPercent}% deposit confirms your date.` : ''}
-            </p>
-          </div>
-          <div>
-            <div className={styles.successLabel}>What you can do</div>
-            <p className={styles.successBody}>
-              You can start preparing: comfortable clothing and warm socks are all
-              you need. Everything else is provided.
+              Your date is held once payment is received
+              {payment ? `, against invoice ${payment.invoiceNumber}` : ''}.
+              {payment?.deposit != null ? ` A ${payment.depositPercent}% deposit confirms your date.` : ''}{' '}
+              You&rsquo;ll hear from us by email as soon as it&rsquo;s confirmed.
             </p>
           </div>
         </div>

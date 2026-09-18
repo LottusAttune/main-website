@@ -79,6 +79,12 @@ export function PortalView({ data }: { data: PortalData }) {
                   </>
                 ) : null}
               </div>
+              {!cancelled && booking.sessionTime ? (
+                <p className={styles.note}>
+                  To ensure a smooth experience, please arrive 15 minutes prior to the start of the session to
+                  settle in. Allow extra time for parking and rush-hour traffic.
+                </p>
+              ) : null}
               {data.googleCalendarUrl ? (
                 <div className={styles.actions}>
                   <a className="btn btn--outline" href={data.googleCalendarUrl} target="_blank" rel="noopener">

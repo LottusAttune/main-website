@@ -583,6 +583,11 @@ function sessionBoxHtml(input: SessionEmailInput, eyebrow: string): string {
     </table>`;
 }
 
+/** Right under the date/time box, so it's seen alongside the session time itself. */
+function arrivalNoteHtml(): string {
+  return `<p style="margin:8px 0 16px;font-size:12.5px;color:#6f5f52;">To ensure a smooth experience, please arrive 15 minutes prior to the start of the session to settle in. Allow extra time for parking and rush-hour traffic.</p>`;
+}
+
 function sectionTitle(text: string): string {
   return `<div style="font-family:Arial,Helvetica,sans-serif;font-size:10.5px;letter-spacing:0.22em;text-transform:uppercase;color:#7c5b3b;margin:22px 0 8px;">${text}</div>`;
 }
@@ -615,6 +620,7 @@ export async function sendBookingConfirmationEmail(input: SessionEmailInput): Pr
     <p style="margin:0 0 10px;">Hi ${escapeHtml(first)},</p>
     <p style="margin:0;">${intro}</p>
     ${sessionBoxHtml(input, 'Your session')}
+    ${arrivalNoteHtml()}
     ${payment}
     ${input.portalUrl ? portalSection(input.portalUrl) : ''}
     ${venueSection(input)}
@@ -647,6 +653,7 @@ export async function sendReminderEmail(input: SessionEmailInput): Promise<Email
     <p style="margin:0 0 10px;">Hi ${escapeHtml(first)},</p>
     <p style="margin:0;">A gentle reminder - your Lotus Attune experience is coming up. Comfortable clothing and socks are all you need; everything else is provided.</p>
     ${sessionBoxHtml(input, 'Coming up')}
+    ${arrivalNoteHtml()}
     ${input.portalUrl ? portalSection(input.portalUrl) : ''}
     ${venueSection(input)}
     ${input.balanceDue > 0 ? `<p style="margin:16px 0 0;">Balance outstanding: <strong>${money(input.balanceDue)}</strong>.</p>` : ''}

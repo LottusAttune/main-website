@@ -127,7 +127,7 @@ export async function GET(request: Request, { params }: { params: Promise<{ toke
     .page { max-width: 8.5in; width: auto; min-height: 0; padding: 40px clamp(20px, 5vw, 0.75in) 60px; box-shadow: 0 30px 60px -40px rgba(59,46,36,0.5); }
     .foot { position: static; margin-top: 30px; }
     .bar { max-width: 8.5in; margin: 0 auto 16px; background: #241b14; color: #f6efe5; padding: 16px 22px; font-size: 14px; line-height: 1.6; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; }
-    .bar.ok { background: #4a6340; } .bar.muted { background: #7a6a5c; }
+    .bar.muted { background: #7a6a5c; }
     .bar a { color: #dcc194; } .bar strong { color: #fff; }
     .bar button, .bar a.btn { display: inline-block; background: #f6efe5; color: #241b14; border: 0; border-radius: 999px; padding: 12px 24px; font: 500 11.5px/1 'Jost', Arial, sans-serif; letter-spacing: 0.22em; text-transform: uppercase; cursor: pointer; text-decoration: none; margin: 4px 8px 4px 0; }
     .bar .pay p { margin: 0 0 6px; }

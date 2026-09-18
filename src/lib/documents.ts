@@ -818,22 +818,22 @@ const PAGE_CSS = `
   @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,500&family=Jost:wght@400;500;600&display=swap');
   * { box-sizing: border-box; }
   body { margin: 0; background: #fbf7f1; color: #3b2e24; font-family: 'Jost', Arial, Helvetica, sans-serif; font-size: 12.5px; line-height: 1.6; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-  .page { width: 8.5in; min-height: 11in; margin: 0 auto; background: #fffdfa; padding: 0.7in 0.75in 0.6in; position: relative; }
+  .page { width: 8.5in; min-height: 11in; margin: 0 auto; background: #fffdfa; padding: 0.55in 0.75in 0.45in; position: relative; }
   .display { font-family: 'Cormorant Garamond', Georgia, serif; font-weight: 300; }
   .eyebrow { font-size: 9.5px; letter-spacing: 0.32em; text-transform: uppercase; color: #7c5b3b; }
   .muted { color: #6f5f52; }
-  .rule { height: 1px; background: rgba(59,46,36,0.14); margin: 22px 0; }
+  .rule { height: 1px; background: rgba(59,46,36,0.14); margin: 14px 0; }
   table { border-collapse: collapse; width: 100%; }
-  .lines th { text-align: left; font-weight: 500; font-size: 9.5px; letter-spacing: 0.22em; text-transform: uppercase; color: #7c5b3b; padding: 0 0 8px; border-bottom: 1px solid rgba(59,46,36,0.2); }
-  .lines td { padding: 9px 0; border-bottom: 1px solid rgba(59,46,36,0.1); vertical-align: top; }
+  .lines th { text-align: left; font-weight: 500; font-size: 9.5px; letter-spacing: 0.22em; text-transform: uppercase; color: #7c5b3b; padding: 0 0 6px; border-bottom: 1px solid rgba(59,46,36,0.2); }
+  .lines td { padding: 6px 0; border-bottom: 1px solid rgba(59,46,36,0.1); vertical-align: top; }
   .lines td.amt, .lines th.amt { text-align: right; white-space: nowrap; font-variant-numeric: tabular-nums; }
-  .totals td { padding: 5px 0; }
-  .totals .grand td { padding-top: 10px; border-top: 1px solid rgba(59,46,36,0.2); font-family: 'Cormorant Garamond', Georgia, serif; font-size: 22px; font-weight: 400; }
-  .box { background: #241b14; color: #f6efe5; padding: 18px 22px; margin: 18px 0; }
+  .totals td { padding: 4px 0; }
+  .totals .grand td { padding-top: 8px; border-top: 1px solid rgba(59,46,36,0.2); font-family: 'Cormorant Garamond', Georgia, serif; font-size: 20px; font-weight: 400; }
+  .box { background: #241b14; color: #f6efe5; padding: 14px 20px; margin: 12px 0; }
   .box .eyebrow { color: #c6a97a; }
-  .box .k { font-size: 9.5px; letter-spacing: 0.2em; text-transform: uppercase; color: rgba(239,230,218,0.6); padding: 6px 0 2px; }
-  .box .v { font-size: 13.5px; color: #f6efe5; text-align: right; padding: 6px 0 2px; }
-  .foot { margin-top: 34px; font-size: 10.5px; color: #6f5f52; border-top: 1px solid rgba(59,46,36,0.14); padding-top: 10px; display: flex; justify-content: space-between; }
+  .box .k { font-size: 9.5px; letter-spacing: 0.2em; text-transform: uppercase; color: rgba(239,230,218,0.6); padding: 4px 0 1px; }
+  .box .v { font-size: 13.5px; color: #f6efe5; text-align: right; padding: 4px 0 1px; }
+  .foot { margin-top: 20px; font-size: 10.5px; color: #6f5f52; border-top: 1px solid rgba(59,46,36,0.14); padding-top: 8px; display: flex; justify-content: space-between; }
   a { color: #7c5b3b; }
 `;
 
@@ -905,6 +905,8 @@ function sessionBox(booking: BookingCtx): string {
 }
 
 function linesTable(doc: DocumentRow, business: BusinessSettings): string {
+  const showCardFee = doc.kind === 'invoice' && business.cardFeePercent > 0 && doc.status !== 'paid' && doc.status !== 'void';
+  const fee = showCardFee ? cardFee(doc.total, business.cardFeePercent) : 0;
   return `
     <table class="lines">
       <thead><tr><th>Description</th><th class="amt">Amount</th></tr></thead>
@@ -919,6 +921,7 @@ function linesTable(doc: DocumentRow, business: BusinessSettings): string {
         <tr><td class="muted">Subtotal</td><td class="amt" style="text-align:right;">${money(doc.subtotal)}</td></tr>
         ${doc.taxRate > 0 ? `<tr><td class="muted">${escapeHtml(business.taxLabel)} ${doc.taxRate}%</td><td style="text-align:right;">${money(doc.tax)}</td></tr>` : ''}
         <tr class="grand"><td>Total</td><td style="text-align:right;">${money(doc.total)} <span style="font-size:11px;font-family:Jost,Arial,sans-serif;color:#6f5f52;">CAD</span></td></tr>
+        ${showCardFee ? `<tr><td class="muted" style="font-size:10.5px;padding-top:6px;">+ ${money(fee)} card fee (${business.cardFeePercent}%)</td><td class="amt" style="text-align:right;font-size:10.5px;padding-top:6px;">${money(doc.total + fee)} by card</td></tr>` : ''}
       </table></td></tr>
     </table>
   `;
@@ -1015,7 +1018,8 @@ function paymentHistoryHtml(payments: { amount: number; method: string; kind: st
   return payments
     .map((p) => {
       const label = PAYMENT_KIND_LABEL[p.kind] ?? 'Payment';
-      return `${label} <strong>${money(p.amount)}</strong> paid ${formatStudioDate(p.createdAt.slice(0, 10))}`;
+      const when = p.createdAt ? ` paid ${formatStudioDate(p.createdAt.slice(0, 10))}` : ' paid';
+      return `${label} <strong>${money(p.amount)}</strong>${when}`;
     })
     .join('<br />');
 }
@@ -1120,7 +1124,7 @@ export async function loadContext(doc: DocumentRow): Promise<DocumentContext> {
       amount: Number(r.amount),
       method: String(r.method),
       kind: String(r.kind),
-      createdAt: String(r.created_at),
+      createdAt: toStamp(r.created_at) ?? '',
     })),
   };
 }
@@ -1173,7 +1177,7 @@ export function documentHtml(doc: DocumentRow, ctx: DocumentContext): string {
         ${business.paymentInstructions ? `<p class="muted" style="margin:0;">Payment: ${escapeHtml(business.paymentInstructions)}</p>` : ''}
       </div>`;
   } else {
-    if (ctx.booking) body += `<div style="height:14px"></div>` + sessionBox(ctx.booking);
+    if (ctx.booking) body += `<div style="height:6px"></div>` + sessionBox(ctx.booking);
     else body += `<div style="height:22px"></div>`;
     body += linesTable(doc, business);
     body += `

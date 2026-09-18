@@ -342,6 +342,7 @@ export function Today({ data, onNavigate }: Props) {
   for (const booking of data.bookings) namesByBooking.set(booking.id, booking.name);
 
   const recent = [...data.activity]
+    .filter((a) => a.kind !== 'stage' && a.kind !== 'terms_accepted')
     .sort((a, b) => b.createdAt.localeCompare(a.createdAt))
     .slice(0, 12);
 

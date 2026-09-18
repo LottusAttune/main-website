@@ -46,6 +46,16 @@
   margin-left: clamp(0px, 4vw, 38px);
 }
 
+.venueNote {
+  margin-top: 10px;
+  padding: 12px 16px;
+  border-radius: 0;
+  background: rgba(198, 169, 122, 0.14);
+  font-size: 14.5px;
+  line-height: 1.7;
+  color: var(--color-ink-body);
+}
+
 .partyRow {
   display: flex;
   flex-wrap: wrap;

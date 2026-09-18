@@ -18,6 +18,7 @@ import {
   TWO_SESSION_THRESHOLD,
   groupPriceFor,
   money,
+  venueNoteFor,
 } from '@/lib/site';
 import { Calendar, formatDay, isoDay } from './Calendar';
 import styles from './BookingForm.module.css';
@@ -435,6 +436,10 @@ export function BookingForm({
               })}
             </select>
           </div>
+
+          {people > 0 && (
+            <div className={`${styles.venueNote} ${styles.indent}`}>{venueNoteFor(people)}</div>
+          )}
 
           {people === 1 && (
             <div className={`${styles.tierChoice} ${styles.indent}`}>

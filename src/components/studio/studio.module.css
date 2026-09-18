@@ -221,7 +221,7 @@
 }
 
 .statValue {
-  font-family: var(--font-display);
+  font-family: var(--font-body);
   font-size: 36px;
   line-height: 1;
   margin-bottom: 8px;
@@ -336,7 +336,7 @@
 }
 
 .numeric {
-  font-family: var(--font-display);
+  font-family: var(--font-body);
   font-weight: 400;
   font-size: 17px;
   font-variant-numeric: tabular-nums;
@@ -487,7 +487,7 @@
 
 .leadValue {
   flex: none;
-  font-family: var(--font-display);
+  font-family: var(--font-body);
   font-weight: 400;
   font-size: 19px;
   color: var(--color-ink);
@@ -552,7 +552,7 @@
 }
 
 .pipelineTotal strong {
-  font-family: var(--font-display);
+  font-family: var(--font-body);
   font-size: 22px;
   font-weight: 300;
   color: var(--color-ink);
@@ -1130,7 +1130,7 @@
 
 .recordValue {
   flex: none;
-  font-family: var(--font-display);
+  font-family: var(--font-body);
   font-size: 20px;
   color: var(--color-ink);
   font-variant-numeric: tabular-nums;

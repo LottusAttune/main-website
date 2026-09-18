@@ -6,7 +6,7 @@ import { loadPortal } from '@/lib/portal';
 import { PortalView } from './PortalView';
 
 export const metadata: Metadata = {
-  title: 'Your booking',
+  title: 'Your Booking Page',
   robots: { index: false, follow: false },
 };
 

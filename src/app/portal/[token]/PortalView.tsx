@@ -31,7 +31,7 @@ export function PortalView({ data }: { data: PortalData }) {
       <main>
         <section className={styles.page} aria-labelledby="portal-heading">
           <div className="eyebrow" style={{ fontSize: 15, marginBottom: 12 }}>
-            Your booking
+            Your Booking Page
           </div>
           <h1 id="portal-heading" className={`display ${styles.title}`}>
             {cancelled
@@ -113,7 +113,7 @@ export function PortalView({ data }: { data: PortalData }) {
                   </div>
                   <p className={styles.note}>
                     {data.balance <= 0
-                      ? 'Paid in full. Nothing more to do.'
+                      ? 'Paid in full - there is nothing further due before your session.'
                       : data.paid > 0
                         ? booking.cardOnFile
                           ? (() => {
@@ -166,6 +166,8 @@ export function PortalView({ data }: { data: PortalData }) {
               ))}
               {booking.confirmed && settings.business.venueDetails ? (
                 <p className={styles.body} style={{ whiteSpace: 'pre-line' }}>
+                  <strong>Location</strong>
+                  <br />
                   {settings.business.venueDetails}
                 </p>
               ) : !booking.confirmed ? (
@@ -173,6 +175,8 @@ export function PortalView({ data }: { data: PortalData }) {
               ) : null}
               {booking.confirmed && data.venueDirections ? (
                 <p className={styles.body} style={{ whiteSpace: 'pre-line' }}>
+                  <strong>Arrival instructions</strong>
+                  <br />
                   {data.venueDirections}
                 </p>
               ) : null}

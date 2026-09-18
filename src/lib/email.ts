@@ -603,47 +603,44 @@ function arrivalNoteHtml(): string {
 }
 
 function sectionTitle(text: string): string {
-  return `<div style="font-family:Arial,Helvetica,sans-serif;font-size:10.5px;letter-spacing:0.22em;text-transform:uppercase;color:#7c5b3b;margin:22px 0 8px;">${text}</div>`;
+  return `<div style="font-family:Arial,Helvetica,sans-serif;font-size:14px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#5c4531;margin:24px 0 10px;">${text}</div>`;
 }
 
 function venueSection(input: SessionEmailInput): string {
   return `
     ${sectionTitle('Getting there')}
     ${input.venueCopy.map((p) => `<p style="margin:0 0 8px;">${escapeHtml(p)}</p>`).join('')}
-    ${input.venueDetails ? `<p style="margin:0 0 8px;">${escapeHtml(input.venueDetails).replace(/\n/g, '<br />')}</p>` : ''}
-    ${input.venueDirections ? `<p style="margin:0 0 8px;">${escapeHtml(input.venueDirections).replace(/\n/g, '<br />')}</p>` : ''}
+    ${input.venueDetails ? `<p style="margin:0 0 8px;"><strong>Location</strong><br />${escapeHtml(input.venueDetails).replace(/\n/g, '<br />')}</p>` : ''}
+    ${input.venueDirections ? `<p style="margin:0 0 8px;"><strong>Arrival instructions</strong><br />${escapeHtml(input.venueDirections).replace(/\n/g, '<br />')}</p>` : ''}
     <table role="presentation" cellpadding="0" cellspacing="0" style="margin:10px 0 4px;"><tr>
       <td style="background:#241b14;border-radius:999px;"><a href="${input.googleCalendarUrl}" style="display:inline-block;padding:12px 24px;font-family:Arial,Helvetica,sans-serif;font-size:11px;letter-spacing:0.2em;text-transform:uppercase;color:#f6efe5;text-decoration:none;">Add to Google Calendar</a></td>
     </tr></table>
-    <p style="margin:0;font-size:12.5px;color:#6f5f52;">Apple or Outlook? Open the attached calendar file.</p>`;
+    ${input.portalUrl ? `<p style="margin:0;font-size:12.5px;color:#6f5f52;">Apple or Outlook? <a href="${input.portalUrl}/calendar" style="color:#7c5b3b;">Download the calendar file</a>.</p>` : ''}`;
 }
 
 export async function sendBookingConfirmationEmail(input: SessionEmailInput): Promise<EmailResult> {
   const first = input.name.split(' ')[0] || input.name;
   const received = input.paymentJustReceived;
   const intro = received
-    ? `Thank you, we received ${paymentKindLabel(received.kind)} of <strong>${money(received.amount)}</strong> by ${escapeHtml(received.method)}${input.invoiceNumber ? ` against ${escapeHtml(input.invoiceNumber)}` : ''}. Your date is confirmed - everything you need is below.`
-    : 'Your Lotus Attune experience is confirmed. Everything you need is below.';
+    ? `We received ${paymentKindLabel(received.kind)} of <strong>${money(received.amount)}</strong> by ${escapeHtml(received.method)}${input.invoiceNumber ? ` against ${escapeHtml(input.invoiceNumber)}` : ''}.`
+    : 'Everything for your Lotus Attune experience is ready.';
   const payment =
     input.balanceDue > 0
       ? balanceChargeHtml(input.balanceDue, input.cardFeePercent, input.balanceChargeDate)
-      : input.amountPaid > 0
-        ? `<p style="margin:0 0 8px;">Paid in full. Nothing more to do.</p>`
+      : input.amountPaid > 0 && !received
+        ? `<p style="margin:0 0 8px;">Your invoice is paid in full - there is nothing further due before your session.</p>`
         : '';
   const html = wrapperHtml(`
     <p style="margin:0 0 10px;">Hi ${escapeHtml(first)},</p>
     <p style="margin:0;">${intro}</p>
+    <p style="margin:4px 0 0;">Your date is confirmed.</p>
     ${sessionBoxHtml(input, 'Your session')}
     ${arrivalNoteHtml()}
     ${payment}
     ${input.portalUrl ? portalSection(input.portalUrl) : ''}
     ${venueSection(input)}
     ${sectionTitle('Good to know')}
-    ${input.faqs
-      .map(
-        (f) => `<p style="margin:0 0 10px;"><strong>${escapeHtml(f.q)}</strong><br />${escapeHtml(f.a)}</p>`
-      )
-      .join('')}
+    <p style="margin:0 0 16px;">Answers to common questions - cancellations, what to bring, group sizes and more - are on our <a href="${SITE.url}/#faq-heading" style="color:#7c5b3b;">FAQ page</a>.</p>
     ${input.cancellationPolicy ? `${sectionTitle('Cancellation policy')}<p style="margin:0 0 16px;">${escapeHtml(input.cancellationPolicy).replace(/\n/g, '<br />')}</p>` : ''}
     <p style="margin:0;">We're looking forward to welcoming you and creating space for a truly restorative reset.</p>
     ${mottoHtml()}`);
@@ -652,12 +649,10 @@ export async function sendBookingConfirmationEmail(input: SessionEmailInput): Pr
     to: input.email,
     subject: `Confirmed: your Lotus Attune experience on ${formatStudioDate(input.sessionDate)}`,
     html,
-    attachments: [
-      { filename: 'lotus-attune-session.ics', content: Buffer.from(input.ics, 'utf8') },
-      ...(input.invoicePdf && input.invoiceNumber
+    attachments:
+      input.invoicePdf && input.invoiceNumber
         ? [{ filename: `${input.invoiceNumber}.pdf`, content: input.invoicePdf }]
-        : []),
-    ],
+        : undefined,
   });
 }
 
@@ -678,7 +673,6 @@ export async function sendReminderEmail(input: SessionEmailInput): Promise<Email
     to: input.email,
     subject: `See you soon: ${formatStudioDate(input.sessionDate)} at ${input.sessionTime}`,
     html,
-    attachments: [{ filename: 'lotus-attune-session.ics', content: Buffer.from(input.ics, 'utf8') }],
   });
 }
 

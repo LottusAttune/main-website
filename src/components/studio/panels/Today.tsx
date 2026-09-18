@@ -4,13 +4,11 @@ import Image from 'next/image';
 
 import { asset } from '@/lib/images';
 import {
-  ACTIVITY_LABELS,
   balanceDue,
   formatShortDate,
   formatStudioDate,
   isOverdue,
   relativeDays,
-  type ActivityEntry,
   type StudioData,
 } from '@/lib/pipeline';
 import { money } from '@/lib/site';
@@ -62,42 +60,6 @@ function whenKey(date: string | null, time: string | null): string {
   return `${date ?? '9999-99-99'} ${time ?? ''}`;
 }
 
-
-function activityLabel(kind: string): string {
-  return ACTIVITY_LABELS[kind] ?? kind.replace(/_/g, ' ');
-}
-
-function ActivityBody({ entry, name }: { entry: ActivityEntry; name: string | null }) {
-  const prefix = name ? `${name} · ` : '';
-
-  if (entry.kind === 'note') {
-    return (
-      <div className={styles.timelineBody}>
-        {prefix}Note
-        {entry.body ? (
-          <span className={`${styles.timelineNote} ${local.noteBlock}`}>{entry.body}</span>
-        ) : null}
-      </div>
-    );
-  }
-
-  if (entry.kind === 'stage') {
-    return (
-      <div className={styles.timelineBody}>
-        {prefix}
-        {entry.body ?? 'Stage changed'}
-      </div>
-    );
-  }
-
-  return (
-    <div className={styles.timelineBody}>
-      {prefix}
-      {activityLabel(entry.kind)}
-      {entry.body ? ` — ${entry.body}` : ''}
-    </div>
-  );
-}
 
 export function Today({ data, onNavigate }: Props) {
   const now = new Date();
@@ -335,17 +297,6 @@ export function Today({ data, onNavigate }: Props) {
     })),
   ].sort((a, b) => a.sortKey.localeCompare(b.sortKey));
 
-  /* ---- Recent activity ---------------------------------------------- */
-
-  const namesByBooking = new Map<string, string>();
-  for (const lead of data.leads) namesByBooking.set(lead.id, lead.name);
-  for (const booking of data.bookings) namesByBooking.set(booking.id, booking.name);
-
-  const recent = [...data.activity]
-    .filter((a) => a.kind !== 'stage' && a.kind !== 'terms_accepted')
-    .sort((a, b) => b.createdAt.localeCompare(a.createdAt))
-    .slice(0, 12);
-
   /* ---- Render ------------------------------------------------------- */
 
   return (
@@ -445,23 +396,6 @@ export function Today({ data, onNavigate }: Props) {
                 </div>
                 {item.value ? <div className={styles.recordValue}>{item.value}</div> : null}
               </div>
-            </div>
-          ))}
-        </div>
-      )}
-
-      <h3 className={styles.subhead}>Recent activity</h3>
-      {recent.length === 0 ? (
-        <div className={styles.empty}>No activity yet.</div>
-      ) : (
-        <div className={styles.timeline}>
-          {recent.map((entry) => (
-            <div key={entry.id} className={styles.timelineItem}>
-              <div className={styles.timelineWhen}>{formatShortDate(entry.createdAt)}</div>
-              <ActivityBody
-                entry={entry}
-                name={entry.bookingId ? namesByBooking.get(entry.bookingId) ?? null : null}
-              />
             </div>
           ))}
         </div>

@@ -3,6 +3,7 @@ import 'server-only';
 import { Resend } from 'resend';
 
 import { FAQS } from '@/data/content';
+import { cardFee } from '@/lib/documents';
 import { buildDiscoveryCallIcs, buildGoogleCalendarLink } from '@/lib/ics';
 import type { DocumentKind, DocumentRow } from '@/lib/pipeline';
 import type { BusinessSettings } from '@/lib/settings';
@@ -523,6 +524,8 @@ export type SessionEmailInput = {
   amountPaid: number;
   balanceDue: number;
   balanceChargeDate: string | null;
+  /** For the card-fee breakdown shown alongside any future balance charge. */
+  cardFeePercent: number;
   portalUrl: string | null;
   /** Set when this confirmation is also the receipt for the payment that
    *  triggered it — folds "payment received" and "you're confirmed" into
@@ -531,6 +534,17 @@ export type SessionEmailInput = {
   invoiceNumber?: string | null;
   invoicePdf?: Buffer | null;
 };
+
+/** The balance line shown ahead of an automatic card charge. Shows the
+ *  actual total that will be charged (fee included) without breaking out
+ *  the fee itself - that detail lives on the invoice. */
+function balanceChargeHtml(balanceDue: number, feePercent: number, chargeDate: string | null): string {
+  if (!chargeDate) {
+    return `<p style="margin:0 0 8px;">Remaining balance: <strong>${money(balanceDue)}</strong> due before your session.</p>`;
+  }
+  const total = balanceDue + cardFee(balanceDue, feePercent);
+  return `<p style="margin:0 0 8px;">Remaining balance: <strong>${money(total)}</strong> will be charged to your card on ${formatStudioDate(chargeDate)}.</p>`;
+}
 
 function paymentKindLabel(kind: string): string {
   switch (kind) {
@@ -612,7 +626,7 @@ export async function sendBookingConfirmationEmail(input: SessionEmailInput): Pr
     : 'Your Lotus Attune experience is confirmed. Everything you need is below.';
   const payment =
     input.balanceDue > 0
-      ? `<p style="margin:0 0 8px;">Remaining balance: <strong>${money(input.balanceDue)}</strong>${input.balanceChargeDate ? ` will be charged to your card on ${formatStudioDate(input.balanceChargeDate)}` : ' due before your session'}.</p>`
+      ? balanceChargeHtml(input.balanceDue, input.cardFeePercent, input.balanceChargeDate)
       : input.amountPaid > 0
         ? `<p style="margin:0 0 8px;">Paid in full. Nothing more to do.</p>`
         : '';
@@ -656,7 +670,7 @@ export async function sendReminderEmail(input: SessionEmailInput): Promise<Email
     ${arrivalNoteHtml()}
     ${input.portalUrl ? portalSection(input.portalUrl) : ''}
     ${venueSection(input)}
-    ${input.balanceDue > 0 ? `<p style="margin:16px 0 0;">Balance outstanding: <strong>${money(input.balanceDue)}</strong>.</p>` : ''}
+    ${input.balanceDue > 0 ? `<div style="margin-top:16px;">${balanceChargeHtml(input.balanceDue, input.cardFeePercent, input.balanceChargeDate)}</div>` : ''}
     ${input.cancellationPolicy ? `${sectionTitle('Cancellation policy')}<p style="margin:0;">${escapeHtml(input.cancellationPolicy).replace(/\n/g, '<br />')}</p>` : ''}
     ${mottoHtml()}`);
 

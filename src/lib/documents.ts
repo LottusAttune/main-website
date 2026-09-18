@@ -973,19 +973,22 @@ export function paymentOptionsHtml(
   );
 
   if (doc.payFullUrl) {
+    const hasFee = business.cardFeePercent > 0;
     parts.push(
-      `<p style="margin:10px 0 4px;"><strong>Credit card</strong>: a ${business.cardFeePercent}% processing fee applies.</p>`
+      `<p style="margin:10px 0 4px;"><strong>Credit card</strong>${hasFee ? `: a ${business.cardFeePercent}% processing fee applies` : ''}.</p>`
     );
     if (deposit !== null && doc.payDepositUrl) {
       const depositFee = cardFee(deposit, business.cardFeePercent);
+      const remaining = doc.total - deposit;
+      const remainingFee = cardFee(remaining, business.cardFeePercent);
       parts.push(
-        `<p style="margin:0 0 4px;"><a href="${doc.payDepositUrl}">Pay the ${money(deposit + depositFee)} deposit by card</a></p>` +
-          `<p class="muted" style="margin:0 0 6px;">The remaining ${money(doc.total - deposit)} plus fee is charged to the same card ${business.balanceDaysBefore} calendar days before the session.</p>`
+        `<p style="margin:0 0 4px;"><a href="${doc.payDepositUrl}">Pay the ${money(deposit + depositFee)} deposit by card</a>${hasFee ? ` (${money(deposit)} + ${money(depositFee)} card fee)` : ''}</p>` +
+          `<p class="muted" style="margin:0 0 6px;">The remaining ${money(remaining)}${hasFee ? ` plus a ${money(remainingFee)} card fee - ${money(remaining + remainingFee)} total` : ''} is charged to the same card ${business.balanceDaysBefore} calendar days before the session.</p>`
       );
     }
     const fee = cardFee(outstanding, business.cardFeePercent);
     parts.push(
-      `<p style="margin:0;"><a href="${doc.payFullUrl}">${deposit !== null ? 'Or pay' : 'Pay'} ${money(outstanding + fee)} ${doc.paidAmount > 0 ? 'balance' : 'in full'} by card</a></p>`
+      `<p style="margin:0;"><a href="${doc.payFullUrl}">${deposit !== null ? 'Or pay' : 'Pay'} ${money(outstanding + fee)} ${doc.paidAmount > 0 ? 'balance' : 'in full'} by card</a>${hasFee ? ` (${money(outstanding)} + ${money(fee)} card fee)` : ''}</p>`
     );
   }
   return parts.join('');
@@ -1036,11 +1039,13 @@ function paymentSummaryHtml(
 
   if (doc.paidAmount > 0) {
     const balanceDay = doc.dueOn ? formatStudioDate(doc.dueOn) : `${business.balanceDaysBefore} days before the session`;
-    const parts = [
-      `<p style="margin:0 0 10px;">${history || `Deposit of <strong>${money(doc.paidAmount)}</strong> received`}. Balance <strong>${money(outstanding)}</strong> due ${balanceDay} will be automatically charged to your card on file.</p>`,
-    ];
+    const fee = cardFee(outstanding, business.cardFeePercent);
+    const chargeLine =
+      business.cardFeePercent > 0
+        ? `Balance <strong>${money(outstanding)}</strong> plus a ${money(fee)} (${business.cardFeePercent}%) card fee - <strong>${money(outstanding + fee)}</strong> total - will be automatically charged to your card on file ${balanceDay}.`
+        : `Balance <strong>${money(outstanding)}</strong> due ${balanceDay} will be automatically charged to your card on file.`;
+    const parts = [`<p style="margin:0 0 10px;">${history || `Deposit of <strong>${money(doc.paidAmount)}</strong> received`}. ${chargeLine}</p>`];
     if (doc.payFullUrl) {
-      const fee = cardFee(outstanding, business.cardFeePercent);
       parts.push(
         `<p style="margin:0;"><a href="${doc.payFullUrl}">Pay the ${money(outstanding + fee)} balance now instead</a></p>`
       );

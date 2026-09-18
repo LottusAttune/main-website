@@ -117,6 +117,7 @@ async function sessionEmailInput(
       due > 0 && row.stripe_payment_method_id
         ? addDays(sessionDate, -settings.business.balanceDaysBefore)
         : null,
+    cardFeePercent: settings.business.cardFeePercent,
     portalUrl: row.portal_token ? `${SITE.url}/portal/${String(row.portal_token)}` : null,
   };
 }

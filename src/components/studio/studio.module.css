@@ -222,7 +222,7 @@
 
 .statValue {
   font-family: var(--font-body);
-  font-size: 36px;
+  font-size: 30px;
   line-height: 1;
   margin-bottom: 8px;
   font-variant-numeric: tabular-nums;
@@ -338,7 +338,7 @@
 .numeric {
   font-family: var(--font-body);
   font-weight: 400;
-  font-size: 17px;
+  font-size: 15px;
   font-variant-numeric: tabular-nums;
 }
 
@@ -489,7 +489,7 @@
   flex: none;
   font-family: var(--font-body);
   font-weight: 400;
-  font-size: 19px;
+  font-size: 17px;
   color: var(--color-ink);
   font-variant-numeric: tabular-nums;
 }
@@ -553,7 +553,7 @@
 
 .pipelineTotal strong {
   font-family: var(--font-body);
-  font-size: 22px;
+  font-size: 19px;
   font-weight: 300;
   color: var(--color-ink);
   font-variant-numeric: tabular-nums;
@@ -1131,7 +1131,7 @@
 .recordValue {
   flex: none;
   font-family: var(--font-body);
-  font-size: 20px;
+  font-size: 18px;
   color: var(--color-ink);
   font-variant-numeric: tabular-nums;
   white-space: nowrap;
@@ -1557,7 +1557,7 @@
   }
 
   .statValue {
-    font-size: 28px;
+    font-size: 24px;
   }
 
   .settingsGrid {

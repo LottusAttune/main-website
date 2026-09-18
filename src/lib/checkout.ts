@@ -82,7 +82,7 @@ export async function createBookingCheckout(
       customerEmail: doc.clientEmail,
       metadata: { documentId: doc.id, number: doc.number, plan, amount: String(amount) },
       successUrl: `${SITE.url}/book/confirmed?session_id={CHECKOUT_SESSION_ID}`,
-      cancelUrl: `${SITE.url}/d/${doc.token}`,
+      cancelUrl: `${SITE.url}/d/${doc.token}?canceled=1`,
       saveCard: Boolean(doc.bookingId),
     });
     return { url: session.url, amount, plan };
@@ -114,7 +114,7 @@ export async function createGiftCheckout(
       customerEmail: gift.buyerEmail,
       metadata: { documentId: doc.id, number: doc.number, plan: 'full', amount: String(amount) },
       successUrl: `${SITE.url}/gift/confirmed?session_id={CHECKOUT_SESSION_ID}`,
-      cancelUrl: `${SITE.url}/d/${doc.token}`,
+      cancelUrl: `${SITE.url}/d/${doc.token}?canceled=1`,
       saveCard: false,
     });
     return { url: session.url, amount };

@@ -38,6 +38,7 @@ export async function GET(request: Request, { params }: { params: Promise<{ toke
 
   const accepted = url.searchParams.get('accepted') === '1' || doc.status === 'accepted';
   const paid = url.searchParams.get('paid') === '1';
+  const canceled = url.searchParams.get('canceled') === '1';
 
   let banner = '';
   if (doc.kind === 'proposal') {
@@ -82,7 +83,10 @@ export async function GET(request: Request, { params }: { params: Promise<{ toke
       banner = `<div class="bar muted">This invoice has been replaced. Please use the newest one from Silvana.</div>`;
     } else {
       const deposit = depositDue(doc, ctx.business);
-      banner = `<div class="bar"><div class="pay">${paymentOptionsHtml(doc, ctx.business, ctx.booking).replace(/<a /g, '<a class="btn" ')}</div><span>${deposit !== null ? 'Deposit due' : 'Balance'}: <strong>${money(deposit ?? doc.total - doc.paidAmount)}</strong></span></div>`;
+      const notice = canceled
+        ? `<p style="margin:0 0 10px;font-weight:600;">Checkout was closed before payment - nothing was charged.</p>`
+        : '';
+      banner = `<div class="bar"><div class="pay">${notice}${paymentOptionsHtml(doc, ctx.business, ctx.booking).replace(/<a /g, '<a class="btn" ')}</div><span>${deposit !== null ? 'Deposit due' : 'Balance'}: <strong>${money(deposit ?? doc.total - doc.paidAmount)}</strong></span></div>`;
     }
   }
 

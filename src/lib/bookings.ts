@@ -107,6 +107,7 @@ async function sessionEmailInput(
       participants <= LOUNGE_MAX
         ? settings.business.venueDirectionsLounge
         : settings.business.venueDirectionsSignature,
+    parking: settings.business.parking,
     cancellationPolicy: settings.business.cancellationPolicy || DEFAULT_CANCELLATION_POLICY,
     faqs: CONFIRMATION_FAQS,
     googleCalendarUrl: googleCalendarUrl(event),

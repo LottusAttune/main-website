@@ -254,13 +254,16 @@ export function Settings({ settings, integrations }: { settings: SiteSettings; i
             {text('cancellationPolicy', 'Cancellation policy text', 'Printed in confirmation and reminder emails. Blank = the wording from the website FAQ.', true)}
           </div>
           <div style={{ marginTop: 14 }}>
-            {text('venueDetails', 'Venue address & building access', 'Street address, buzzer, parking notes - shared by both venues. Printed in confirmations and used as the calendar location.', true)}
+            {text('venueDetails', 'Venue address & building access', 'Street address and buzzer - shared by both venues. Printed in confirmations and used as the calendar location.', true)}
           </div>
           <div style={{ marginTop: 14 }}>
             {text('venueDirectionsLounge', 'Once inside: Private Wellness Lounge', 'How to find this specific venue once through the door - only shown to clients booked here.', true)}
           </div>
           <div style={{ marginTop: 14 }}>
             {text('venueDirectionsSignature', 'Once inside: Premium Signature Venue', 'How to find this specific venue once through the door - only shown to clients booked here.', true)}
+          </div>
+          <div style={{ marginTop: 14 }}>
+            {text('parking', 'Parking', 'Shared by both venues. Printed after the lobby directions in confirmations and the booking page.', true)}
           </div>
           {saveRow}
         </div>

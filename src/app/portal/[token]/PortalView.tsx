@@ -175,9 +175,16 @@ export function PortalView({ data }: { data: PortalData }) {
               ) : null}
               {booking.confirmed && data.venueDirections ? (
                 <p className={styles.body} style={{ whiteSpace: 'pre-line' }}>
-                  <strong>Arrival instructions</strong>
+                  <strong>Once inside the lobby</strong>
                   <br />
                   {data.venueDirections}
+                </p>
+              ) : null}
+              {booking.confirmed && settings.business.parking ? (
+                <p className={styles.body} style={{ whiteSpace: 'pre-line' }}>
+                  <strong>Parking</strong>
+                  <br />
+                  {settings.business.parking}
                 </p>
               ) : null}
             </div>

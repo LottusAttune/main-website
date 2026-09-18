@@ -40,6 +40,35 @@ export async function GET(request: Request, { params }: { params: Promise<{ toke
   const paid = url.searchParams.get('paid') === '1';
   const canceled = url.searchParams.get('canceled') === '1';
 
+  // A canceled checkout gets nothing else on screen - no invoice, no
+  // duplicated payment details - just this, and a single clear way back in.
+  if (canceled && doc.kind === 'invoice' && doc.status !== 'paid' && doc.status !== 'void') {
+    const resumeUrl = doc.payDepositUrl ?? doc.payFullUrl;
+    const html = `<!doctype html><html><head><meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" /><meta name="robots" content="noindex" />
+    <title>${escapeHtml(doc.number)} — Lotus Attune</title>
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500&family=Jost:wght@400;500&display=swap');
+      body { margin: 0; min-height: 100vh; display: flex; align-items: center; justify-content: center; background: #f6efe5; color: #241b14; font-family: 'Jost', Arial, sans-serif; padding: 24px; text-align: center; }
+      .wrap { max-width: 420px; }
+      .mark { display: block; width: 62px; height: 55px; margin: 0 auto 12px; }
+      .wordmark { font-family: 'Cormorant Garamond', Georgia, serif; font-size: 15px; letter-spacing: 0.16em; color: #241b14; margin: 0 0 22px; }
+      h1 { font-family: 'Cormorant Garamond', Georgia, serif; font-weight: 500; font-size: 30px; margin: 0 0 12px; }
+      p { font-size: 16px; line-height: 1.65; margin: 0 0 28px; color: #3b2e24; }
+      .btn { display: inline-block; background: #241b14; color: #f6efe5; padding: 15px 30px; text-decoration: none; font-size: 12px; letter-spacing: 0.2em; text-transform: uppercase; border-radius: 999px; margin-bottom: 16px; }
+    </style></head><body>
+      <div class="wrap">
+        <img class="mark" src="/assets/logo-mark-transparent.webp" alt="" width="62" height="55" />
+        <div class="wordmark">LOTUS ATTUNE</div>
+        <h1>Checkout was closed</h1>
+        <p>Nothing was charged - no payment went through.</p>
+        ${resumeUrl ? `<a class="btn" href="${resumeUrl}">Continue to payment</a>` : ''}
+      </div>
+    </body></html>`;
+    return new NextResponse(html, {
+      headers: { 'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'no-store' },
+    });
+  }
+
   let banner = '';
   if (doc.kind === 'proposal') {
     if (doc.status === 'void' || doc.status === 'declined') {
@@ -83,10 +112,7 @@ export async function GET(request: Request, { params }: { params: Promise<{ toke
       banner = `<div class="bar muted">This invoice has been replaced. Please use the newest one from Silvana.</div>`;
     } else {
       const deposit = depositDue(doc, ctx.business);
-      const notice = canceled
-        ? `<p style="margin:0 0 10px;font-weight:600;">Checkout was closed before payment - nothing was charged.</p>`
-        : '';
-      banner = `<div class="bar"><div class="pay">${notice}${paymentOptionsHtml(doc, ctx.business, ctx.booking).replace(/<a /g, '<a class="btn" ')}</div><span>${deposit !== null ? 'Deposit due' : 'Balance'}: <strong>${money(deposit ?? doc.total - doc.paidAmount)}</strong></span></div>`;
+      banner = `<div class="bar"><div class="pay">${paymentOptionsHtml(doc, ctx.business, ctx.booking).replace(/<a /g, '<a class="btn" ')}</div><span>${deposit !== null ? 'Deposit due' : 'Balance'}: <strong>${money(deposit ?? doc.total - doc.paidAmount)}</strong></span></div>`;
     }
   }
 

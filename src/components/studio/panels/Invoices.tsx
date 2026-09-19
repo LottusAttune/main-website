@@ -177,11 +177,13 @@ export function Invoices({ documents, payments, integrations, initialFilter = 'a
   const outstanding = openInvoices.reduce((sum, doc) => sum + balanceDue(doc), 0);
   const overdueInvoices = invoices.filter((doc) => isOverdue(doc));
   const overdueTotal = overdueInvoices.reduce((sum, doc) => sum + balanceDue(doc), 0);
+  const voidDocumentIds = new Set(invoices.filter((doc) => doc.status === 'void').map((doc) => doc.id));
   const monthPayments = payments.filter(
     (p) =>
       p.kind !== 'refund' &&
       p.kind !== 'cancellation_fee' &&
-      localDate(p.createdAt).slice(0, 7) === thisMonth
+      localDate(p.createdAt).slice(0, 7) === thisMonth &&
+      !(p.documentId && voidDocumentIds.has(p.documentId))
   );
   const paidThisMonth = monthPayments.reduce((sum, p) => sum + p.amount, 0);
 

@@ -247,11 +247,13 @@ export function Today({ data, onNavigate }: Props) {
   const bookedThisMonthValue = bookedThisMonth.reduce((sum, b) => sum + b.total, 0);
   const openInvoices = invoices.filter((d) => d.status !== 'void' && d.status !== 'paid');
   const outstanding = openInvoices.reduce((sum, d) => sum + balanceDue(d), 0);
+  const voidDocumentIds = new Set(data.documents.filter((d) => d.status === 'void').map((d) => d.id));
   const receivedRows = data.payments.filter(
     (p) =>
       p.createdAt.slice(0, 7) === month &&
       p.kind !== 'refund' &&
-      p.kind !== 'cancellation_fee'
+      p.kind !== 'cancellation_fee' &&
+      !(p.documentId && voidDocumentIds.has(p.documentId))
   );
   const received = receivedRows.reduce((sum, p) => sum + p.amount, 0);
 

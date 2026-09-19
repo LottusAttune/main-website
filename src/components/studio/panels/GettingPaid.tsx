@@ -367,8 +367,15 @@ export function GettingPaid({ documents, payments, paymentLinks, integrations }:
   const outstanding = invoices.filter((d) => d.status !== 'paid').reduce((t, d) => t + balanceDue(d), 0);
   const overdue = invoices.filter((d) => isOverdue(d)).reduce((t, d) => t + balanceDue(d), 0);
   const month = new Date().toISOString().slice(0, 7);
+  const voidDocumentIds = new Set(invoiceDocs.filter((d) => d.status === 'void').map((d) => d.id));
   const received = payments
-    .filter((p) => p.createdAt.startsWith(month) && p.kind !== 'refund' && p.kind !== 'cancellation_fee')
+    .filter(
+      (p) =>
+        p.createdAt.startsWith(month) &&
+        p.kind !== 'refund' &&
+        p.kind !== 'cancellation_fee' &&
+        !(p.documentId && voidDocumentIds.has(p.documentId))
+    )
     .reduce((t, p) => t + p.amount, 0);
 
   const tabs: Array<{ key: Tab; label: string; count?: number }> = [

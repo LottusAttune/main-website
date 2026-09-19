@@ -52,7 +52,7 @@ export const metadata: Metadata = {
     description: SITE.description,
     // Absolute, resolved against metadataBase — crawlers cannot follow a
     // relative OG image.
-    images: [{ url: '/assets/silvana-hero.webp', width: 962, height: 1635 }],
+    images: [{ url: '/assets/somatic-main.webp', width: 2400, height: 1350 }],
   },
   twitter: { card: 'summary_large_image' },
   verification: {

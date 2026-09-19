@@ -661,7 +661,7 @@ export async function sendBookingConfirmationEmail(input: SessionEmailInput): Pr
     <p style="margin:0 0 16px;">Answers to common questions - what to wear, what to expect, what is included and more - are on our <a href="${SITE.url}/#faq-heading" style="color:#7c5b3b;">FAQ page</a>.</p>
     ${input.cancellationPolicy ? `${sectionTitle('Cancellation policy')}<p style="margin:0 0 16px;">${escapeHtml(input.cancellationPolicy).replace(/\n/g, '<br />')}</p>` : ''}
     <p style="margin:0 0 10px;">We're looking forward to welcoming you and creating space for a truly restorative reset!</p>
-    <p style="margin:0;">Warm regards,<br />Silvana</p>
+    <p style="margin:0;">In resonance,<br />— Silvana, Founder &amp; Facilitator</p>
     ${mottoHtml()}`);
 
   return sendEmail({
@@ -687,7 +687,7 @@ export async function sendReminderEmail(input: SessionEmailInput): Promise<Email
     ${input.balanceDue > 0 ? `<div style="margin-top:16px;">${balanceChargeHtml(input.balanceDue, input.cardFeePercent, input.balanceChargeDate)}</div>` : ''}
     ${input.cancellationPolicy ? `${sectionTitle('Cancellation policy')}<p style="margin:0 0 16px;">${escapeHtml(input.cancellationPolicy).replace(/\n/g, '<br />')}</p>` : ''}
     <p style="margin:0 0 10px;">Looking forward to seeing you soon!</p>
-    <p style="margin:0;">Warm regards,<br />Silvana</p>
+    <p style="margin:0;">In resonance,<br />— Silvana, Founder &amp; Facilitator</p>
     ${mottoHtml()}`);
 
   return sendEmail({

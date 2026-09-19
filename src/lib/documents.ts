@@ -9,6 +9,7 @@ import {
 import { renderPdf } from '@/lib/pdfshift';
 import { createPaymentLink, deactivatePaymentLink, isStripeConfigured } from '@/lib/stripe';
 import {
+  balanceDue,
   formatStudioDate,
   type DocumentKind,
   type DocumentLine,
@@ -69,8 +70,11 @@ function addDays(iso: string, days: number): string {
   return date.toISOString().slice(0, 10);
 }
 
+/** Today's calendar date in Toronto, not UTC - `toISOString()` rolls over
+ *  to tomorrow as early as 8pm EDT / 7pm EST, which showed up as invoices
+ *  issued a day ahead of the actual local date. */
 function todayIso(): string {
-  return new Date().toISOString().slice(0, 10);
+  return new Intl.DateTimeFormat('en-CA', { timeZone: 'America/Toronto' }).format(new Date());
 }
 
 export function documentFromRow(row: Row): DocumentRow {
@@ -851,7 +855,8 @@ function header(kind: DocumentKind, doc: DocumentRow, business: BusinessSettings
         <div class="display" style="font-size:34px;line-height:1;margin-bottom:8px;">${title}</div>
         <div style="font-size:13px;letter-spacing:0.08em;">${escapeHtml(doc.number)}</div>
         <div class="muted" style="margin-top:6px;">Issued ${formatStudioDate(doc.issuedOn)}</div>
-        ${doc.dueOn && kind === 'invoice' ? `<div class="muted">Due ${formatStudioDate(doc.dueOn)}</div>` : ''}
+        ${doc.dueOn && kind === 'invoice' && balanceDue(doc) > 0 ? `<div class="muted">Due ${formatStudioDate(doc.dueOn)}</div>` : ''}
+        ${kind === 'invoice' && balanceDue(doc) <= 0 ? `<div class="muted">Paid in full</div>` : ''}
         ${doc.dueOn && kind === 'proposal' ? `<div class="muted">Valid until ${formatStudioDate(doc.dueOn)}</div>` : ''}
       </td>
     </tr></table>
@@ -862,6 +867,7 @@ function header(kind: DocumentKind, doc: DocumentRow, business: BusinessSettings
         <div style="font-weight:500;">${escapeHtml(business.businessName)}</div>
         ${business.businessAddress ? `<div class="muted">${escapeHtml(business.businessAddress).replace(/\n/g, '<br />')}</div>` : ''}
         <div class="muted">${escapeHtml(business.businessEmail)} · ${escapeHtml(business.businessPhone)}</div>
+        <div class="muted"><a href="https://www.lotusattune.com">www.lotusattune.com</a></div>
         ${business.taxNumber ? `<div class="muted">${escapeHtml(business.taxLabel)} № ${escapeHtml(business.taxNumber)}</div>` : ''}
       </td>
       <td style="vertical-align:top;width:50%;">

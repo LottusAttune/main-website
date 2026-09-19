@@ -257,7 +257,9 @@ function LeadDrawer({
             <DetailRow label="Time">{lead.sessionTime ?? '—'}</DetailRow>
             {lead.sessionDate2 ? (
               <DetailRow label="Second session">
-                {formatStudioDate(lead.sessionDate2)} · {lead.sessionTime2}
+                {lead.sessionDate2 === lead.sessionDate
+                  ? lead.sessionTime2
+                  : `${formatStudioDate(lead.sessionDate2)} · ${lead.sessionTime2}`}
               </DetailRow>
             ) : null}
             <DetailRow label="Venue">{lead.venue}</DetailRow>

@@ -357,6 +357,12 @@ export const VENUE_COPY = [
   'Ample access to nearby public parking, including multiple Green P and paid parking facilities within a short walking distance.',
 ] as const;
 
+/** VENUE_COPY without the parking sentence, for the confirmation email and
+ *  booking page - both already print a dedicated "Parking" section further
+ *  down, so repeating it here read as redundant. The footer still uses the
+ *  full VENUE_COPY, since it has no separate parking field alongside it. */
+export const VENUE_COPY_BOOKING = VENUE_COPY.slice(0, 1);
+
 export const CORPORATE_ADDON_COPY =
   'Includes a 45-minute extension featuring a facilitated activity focused on recognition, values alignment, mindful communication, and team connection —customized to your team’s objectives. Additional $500 per event.';
 

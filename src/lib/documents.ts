@@ -900,7 +900,12 @@ function sessionBox(booking: BookingCtx): string {
     ['Time', booking.sessionTime ?? '—'],
   ];
   if (booking.sessionDate2) {
-    rows.push(['Second session', `${formatStudioDate(booking.sessionDate2)} · ${booking.sessionTime2 ?? ''}`]);
+    rows.push([
+      'Second session',
+      booking.sessionDate2 === booking.sessionDate
+        ? booking.sessionTime2 ?? ''
+        : `${formatStudioDate(booking.sessionDate2)} · ${booking.sessionTime2 ?? ''}`,
+    ]);
   }
   rows.push(['Venue', venue]);
   if (booking.teamAddon) rows.push(['Add-on', 'Team-building activity']);

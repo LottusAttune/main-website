@@ -1,7 +1,7 @@
 import 'server-only';
 
 import { sessionSlotWindow } from '@/lib/calendar';
-import { FAQS, VENUE_COPY } from '@/data/content';
+import { FAQS, VENUE_COPY_BOOKING } from '@/data/content';
 import { sql } from '@/lib/db';
 import {
   ensureBookingDocument,
@@ -84,7 +84,7 @@ async function sessionEmailInput(
   const event = {
     uid: `booking-${String(row.id)}@lotusattune.com`,
     title: 'Lotus Attune — Immersive Soma Sound Experience',
-    description: `${venue}. ${VENUE_COPY[0]}`,
+    description: `${venue}. ${VENUE_COPY_BOOKING[0]}`,
     location: settings.business.venueDetails || venue,
     startISO,
     endISO,
@@ -101,7 +101,8 @@ async function sessionEmailInput(
     sessionDate2: toIso(row.session_date_2),
     sessionTime2: row.session_time_2 ? String(row.session_time_2) : null,
     venue,
-    venueCopy: VENUE_COPY,
+    teamAddon: Boolean(row.team_addon),
+    venueCopy: VENUE_COPY_BOOKING,
     venueDetails: settings.business.venueDetails,
     venueDirections:
       participants <= LOUNGE_MAX

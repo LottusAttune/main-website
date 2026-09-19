@@ -453,6 +453,7 @@ export async function sendNewBookingOwnerNotification(input: {
   sessionTime2: string | null;
   total: number;
   venue: string;
+  teamAddon: boolean;
   studioUrl: string;
   invoice: { number: string; total: number; deposit: number | null } | null;
 }): Promise<EmailResult> {
@@ -471,9 +472,10 @@ export async function sendNewBookingOwnerNotification(input: {
   }
   rows.push(
     ['Participants', input.participants === 1 ? 'One-on-one' : String(input.participants)],
-    ['Venue', input.venue],
-    inv ? ['Invoice total', money(inv.total)] : ['Estimated total', money(input.total)]
+    ['Venue', input.venue]
   );
+  if (input.teamAddon) rows.push(['Add-on', 'Team-building activity']);
+  rows.push(inv ? ['Invoice total', money(inv.total)] : ['Estimated total', money(input.total)]);
   const details = `
     <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#241b14;margin:16px 0;">
       <tr><td style="padding:22px 28px;">
@@ -518,6 +520,7 @@ export type SessionEmailInput = {
   sessionDate2: string | null;
   sessionTime2: string | null;
   venue: string;
+  teamAddon: boolean;
   venueCopy: readonly string[];
   venueDetails: string;
   /** How to find this specific venue once inside the building. */
@@ -590,6 +593,7 @@ function sessionBoxHtml(input: SessionEmailInput, eyebrow: string): string {
     ['Participants', input.participants === 1 ? 'One-on-one' : String(input.participants)],
     ['Venue', input.venue]
   );
+  if (input.teamAddon) rows.push(['Add-on', 'Team-building activity']);
   return `
     <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#241b14;margin:16px 0;">
       <tr><td style="padding:22px 28px;">
@@ -654,7 +658,7 @@ export async function sendBookingConfirmationEmail(input: SessionEmailInput): Pr
     ${input.portalUrl ? portalSection(input.portalUrl) : ''}
     ${venueSection(input)}
     ${sectionTitle('Good to know')}
-    <p style="margin:0 0 16px;">Answers to common questions - cancellations, what to bring, group sizes and more - are on our <a href="${SITE.url}/#faq-heading" style="color:#7c5b3b;">FAQ page</a>.</p>
+    <p style="margin:0 0 16px;">Answers to common questions - what to wear, what to expect, what is included and more - are on our <a href="${SITE.url}/#faq-heading" style="color:#7c5b3b;">FAQ page</a>.</p>
     ${input.cancellationPolicy ? `${sectionTitle('Cancellation policy')}<p style="margin:0 0 16px;">${escapeHtml(input.cancellationPolicy).replace(/\n/g, '<br />')}</p>` : ''}
     <p style="margin:0;">We're looking forward to welcoming you and creating space for a truly restorative reset.</p>
     ${mottoHtml()}`);

@@ -252,6 +252,7 @@ export async function POST(request: Request) {
         sessionTime2: input.sessionTime2 ?? null,
         total,
         venue,
+        teamAddon: input.teamAddon,
         studioUrl: `${SITE.url}/studio`,
         invoice: invoiceSummary,
       });

@@ -1,6 +1,6 @@
 import 'server-only';
 
-import { CORPORATE_ADDON_COPY, FAQS, VENUE_COPY } from '@/data/content';
+import { CORPORATE_ADDON_COPY, FAQS, VENUE_COPY_BOOKING } from '@/data/content';
 import { sessionSlotWindow } from '@/lib/calendar';
 import { sql } from '@/lib/db';
 import {
@@ -158,7 +158,7 @@ export async function loadPortal(token: string): Promise<PortalData | null> {
     invoice,
     settings,
     venue,
-    venueCopy: VENUE_COPY,
+    venueCopy: VENUE_COPY_BOOKING,
     venueDirections:
       venue === 'Private Wellness Lounge'
         ? settings.business.venueDirectionsLounge
@@ -183,7 +183,7 @@ export function calendarEvent(booking: BookingCtx, settings: SiteSettings, venue
   return {
     uid: `booking-${booking.id}@lotusattune.com`,
     title: 'Lotus Attune, Immersive Soma Sound Experience',
-    description: `${venue}. ${VENUE_COPY[0]}`,
+    description: `${venue}. ${VENUE_COPY_BOOKING[0]}`,
     location: settings.business.venueDetails || venue,
     startISO,
     endISO,

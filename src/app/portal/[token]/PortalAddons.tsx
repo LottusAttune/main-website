@@ -28,7 +28,7 @@ export function PortalAddons({ token, upsells, cardOnFile }: Props) {
       const response = await fetch(`/api/portal/${token}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ addon: upsell.key }),
+        body: JSON.stringify({ action: 'addon', addon: upsell.key }),
       });
       const body = (await response.json().catch(() => null)) as { error?: string; total?: number; balance?: number } | null;
       if (!response.ok) {

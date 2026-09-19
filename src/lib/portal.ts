@@ -15,10 +15,14 @@ import {
 } from '@/lib/documents';
 import { sendOwnerNotification } from '@/lib/email';
 import { buildIcs, googleCalendarUrl, zonedTimeToUtc, type CalendarEvent } from '@/lib/ics';
-import { balanceDue, type DocumentRow } from '@/lib/pipeline';
+import { balanceDue, formatStudioDate, type DocumentRow } from '@/lib/pipeline';
 import { MIN_GROUP_SIZE, quoteFor } from '@/lib/quote';
 import { getSettings, type SiteSettings } from '@/lib/settings';
-import { LOUNGE_MAX, money, SITE, splitVenueDetails, TEAM_ADDON_MIN_PARTICIPANTS } from '@/lib/site';
+import { LOUNGE_MAX, money, SITE, splitVenueDetails, TEAM_ADDON_MIN_PARTICIPANTS, TIME_SLOTS, type SlotKey } from '@/lib/site';
+
+function escapeHtml(value: string): string {
+  return value.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
 
 /**
  * The client portal: one private link per booking (the token is the
@@ -280,4 +284,65 @@ export async function addUpsell(
     html: `<p style="margin:0;">${booking.name} added <strong>${upsell.title}</strong> from their portal.${data.invoice ? ` Invoice ${data.invoice.number} is now ${money(total)}; ${money(balance)} is outstanding${booking.cardOnFile ? ' and will be charged with the balance' : ''}.` : ''}</p>`,
   });
   return { ok: true, total, balance };
+}
+
+/**
+ * A request, not an automatic change: nothing on the booking moves until
+ * Silvana confirms the new date herself in Studio. Keeps a paid deposit,
+ * invoice and calendar events from shifting under an unreviewed request.
+ */
+export async function requestReschedule(
+  token: string,
+  preferredDate: string,
+  preferredSlot: SlotKey,
+  note: string | null
+): Promise<{ ok: true } | { ok: false; error: string }> {
+  const data = await loadPortal(token);
+  if (!data) return { ok: false, error: 'Booking not found.' };
+  if (data.booking.status === 'cancelled') return { ok: false, error: 'This booking is cancelled.' };
+  if (data.booking.status === 'complete') return { ok: false, error: 'This session has already taken place.' };
+
+  const slotLabel = TIME_SLOTS.find((s) => s.key === preferredSlot)?.label ?? preferredSlot;
+  const currentWhen = data.booking.sessionDate
+    ? `${formatStudioDate(data.booking.sessionDate)}${data.booking.sessionTime ? `, ${data.booking.sessionTime}` : ''}`
+    : 'an unscheduled date';
+  const requestedWhen = `${formatStudioDate(preferredDate)}, ${slotLabel}`;
+
+  await logActivity({
+    bookingId: data.booking.id,
+    kind: 'reschedule_requested',
+    body: `Requested to move from ${currentWhen} to ${requestedWhen}${note ? ` — "${note}"` : ''}`,
+  });
+  await sendOwnerNotification({
+    subject: `${data.booking.name} asked to reschedule their session`,
+    html: `<p style="margin:0;"><strong>${data.booking.name}</strong> asked to move their session from ${currentWhen} to <strong>${requestedWhen}</strong>.${note ? ` Their note: "${escapeHtml(note)}"` : ''} Nothing has changed yet - confirm the new date in Studio if it works for you.</p>`,
+  });
+  return { ok: true };
+}
+
+/** Also a request, not an automatic cancellation - lets Silvana apply the
+ *  cancellation policy (the notice window, the fee) herself when she cancels
+ *  the booking in Studio, rather than the site deciding that unattended. */
+export async function requestCancellation(
+  token: string,
+  reason: string | null
+): Promise<{ ok: true } | { ok: false; error: string }> {
+  const data = await loadPortal(token);
+  if (!data) return { ok: false, error: 'Booking not found.' };
+  if (data.booking.status === 'cancelled') return { ok: false, error: 'This booking is already cancelled.' };
+
+  const when = data.booking.sessionDate
+    ? `${formatStudioDate(data.booking.sessionDate)}${data.booking.sessionTime ? `, ${data.booking.sessionTime}` : ''}`
+    : 'their session';
+
+  await logActivity({
+    bookingId: data.booking.id,
+    kind: 'cancellation_requested',
+    body: `Requested to cancel ${when}${reason ? ` — "${reason}"` : ''}`,
+  });
+  await sendOwnerNotification({
+    subject: `${data.booking.name} asked to cancel their session`,
+    html: `<p style="margin:0;"><strong>${data.booking.name}</strong> asked to cancel their session on ${when}.${reason ? ` Their reason: "${escapeHtml(reason)}"` : ''} Nothing has changed yet - cancel it in Studio once you've checked the cancellation policy for any fee.</p>`,
+  });
+  return { ok: true };
 }

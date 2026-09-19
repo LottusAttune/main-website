@@ -568,11 +568,16 @@ function paymentKindLabel(kind: string): string {
   }
 }
 
-/** "Your booking page": the countdown, the details, add-ons and the invoice, all in one link. */
-function portalSection(url: string): string {
+/** "Your booking page": the countdown, the details, add-ons and the invoice,
+ *  all in one link. `mentionChanges` names rescheduling/cancelling directly -
+ *  used on the confirmation, when there's still plenty of notice, but left
+ *  out of the reminder close to the session so it doesn't read as an
+ *  invitation to cancel days before. The option lives on the booking page
+ *  either way; this only changes what the email itself says. */
+function portalSection(url: string, mentionChanges = false): string {
   return `
     ${sectionTitle('Your booking page')}
-    <p style="margin:0 0 4px;">Everything for the day in one place: a countdown to your session, the details, your invoice, calendar links, and extras you can add to your experience.</p>
+    <p style="margin:0 0 4px;">Everything for the day in one place: a countdown to your session, the details, your invoice, calendar links, and extras you can add to your experience.${mentionChanges ? ' Need a different date, or need to cancel? You can request that from there too.' : ''}</p>
     ${BUTTON(url, 'Open your booking page')}`;
 }
 
@@ -655,7 +660,7 @@ export async function sendBookingConfirmationEmail(input: SessionEmailInput): Pr
     ${sessionBoxHtml(input, 'Your session')}
     ${arrivalNoteHtml()}
     ${payment}
-    ${input.portalUrl ? portalSection(input.portalUrl) : ''}
+    ${input.portalUrl ? portalSection(input.portalUrl, true) : ''}
     ${venueSection(input)}
     ${sectionTitle('Good to know')}
     <p style="margin:0 0 16px;">Answers to common questions - what to wear, what to expect, what is included and more - are on our <a href="${SITE.url}/#faq-heading" style="color:#7c5b3b;">FAQ page</a>.</p>

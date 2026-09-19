@@ -151,6 +151,8 @@ export const ACTIVITY_LABELS: Record<string, string> = {
   reminder_sent: 'Reminder sent',
   cancelled: 'Cancelled',
   cancellation_fee_charged: 'Cancellation fee charged',
+  reschedule_requested: 'Reschedule requested',
+  cancellation_requested: 'Cancellation requested',
   payment_on_void: '⚠ Payment on a void invoice',
   record_failed: '⚠ Payment not recorded',
   email_failed: '⚠ Email failed',

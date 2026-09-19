@@ -3,9 +3,10 @@ import { SiteFooter } from '@/components/chrome/SiteFooter';
 import { SiteNav } from '@/components/chrome/SiteNav';
 import { formatStudioDate } from '@/lib/pipeline';
 import type { PortalData } from '@/lib/portal';
-import { money, SITE, splitVenueDetails } from '@/lib/site';
+import { money, SITE, splitVenueDetails, toTorontoDateIso } from '@/lib/site';
 import { Countdown } from './Countdown';
 import { PortalAddons } from './PortalAddons';
+import { PortalReschedule } from './PortalReschedule';
 import styles from './portal.module.css';
 
 /** The page itself, separate from the loading so it can be previewed with sample data. */
@@ -24,6 +25,10 @@ export function PortalView({ data }: { data: PortalData }) {
         : `${booking.participants} participants`;
   const extras = [booking.teamAddon ? 'Team-building add-on' : null].filter(Boolean);
   const { location, arrival } = splitVenueDetails(settings.business.venueDetails);
+  const minRescheduleDate = (() => {
+    const [y, m, d] = toTorontoDateIso(new Date()).split('-').map(Number);
+    return new Date(Date.UTC(y, m - 1, d + settings.leadTimeDays)).toISOString().slice(0, 10);
+  })();
 
   return (
     <>
@@ -97,6 +102,9 @@ export function PortalView({ data }: { data: PortalData }) {
                     Apple / Outlook file
                   </a>
                 </div>
+              ) : null}
+              {!cancelled && booking.status !== 'complete' ? (
+                <PortalReschedule token={token} minDate={minRescheduleDate} />
               ) : null}
             </div>
 

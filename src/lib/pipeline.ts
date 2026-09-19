@@ -4,6 +4,8 @@
  * the panels are Client Components.
  */
 
+import { toTorontoDateIso } from '@/lib/site';
+
 /** Kanban stages, in order. A lead's `status` is one of these keys. */
 export const STAGES = [
   { key: 'new_enquiry', label: 'New enquiry' },
@@ -398,7 +400,7 @@ export function relativeDays(iso: string | null, now = new Date()): string {
 /** An invoice that is sent, unpaid and past its due date. */
 export function isOverdue(doc: DocumentRow, today = new Date()): boolean {
   if (doc.kind !== 'invoice' || doc.status !== 'sent' || !doc.dueOn) return false;
-  return doc.dueOn < today.toISOString().slice(0, 10);
+  return doc.dueOn < toTorontoDateIso(today);
 }
 
 export type StudioData = {

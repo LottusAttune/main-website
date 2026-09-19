@@ -11,7 +11,8 @@ import {
   paymentOptionsHtml,
 } from '@/lib/documents';
 import { formatStudioDate } from '@/lib/pipeline';
-import { money } from '@/lib/site';
+import { portalUrlForBooking } from '@/lib/portal';
+import { money, SITE } from '@/lib/site';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -116,6 +117,12 @@ export async function GET(request: Request, { params }: { params: Promise<{ toke
     }
   }
 
+  // "Close" used to call window.close(), which browsers silently refuse on a
+  // tab that was navigated to (not opened by script) - leaving the client
+  // stuck here after paying with no way back. Send them somewhere real
+  // instead: their booking page when there is one, the site otherwise.
+  const returnUrl = ctx.booking ? await portalUrlForBooking(ctx.booking.id) : null;
+
   const rendered = documentHtml(doc, ctx);
   const inner = rendered.replace(/^[\s\S]*?<body>/, '').replace(/<\/body>[\s\S]*$/, '');
   const styles = rendered.match(/<style>([\s\S]*?)<\/style>/)?.[1] ?? '';
@@ -148,7 +155,7 @@ export async function GET(request: Request, { params }: { params: Promise<{ toke
     <div class="actions">
       <a href="#" onclick="window.print();return false;">Print</a>
       <a href="/d/${escapeHtml(token)}/pdf?download=1">Download PDF</a>
-      <a href="#" onclick="window.close();return false;">Close</a>
+      <a href="${returnUrl ?? SITE.url}">${returnUrl ? 'Back to your booking page' : 'Back to the site'}</a>
     </div>
     ${inner}
   </body></html>`;

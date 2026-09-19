@@ -179,6 +179,14 @@ export function money(amount: number): string {
  *  second line with buzzer/entry info. Split so each gets its own bold
  *  "Location" / "Arrival instructions" heading, without depending on
  *  whatever words the text itself happens to start with. */
+/** A stored timestamp's calendar date in Toronto, not UTC - `.slice(0, 10)`
+ *  on an ISO timestamp reads the UTC date, which is already tomorrow from
+ *  as early as 8pm EDT / 7pm EST, showing payments as received a day late. */
+export function toTorontoDateIso(timestamp: string | Date): string {
+  const date = typeof timestamp === 'string' ? new Date(timestamp) : timestamp;
+  return new Intl.DateTimeFormat('en-CA', { timeZone: 'America/Toronto' }).format(date);
+}
+
 export function splitVenueDetails(text: string): { location: string; arrival: string | null } {
   const parts = text
     .split(/\n+/)

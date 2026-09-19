@@ -18,7 +18,7 @@ import {
 } from '@/lib/pipeline';
 import { giftQuoteFor, quoteFor } from '@/lib/quote';
 import { getSettings, type BusinessSettings, type SiteSettings } from '@/lib/settings';
-import { LOUNGE_MAX, money, SITE, venueNoteFor } from '@/lib/site';
+import { LOUNGE_MAX, money, SITE, toTorontoDateIso, venueNoteFor } from '@/lib/site';
 
 /**
  * Proposals, invoices and gift certificates.
@@ -581,8 +581,12 @@ export async function updateDocument(
 // link is already in the PDF and the email the first time the client sees it.
 // ---------------------------------------------------------------------------
 
+/** Rounding a fractional-cent fee down to whole dollars can erase it
+ *  entirely on a small amount (3% of $3 is $0.09, which rounds to $0) - a
+ *  real fee never disappears, it floors at $1. */
 export function cardFee(amount: number, feePercent: number): number {
-  return Math.round((amount * feePercent) / 100);
+  if (amount <= 0 || feePercent <= 0) return 0;
+  return Math.max(1, Math.round((amount * feePercent) / 100));
 }
 
 export function depositAmount(doc: DocumentRow, depositPercent: number): number {
@@ -1025,7 +1029,7 @@ function paymentHistoryHtml(payments: { amount: number; method: string; kind: st
   return payments
     .map((p) => {
       const label = PAYMENT_KIND_LABEL[p.kind] ?? 'Payment';
-      const when = p.createdAt ? ` paid ${formatStudioDate(p.createdAt.slice(0, 10))}` : ' paid';
+      const when = p.createdAt ? ` paid ${formatStudioDate(toTorontoDateIso(p.createdAt))}` : ' paid';
       return `${label} <strong>${money(p.amount)}</strong>${when}`;
     })
     .join('<br />');
@@ -1043,7 +1047,7 @@ function paymentSummaryHtml(
     return '<p style="margin:0;">This invoice has been voided.</p>';
   }
   if (doc.status === 'paid') {
-    return `<p style="margin:0;">${history || `Paid in full${doc.paidAt ? ` ${formatStudioDate(doc.paidAt.slice(0, 10))}` : ''}${doc.paidMethod ? ` by ${escapeHtml(doc.paidMethod)}` : ''}`}.</p>`;
+    return `<p style="margin:0;">${history || `Paid in full${doc.paidAt ? ` ${formatStudioDate(toTorontoDateIso(doc.paidAt))}` : ''}${doc.paidMethod ? ` by ${escapeHtml(doc.paidMethod)}` : ''}`}.</p>`;
   }
 
   const outstanding = doc.total - doc.paidAmount;
@@ -1139,7 +1143,7 @@ export async function loadContext(doc: DocumentRow): Promise<DocumentContext> {
 function acceptanceHtml(doc: DocumentRow, ctx: DocumentContext): string {
   const a = ctx.acceptance;
   if (!a) return '';
-  const when = formatStudioDate(a.acceptedAt.slice(0, 10));
+  const when = formatStudioDate(toTorontoDateIso(a.acceptedAt));
   const sig = a.signaturePng && a.signaturePng.startsWith('data:image/png;base64,')
     ? `<img src="${a.signaturePng}" alt="Signature" style="display:block;height:64px;margin:6px 0 4px;" />`
     : '';

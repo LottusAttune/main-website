@@ -262,7 +262,7 @@ export const FAQS = [
   },
   {
     q: 'Cancellation Policy',
-    a: "Life happens, and plans change. If you are unable to attend, please cancel at least 72 hours before your scheduled session. You may reschedule your experience, subject to availability. Cancellations made with less than 72 hours' notice, or no-shows, are subject to a $100 fee.",
+    a: "Life happens, and plans change — please give us as much notice as you can.\n24–72 hours' notice: $100 fee.\nLess than 24 hours' notice: your deposit is forfeited.\nNo-shows, with no notice at all, are non-refundable in full.\nThe same applies if you need to reschedule rather than cancel.",
   },
 ] as const;
 

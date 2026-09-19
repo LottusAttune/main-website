@@ -95,6 +95,7 @@
   font-size: 16.5px;
   line-height: 1.85;
   color: var(--color-ink-body);
+  white-space: pre-line;
 }
 
 .answerCompact {

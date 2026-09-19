@@ -61,7 +61,7 @@ export function PolicyModal({ triggerClassName }: Props) {
                 ✕
               </button>
             </div>
-            <p>{CANCELLATION_POLICY.a}</p>
+            <p style={{ whiteSpace: 'pre-line' }}>{CANCELLATION_POLICY.a}</p>
             <button type="button" className="btn btn--dark" onClick={() => setOpen(false)}>
               Close
             </button>

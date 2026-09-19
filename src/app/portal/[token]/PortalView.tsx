@@ -167,7 +167,7 @@ export function PortalView({ data }: { data: PortalData }) {
               ))}
               {booking.confirmed && location ? (
                 <p className={styles.body}>
-                  <strong>Location</strong>
+                  <strong>Location:</strong>
                   <br />
                   {location}
                 </p>
@@ -176,21 +176,21 @@ export function PortalView({ data }: { data: PortalData }) {
               ) : null}
               {booking.confirmed && arrival ? (
                 <p className={styles.body} style={{ whiteSpace: 'pre-line' }}>
-                  <strong>Arrival instructions</strong>
+                  <strong>Arrival instructions:</strong>
                   <br />
                   {arrival}
                 </p>
               ) : null}
               {booking.confirmed && data.venueDirections ? (
                 <p className={styles.body} style={{ whiteSpace: 'pre-line' }}>
-                  <strong>Once inside the lobby</strong>
+                  <strong>Once inside the lobby:</strong>
                   <br />
                   {data.venueDirections}
                 </p>
               ) : null}
               {booking.confirmed && settings.business.parking ? (
                 <p className={styles.body} style={{ whiteSpace: 'pre-line' }}>
-                  <strong>Parking</strong>
+                  <strong>Parking:</strong>
                   <br />
                   {settings.business.parking}
                 </p>

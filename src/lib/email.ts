@@ -612,10 +612,10 @@ function venueSection(input: SessionEmailInput): string {
   return `
     ${sectionTitle('Getting there')}
     ${input.venueCopy.map((p) => `<p style="margin:0 0 8px;">${escapeHtml(p)}</p>`).join('')}
-    ${location ? `<p style="margin:0 0 8px;"><strong>Location</strong><br />${escapeHtml(location)}</p>` : ''}
-    ${arrival ? `<p style="margin:0 0 8px;"><strong>Arrival instructions</strong><br />${escapeHtml(arrival).replace(/\n/g, '<br />')}</p>` : ''}
-    ${input.venueDirections ? `<p style="margin:0 0 8px;"><strong>Once inside the lobby</strong><br />${escapeHtml(input.venueDirections).replace(/\n/g, '<br />')}</p>` : ''}
-    ${input.parking ? `<p style="margin:0 0 8px;"><strong>Parking</strong><br />${escapeHtml(input.parking).replace(/\n/g, '<br />')}</p>` : ''}
+    ${location ? `<p style="margin:0 0 8px;"><strong>Location:</strong><br />${escapeHtml(location)}</p>` : ''}
+    ${arrival ? `<p style="margin:0 0 8px;"><strong>Arrival instructions:</strong><br />${escapeHtml(arrival).replace(/\n/g, '<br />')}</p>` : ''}
+    ${input.venueDirections ? `<p style="margin:0 0 8px;"><strong>Once inside the lobby:</strong><br />${escapeHtml(input.venueDirections).replace(/\n/g, '<br />')}</p>` : ''}
+    ${input.parking ? `<p style="margin:0 0 8px;"><strong>Parking:</strong><br />${escapeHtml(input.parking).replace(/\n/g, '<br />')}</p>` : ''}
     <table role="presentation" cellpadding="0" cellspacing="0" style="margin:10px 0 4px;"><tr>
       <td style="background:#241b14;border-radius:999px;"><a href="${input.googleCalendarUrl}" style="display:inline-block;padding:12px 24px;font-family:Arial,Helvetica,sans-serif;font-size:11px;letter-spacing:0.2em;text-transform:uppercase;color:#f6efe5;text-decoration:none;">Add to Google Calendar</a></td>
     </tr></table>

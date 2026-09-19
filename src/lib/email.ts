@@ -679,9 +679,10 @@ export async function sendReminderEmail(input: SessionEmailInput): Promise<Email
   const first = input.name.split(' ')[0] || input.name;
   const html = wrapperHtml(`
     <p style="margin:0 0 10px;">Hi ${escapeHtml(first)},</p>
-    <p style="margin:0;">A gentle reminder - your Lotus Attune experience is coming up. Comfortable clothing and socks are all you need; everything else is provided.</p>
+    <p style="margin:0;">A gentle reminder - your Lotus Attune experience is coming up.</p>
     ${sessionBoxHtml(input, 'Coming up')}
     ${arrivalNoteHtml()}
+    <p style="margin:8px 0 16px;">Comfortable clothing and a pair of socks are all you need; everything else is provided.</p>
     ${input.portalUrl ? portalSection(input.portalUrl) : ''}
     ${venueSection(input)}
     ${input.balanceDue > 0 ? `<div style="margin-top:16px;">${balanceChargeHtml(input.balanceDue, input.cardFeePercent, input.balanceChargeDate)}</div>` : ''}

@@ -18,7 +18,7 @@ import { buildIcs, googleCalendarUrl, zonedTimeToUtc, type CalendarEvent } from 
 import { balanceDue, formatStudioDate, type DocumentRow } from '@/lib/pipeline';
 import { MIN_GROUP_SIZE, quoteFor } from '@/lib/quote';
 import { getSettings, type SiteSettings } from '@/lib/settings';
-import { LOUNGE_MAX, money, SITE, splitVenueDetails, TEAM_ADDON_MIN_PARTICIPANTS, TIME_SLOTS, type SlotKey } from '@/lib/site';
+import { LOUNGE_MAX, money, SITE, splitAddressForCalendar, splitVenueDetails, TEAM_ADDON_MIN_PARTICIPANTS, TIME_SLOTS, type SlotKey } from '@/lib/site';
 
 function escapeHtml(value: string): string {
   return value.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
@@ -185,15 +185,19 @@ export async function loadPortal(token: string): Promise<PortalData | null> {
 export function calendarEvent(booking: BookingCtx, settings: SiteSettings, venue: string): CalendarEvent {
   const { startISO, endISO } = sessionSlotWindow(booking.sessionDate!, booking.sessionTime!);
   // Location is for the calendar app's own map/directions lookup - just the
-  // address, not the buzzer/arrival text, which reads better as part of the
+  // street address, not any trailing descriptive sentence (which some
+  // calendar apps separately auto-link as a second, confusing address) and
+  // not the buzzer/arrival text - both read better as part of the
   // description instead.
   const { location, arrival } = splitVenueDetails(settings.business.venueDetails);
+  const { mapLocation, extra } = splitAddressForCalendar(location);
   const venueDirections =
     venue === 'Private Wellness Lounge'
       ? settings.business.venueDirectionsLounge
       : settings.business.venueDirectionsSignature;
   const description = [
-    venue,
+    `${venue}:`,
+    extra,
     arrival,
     venueDirections,
     'Please arrive 15 minutes prior to the start of your session to settle in. Allow extra time for parking and rush-hour traffic.',
@@ -204,7 +208,7 @@ export function calendarEvent(booking: BookingCtx, settings: SiteSettings, venue
     uid: `booking-${booking.id}@lotusattune.com`,
     title: 'Lotus Attune, Immersive Soma Sound Experience',
     description,
-    location: location || venue,
+    location: mapLocation || venue,
     startISO,
     endISO,
     attendeeName: booking.name,

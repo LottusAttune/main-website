@@ -194,3 +194,17 @@ export function splitVenueDetails(text: string): { location: string; arrival: st
     .filter(Boolean);
   return { location: parts[0] ?? '', arrival: parts.length > 1 ? parts.slice(1).join('\n') : null };
 }
+
+/** For a calendar app's own Location field specifically - just the street
+ *  address (the first sentence), not any trailing descriptive sentence
+ *  ("Just south of Bloor Street East"), since a phone's calendar app
+ *  auto-links any recognizable street name found anywhere inside that
+ *  field as a second, separate address, which is exactly the confusing
+ *  double-link the client reported. The rest still isn't lost - it moves
+ *  into the event description instead, as plain (non-geocoded) text. */
+export function splitAddressForCalendar(location: string): { mapLocation: string; extra: string | null } {
+  const match = location.match(/^([^.]+\.)\s*([\s\S]*)$/);
+  if (!match) return { mapLocation: location.trim(), extra: null };
+  const [, first, rest] = match;
+  return { mapLocation: first.trim(), extra: rest.trim() || null };
+}

@@ -28,7 +28,7 @@ import { buildIcs, googleCalendarUrl } from '@/lib/ics';
 import { balanceDue, type DocumentRow } from '@/lib/pipeline';
 import { getSettings, type SiteSettings } from '@/lib/settings';
 import { chargeSavedCard, isStripeConfigured, StripeError } from '@/lib/stripe';
-import { LOUNGE_MAX, money, SITE, splitVenueDetails } from '@/lib/site';
+import { LOUNGE_MAX, money, SITE, splitAddressForCalendar, splitVenueDetails } from '@/lib/site';
 
 /**
  * Everything that happens to a booking after the client says yes:
@@ -86,11 +86,15 @@ async function sessionEmailInput(
       : settings.business.venueDirectionsSignature;
   const { startISO, endISO } = sessionSlotWindow(sessionDate, sessionTime);
   // Location is for the calendar app's own map/directions lookup - just the
-  // address, not the buzzer/arrival text, which reads better as part of the
+  // street address, not any trailing descriptive sentence (which some
+  // calendar apps separately auto-link as a second, confusing address) and
+  // not the buzzer/arrival text - both read better as part of the
   // description instead.
   const { location, arrival } = splitVenueDetails(settings.business.venueDetails);
+  const { mapLocation, extra } = splitAddressForCalendar(location);
   const description = [
-    venue,
+    `${venue}:`,
+    extra,
     arrival,
     venueDirections,
     'Please arrive 15 minutes prior to the start of your session to settle in. Allow extra time for parking and rush-hour traffic.',
@@ -101,7 +105,7 @@ async function sessionEmailInput(
     uid: `booking-${String(row.id)}@lotusattune.com`,
     title: 'Lotus Attune — Immersive Soma Sound Experience',
     description,
-    location: location || venue,
+    location: mapLocation || venue,
     startISO,
     endISO,
     attendeeName: String(row.name),

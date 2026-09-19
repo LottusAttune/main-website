@@ -80,6 +80,10 @@ async function sessionEmailInput(
 
   const participants = Number(row.participants);
   const venue = participants <= LOUNGE_MAX ? 'Private Wellness Lounge' : 'Premium Signature Venue';
+  const venueDirections =
+    participants <= LOUNGE_MAX
+      ? settings.business.venueDirectionsLounge
+      : settings.business.venueDirectionsSignature;
   const { startISO, endISO } = sessionSlotWindow(sessionDate, sessionTime);
   // Location is for the calendar app's own map/directions lookup - just the
   // address, not the buzzer/arrival text, which reads better as part of the
@@ -88,6 +92,7 @@ async function sessionEmailInput(
   const description = [
     venue,
     arrival,
+    venueDirections,
     'Please arrive 15 minutes prior to the start of your session to settle in. Allow extra time for parking and rush-hour traffic.',
   ]
     .filter(Boolean)
@@ -115,10 +120,7 @@ async function sessionEmailInput(
     teamAddon: Boolean(row.team_addon),
     venueCopy: VENUE_COPY_BOOKING,
     venueDetails: settings.business.venueDetails,
-    venueDirections:
-      participants <= LOUNGE_MAX
-        ? settings.business.venueDirectionsLounge
-        : settings.business.venueDirectionsSignature,
+    venueDirections,
     parking: settings.business.parking,
     cancellationPolicy: settings.business.cancellationPolicy || DEFAULT_CANCELLATION_POLICY,
     faqs: CONFIRMATION_FAQS,

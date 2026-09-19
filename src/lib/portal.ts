@@ -184,9 +184,14 @@ export function calendarEvent(booking: BookingCtx, settings: SiteSettings, venue
   // address, not the buzzer/arrival text, which reads better as part of the
   // description instead.
   const { location, arrival } = splitVenueDetails(settings.business.venueDetails);
+  const venueDirections =
+    venue === 'Private Wellness Lounge'
+      ? settings.business.venueDirectionsLounge
+      : settings.business.venueDirectionsSignature;
   const description = [
     venue,
     arrival,
+    venueDirections,
     'Please arrive 15 minutes prior to the start of your session to settle in. Allow extra time for parking and rush-hour traffic.',
   ]
     .filter(Boolean)

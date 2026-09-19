@@ -221,7 +221,7 @@ export function PortalView({ data }: { data: PortalData }) {
 
           {data.cancellationPolicy ? (
             <div className={styles.section}>
-              <h2 className={`display ${styles.sectionTitle}`}>Cancellation policy</h2>
+              <h2 className={`display ${styles.sectionTitle}`}>Cancellation & Rescheduling Policy</h2>
               <p className={styles.body} style={{ whiteSpace: 'pre-line' }}>
                 {data.cancellationPolicy}
               </p>

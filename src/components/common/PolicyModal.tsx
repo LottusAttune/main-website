@@ -7,8 +7,8 @@ import { FAQS } from '@/data/content';
 import styles from './IncludedModal.module.css';
 
 const CANCELLATION_POLICY = (() => {
-  const faq = FAQS.find((f) => f.q === 'Cancellation Policy');
-  if (!faq) throw new Error('"Cancellation Policy" FAQ not found in FAQS');
+  const faq = FAQS.find((f) => f.q === 'Cancellation & Rescheduling Policy');
+  if (!faq) throw new Error('"Cancellation & Rescheduling Policy" FAQ not found in FAQS');
   return faq;
 })();
 
@@ -51,12 +51,12 @@ export function PolicyModal({ triggerClassName }: Props) {
           className={styles.overlay}
           role="dialog"
           aria-modal="true"
-          aria-label="Cancellation policy"
+          aria-label="Cancellation & Rescheduling Policy"
           onClick={() => setOpen(false)}
         >
           <div className={`${styles.shell} ${styles.shellCompact}`} onClick={(e) => e.stopPropagation()}>
             <div className={styles.head}>
-              <div className={styles.title} style={{ margin: 0 }}>Cancellation Policy</div>
+              <div className={styles.title} style={{ margin: 0 }}>Cancellation &amp; Rescheduling Policy</div>
               <button type="button" className={styles.close} aria-label="Close" onClick={() => setOpen(false)}>
                 ✕
               </button>

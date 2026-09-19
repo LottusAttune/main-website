@@ -19,8 +19,8 @@ import { money, SITE, splitVenueDetails } from '@/lib/site';
 export const DISCOVERY_CALL_MEET_LINK = 'https://meet.google.com/eyu-jxag-asc';
 
 const GIFT_CANCELLATION_POLICY = (() => {
-  const faq = FAQS.find((f) => f.q === 'Cancellation Policy');
-  if (!faq) throw new Error('"Cancellation Policy" FAQ not found in FAQS');
+  const faq = FAQS.find((f) => f.q === 'Cancellation & Rescheduling Policy');
+  if (!faq) throw new Error('"Cancellation & Rescheduling Policy" FAQ not found in FAQS');
   return faq;
 })();
 
@@ -664,7 +664,7 @@ export async function sendBookingConfirmationEmail(input: SessionEmailInput): Pr
     ${venueSection(input)}
     ${sectionTitle('Good to know')}
     <p style="margin:0 0 16px;">Answers to common questions - what to wear, what to expect, what is included and more - are on our <a href="${SITE.url}/#faq-heading" style="color:#7c5b3b;">FAQ page</a>.</p>
-    ${input.cancellationPolicy ? `${sectionTitle('Cancellation policy')}<p style="margin:0 0 16px;">${escapeHtml(input.cancellationPolicy).replace(/\n/g, '<br />')}</p>` : ''}
+    ${input.cancellationPolicy ? `${sectionTitle('Cancellation & Rescheduling Policy')}<p style="margin:0 0 16px;">${escapeHtml(input.cancellationPolicy).replace(/\n/g, '<br />')}</p>` : ''}
     <p style="margin:0 0 10px;">We're looking forward to welcoming you and creating space for a truly restorative reset!</p>
     <p style="margin:0;">In resonance,<br />— Silvana, Founder &amp; Facilitator</p>
     ${mottoHtml()}`);
@@ -691,7 +691,7 @@ export async function sendReminderEmail(input: SessionEmailInput): Promise<Email
     ${input.portalUrl ? portalSection(input.portalUrl) : ''}
     ${venueSection(input)}
     ${input.balanceDue > 0 ? `<div style="margin-top:16px;">${balanceChargeHtml(input.balanceDue, input.cardFeePercent, input.balanceChargeDate)}</div>` : ''}
-    ${input.cancellationPolicy ? `${sectionTitle('Cancellation policy')}<p style="margin:0 0 16px;">${escapeHtml(input.cancellationPolicy).replace(/\n/g, '<br />')}</p>` : ''}
+    ${input.cancellationPolicy ? `${sectionTitle('Cancellation & Rescheduling Policy')}<p style="margin:0 0 16px;">${escapeHtml(input.cancellationPolicy).replace(/\n/g, '<br />')}</p>` : ''}
     <p style="margin:0 0 10px;">Looking forward to seeing you soon!</p>
     <p style="margin:0;">In resonance,<br />— Silvana, Founder &amp; Facilitator</p>
     ${mottoHtml()}`);

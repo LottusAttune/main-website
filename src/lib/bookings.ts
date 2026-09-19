@@ -57,7 +57,7 @@ const CONFIRMATION_FAQS = FAQS.filter((f) =>
 );
 
 const DEFAULT_CANCELLATION_POLICY =
-  FAQS.find((f) => f.q === 'Cancellation Policy')?.a ?? '';
+  FAQS.find((f) => f.q === 'Cancellation & Rescheduling Policy')?.a ?? '';
 
 async function invoiceFor(bookingId: string): Promise<DocumentRow | null> {
   const result = await sql`

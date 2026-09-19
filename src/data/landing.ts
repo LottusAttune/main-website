@@ -169,7 +169,7 @@ const LANDING_FAQ_QUESTIONS = [
   'How will I feel after the session?',
   'What should I bring?',
   'What should I wear?',
-  'Cancellation Policy',
+  'Cancellation & Rescheduling Policy',
 ] as const;
 export const LANDING_FAQS = LANDING_FAQ_QUESTIONS.map((q) => {
   const faq = FAQS.find((f) => f.q === q);

@@ -261,8 +261,8 @@ export const FAQS = [
     a: 'Comfortable clothing, including socks to keep your feet warm, is recommended to help you fully relax and enjoy the session. Cozy layers are encouraged for added comfort.',
   },
   {
-    q: 'Cancellation Policy',
-    a: "Life happens, and plans change — please give us as much notice as you can.\n24–72 hours' notice: $150 fee.\nLess than 24 hours' notice: your deposit is forfeited.\nNo-shows, with no notice, are non-refundable in full.\nThe same applies if you need to reschedule rather than cancel.",
+    q: 'Cancellation & Rescheduling Policy',
+    a: 'Life happens, and plans change. If you need to cancel or reschedule, please give us as much notice as you can — the same notice periods apply either way. With 24–72 hours\' notice, a $150 fee applies. With less than 24 hours\' notice, your deposit, or 50% of your total, is forfeited. No-shows, with no notice, are non-refundable in full. Rescheduling is subject to availability.',
   },
 ] as const;
 

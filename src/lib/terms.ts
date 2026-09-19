@@ -1,7 +1,7 @@
 import { FAQS } from '@/data/content';
 import type { LegalSection } from '@/components/legal/LegalPage';
 import type { BusinessSettings } from '@/lib/settings';
-import { money, SITE } from '@/lib/site';
+import { SITE } from '@/lib/site';
 
 /**
  * The Terms & Conditions, built from the live business settings so the
@@ -11,7 +11,7 @@ import { money, SITE } from '@/lib/site';
 export function termsSections(business: BusinessSettings): LegalSection[] {
   const policy =
     business.cancellationPolicy ||
-    FAQS.find((f) => f.q === 'Cancellation Policy')?.a ||
+    FAQS.find((f) => f.q === 'Cancellation & Rescheduling Policy')?.a ||
     '';
   const deposit = business.depositPercent > 0 && business.depositPercent < 100;
 
@@ -39,9 +39,7 @@ export function termsSections(business: BusinessSettings): LegalSection[] {
       title: 'Cancellations and no-shows',
       paragraphs: [
         policy,
-        business.cancellationFee > 0
-          ? `Where a card is on file, a cancellation fee of ${money(business.cancellationFee)} is charged for cancellations made within ${business.cancellationHours} hours of the session start, or for a no-show.`
-          : 'Where a card is on file, any applicable cancellation fee is charged to that card.',
+        'Where a card is on file, any fee due under this policy is charged to that card.',
       ],
     },
     {

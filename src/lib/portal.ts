@@ -167,9 +167,9 @@ export async function loadPortal(token: string): Promise<PortalData | null> {
       venue === 'Private Wellness Lounge'
         ? settings.business.venueDirectionsLounge
         : settings.business.venueDirectionsSignature,
-    faqs: FAQS.filter((f) => f.q !== 'Cancellation Policy'),
+    faqs: FAQS.filter((f) => f.q !== 'Cancellation & Rescheduling Policy'),
     cancellationPolicy:
-      settings.business.cancellationPolicy || (FAQS.find((f) => f.q === 'Cancellation Policy')?.a ?? ''),
+      settings.business.cancellationPolicy || (FAQS.find((f) => f.q === 'Cancellation & Rescheduling Policy')?.a ?? ''),
     startsAt,
     endsAt,
     googleCalendarUrl: calendar,

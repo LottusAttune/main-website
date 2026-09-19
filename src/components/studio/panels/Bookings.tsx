@@ -198,7 +198,7 @@ export function Bookings({ bookings, documents, integrations, business, onOpenDe
 
   const now = new Date();
   const today = toIso(now);
-  const reminderHorizon = addDays(today, 7);
+  const reminderHorizon = addDays(today, 14);
 
   /** Latest live invoice per booking. */
   const invoiceFor = useMemo(() => {

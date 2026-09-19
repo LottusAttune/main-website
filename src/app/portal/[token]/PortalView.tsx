@@ -3,7 +3,7 @@ import { SiteFooter } from '@/components/chrome/SiteFooter';
 import { SiteNav } from '@/components/chrome/SiteNav';
 import { formatStudioDate } from '@/lib/pipeline';
 import type { PortalData } from '@/lib/portal';
-import { money, SITE } from '@/lib/site';
+import { money, SITE, splitVenueDetails } from '@/lib/site';
 import { Countdown } from './Countdown';
 import { PortalAddons } from './PortalAddons';
 import styles from './portal.module.css';
@@ -23,6 +23,7 @@ export function PortalView({ data }: { data: PortalData }) {
         ? `Corporate introductory experience, ${booking.participants} participants`
         : `${booking.participants} participants`;
   const extras = [booking.teamAddon ? 'Team-building add-on' : null].filter(Boolean);
+  const { location, arrival } = splitVenueDetails(settings.business.venueDetails);
 
   return (
     <>
@@ -164,14 +165,21 @@ export function PortalView({ data }: { data: PortalData }) {
                   {p}
                 </p>
               ))}
-              {booking.confirmed && settings.business.venueDetails ? (
-                <p className={styles.body} style={{ whiteSpace: 'pre-line' }}>
+              {booking.confirmed && location ? (
+                <p className={styles.body}>
                   <strong>Location</strong>
                   <br />
-                  {settings.business.venueDetails}
+                  {location}
                 </p>
               ) : !booking.confirmed ? (
                 <p className={styles.body}>The exact address and arrival details follow with your booking confirmation.</p>
+              ) : null}
+              {booking.confirmed && arrival ? (
+                <p className={styles.body} style={{ whiteSpace: 'pre-line' }}>
+                  <strong>Arrival instructions</strong>
+                  <br />
+                  {arrival}
+                </p>
               ) : null}
               {booking.confirmed && data.venueDirections ? (
                 <p className={styles.body} style={{ whiteSpace: 'pre-line' }}>

@@ -8,7 +8,7 @@ import { buildDiscoveryCallIcs, buildGoogleCalendarLink } from '@/lib/ics';
 import type { DocumentKind, DocumentRow } from '@/lib/pipeline';
 import type { BusinessSettings } from '@/lib/settings';
 import { formatStudioDate } from '@/lib/pipeline';
-import { money, SITE } from '@/lib/site';
+import { money, SITE, splitVenueDetails } from '@/lib/site';
 
 /**
  * Permanent Google Meet room, reused for every discovery call rather than
@@ -608,10 +608,12 @@ function sectionTitle(text: string): string {
 }
 
 function venueSection(input: SessionEmailInput): string {
+  const { location, arrival } = splitVenueDetails(input.venueDetails);
   return `
     ${sectionTitle('Getting there')}
     ${input.venueCopy.map((p) => `<p style="margin:0 0 8px;">${escapeHtml(p)}</p>`).join('')}
-    ${input.venueDetails ? `<p style="margin:0 0 8px;"><strong>Location</strong><br />${escapeHtml(input.venueDetails).replace(/\n/g, '<br />')}</p>` : ''}
+    ${location ? `<p style="margin:0 0 8px;"><strong>Location</strong><br />${escapeHtml(location)}</p>` : ''}
+    ${arrival ? `<p style="margin:0 0 8px;"><strong>Arrival instructions</strong><br />${escapeHtml(arrival).replace(/\n/g, '<br />')}</p>` : ''}
     ${input.venueDirections ? `<p style="margin:0 0 8px;"><strong>Once inside the lobby</strong><br />${escapeHtml(input.venueDirections).replace(/\n/g, '<br />')}</p>` : ''}
     ${input.parking ? `<p style="margin:0 0 8px;"><strong>Parking</strong><br />${escapeHtml(input.parking).replace(/\n/g, '<br />')}</p>` : ''}
     <table role="presentation" cellpadding="0" cellspacing="0" style="margin:10px 0 4px;"><tr>

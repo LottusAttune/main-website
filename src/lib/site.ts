@@ -174,3 +174,15 @@ export function venueNoteFor(participants: number): string {
 export function money(amount: number): string {
   return `$${amount.toLocaleString('en-CA')}`;
 }
+
+/** The venue address field is often two lines: the street address, then a
+ *  second line with buzzer/entry info. Split so each gets its own bold
+ *  "Location" / "Arrival instructions" heading, without depending on
+ *  whatever words the text itself happens to start with. */
+export function splitVenueDetails(text: string): { location: string; arrival: string | null } {
+  const parts = text
+    .split(/\n+/)
+    .map((p) => p.trim())
+    .filter(Boolean);
+  return { location: parts[0] ?? '', arrival: parts.length > 1 ? parts.slice(1).join('\n') : null };
+}

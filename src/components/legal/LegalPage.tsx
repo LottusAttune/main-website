@@ -57,7 +57,7 @@ export function LegalPage({
                 {section.title}
               </h2>
               {section.paragraphs.map((p) => (
-                <p key={p} className="body" style={{ fontSize: 16, lineHeight: 1.75, marginBottom: 10 }}>
+                <p key={p} className="body" style={{ fontSize: 16, lineHeight: 1.75, marginBottom: 10, whiteSpace: 'pre-line' }}>
                   {p}
                 </p>
               ))}

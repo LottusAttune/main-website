@@ -28,7 +28,7 @@ import { buildIcs, googleCalendarUrl } from '@/lib/ics';
 import { balanceDue, type DocumentRow } from '@/lib/pipeline';
 import { getSettings, type SiteSettings } from '@/lib/settings';
 import { chargeSavedCard, isStripeConfigured, StripeError } from '@/lib/stripe';
-import { LOUNGE_MAX, money, SITE } from '@/lib/site';
+import { LOUNGE_MAX, money, SITE, splitVenueDetails } from '@/lib/site';
 
 /**
  * Everything that happens to a booking after the client says yes:
@@ -81,11 +81,22 @@ async function sessionEmailInput(
   const participants = Number(row.participants);
   const venue = participants <= LOUNGE_MAX ? 'Private Wellness Lounge' : 'Premium Signature Venue';
   const { startISO, endISO } = sessionSlotWindow(sessionDate, sessionTime);
+  // Location is for the calendar app's own map/directions lookup - just the
+  // address, not the buzzer/arrival text, which reads better as part of the
+  // description instead.
+  const { location, arrival } = splitVenueDetails(settings.business.venueDetails);
+  const description = [
+    venue,
+    arrival,
+    'Please arrive 15 minutes prior to the start of your session to settle in. Allow extra time for parking and rush-hour traffic.',
+  ]
+    .filter(Boolean)
+    .join(' ');
   const event = {
     uid: `booking-${String(row.id)}@lotusattune.com`,
     title: 'Lotus Attune — Immersive Soma Sound Experience',
-    description: `${venue}. ${VENUE_COPY_BOOKING[0]}`,
-    location: settings.business.venueDetails || venue,
+    description,
+    location: location || venue,
     startISO,
     endISO,
     attendeeName: String(row.name),

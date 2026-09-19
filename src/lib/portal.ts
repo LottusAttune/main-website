@@ -18,7 +18,7 @@ import { buildIcs, googleCalendarUrl, zonedTimeToUtc, type CalendarEvent } from 
 import { balanceDue, type DocumentRow } from '@/lib/pipeline';
 import { MIN_GROUP_SIZE, quoteFor } from '@/lib/quote';
 import { getSettings, type SiteSettings } from '@/lib/settings';
-import { LOUNGE_MAX, money, SITE, TEAM_ADDON_MIN_PARTICIPANTS } from '@/lib/site';
+import { LOUNGE_MAX, money, SITE, splitVenueDetails, TEAM_ADDON_MIN_PARTICIPANTS } from '@/lib/site';
 
 /**
  * The client portal: one private link per booking (the token is the
@@ -180,11 +180,22 @@ export async function loadPortal(token: string): Promise<PortalData | null> {
 
 export function calendarEvent(booking: BookingCtx, settings: SiteSettings, venue: string): CalendarEvent {
   const { startISO, endISO } = sessionSlotWindow(booking.sessionDate!, booking.sessionTime!);
+  // Location is for the calendar app's own map/directions lookup - just the
+  // address, not the buzzer/arrival text, which reads better as part of the
+  // description instead.
+  const { location, arrival } = splitVenueDetails(settings.business.venueDetails);
+  const description = [
+    venue,
+    arrival,
+    'Please arrive 15 minutes prior to the start of your session to settle in. Allow extra time for parking and rush-hour traffic.',
+  ]
+    .filter(Boolean)
+    .join(' ');
   return {
     uid: `booking-${booking.id}@lotusattune.com`,
     title: 'Lotus Attune, Immersive Soma Sound Experience',
-    description: `${venue}. ${VENUE_COPY_BOOKING[0]}`,
-    location: settings.business.venueDetails || venue,
+    description,
+    location: location || venue,
     startISO,
     endISO,
     attendeeName: booking.name,

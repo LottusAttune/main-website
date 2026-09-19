@@ -36,10 +36,15 @@
 }
 
 .countdownLabel {
-  font-size: var(--text-eyebrow);
-  letter-spacing: var(--tracking-eyebrow);
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: 0.24em;
   text-transform: uppercase;
-  color: var(--color-gold);
+  /* --color-gold measures only ~3.4:1 against this dark background - under
+     the 4.5:1 body text needs. --color-gold-light is the variant already
+     used for the same kind of label on a dark surface (e.g. the email's
+     session box eyebrows), and clears 5:1 here. */
+  color: var(--color-gold-light);
   margin-bottom: 12px;
 }
 

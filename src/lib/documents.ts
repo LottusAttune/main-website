@@ -864,15 +864,16 @@ function header(kind: DocumentKind, doc: DocumentRow, business: BusinessSettings
     <table><tr>
       <td style="vertical-align:top;width:50%;padding-right:20px;">
         <div class="eyebrow" style="margin-bottom:6px;">From</div>
-        <div style="font-weight:500;">${escapeHtml(business.businessName)}</div>
+        <div style="font-weight:500;margin-bottom:4px;">${escapeHtml(business.businessName)}</div>
         ${business.businessAddress ? `<div class="muted">${escapeHtml(business.businessAddress).replace(/\n/g, '<br />')}</div>` : ''}
-        <div class="muted">${escapeHtml(business.businessEmail)} · ${escapeHtml(business.businessPhone)}</div>
+        <div class="muted">${escapeHtml(business.businessEmail)}</div>
+        <div class="muted">${escapeHtml(business.businessPhone)}</div>
         <div class="muted"><a href="https://www.lotusattune.com">www.lotusattune.com</a></div>
         ${business.taxNumber ? `<div class="muted">${escapeHtml(business.taxLabel)} № ${escapeHtml(business.taxNumber)}</div>` : ''}
       </td>
       <td style="vertical-align:top;width:50%;">
         <div class="eyebrow" style="margin-bottom:6px;">${kind === 'proposal' ? 'Prepared for' : 'Bill to'}</div>
-        <div style="font-weight:500;">${escapeHtml(doc.clientName)}</div>
+        <div style="font-weight:500;margin-bottom:4px;">${escapeHtml(doc.clientName)}</div>
         ${doc.clientCompany ? `<div class="muted">${escapeHtml(doc.clientCompany)}</div>` : ''}
         <div class="muted">${escapeHtml(doc.clientEmail)}</div>
       </td>

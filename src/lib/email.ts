@@ -462,7 +462,12 @@ export async function sendNewBookingOwnerNotification(input: {
     ['Time', input.sessionTime],
   ];
   if (input.sessionDate2) {
-    rows.push(['Second session', `${formatStudioDate(input.sessionDate2)} · ${input.sessionTime2 ?? ''}`]);
+    rows.push([
+      'Second session',
+      input.sessionDate2 === input.sessionDate
+        ? input.sessionTime2 ?? ''
+        : `${formatStudioDate(input.sessionDate2)} · ${input.sessionTime2 ?? ''}`,
+    ]);
   }
   rows.push(
     ['Participants', input.participants === 1 ? 'One-on-one' : String(input.participants)],
@@ -574,7 +579,12 @@ function sessionBoxHtml(input: SessionEmailInput, eyebrow: string): string {
     ['Time', input.sessionTime],
   ];
   if (input.sessionDate2) {
-    rows.push(['Second session', `${formatStudioDate(input.sessionDate2)} · ${input.sessionTime2 ?? ''}`]);
+    rows.push([
+      'Second session',
+      input.sessionDate2 === input.sessionDate
+        ? input.sessionTime2 ?? ''
+        : `${formatStudioDate(input.sessionDate2)} · ${input.sessionTime2 ?? ''}`,
+    ]);
   }
   rows.push(
     ['Participants', input.participants === 1 ? 'One-on-one' : String(input.participants)],

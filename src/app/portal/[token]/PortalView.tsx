@@ -67,7 +67,9 @@ export function PortalView({ data }: { data: PortalData }) {
                   <>
                     <span className={styles.rowLabel}>Second session</span>
                     <span className={styles.rowValue}>
-                      {formatStudioDate(booking.sessionDate2)}, {booking.sessionTime2}
+                      {booking.sessionDate2 === booking.sessionDate
+                        ? booking.sessionTime2
+                        : `${formatStudioDate(booking.sessionDate2)}, ${booking.sessionTime2}`}
                     </span>
                   </>
                 ) : null}

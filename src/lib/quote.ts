@@ -130,7 +130,9 @@ export function quoteFor(
       gratuity = Math.round(input.gratuityAmount);
       lines.push({ label: 'Gratuity', value: money(gratuity) });
     } else if (input.gratuityPercent) {
-      gratuity = Math.round((total * input.gratuityPercent) / 100);
+      // Gratuity reflects the value of the service, not what's left after a
+      // discount code - a 100%-off code must not zero it out.
+      gratuity = Math.round((subtotal * input.gratuityPercent) / 100);
       if (gratuity > 0) {
         lines.push({
           label: `Gratuity — ${input.gratuityPercent}%`,
@@ -231,7 +233,9 @@ export function giftQuoteFor(
     gratuity = Math.round(input.gratuityAmount);
     lines.push({ label: 'Gratuity', value: money(gratuity) });
   } else if (input.gratuityPercent) {
-    gratuity = Math.round((total * input.gratuityPercent) / 100);
+    // Gratuity reflects the value of the service, not what's left after a
+    // discount code - a 100%-off code must not zero it out.
+    gratuity = Math.round((subtotal * input.gratuityPercent) / 100);
     if (gratuity > 0) {
       lines.push({
         label: `Gratuity — ${input.gratuityPercent}%`,

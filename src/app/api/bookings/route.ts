@@ -275,7 +275,6 @@ export async function POST(request: Request) {
               sessionDate: input.sessionDate,
               sessionTime: input.sessionTime,
               instructions: payment.instructions,
-              viewUrl: payment.invoiceUrl,
             });
             if (!sent.ok) {
               await logActivity({ bookingId, kind: 'email_failed', body: `E-transfer request: ${sent.error}` });

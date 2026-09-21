@@ -495,7 +495,9 @@ export async function ensureGiftDocument(
   const { subtotal, tax, total } = totalsFor(lines, rate);
   const number = await nextNumber(kind, s.business.invoicePrefix || 'LA');
   const issued = todayIso();
-  const dueOn = kind === 'invoice' ? addDays(issued, s.business.invoiceDueDays) : null;
+  // A gift is paid at the time it's requested, not on credit terms - there
+  // is no "due by" date to show anywhere for it.
+  const dueOn = null;
   const to = kind === 'certificate' && gift.recipientEmail ? gift.recipientEmail : gift.buyerEmail;
   const toName = kind === 'certificate' ? gift.recipientName : (gift.buyerName ?? gift.buyerEmail);
 

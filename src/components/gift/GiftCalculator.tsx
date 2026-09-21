@@ -70,7 +70,6 @@ export function GiftCalculator({ pricing, codes, payTerms }: Props) {
   >({});
   const [sent, setSent] = useState(false);
   const [issuedCode, setIssuedCode] = useState('');
-  const [invoiceUrl, setInvoiceUrl] = useState<string | null>(null);
   const [redirecting, setRedirecting] = useState(false);
   const [payBy, setPayBy] = useState<'card' | 'etransfer'>('card');
   const [etransfer, setEtransfer] = useState<{ amount: number; number: string; instructions: string } | null>(null);
@@ -254,7 +253,6 @@ export function GiftCalculator({ pricing, codes, payTerms }: Props) {
         } | null;
       } | null;
       setIssuedCode(body?.code ?? '');
-      setInvoiceUrl(body?.payment?.invoiceUrl ?? null);
       if (body?.payment?.method === 'etransfer') {
         setEtransfer({ amount: body.payment.invoiceTotal, number: body.payment.invoiceNumber, instructions: body.payment.instructions });
       }
@@ -456,14 +454,9 @@ export function GiftCalculator({ pricing, codes, payTerms }: Props) {
           <>
             <div className={styles.asideTitle}>Gift Certificate</div>
             <p className={styles.success} role="status">
-              Thank you. Your invoice is on its way by email with the payment details.
-              The certificate below is issued and emailed as soon as the payment arrives.
-              {invoiceUrl ? (
-                <>
-                  {' '}
-                  <a href={invoiceUrl} style={{ color: 'inherit' }}>View the invoice</a>.
-                </>
-              ) : null}
+              {etransfer
+                ? "Thank you! Send the e-transfer below to confirm it - the certificate is issued and emailed as soon as we receive it."
+                : 'Thank you! Your gift certificate is confirmed and on its way by email.'}
             </p>
             {etransfer ? (
               <p className={styles.success} role="status" style={{ whiteSpace: 'pre-line' }}>
@@ -471,6 +464,8 @@ export function GiftCalculator({ pricing, codes, payTerms }: Props) {
                 {'\n'}Reference: {etransfer.number.slice(-4)}
                 {'\n'}Please include this in your transfer&apos;s message - it&apos;s how we match your payment automatically.
                 {'\n'}{etransfer.instructions}
+                {'\n'}
+                {'\n'}A confirmation email is on its way - check your spam or junk folder if it doesn&apos;t land soon.
               </p>
             ) : null}
             <div className={styles.sentCert}>

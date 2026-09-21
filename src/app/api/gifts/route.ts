@@ -147,7 +147,6 @@ export async function POST(request: Request) {
                   reference: referenceTail(payment.invoiceNumber),
                   giftRecipient: input.recipientName,
                   instructions: payment.instructions,
-                  viewUrl: payment.invoiceUrl,
                 })
               : await sendDocument(invoiceId);
           if (!sent.ok) await logActivity({ giftId, documentId: invoiceId, kind: 'email_failed', body: `Gift invoice: ${sent.error}` });

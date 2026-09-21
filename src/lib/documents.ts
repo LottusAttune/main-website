@@ -965,6 +965,14 @@ export function paymentOptionsHtml(
   const deposit = depositDue(doc, business);
   const outstanding = doc.total - doc.paidAmount;
   const balanceDay = balanceDueOn(booking?.sessionDate ?? null, business);
+
+  // A discount code that covers the full amount (or any other reason the
+  // invoice already nets to zero) leaves nothing to pay - never show a due
+  // date or payment methods for money that isn't owed.
+  if (outstanding <= 0) {
+    return withIntro ? '<p style="margin:0;">Nothing further is due - this invoice is paid in full.</p>' : '';
+  }
+
   const parts: string[] = [];
 
   if (!withIntro) {
@@ -1047,15 +1055,17 @@ function paymentSummaryHtml(
   payments: { amount: number; method: string; kind: string; createdAt: string }[] = []
 ): string {
   const history = paymentHistoryHtml(payments);
+  const outstanding = doc.total - doc.paidAmount;
 
   if (doc.status === 'void') {
     return '<p style="margin:0;">This invoice has been voided.</p>';
   }
-  if (doc.status === 'paid') {
+  // A discount code that covers the full amount leaves nothing outstanding
+  // even before the status column catches up - never show a "$0 due by..."
+  // line for that.
+  if (doc.status === 'paid' || outstanding <= 0) {
     return `<p style="margin:0;">${history || `Paid in full${doc.paidAt ? ` ${formatStudioDate(toTorontoDateIso(doc.paidAt))}` : ''}${doc.paidMethod ? ` by ${escapeHtml(doc.paidMethod)}` : ''}`}.</p>`;
   }
-
-  const outstanding = doc.total - doc.paidAmount;
 
   if (doc.paidAmount > 0) {
     const balanceDay = doc.dueOn ? formatStudioDate(doc.dueOn) : `${business.balanceDaysBefore} days before the session`;

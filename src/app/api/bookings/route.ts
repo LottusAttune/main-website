@@ -4,6 +4,7 @@ import { createCalendarEvent, sessionSlotWindow } from '@/lib/calendar';
 import { isDatabaseConfigured, sql } from '@/lib/db';
 import { randomUUID } from 'node:crypto';
 
+import { sendBookingConfirmation } from '@/lib/bookings';
 import { createBookingCheckout } from '@/lib/checkout';
 import {
   bookingLines,
@@ -11,6 +12,7 @@ import {
   logActivity,
   nextNumber,
   prepareBookingInvoice,
+  recordPayment,
   totalsFor,
   type BookingCtx,
 } from '@/lib/documents';
@@ -233,6 +235,20 @@ export async function POST(request: Request) {
         try {
           const prepared = await prepareBookingInvoice(bookingId, settings);
           invoiceSummary = { number: prepared.number, total: prepared.total, deposit: prepared.deposit };
+          // A discount code can cover the whole invoice - there is no
+          // payment left to wait for, so settle it and confirm right away
+          // rather than leaving the booking stuck forever waiting for a
+          // Stripe or e-transfer payment that will never happen.
+          if (prepared.total <= 0) {
+            await recordPayment({
+              documentId: prepared.doc.id,
+              amount: 0,
+              method: 'other',
+              kind: 'payment',
+              note: 'Comped — a discount code covered the full amount; nothing owed.',
+            });
+            await sendBookingConfirmation(bookingId);
+          }
         } catch (error) {
           console.error('[bookings] invoice failed:', error);
           await logActivity({ bookingId, kind: 'email_failed', body: `Invoice could not be prepared: ${error instanceof Error ? error.message : 'unknown error'}` });

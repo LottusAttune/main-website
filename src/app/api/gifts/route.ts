@@ -4,7 +4,7 @@ import { isDatabaseConfigured, sql } from '@/lib/db';
 import { generateGiftCode } from '@/lib/gift-code';
 import { giftQuoteFor } from '@/lib/quote';
 import { createGiftCheckout } from '@/lib/checkout';
-import { ensureGiftDocument, logActivity, sendDocument } from '@/lib/documents';
+import { ensureGiftDocument, issueGiftCertificate, logActivity, recordPayment, sendDocument } from '@/lib/documents';
 import { sendOwnerNotification } from '@/lib/email';
 import { getSettings } from '@/lib/settings';
 import { money, SITE } from '@/lib/site';
@@ -135,6 +135,21 @@ export async function POST(request: Request) {
         if (invoiceId && settings.business.autoSendInvoices) {
           const sent = await sendDocument(invoiceId);
           if (!sent.ok) await logActivity({ giftId, documentId: invoiceId, kind: 'email_failed', body: `Gift invoice: ${sent.error}` });
+        }
+        // A discount code can cover the whole gift - there is no payment
+        // left to wait for, so settle it and issue the certificate right
+        // away rather than leaving it stuck waiting for a payment that will
+        // never happen.
+        if (invoiceId && total <= 0) {
+          await recordPayment({
+            documentId: invoiceId,
+            amount: 0,
+            method: 'other',
+            kind: 'payment',
+            note: 'Comped — a discount code covered the full amount; nothing owed.',
+          });
+          const issued = await issueGiftCertificate(giftId);
+          if (!issued.ok) await logActivity({ giftId, documentId: invoiceId, kind: 'email_failed', body: `Certificate: ${issued.error}` });
         }
         await sendOwnerNotification({
           subject: `New gift certificate request: ${input.buyerName} for ${input.recipientName}, ${money(total)}`,

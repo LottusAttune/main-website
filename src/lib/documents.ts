@@ -57,7 +57,14 @@ function escapeHtml(value: string): string {
     .replace(/"/g, '&quot;');
 }
 
-function paragraphs(text: string): string {
+/** The digits a client is asked to quote on an e-transfer - just the
+ *  sequence at the end (e.g. "0012" of "LA-2026-0012"), never the letters
+ *  or the year, since those are what people get wrong when copying it. */
+export function referenceTail(number: string): string {
+  return number.slice(-4);
+}
+
+export function paragraphs(text: string): string {
   return text
     .split(/\n{2,}/)
     .map((p) => `<p style="margin:0 0 10px;">${escapeHtml(p).replace(/\n/g, '<br />')}</p>`)
@@ -994,6 +1001,7 @@ export function paymentOptionsHtml(
 
   parts.push(
     `<p style="margin:0 0 8px;"><strong>Interac e-transfer</strong>: ${money(outstanding)}${deposit !== null ? ' in full (no deposit plan by e-transfer)' : ''}, no fee.</p>` +
+      `<p style="margin:0 0 8px;">Please include <strong>${referenceTail(doc.number)}</strong> in your transfer's message - the last part of your reference number. It's how we match your payment automatically.</p>` +
       (business.paymentInstructions
         ? paragraphs(business.paymentInstructions)
         : `<p class="muted" style="margin:0 0 8px;">Reply to this email for e-transfer details.</p>`)

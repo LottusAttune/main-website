@@ -15,10 +15,13 @@ export const runtime = 'nodejs';
  * Interac has no webhook of its own, so the bank's "money transfer from X
  * has been deposited" email is the signal: a small script in the inbox
  * (docs/etransfer-webhook.md) posts each one here. The payment is matched
- * to an invoice by the invoice number in the transfer's message, or failing
- * that by an exact amount on a single open invoice whose client name
- * matches the sender. Anything else is reported to Silvana to record by
- * hand, never guessed.
+ * to an invoice in order: the full reference in the transfer's message, the
+ * same reference typed without its letters/dashes, just the last 4 digits
+ * (what clients are actually asked to quote - see referenceTail) when it's
+ * unique among what's currently outstanding, or failing all of that an
+ * exact amount on a single open invoice whose client name matches the
+ * sender. Anything else is reported to Silvana to record by hand, never
+ * guessed.
  */
 const schema = z.object({
   /** Whole dollars or cents are both fine; rounded to whole dollars. */
@@ -32,6 +35,12 @@ const schema = z.object({
 });
 
 const NUMBER_RE = /\b([A-Z]{1,6}-(?:P-|GC-)?\d{4}-\d{4})\b/i;
+/** The year+sequence in an invoice number, e.g. "LA-2026-0012" -> "20260012" -
+ *  what's left once a client drops the letters, dashes and spaces. */
+const YEAR_SEQUENCE_RE = /(\d{4})-(\d{4})$/;
+/** Just the trailing sequence, e.g. "LA-2026-0012" -> "0012" - the short
+ *  code clients are actually asked to quote. */
+const SEQUENCE_RE = /-(\d{4})$/;
 
 function nameMatches(sender: string, client: string): boolean {
   const a = sender.toLowerCase().split(/\s+/).filter((w) => w.length > 1);
@@ -61,10 +70,16 @@ export async function POST(request: Request) {
 
   const settings = await getSettings();
   const text = `${input.subject}\n${input.message}`;
-  const byNumber = NUMBER_RE.exec(text)?.[1]?.toUpperCase() ?? null;
+  const digits = text.replace(/\D/g, '');
+  // Digit runs as their own tokens (split on any non-digit), so a match
+  // never fires on part of a longer, unrelated number.
+  const tokens = text.match(/\d+/g) ?? [];
 
   let documentId: string | null = null;
   let how = '';
+
+  // Tier 1: the exact reference, letters and all - the surest match.
+  const byNumber = NUMBER_RE.exec(text)?.[1]?.toUpperCase() ?? null;
   if (byNumber) {
     const found = await sql`
       SELECT id FROM documents WHERE upper(number) = ${byNumber} AND kind = 'invoice' AND status NOT IN ('void', 'paid') LIMIT 1
@@ -74,17 +89,51 @@ export async function POST(request: Request) {
       how = `invoice number ${byNumber} in the message`;
     }
   }
+
+  // Everything currently outstanding - the pool every softer match below
+  // checks against, so a stray short number can never lock onto an old,
+  // already-settled invoice.
+  const open = documentId
+    ? []
+    : (
+        await sqlRaw(
+          `SELECT id, number, client_name FROM documents WHERE kind = 'invoice' AND status IN ('draft', 'sent') ORDER BY created_at DESC LIMIT 200`,
+          []
+        )
+      ).rows as { id: string; number: string; client_name: string }[];
+
+  // Tier 2: the reference typed without its letters/dashes (e.g. "20260012").
   if (!documentId) {
-    // Open invoices where this exact amount is the balance or the deposit,
-    // and the sender's name matches the client's. One hit only.
-    const open = await sqlRaw(
-      `SELECT id, client_name, total, paid_amount, booking_id FROM documents
-       WHERE kind = 'invoice' AND status IN ('draft', 'sent') ORDER BY created_at DESC LIMIT 200`,
-      []
-    );
+    const hits = open.filter((row) => {
+      const m = YEAR_SEQUENCE_RE.exec(row.number);
+      return m && digits.includes(`${m[1]}${m[2]}`);
+    });
+    if (hits.length === 1) {
+      documentId = hits[0].id;
+      how = `invoice number ${hits[0].number} (typed without the letters/dashes)`;
+    }
+  }
+
+  // Tier 3: just the last 4 digits, leading zeros optional (e.g. "12" for
+  // "0012") - what clients are actually asked to quote. Only trusted when
+  // exactly one open invoice has that number right now.
+  if (!documentId) {
+    const hits = open.filter((row) => {
+      const m = SEQUENCE_RE.exec(row.number);
+      return m && tokens.some((t) => Number(t) === Number(m[1]));
+    });
+    if (hits.length === 1) {
+      documentId = hits[0].id;
+      how = `invoice number ${hits[0].number} (matched by the last 4 digits)`;
+    }
+  }
+
+  // Tier 4: no usable reference at all - fall back to the exact amount and
+  // the sender's name matching a single open invoice.
+  if (!documentId) {
     const hits: string[] = [];
-    for (const row of open.rows) {
-      const doc = await getDocument(String(row.id));
+    for (const row of open) {
+      const doc = await getDocument(row.id);
       if (!doc) continue;
       const due = balanceDue(doc);
       const deposit = depositDue(doc, settings.business);

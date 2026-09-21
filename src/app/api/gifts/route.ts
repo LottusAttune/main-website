@@ -4,8 +4,8 @@ import { isDatabaseConfigured, sql } from '@/lib/db';
 import { generateGiftCode } from '@/lib/gift-code';
 import { giftQuoteFor } from '@/lib/quote';
 import { createGiftCheckout } from '@/lib/checkout';
-import { ensureGiftDocument, issueGiftCertificate, logActivity, recordPayment, sendDocument } from '@/lib/documents';
-import { sendOwnerNotification } from '@/lib/email';
+import { ensureGiftDocument, issueGiftCertificate, logActivity, recordPayment, referenceTail, sendDocument } from '@/lib/documents';
+import { sendEtransferRequestEmail, sendOwnerNotification } from '@/lib/email';
 import { getSettings } from '@/lib/settings';
 import { money, SITE } from '@/lib/site';
 import { giftSchema } from '@/lib/validation';
@@ -132,8 +132,24 @@ export async function POST(request: Request) {
 
       after(async () => {
         await logActivity({ giftId, kind: 'received', body: 'Gift certificate requested from the website' });
-        if (invoiceId && settings.business.autoSendInvoices) {
-          const sent = await sendDocument(invoiceId);
+        if (invoiceId && settings.business.autoSendInvoices && total > 0) {
+          // E-transfer gets a plain ask to pay, never called an invoice and
+          // never carrying a PDF - that's reserved for the one that says
+          // "paid" once the certificate itself goes out. Card already sends
+          // the buyer straight to Stripe, so the invoice email there is
+          // just their own copy of what they're paying, not an ask.
+          const sent =
+            payment?.method === 'etransfer'
+              ? await sendEtransferRequestEmail({
+                  to: input.buyerEmail,
+                  name: input.buyerName,
+                  amount: total,
+                  reference: referenceTail(payment.invoiceNumber),
+                  giftRecipient: input.recipientName,
+                  instructions: payment.instructions,
+                  viewUrl: payment.invoiceUrl,
+                })
+              : await sendDocument(invoiceId);
           if (!sent.ok) await logActivity({ giftId, documentId: invoiceId, kind: 'email_failed', body: `Gift invoice: ${sent.error}` });
         }
         // A discount code can cover the whole gift - there is no payment

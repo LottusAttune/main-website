@@ -468,7 +468,8 @@ export function GiftCalculator({ pricing, codes, payTerms }: Props) {
             {etransfer ? (
               <p className={styles.success} role="status" style={{ whiteSpace: 'pre-line' }}>
                 <strong>Send {money(etransfer.amount)} by Interac e-transfer</strong>
-                {'\n'}Reference: {etransfer.number}
+                {'\n'}Reference: {etransfer.number.slice(-4)}
+                {'\n'}Please include this in your transfer&apos;s message - it&apos;s how we match your payment automatically.
                 {'\n'}{etransfer.instructions}
               </p>
             ) : null}

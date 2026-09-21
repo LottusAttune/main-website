@@ -13,10 +13,11 @@ import {
   nextNumber,
   prepareBookingInvoice,
   recordPayment,
+  referenceTail,
   totalsFor,
   type BookingCtx,
 } from '@/lib/documents';
-import { sendNewBookingOwnerNotification } from '@/lib/email';
+import { sendEtransferRequestEmail, sendNewBookingOwnerNotification } from '@/lib/email';
 import { quoteFor } from '@/lib/quote';
 import { getSettings } from '@/lib/settings';
 import { LOUNGE_MAX, SITE } from '@/lib/site';
@@ -248,6 +249,23 @@ export async function POST(request: Request) {
               note: 'Comped — a discount code covered the full amount; nothing owed.',
             });
             await sendBookingConfirmation(bookingId);
+          } else if (payment?.method === 'etransfer') {
+            // The only thing an e-transfer client hears before paying: a
+            // plain ask, never called an invoice and never carrying a PDF -
+            // that's reserved for the one that says "paid".
+            const sent = await sendEtransferRequestEmail({
+              to: input.email,
+              name: input.name,
+              amount: payment.invoiceTotal,
+              reference: referenceTail(payment.invoiceNumber),
+              sessionDate: input.sessionDate,
+              sessionTime: input.sessionTime,
+              instructions: payment.instructions,
+              viewUrl: payment.invoiceUrl,
+            });
+            if (!sent.ok) {
+              await logActivity({ bookingId, kind: 'email_failed', body: `E-transfer request: ${sent.error}` });
+            }
           }
         } catch (error) {
           console.error('[bookings] invoice failed:', error);

@@ -137,6 +137,7 @@ export async function getStudioData(): Promise<StudioData> {
       termsAcceptedAt: toStamp(row.terms_accepted_at),
       portalUrl: row.portal_token ? `${SITE.url}/portal/${String(row.portal_token)}` : null,
       cancellationFeeChargedAt: toStamp(row.cancellation_fee_charged_at),
+      paymentMethod: row.payment_method ? String(row.payment_method) : null,
     };
   });
 

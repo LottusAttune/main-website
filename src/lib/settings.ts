@@ -208,6 +208,19 @@ export async function getSettings(): Promise<SiteSettings> {
         UNION
         SELECT DISTINCT session_date_2 AS day FROM bookings
         WHERE status IN ('booked', 'complete') AND session_date_2 IS NOT NULL
+        -- An e-transfer request holds its date until it's paid or cancelled -
+        -- choosing it is the client's commitment, and Silvana can see and
+        -- cancel a stale one herself. A card attempt only holds its date
+        -- for a short window (long enough to finish Stripe checkout) since
+        -- it never shows up anywhere for her to clear by hand if abandoned.
+        UNION
+        SELECT DISTINCT session_date AS day FROM bookings
+        WHERE status = 'new_enquiry' AND session_date IS NOT NULL
+          AND (payment_method = 'etransfer' OR (payment_method = 'card' AND created_at > NOW() - INTERVAL '30 minutes'))
+        UNION
+        SELECT DISTINCT session_date_2 AS day FROM bookings
+        WHERE status = 'new_enquiry' AND session_date_2 IS NOT NULL
+          AND (payment_method = 'etransfer' OR (payment_method = 'card' AND created_at > NOW() - INTERVAL '30 minutes'))
       `,
       sql`
         SELECT id, call_date, call_time FROM discovery_calls

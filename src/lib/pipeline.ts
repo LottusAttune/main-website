@@ -57,6 +57,8 @@ export type Lead = {
   /** The client's private booking page. */
   portalUrl: string | null;
   cancellationFeeChargedAt: string | null;
+  /** What the client chose on the booking form - 'card' or 'etransfer'. */
+  paymentMethod: string | null;
 };
 
 export type PaymentRow = {

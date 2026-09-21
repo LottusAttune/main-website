@@ -1,6 +1,6 @@
 import 'server-only';
 
-import { sessionSlotWindow } from '@/lib/calendar';
+import { createCalendarEvent, sessionSlotWindow } from '@/lib/calendar';
 import { FAQS, VENUE_COPY_BOOKING } from '@/data/content';
 import { sql } from '@/lib/db';
 import {
@@ -194,6 +194,63 @@ export async function sendBookingReminder(bookingId: string): Promise<ActionResu
   return { ok: true };
 }
 
+/** The calendar hold: created immediately for an e-transfer request, but
+ *  deferred for a card attempt until it actually pays (see the bookings
+ *  route) - a no-op once it already exists either way. */
+async function ensureCalendarHold(bookingId: string): Promise<void> {
+  const result = await sql`SELECT * FROM bookings WHERE id = ${bookingId}`;
+  const row = result.rows[0];
+  const sessionDate = toIso(row?.session_date);
+  if (!row || row.calendar_event_id || !sessionDate) return;
+  const sessionTime = row.session_time ? String(row.session_time) : null;
+  if (!sessionTime) return;
+  const sessionDate2 = toIso(row.session_date_2);
+  const sessionTime2 = row.session_time_2 ? String(row.session_time_2) : null;
+
+  const participants = Number(row.participants);
+  const venue = participants <= LOUNGE_MAX ? 'Private Wellness Lounge' : 'Premium Signature Venue';
+  const description = [
+    `Email: ${row.email}`,
+    row.phone ? `Phone: ${row.phone}` : null,
+    row.company ? `Company: ${row.company}` : null,
+    `Participants: ${participants}`,
+    row.is_package ? 'Package of four sessions' : null,
+    row.is_corporate_intro ? 'Corporate introductory session' : null,
+    row.team_addon ? 'Team-building add-on: yes' : null,
+    Number(row.gratuity ?? 0) > 0 ? `Gratuity: $${row.gratuity}` : null,
+    row.message ? `Message: ${row.message}` : null,
+  ]
+    .filter(Boolean)
+    .join('\n');
+
+  try {
+    const firstWindow = sessionSlotWindow(sessionDate, sessionTime);
+    const eventId = await createCalendarEvent({
+      summary: `Lotus Attune Session — ${row.name}`,
+      description,
+      location: venue,
+      startISO: firstWindow.startISO,
+      endISO: firstWindow.endISO,
+    });
+    let eventId2: string | null = null;
+    if (sessionDate2 && sessionTime2) {
+      const secondWindow = sessionSlotWindow(sessionDate2, sessionTime2);
+      eventId2 = await createCalendarEvent({
+        summary: `Lotus Attune Session (session 2) — ${row.name}`,
+        description,
+        location: venue,
+        startISO: secondWindow.startISO,
+        endISO: secondWindow.endISO,
+      });
+    }
+    if (eventId || eventId2) {
+      await sql`UPDATE bookings SET calendar_event_id = ${eventId}, calendar_event_id_2 = ${eventId2} WHERE id = ${bookingId}`;
+    }
+  } catch (error) {
+    console.error('[bookings] calendar event failed:', error);
+  }
+}
+
 /** After any card payment lands: the client gets exactly one email — the
  *  full booking confirmation the first time money arrives (folding in the
  *  receipt), or a plain receipt for any payment after that — plus a
@@ -204,6 +261,8 @@ export async function afterPayment(
   method: string,
   kind: string
 ): Promise<void> {
+  if (doc.bookingId) await ensureCalendarHold(doc.bookingId);
+
   // The invoice goes out again with the receipt, now showing the payment.
   let pdf: Buffer | null = null;
   try {

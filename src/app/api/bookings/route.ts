@@ -101,6 +101,13 @@ export async function POST(request: Request) {
     );
   }
 
+  // A card attempt isn't real until it's paid - no email, no calendar hold,
+  // nothing shown in the studio, until the payment actually lands (see
+  // afterPayment). E-transfer is shown right away: choosing it is itself
+  // the client's commitment to pay.
+  const byCard = input.paymentPlan !== 'etransfer';
+  const paymentMethod: 'card' | 'etransfer' = byCard ? 'card' : 'etransfer';
+
   try {
     // The invoice number is claimed while the booking row is being written,
     // so the two round trips overlap instead of queueing.
@@ -115,14 +122,14 @@ export async function POST(request: Request) {
         name, email, phone, company, message, participants,
         session_date, session_time, session_date_2, session_time_2,
         team_addon, is_package, is_corporate_intro,
-        discount_code, gratuity, estimated_total, terms_accepted_at
+        discount_code, gratuity, estimated_total, terms_accepted_at, payment_method
       ) VALUES (
         ${input.name}, ${input.email}, ${input.phone ?? null}, ${input.company ?? null}, ${input.message ?? null},
         ${input.participants},
         ${input.sessionDate}, ${input.sessionTime},
         ${input.sessionDate2 ?? null}, ${input.sessionTime2 ?? null},
         ${input.teamAddon}, ${input.isPackage}, ${input.isCorporateIntro},
-        ${eligibleDiscount?.code ?? null}, ${gratuity}, ${total}, NOW()
+        ${eligibleDiscount?.code ?? null}, ${gratuity}, ${total}, NOW(), ${paymentMethod}
       )
       RETURNING id, portal_token
     `;
@@ -175,7 +182,6 @@ export async function POST(request: Request) {
         const token = randomUUID();
         // The total is known before the insert: the checkout needs it too.
         const { total: invoiceTotal } = totalsFor(bookingLines(booking, settings), settings.business.taxRatePercent);
-        const byCard = input.paymentPlan !== 'etransfer';
         const [, checkout] = await Promise.all([
           insertBookingInvoice({ id, token, number, booking, settings, paymentPlan: input.paymentPlan === 'deposit' ? 'deposit' : 'full' }),
           byCard
@@ -232,6 +238,13 @@ export async function POST(request: Request) {
       // just warms the invoice's payment links and PDF cache so the Stripe
       // receipt and the invoice page are both ready the moment they pay.
       let invoiceSummary: { number: string; total: number; deposit: number | null } | null = null;
+      // A card attempt only "activates" (owner notified, calendar held)
+      // once it's actually paid - see afterPayment in lib/bookings.ts,
+      // which does both the moment the payment lands. Everything else
+      // (e-transfer, a comped $0 invoice, or no invoicing at all) is
+      // already resolved or was never waiting on Stripe, so it activates
+      // immediately, same as before.
+      let activateNow = !byCard || !settings.business.autoSendInvoices;
       if (settings.business.autoSendInvoices) {
         try {
           const prepared = await prepareBookingInvoice(bookingId, settings);
@@ -249,6 +262,7 @@ export async function POST(request: Request) {
               note: 'Comped — a discount code covered the full amount; nothing owed.',
             });
             await sendBookingConfirmation(bookingId);
+            activateNow = true;
           } else if (payment?.method === 'etransfer') {
             // The only thing an e-transfer client hears before paying: a
             // plain ask, never called an invoice and never carrying a PDF -
@@ -273,56 +287,58 @@ export async function POST(request: Request) {
         }
       }
 
-      const ownerEmail = await sendNewBookingOwnerNotification({
-        name: input.name,
-        email: input.email,
-        phone: input.phone ?? null,
-        company: input.company ?? null,
-        message: input.message ?? null,
-        participants: input.participants,
-        sessionDate: input.sessionDate,
-        sessionTime: input.sessionTime,
-        sessionDate2: input.sessionDate2 ?? null,
-        sessionTime2: input.sessionTime2 ?? null,
-        total,
-        venue,
-        teamAddon: input.teamAddon,
-        studioUrl: `${SITE.url}/studio`,
-        invoice: invoiceSummary,
-      });
-      if (!ownerEmail.ok) {
-        await logActivity({ bookingId, kind: 'email_failed', body: `Owner notification: ${ownerEmail.error}` });
-      }
-
-      try {
-        const firstWindow = sessionSlotWindow(input.sessionDate, input.sessionTime);
-        const eventId = await createCalendarEvent({
-          summary: `Lotus Attune Session — ${input.name}`,
-          description,
-          location: venue,
-          startISO: firstWindow.startISO,
-          endISO: firstWindow.endISO,
+      if (activateNow) {
+        const ownerEmail = await sendNewBookingOwnerNotification({
+          name: input.name,
+          email: input.email,
+          phone: input.phone ?? null,
+          company: input.company ?? null,
+          message: input.message ?? null,
+          participants: input.participants,
+          sessionDate: input.sessionDate,
+          sessionTime: input.sessionTime,
+          sessionDate2: input.sessionDate2 ?? null,
+          sessionTime2: input.sessionTime2 ?? null,
+          total,
+          venue,
+          teamAddon: input.teamAddon,
+          studioUrl: `${SITE.url}/studio`,
+          invoice: invoiceSummary,
         });
-        let eventId2: string | null = null;
-        if (input.sessionDate2 && input.sessionTime2) {
-          const secondWindow = sessionSlotWindow(input.sessionDate2, input.sessionTime2);
-          eventId2 = await createCalendarEvent({
-            summary: `Lotus Attune Session (session 2) — ${input.name}`,
+        if (!ownerEmail.ok) {
+          await logActivity({ bookingId, kind: 'email_failed', body: `Owner notification: ${ownerEmail.error}` });
+        }
+
+        try {
+          const firstWindow = sessionSlotWindow(input.sessionDate, input.sessionTime);
+          const eventId = await createCalendarEvent({
+            summary: `Lotus Attune Session — ${input.name}`,
             description,
             location: venue,
-            startISO: secondWindow.startISO,
-            endISO: secondWindow.endISO,
+            startISO: firstWindow.startISO,
+            endISO: firstWindow.endISO,
           });
+          let eventId2: string | null = null;
+          if (input.sessionDate2 && input.sessionTime2) {
+            const secondWindow = sessionSlotWindow(input.sessionDate2, input.sessionTime2);
+            eventId2 = await createCalendarEvent({
+              summary: `Lotus Attune Session (session 2) — ${input.name}`,
+              description,
+              location: venue,
+              startISO: secondWindow.startISO,
+              endISO: secondWindow.endISO,
+            });
+          }
+          if (eventId || eventId2) {
+            await sql`
+              UPDATE bookings
+              SET calendar_event_id = ${eventId}, calendar_event_id_2 = ${eventId2}
+              WHERE id = ${bookingId}
+            `;
+          }
+        } catch (error) {
+          console.error('[bookings] calendar event failed:', error);
         }
-        if (eventId || eventId2) {
-          await sql`
-            UPDATE bookings
-            SET calendar_event_id = ${eventId}, calendar_event_id_2 = ${eventId2}
-            WHERE id = ${bookingId}
-          `;
-        }
-      } catch (error) {
-        console.error('[bookings] calendar event failed:', error);
       }
     });
 

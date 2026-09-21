@@ -199,7 +199,16 @@ type Action = {
   alert?: boolean;
 };
 
-export function Bookings({ bookings, documents, integrations, business, onOpenDetails }: Props) {
+export function Bookings({ bookings: allBookings, documents, integrations, business, onOpenDetails }: Props) {
+  // A card attempt that hasn't paid isn't a real booking yet - it never got
+  // an invoice, an email, or a calendar hold, so it shouldn't clutter this
+  // list either. It simply appears once (if) it's actually paid. An
+  // e-transfer request is different: choosing it is the client's
+  // commitment, so it belongs here as "awaiting payment" from the start.
+  const bookings = useMemo(
+    () => allBookings.filter((b) => !(b.status === 'new_enquiry' && b.paymentMethod === 'card')),
+    [allBookings]
+  );
   const { run, pending, error } = useStudioAction();
   const [filter, setFilter] = useState<Filter>('upcoming');
   const [sortBy, setSortBy] = useState<SortBy>('event');

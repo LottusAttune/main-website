@@ -418,6 +418,11 @@ ALTER TABLE bookings ADD COLUMN IF NOT EXISTS balance_requested_at        TIMEST
 -- The client ticked "I agree to the Terms & Conditions" on the booking form.
 ALTER TABLE bookings ADD COLUMN IF NOT EXISTS terms_accepted_at           TIMESTAMPTZ;
 ALTER TABLE bookings ADD COLUMN IF NOT EXISTS cancellation_fee_charged_at TIMESTAMPTZ;
+-- What the client chose on the booking form: 'card' or 'etransfer'. A card
+-- attempt that never pays stays invisible (no email, hidden from the
+-- studio) until it does; an e-transfer request is shown right away, since
+-- choosing it is itself the client's commitment to pay.
+ALTER TABLE bookings ADD COLUMN IF NOT EXISTS payment_method TEXT;
 
 CREATE TABLE IF NOT EXISTS payments (
   id                      UUID PRIMARY KEY DEFAULT gen_random_uuid(),

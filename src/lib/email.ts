@@ -536,7 +536,7 @@ export async function sendEtransferRequestEmail(input: {
     html: wrapperHtml(`
       <p style="margin:0 0 10px;">Hi ${escapeHtml(first)},</p>
       <p style="margin:0;">${intro} To ${input.giftRecipient ? 'complete your gift certificate purchase' : 'confirm your booking'}, please send <strong>${money(input.amount)}</strong> by Interac e-transfer - no card fee.</p>
-      <p style="margin:14px 0 6px;">Please include <strong>${escapeHtml(input.reference)}</strong> in your bank transfer's message - this will allow us to match your payment automatically.</p>
+      <p style="margin:14px 0 6px;">Please include <strong>${escapeHtml(input.reference)}</strong> in your bank transfer's message - this will allow us to match your payment and ${input.giftRecipient ? 'send you a copy of the gift certificate' : 'confirm your booking'}.</p>
       <p style="margin:0 0 14px;"><strong>Send an Interac e-transfer to ${SITE.email}.</strong> Auto-deposit is on, so no security question is needed.</p>
       <p style="margin:14px 0 0;">Once we receive payment, you'll get your confirmation by email${input.giftRecipient ? ' along with the gift certificate' : ' with all the session details'}.</p>
       <p style="margin:14px 0 0;font-size:13px;">Questions? Just reply to this email.</p>

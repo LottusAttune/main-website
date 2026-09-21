@@ -543,7 +543,7 @@ export async function issueGiftCertificate(giftId: string): Promise<ActionResult
     certificate.id,
     gift.recipientEmail
       ? undefined
-      : `Your Lotus Attune gift certificate for ${escapeHtml(gift.recipientName)} is ready. We don't have a delivery email on file for them, so please forward this to them yourself when you're ready.`
+      : `Here's the gift certificate for ${escapeHtml(gift.recipientName)}. Pass it along to them or print it out.`
   );
   if (!sent.ok) return sent;
 

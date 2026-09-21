@@ -2,10 +2,11 @@
 
 import { useMemo, useState } from 'react';
 
-import { money, TIME_SLOTS } from '@/lib/site';
+import { money, TIME_SLOTS, toTorontoDateIso } from '@/lib/site';
 import {
   balanceDue,
   documentStatusLabel,
+  formatShortDate,
   formatStudioDate,
   isOverdue,
   relativeDays,
@@ -39,6 +40,7 @@ const FILTERS: { key: Filter; label: string }[] = [
 ];
 
 const COLUMNS = [
+  { header: 'Requested', value: (b: BookingRow) => b.createdAt },
   { header: 'Date', value: (b: BookingRow) => b.sessionDate ?? '' },
   { header: 'Time', value: (b: BookingRow) => b.sessionTime ?? '' },
   { header: 'Second date', value: (b: BookingRow) => b.sessionDate2 ?? '' },
@@ -109,8 +111,22 @@ function bucketOf(b: BookingRow, today: string): Bucket {
 
 const BUCKET_RANK: Record<Bucket, number> = { upcoming: 0, past: 1, cancelled: 2 };
 
-/** Upcoming soonest first, then past most-recent first, cancelled last. */
-function sortBookings(bookings: BookingRow[], today: string): BookingRow[] {
+type SortMode = 'event' | 'purchase-newest' | 'purchase-oldest';
+
+const SORT_MODES: { key: SortMode; label: string }[] = [
+  { key: 'event', label: 'Event date' },
+  { key: 'purchase-newest', label: 'Purchase date (newest)' },
+  { key: 'purchase-oldest', label: 'Purchase date (oldest)' },
+];
+
+/** Upcoming soonest first, then past most-recent first, cancelled last - or,
+ *  by request date, so the order clients booked in stays legible on its own
+ *  rather than being scrambled by their session dates. */
+function sortBookings(bookings: BookingRow[], today: string, sortMode: SortMode): BookingRow[] {
+  if (sortMode !== 'event') {
+    const list = [...bookings].sort((a, b) => a.createdAt.localeCompare(b.createdAt));
+    return sortMode === 'purchase-newest' ? list.reverse() : list;
+  }
   const key = (b: BookingRow) => `${b.sessionDate ?? '9999-99-99'} ${b.sessionTime ?? ''}`;
   return [...bookings].sort((a, b) => {
     const ba = bucketOf(a, today);
@@ -189,6 +205,7 @@ type Action = {
 export function Bookings({ bookings, documents, integrations, business, onOpenDetails }: Props) {
   const { run, pending, error } = useStudioAction();
   const [filter, setFilter] = useState<Filter>('upcoming');
+  const [sortMode, setSortMode] = useState<SortMode>('event');
   const [search, setSearch] = useState('');
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editDate, setEditDate] = useState('');
@@ -211,7 +228,10 @@ export function Bookings({ bookings, documents, integrations, business, onOpenDe
     return map;
   }, [documents]);
 
-  const sorted = useMemo(() => sortBookings(bookings, today), [bookings, today]);
+  const sorted = useMemo(
+    () => sortBookings(bookings, today, sortMode),
+    [bookings, today, sortMode]
+  );
 
   const byFilter =
     filter === 'all' ? sorted : sorted.filter((b) => bucketOf(b, today) === filter);
@@ -501,6 +521,19 @@ export function Bookings({ bookings, documents, integrations, business, onOpenDe
             aria-label="Search bookings"
             style={{ minWidth: 220, padding: '10px 14px', minHeight: 42 }}
           />
+          <select
+            className="field"
+            aria-label="Sort bookings"
+            value={sortMode}
+            onChange={(e) => setSortMode(e.target.value as SortMode)}
+            style={{ padding: '10px 14px', minHeight: 42 }}
+          >
+            {SORT_MODES.map((m) => (
+              <option key={m.key} value={m.key}>
+                Sort: {m.label}
+              </option>
+            ))}
+          </select>
         </div>
         <ExportButton filename="lotus-bookings" rows={visible} columns={COLUMNS} />
       </div>
@@ -516,6 +549,7 @@ export function Bookings({ bookings, documents, integrations, business, onOpenDe
             <table className={styles.table}>
               <thead>
                 <tr>
+                  <th>Requested</th>
                   <th>Date</th>
                   <th>Time</th>
                   <th>Client</th>
@@ -536,6 +570,9 @@ export function Bookings({ bookings, documents, integrations, business, onOpenDe
 
                   return (
                     <tr key={booking.id}>
+                      <td style={{ whiteSpace: 'nowrap' }}>
+                        {formatShortDate(toTorontoDateIso(booking.createdAt))}
+                      </td>
                       {isEditing ? (
                         <td colSpan={2}>
                           {renderEditor(Boolean(booking.sessionDate2), false)}
@@ -642,6 +679,10 @@ export function Bookings({ bookings, documents, integrations, business, onOpenDe
                   </div>
 
                   <div className={styles.kv}>
+                    <div className={styles.kvLabel}>Requested</div>
+                    <div className={styles.kvValue}>
+                      {formatStudioDate(toTorontoDateIso(booking.createdAt))}
+                    </div>
                     {booking.company ? (
                       <>
                         <div className={styles.kvLabel}>Company</div>

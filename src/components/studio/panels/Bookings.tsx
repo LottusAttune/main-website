@@ -8,6 +8,7 @@ import {
   documentStatusLabel,
   formatShortDate,
   formatStudioDate,
+  formatStudioDateParts,
   isOverdue,
   relativeDays,
   type BookingRow,
@@ -111,24 +112,19 @@ function bucketOf(b: BookingRow, today: string): Bucket {
 
 const BUCKET_RANK: Record<Bucket, number> = { upcoming: 0, past: 1, cancelled: 2 };
 
-type SortMode = 'event' | 'purchase-newest' | 'purchase-oldest';
+type SortBy = 'event' | 'purchase';
+type SortDir = 'asc' | 'desc';
 
-const SORT_MODES: { key: SortMode; label: string }[] = [
-  { key: 'event', label: 'Event date' },
-  { key: 'purchase-newest', label: 'Purchase date (newest)' },
-  { key: 'purchase-oldest', label: 'Purchase date (oldest)' },
-];
-
-/** Upcoming soonest first, then past most-recent first, cancelled last - or,
- *  by request date, so the order clients booked in stays legible on its own
- *  rather than being scrambled by their session dates. */
-function sortBookings(bookings: BookingRow[], today: string, sortMode: SortMode): BookingRow[] {
-  if (sortMode !== 'event') {
+/** Upcoming soonest first, then past most-recent first, cancelled last (or
+ *  its exact reverse) - or by request date, so the order clients booked in
+ *  stays legible on its own rather than being scrambled by session dates. */
+function sortBookings(bookings: BookingRow[], today: string, sortBy: SortBy, sortDir: SortDir): BookingRow[] {
+  if (sortBy === 'purchase') {
     const list = [...bookings].sort((a, b) => a.createdAt.localeCompare(b.createdAt));
-    return sortMode === 'purchase-newest' ? list.reverse() : list;
+    return sortDir === 'asc' ? list : list.reverse();
   }
   const key = (b: BookingRow) => `${b.sessionDate ?? '9999-99-99'} ${b.sessionTime ?? ''}`;
-  return [...bookings].sort((a, b) => {
+  const list = [...bookings].sort((a, b) => {
     const ba = bucketOf(a, today);
     const bb = bucketOf(b, today);
     if (ba !== bb) return BUCKET_RANK[ba] - BUCKET_RANK[bb];
@@ -136,6 +132,7 @@ function sortBookings(bookings: BookingRow[], today: string, sortMode: SortMode)
       ? key(a).localeCompare(key(b))
       : key(b).localeCompare(key(a));
   });
+  return sortDir === 'asc' ? list : list.reverse();
 }
 
 /* ---------- labels ---------- */
@@ -205,7 +202,8 @@ type Action = {
 export function Bookings({ bookings, documents, integrations, business, onOpenDetails }: Props) {
   const { run, pending, error } = useStudioAction();
   const [filter, setFilter] = useState<Filter>('upcoming');
-  const [sortMode, setSortMode] = useState<SortMode>('event');
+  const [sortBy, setSortBy] = useState<SortBy>('event');
+  const [sortDir, setSortDir] = useState<SortDir>('asc');
   const [search, setSearch] = useState('');
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editDate, setEditDate] = useState('');
@@ -229,9 +227,20 @@ export function Bookings({ bookings, documents, integrations, business, onOpenDe
   }, [documents]);
 
   const sorted = useMemo(
-    () => sortBookings(bookings, today, sortMode),
-    [bookings, today, sortMode]
+    () => sortBookings(bookings, today, sortBy, sortDir),
+    [bookings, today, sortBy, sortDir]
   );
+
+  const toggleSort = (col: SortBy) => {
+    if (sortBy === col) {
+      setSortDir((d) => (d === 'asc' ? 'desc' : 'asc'));
+    } else {
+      setSortBy(col);
+      setSortDir(col === 'purchase' ? 'desc' : 'asc');
+    }
+  };
+
+  const sortArrow = (col: SortBy) => (sortBy === col ? (sortDir === 'asc' ? ' ▲' : ' ▼') : '');
 
   const byFilter =
     filter === 'all' ? sorted : sorted.filter((b) => bucketOf(b, today) === filter);
@@ -521,19 +530,6 @@ export function Bookings({ bookings, documents, integrations, business, onOpenDe
             aria-label="Search bookings"
             style={{ minWidth: 220, padding: '10px 14px', minHeight: 42 }}
           />
-          <select
-            className="field"
-            aria-label="Sort bookings"
-            value={sortMode}
-            onChange={(e) => setSortMode(e.target.value as SortMode)}
-            style={{ padding: '10px 14px', minHeight: 42 }}
-          >
-            {SORT_MODES.map((m) => (
-              <option key={m.key} value={m.key}>
-                Sort: {m.label}
-              </option>
-            ))}
-          </select>
         </div>
         <ExportButton filename="lotus-bookings" rows={visible} columns={COLUMNS} />
       </div>
@@ -549,8 +545,16 @@ export function Bookings({ bookings, documents, integrations, business, onOpenDe
             <table className={styles.table}>
               <thead>
                 <tr>
-                  <th>Requested</th>
-                  <th>Date</th>
+                  <th>
+                    <button type="button" className={local.sortHeader} onClick={() => toggleSort('purchase')}>
+                      Requested{sortArrow('purchase')}
+                    </button>
+                  </th>
+                  <th>
+                    <button type="button" className={local.sortHeader} onClick={() => toggleSort('event')}>
+                      Date{sortArrow('event')}
+                    </button>
+                  </th>
                   <th>Time</th>
                   <th>Client</th>
                   <th>Format</th>
@@ -580,11 +584,14 @@ export function Bookings({ bookings, documents, integrations, business, onOpenDe
                       ) : (
                         <>
                           <td style={{ whiteSpace: 'nowrap' }}>
-                            <div>{formatStudioDate(booking.sessionDate)}</div>
+                            <div>{formatStudioDateParts(booking.sessionDate).date}</div>
+                            <div className={styles.priceNote}>
+                              {formatStudioDateParts(booking.sessionDate).weekday}
+                            </div>
                             {booking.sessionDate2 &&
                             booking.sessionDate2 !== booking.sessionDate ? (
                               <div className={styles.priceNote}>
-                                + {formatStudioDate(booking.sessionDate2)}
+                                + {formatShortDate(booking.sessionDate2)}
                               </div>
                             ) : null}
                           </td>

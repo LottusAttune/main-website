@@ -387,6 +387,17 @@ export function formatShortDate(iso: string | null): string {
   return `${MONTHS_SHORT[month - 1]} ${String(day).padStart(2, '0')}`;
 }
 
+/** Same date as `formatStudioDate`, split so the weekday can go on its own
+ *  line - a narrow table column doesn't have to fit "Sept 05, 2026
+ *  (Monday)" on one line to stay unambiguous. */
+export function formatStudioDateParts(iso: string | null): { date: string; weekday: string } {
+  if (!iso) return { date: '—', weekday: '' };
+  const [year, month, day] = iso.split('-').map(Number);
+  const date = new Date(year, month - 1, day);
+  const weekday = date.toLocaleDateString('en-US', { weekday: 'long' });
+  return { date: `${MONTHS_SHORT[month - 1]} ${String(day).padStart(2, '0')}, ${year}`, weekday };
+}
+
 /** "3 days ago" / "today" / "in 2 days", from an ISO date or timestamp. */
 export function relativeDays(iso: string | null, now = new Date()): string {
   if (!iso) return '';

@@ -57,3 +57,17 @@
   gap: 8px;
   margin-top: 12px;
 }
+
+/* A sortable table header reads exactly like the plain ones next to it -
+   only the pointer cursor and the arrow give away that it is clickable. */
+.sortHeader {
+  background: none;
+  border: 0;
+  padding: 0;
+  margin: 0;
+  font: inherit;
+  color: inherit;
+  letter-spacing: inherit;
+  text-transform: inherit;
+  cursor: pointer;
+}

@@ -59,7 +59,7 @@
 }
 
 /* A sortable table header reads exactly like the plain ones next to it -
-   only the pointer cursor and the arrow give away that it is clickable. */
+   only the pointer cursor and the icon give away that it is clickable. */
 .sortHeader {
   background: none;
   border: 0;
@@ -70,4 +70,15 @@
   letter-spacing: inherit;
   text-transform: inherit;
   cursor: pointer;
+}
+
+/* Neutral on a header that isn't the active sort - still visible enough to
+   read as clickable before it's ever been clicked. */
+.sortIcon {
+  opacity: 0.45;
+}
+
+/* The active sort's direction arrow, at full strength. */
+.sortIconOn {
+  opacity: 1;
 }

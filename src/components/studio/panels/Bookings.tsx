@@ -240,7 +240,11 @@ export function Bookings({ bookings, documents, integrations, business, onOpenDe
     }
   };
 
-  const sortArrow = (col: SortBy) => (sortBy === col ? (sortDir === 'asc' ? ' ▲' : ' ▼') : '');
+  /** An icon on both sortable headers all the time - filled and pointing a
+   *  direction on the active one, faint and neutral on the other - so it
+   *  reads as clickable before it's ever been clicked. */
+  const sortIcon = (col: SortBy) =>
+    sortBy === col ? (sortDir === 'asc' ? '▲' : '▼') : '⇅';
 
   const byFilter =
     filter === 'all' ? sorted : sorted.filter((b) => bucketOf(b, today) === filter);
@@ -547,12 +551,18 @@ export function Bookings({ bookings, documents, integrations, business, onOpenDe
                 <tr>
                   <th>
                     <button type="button" className={local.sortHeader} onClick={() => toggleSort('purchase')}>
-                      Requested{sortArrow('purchase')}
+                      Requested{' '}
+                      <span className={sortBy === 'purchase' ? local.sortIconOn : local.sortIcon}>
+                        {sortIcon('purchase')}
+                      </span>
                     </button>
                   </th>
                   <th>
                     <button type="button" className={local.sortHeader} onClick={() => toggleSort('event')}>
-                      Date{sortArrow('event')}
+                      Date{' '}
+                      <span className={sortBy === 'event' ? local.sortIconOn : local.sortIcon}>
+                        {sortIcon('event')}
+                      </span>
                     </button>
                   </th>
                   <th>Time</th>

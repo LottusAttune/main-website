@@ -82,7 +82,7 @@ export const DEFAULT_BUSINESS: BusinessSettings = {
   taxLabel: 'HST',
   taxNumber: '',
   taxRatePercent: 0,
-  paymentInstructions: `Send an Interac e-transfer to ${SITE.email}. Auto-deposit is on, so no security question is needed. Please put your invoice number in the message.`,
+  paymentInstructions: `Send an Interac e-transfer to ${SITE.email}. Auto-deposit is on, so no security question is needed.`,
   invoiceDueDays: 7,
   invoicePrefix: 'LA',
   invoiceFooter: '',

@@ -146,7 +146,6 @@ export async function POST(request: Request) {
                   amount: total,
                   reference: referenceTail(payment.invoiceNumber),
                   giftRecipient: input.recipientName,
-                  instructions: payment.instructions,
                 })
               : await sendDocument(invoiceId);
           if (!sent.ok) await logActivity({ giftId, documentId: invoiceId, kind: 'email_failed', body: `Gift invoice: ${sent.error}` });
@@ -168,7 +167,13 @@ export async function POST(request: Request) {
         }
         await sendOwnerNotification({
           subject: `New gift certificate request: ${input.buyerName} for ${input.recipientName}, ${money(total)}`,
-          html: `<p style="margin:0 0 8px;">${input.buyerName} (${input.buyerEmail}) is buying a ${money(total)} gift certificate for ${input.recipientName}${input.recipientEmail ? ` (${input.recipientEmail})` : ''}.</p><p style="margin:0;">${payment?.checkoutUrl ? 'They were sent to the card checkout; the certificate goes out on its own once paid.' : 'The invoice went to them by email.'}</p>`,
+          html: `<p style="margin:0 0 8px;">${input.buyerName} (${input.buyerEmail}) is buying a ${money(total)} gift certificate for ${input.recipientName}${input.recipientEmail ? ` (${input.recipientEmail})` : ''}.</p><p style="margin:0;">${
+            payment?.checkoutUrl
+              ? 'They were sent to the card checkout; the certificate goes out on its own once paid.'
+              : total <= 0
+                ? 'Nothing was owed - the certificate is already on its way to them.'
+                : 'The e-transfer request went to them by email.'
+          }</p>`,
         });
       });
 

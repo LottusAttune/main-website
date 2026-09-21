@@ -72,7 +72,7 @@ export function GiftCalculator({ pricing, codes, payTerms }: Props) {
   const [issuedCode, setIssuedCode] = useState('');
   const [redirecting, setRedirecting] = useState(false);
   const [payBy, setPayBy] = useState<'card' | 'etransfer'>('card');
-  const [etransfer, setEtransfer] = useState<{ amount: number; number: string; instructions: string } | null>(null);
+  const [etransfer, setEtransfer] = useState<{ amount: number; number: string } | null>(null);
   const [hideBuyerName, setHideBuyerName] = useState(false);
   const [previewOpen, setPreviewOpen] = useState(false);
 
@@ -254,7 +254,7 @@ export function GiftCalculator({ pricing, codes, payTerms }: Props) {
       } | null;
       setIssuedCode(body?.code ?? '');
       if (body?.payment?.method === 'etransfer') {
-        setEtransfer({ amount: body.payment.invoiceTotal, number: body.payment.invoiceNumber, instructions: body.payment.instructions });
+        setEtransfer({ amount: body.payment.invoiceTotal, number: body.payment.invoiceNumber });
       }
       // Straight to the secure payment page; the certificate is emailed the
       // moment the payment completes. Without a card checkout the invoice
@@ -459,13 +459,18 @@ export function GiftCalculator({ pricing, codes, payTerms }: Props) {
                 : 'Thank you! Your gift certificate is confirmed and on its way by email.'}
             </p>
             {etransfer ? (
-              <p className={styles.success} role="status" style={{ whiteSpace: 'pre-line' }}>
+              <p className={styles.success} role="status">
                 <strong>Send {money(etransfer.amount)} by Interac e-transfer</strong>
-                {'\n'}Reference: {etransfer.number.slice(-4)}
-                {'\n'}Please include this in your transfer&apos;s message - it&apos;s how we match your payment automatically.
-                {'\n'}{etransfer.instructions}
-                {'\n'}
-                {'\n'}A confirmation email is on its way - check your spam or junk folder if it doesn&apos;t land soon.
+                <br />
+                Please include <strong>{etransfer.number.slice(-4)}</strong> in your bank
+                transfer&apos;s message - this will allow us to match your payment automatically.
+                <br />
+                <strong>Send an Interac e-transfer to {SITE.email}.</strong> Auto-deposit is on, so
+                no security question is needed.
+                <br />
+                <br />
+                A confirmation email is on its way - check your spam or junk folder if it
+                doesn&apos;t land soon.
               </p>
             ) : null}
             <div className={styles.sentCert}>

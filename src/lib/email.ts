@@ -3,7 +3,7 @@ import 'server-only';
 import { Resend } from 'resend';
 
 import { FAQS } from '@/data/content';
-import { cardFee, paragraphs } from '@/lib/documents';
+import { cardFee } from '@/lib/documents';
 import { buildDiscoveryCallIcs, buildGoogleCalendarLink } from '@/lib/ics';
 import type { DocumentKind, DocumentRow } from '@/lib/pipeline';
 import type { BusinessSettings } from '@/lib/settings';
@@ -525,7 +525,6 @@ export async function sendEtransferRequestEmail(input: {
   sessionTime?: string;
   /** Set for a gift certificate, in place of the session date. */
   giftRecipient?: string;
-  instructions: string;
 }): Promise<EmailResult> {
   const first = input.name.split(' ')[0] || input.name;
   const intro = input.sessionDate
@@ -537,8 +536,8 @@ export async function sendEtransferRequestEmail(input: {
     html: wrapperHtml(`
       <p style="margin:0 0 10px;">Hi ${escapeHtml(first)},</p>
       <p style="margin:0;">${intro} To confirm it, please send <strong>${money(input.amount)}</strong> by Interac e-transfer - no card fee.</p>
-      <p style="margin:14px 0 6px;">Please include <strong>${escapeHtml(input.reference)}</strong> in your transfer's message - the last part of your reference number. It's how we match your payment automatically.</p>
-      ${input.instructions ? paragraphs(input.instructions) : ''}
+      <p style="margin:14px 0 6px;">Please include <strong>${escapeHtml(input.reference)}</strong> in your bank transfer's message - this will allow us to match your payment automatically.</p>
+      <p style="margin:0 0 14px;"><strong>Send an Interac e-transfer to ${SITE.email}.</strong> Auto-deposit is on, so no security question is needed.</p>
       <p style="margin:14px 0 0;">Once we receive it, you'll get your confirmation by email${input.giftRecipient ? ' along with the gift certificate' : ' with all the session details'}.</p>
       <p style="margin:14px 0 0;font-size:13px;">Questions? Just reply to this email.</p>
       <p style="margin:10px 0 0;font-size:12px;color:#8a7a63;">Don't see it land later? Check your spam or junk folder.</p>

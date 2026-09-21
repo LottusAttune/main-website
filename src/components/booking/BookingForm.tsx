@@ -351,9 +351,13 @@ export function BookingForm({
                 <div className={styles.etransferRow}><span>Amount</span><strong>{money(payment.deposit ?? payment.invoiceTotal)}</strong></div>
                 <div className={styles.etransferRow}><span>Reference</span><strong>{payment.invoiceNumber.slice(-4)}</strong></div>
                 <p className={styles.successBody}>
-                  Please include this in your transfer&apos;s message - it&apos;s how we match your payment automatically.
+                  Please include <strong>{payment.invoiceNumber.slice(-4)}</strong> in your bank
+                  transfer&apos;s message - this will allow us to match your payment automatically.
                 </p>
-                <p className={styles.successBody} style={{ whiteSpace: 'pre-line' }}>{payment.instructions}</p>
+                <p className={styles.successBody}>
+                  <strong>Send an Interac e-transfer to {SITE.email}.</strong> Auto-deposit is on,
+                  so no security question is needed.
+                </p>
               </div>
             ) : null}
             <div className={styles.successActions}>

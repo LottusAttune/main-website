@@ -455,7 +455,7 @@ export function GiftCalculator({ pricing, codes, payTerms }: Props) {
             <div className={styles.asideTitle}>Gift Certificate</div>
             <p className={styles.success} role="status">
               {etransfer
-                ? "Thank you! Send the e-transfer below to confirm it - the certificate is issued and emailed as soon as we receive it."
+                ? "Thank you! Send the e-transfer below to complete your gift certificate purchase - it's issued and emailed as soon as we receive payment."
                 : 'Thank you! Your gift certificate is confirmed and on its way by email.'}
             </p>
             {etransfer ? (

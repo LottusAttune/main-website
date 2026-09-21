@@ -543,7 +543,7 @@ export async function issueGiftCertificate(giftId: string): Promise<ActionResult
     certificate.id,
     gift.recipientEmail
       ? undefined
-      : `Here's the gift certificate for ${escapeHtml(gift.recipientName)}. Pass it along to them or print it out.`
+      : `Here's the gift certificate for ${escapeHtml(gift.recipientName)}. Pass it along.`
   );
   if (!sent.ok) return sent;
 

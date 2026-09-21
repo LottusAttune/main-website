@@ -193,6 +193,14 @@ const action = z.discriminatedUnion('action', [
   z.object({ action: z.literal('chargeCancellationFee'), bookingId: z.string().uuid() }),
   z.object({ action: z.literal('deleteGift'), id: z.string().uuid() }),
   z.object({
+    action: z.literal('editGift'),
+    id: z.string().uuid(),
+    recipientName: z.string().trim().min(1).max(120),
+    recipientEmail: z.string().trim().email().max(200).nullable(),
+    buyerName: z.string().trim().max(120).nullable(),
+    buyerEmail: z.string().trim().email().max(200),
+  }),
+  z.object({
     action: z.literal('updateBusiness'),
     businessName: z.string().trim().min(1).max(160),
     businessAddress: z.string().trim().max(400),
@@ -462,6 +470,24 @@ export async function POST(request: Request) {
 
       case 'deleteGift':
         await sql`DELETE FROM gift_requests WHERE id = ${input.id}`;
+        break;
+
+      case 'editGift':
+        await sql`
+          UPDATE gift_requests SET
+            recipient_name = ${input.recipientName}, recipient_email = ${input.recipientEmail},
+            buyer_name = ${input.buyerName}, buyer_email = ${input.buyerEmail}
+          WHERE id = ${input.id}
+        `;
+        // Paperwork not yet sent follows the corrected details - a
+        // certificate goes to the recipient, an invoice to the buyer.
+        await sql`
+          UPDATE documents SET
+            client_name = CASE WHEN kind = 'certificate' THEN ${input.recipientName} ELSE COALESCE(${input.buyerName}, ${input.buyerEmail}) END,
+            client_email = CASE WHEN kind = 'certificate' THEN COALESCE(${input.recipientEmail}, ${input.buyerEmail}) ELSE ${input.buyerEmail} END,
+            pdf = NULL, pdf_generated_at = NULL
+          WHERE gift_id = ${input.id} AND status = 'draft'
+        `;
         break;
 
       case 'updateBusiness':

@@ -26,14 +26,14 @@ const FILTERS: { key: Filter; label: string }[] = [
   { key: 'requested', label: 'To issue' },
   { key: 'active', label: 'Active' },
   { key: 'redeemed', label: 'Redeemed' },
-  { key: 'archived', label: 'Archived' },
+  { key: 'archived', label: 'Cancelled' },
 ];
 
 const STATUS: Record<string, { label: string; pill: string }> = {
   requested: { label: 'To issue', pill: styles.pillPending },
   active: { label: 'Active', pill: styles.pillSuccess },
   redeemed: { label: 'Redeemed', pill: styles.pillNeutral },
-  archived: { label: 'Archived', pill: styles.pillAlert },
+  archived: { label: 'Cancelled', pill: styles.pillAlert },
 };
 
 function statusOf(card: GiftCard): { label: string; pill: string } {
@@ -74,6 +74,31 @@ const DARK = `btn btn--dark ${styles.smallBtn} ${local.tap}`;
 export function GiftCards({ cards, documents, integrations }: Props) {
   const { run, pending, error } = useStudioAction();
   const [filter, setFilter] = useState<Filter>('all');
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [editRecipientName, setEditRecipientName] = useState('');
+  const [editRecipientEmail, setEditRecipientEmail] = useState('');
+  const [editBuyerName, setEditBuyerName] = useState('');
+  const [editBuyerEmail, setEditBuyerEmail] = useState('');
+
+  const startEdit = (card: GiftCard) => {
+    setEditingId(card.id);
+    setEditRecipientName(card.recipientName);
+    setEditRecipientEmail(card.recipientEmail ?? '');
+    setEditBuyerName(card.buyerName ?? '');
+    setEditBuyerEmail(card.buyerEmail);
+  };
+
+  const saveEdit = async (id: string) => {
+    const ok = await run({
+      action: 'editGift',
+      id,
+      recipientName: editRecipientName,
+      recipientEmail: editRecipientEmail.trim() || null,
+      buyerName: editBuyerName.trim() || null,
+      buyerEmail: editBuyerEmail,
+    });
+    if (ok) setEditingId(null);
+  };
 
   const toIssue = cards.filter((card) => card.status === 'requested');
   const outstanding = cards
@@ -196,6 +221,64 @@ export function GiftCards({ cards, documents, integrations }: Props) {
                   <div className={styles.recordValue}>{money(card.total)}</div>
                 </div>
 
+                {editingId === card.id ? (
+                  <div className={styles.editStack}>
+                    <div className={styles.editRow}>
+                      <input
+                        type="text"
+                        aria-label="Recipient name"
+                        placeholder="Recipient name"
+                        className={styles.editInput}
+                        value={editRecipientName}
+                        onChange={(e) => setEditRecipientName(e.target.value)}
+                      />
+                      <input
+                        type="email"
+                        aria-label="Recipient email"
+                        placeholder="Recipient email"
+                        className={styles.editInput}
+                        value={editRecipientEmail}
+                        onChange={(e) => setEditRecipientEmail(e.target.value)}
+                      />
+                    </div>
+                    <div className={styles.editRow} style={{ marginTop: 8 }}>
+                      <input
+                        type="text"
+                        aria-label="Buyer name"
+                        placeholder="Buyer name"
+                        className={styles.editInput}
+                        value={editBuyerName}
+                        onChange={(e) => setEditBuyerName(e.target.value)}
+                      />
+                      <input
+                        type="email"
+                        aria-label="Buyer email"
+                        placeholder="Buyer email"
+                        className={styles.editInput}
+                        value={editBuyerEmail}
+                        onChange={(e) => setEditBuyerEmail(e.target.value)}
+                      />
+                    </div>
+                    <div className={styles.recordActions} style={{ marginTop: 10 }}>
+                      <button
+                        type="button"
+                        className={DARK}
+                        disabled={pending}
+                        onClick={() => void saveEdit(card.id)}
+                      >
+                        Save
+                      </button>
+                      <button
+                        type="button"
+                        className={OUTLINE}
+                        disabled={pending}
+                        onClick={() => setEditingId(null)}
+                      >
+                        Cancel
+                      </button>
+                    </div>
+                  </div>
+                ) : (
                 <div className={styles.kv}>
                   <span className={styles.kvLabel}>Code</span>
                   <span className={styles.kvValue}>
@@ -227,6 +310,7 @@ export function GiftCards({ cards, documents, integrations }: Props) {
                     <span className={`${styles.pill} ${status.pill}`}>{status.label}</span>
                   </span>
                 </div>
+                )}
 
                 <div className={local.paperwork}>
                   <div className={local.paperworkLabel}>Paperwork</div>
@@ -291,6 +375,16 @@ export function GiftCards({ cards, documents, integrations }: Props) {
                 </div>
 
                 <div className={styles.recordActions}>
+                  {editingId !== card.id ? (
+                    <button
+                      type="button"
+                      className={OUTLINE}
+                      disabled={pending}
+                      onClick={() => startEdit(card)}
+                    >
+                      Edit
+                    </button>
+                  ) : null}
                   {card.status !== 'redeemed' ? (
                     <button
                       type="button"
@@ -312,7 +406,7 @@ export function GiftCards({ cards, documents, integrations }: Props) {
                         void run({ action: 'setGiftStatus', id: card.id, status: 'archived' })
                       }
                     >
-                      Archive
+                      Cancel
                     </button>
                   ) : (
                     <button

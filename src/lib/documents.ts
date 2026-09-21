@@ -536,7 +536,15 @@ export async function issueGiftCertificate(giftId: string): Promise<ActionResult
   const certificate = await ensureGiftDocument(giftId, 'certificate', settings);
   if (certificate.status === 'sent') return { ok: true };
 
-  const sent = await sendDocument(certificate.id);
+  // Without a recipient email, the certificate can only go to the buyer -
+  // say plainly that forwarding it on is now their job, rather than the
+  // default wording, which reads as if written to the recipient directly.
+  const sent = await sendDocument(
+    certificate.id,
+    gift.recipientEmail
+      ? undefined
+      : `Your Lotus Attune gift certificate for ${escapeHtml(gift.recipientName)} is ready. We don't have a delivery email on file for them, so please forward this to them yourself when you're ready.`
+  );
   if (!sent.ok) return sent;
 
   // The buyer gets their own copy when the certificate went to someone else.
@@ -1305,7 +1313,7 @@ export async function generatePdf(doc: DocumentRow, ctx?: DocumentContext): Prom
 // Send / accept / pay / void
 // ---------------------------------------------------------------------------
 
-export async function sendDocument(id: string): Promise<ActionResult> {
+export async function sendDocument(id: string, introHtmlOverride?: string): Promise<ActionResult> {
   const doc = await getDocument(id);
   if (!doc) return { ok: false, error: 'Document not found.' };
   if (doc.status === 'void') return { ok: false, error: 'This document is void - create a new one.' };
@@ -1341,7 +1349,7 @@ export async function sendDocument(id: string): Promise<ActionResult> {
     paymentHtml: ready.kind === 'invoice' ? paymentOptionsHtml(ready, ctx.business, ctx.booking) : '',
     giftCode: ctx.gift?.code ?? null,
     subject: deposit !== null ? `Invoice ${ready.number} from Lotus Attune: ${money(deposit)} deposit to confirm your date` : undefined,
-    introHtml: depositIntro,
+    introHtml: introHtmlOverride ?? depositIntro,
   });
 
   if (!result.ok) {

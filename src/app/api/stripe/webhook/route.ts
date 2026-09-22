@@ -53,7 +53,7 @@ export async function POST(request: Request) {
 
   try {
     const settings = await getSettings();
-    await settleCheckoutSession(session, settings.business.depositPercent);
+    await settleCheckoutSession(session, settings.business);
     return NextResponse.json({ received: true });
   } catch (error) {
     console.error('[stripe] webhook failed:', error);

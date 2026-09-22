@@ -139,7 +139,7 @@ export type SettledCheckout = {
  */
 export async function settleCheckoutSession(
   session: Record<string, unknown>,
-  depositPercent: number
+  business: BusinessSettings
 ): Promise<SettledCheckout | null> {
   const metadata = (session.metadata ?? {}) as Record<string, string>;
   const documentId = metadata.documentId;
@@ -157,8 +157,16 @@ export async function settleCheckoutSession(
     Number.isFinite(minted) && minted > 0
       ? minted
       : plan === 'deposit'
-        ? depositAmount(doc, depositPercent)
+        ? depositAmount(doc, business.depositPercent)
         : doc.total - doc.paidAmount;
+  // What actually left the card - Stripe's own total for the session (in
+  // cents) when it's there, since that's the real number rather than a
+  // recomputed one that could drift if the fee percentage changes later.
+  const totalCents = Number(session.amount_total);
+  const chargedAmount =
+    Number.isFinite(totalCents) && totalCents > 0
+      ? Math.round(totalCents) / 100
+      : amount + cardFee(amount, business.cardFeePercent);
 
   const intentId = session.payment_intent ? String(session.payment_intent) : null;
   let paymentMethodId: string | null = null;
@@ -179,15 +187,15 @@ export async function settleCheckoutSession(
     note: `Stripe ${plan}`,
   });
   if (!alreadyRecorded) {
-    await afterPayment(updated, amount, 'card', plan === 'deposit' ? 'deposit' : 'payment');
+    await afterPayment(updated, amount, 'card', plan === 'deposit' ? 'deposit' : 'payment', chargedAmount);
   }
   return { doc: updated, amount, plan, alreadyRecorded };
 }
 
 /** Looks a session up by id (the thank-you page's query string) and settles it if paid. */
-export async function settleCheckoutById(sessionId: string, depositPercent: number): Promise<SettledCheckout | null> {
+export async function settleCheckoutById(sessionId: string, business: BusinessSettings): Promise<SettledCheckout | null> {
   if (!isStripeConfigured()) return null;
   const session = await getCheckoutSession(sessionId).catch(() => null);
   if (!session) return null;
-  return settleCheckoutSession(session, depositPercent);
+  return settleCheckoutSession(session, business);
 }

@@ -26,7 +26,7 @@ export default async function GiftConfirmedPage({
   const settings = await getSettings();
   const settled =
     sessionId && isDatabaseConfigured()
-      ? await settleCheckoutById(sessionId, settings.business.depositPercent).catch((error) => {
+      ? await settleCheckoutById(sessionId, settings.business).catch((error) => {
           console.error('[gift/confirmed] settle failed:', error);
           return null;
         })

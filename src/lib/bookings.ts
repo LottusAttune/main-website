@@ -4,6 +4,7 @@ import { createCalendarEvent, sessionSlotWindow } from '@/lib/calendar';
 import { FAQS, VENUE_COPY_BOOKING } from '@/data/content';
 import { sql } from '@/lib/db';
 import {
+  cardFee,
   ensureBookingDocument,
   ensurePaymentLinks,
   generatePdf,
@@ -259,7 +260,14 @@ export async function afterPayment(
   doc: DocumentRow,
   amount: number,
   method: string,
-  kind: string
+  kind: string,
+  /** What actually left the client's card, service + fee - the emails
+   *  quote this, not the pre-fee service amount, so they match the same
+   *  total the invoice itself now shows. Defaults to `amount` for
+   *  payments that never carry a separate fee (e-transfer, a manually
+   *  recorded amount in the studio, which is already whatever really
+   *  arrived). */
+  chargedAmount = amount
 ): Promise<void> {
   if (doc.bookingId) await ensureCalendarHold(doc.bookingId);
 
@@ -276,13 +284,13 @@ export async function afterPayment(
     : true;
 
   if (doc.bookingId && kind !== 'cancellation_fee' && !alreadyConfirmed) {
-    await sendBookingConfirmation(doc.bookingId, { amount, method, kind, pdf });
+    await sendBookingConfirmation(doc.bookingId, { amount: chargedAmount, method, kind, pdf });
   } else {
     await sendReceiptEmail({
       name: doc.clientName,
       email: doc.clientEmail,
       number: doc.number,
-      amount,
+      amount: chargedAmount,
       method,
       kind,
       balanceDue: balanceDue(doc),
@@ -291,8 +299,8 @@ export async function afterPayment(
     });
   }
   await sendOwnerNotification({
-    subject: `Payment received: ${money(amount)} from ${doc.clientName} — ${doc.number}`,
-    html: `<p style="margin:0;">${doc.clientName} paid ${money(amount)} by ${method} (${kind}) on ${doc.number}.${balanceDue(doc) > 0 ? ` ${money(balanceDue(doc))} remains.` : ' Paid in full.'}</p>`,
+    subject: `Payment received: ${money(chargedAmount)} from ${doc.clientName} — ${doc.number}`,
+    html: `<p style="margin:0;">${doc.clientName} paid ${money(chargedAmount)} by ${method} (${kind}) on ${doc.number}.${balanceDue(doc) > 0 ? ` ${money(balanceDue(doc))} remains.` : ' Paid in full.'}</p>`,
   });
   // A paid gift invoice turns into the certificate itself.
   if (doc.giftId && balanceDue(doc) <= 0 && kind !== 'cancellation_fee' && kind !== 'refund') {
@@ -396,7 +404,7 @@ export async function chargeBalance(bookingId: string): Promise<ActionResult> {
       stripePaymentIntent: intent,
       note: fee > 0 ? `Card fee ${money(fee)} charged on top` : null,
     });
-    await afterPayment(doc, due, 'card', 'balance');
+    await afterPayment(doc, due, 'card', 'balance', due + fee);
     return { ok: true };
   } catch (error) {
     console.error('[bookings] balance charged but not recorded:', error);

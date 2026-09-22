@@ -32,7 +32,7 @@ export default async function BookingConfirmedPage({
   const settings = await getSettings();
   const settled =
     sessionId && isDatabaseConfigured()
-      ? await settleCheckoutById(sessionId, settings.business.depositPercent).catch((error) => {
+      ? await settleCheckoutById(sessionId, settings.business).catch((error) => {
           console.error('[book/confirmed] settle failed:', error);
           return null;
         })

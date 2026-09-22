@@ -68,6 +68,7 @@ export async function POST(request: Request) {
       name: existing.name,
       email: existing.email,
       company: existing.company,
+      message: existing.message,
       callDate: input.callDate,
       callTime: input.callTime,
       rescheduleToken: input.token,

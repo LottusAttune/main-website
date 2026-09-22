@@ -214,6 +214,7 @@ export async function sendDiscoveryCallEmails(input: {
   name: string;
   email: string;
   company?: string | null;
+  message?: string | null;
   callDate: string;
   callTime: string;
   rescheduleToken: string;
@@ -259,6 +260,7 @@ export async function sendDiscoveryCallEmails(input: {
       Client email: <a href="mailto:${input.email}" style="color:#7c5b3b;">${input.email}</a>
       ${input.company ? `<br />Company: ${input.company}` : ''}
     </p>
+    ${input.message ? `<p style="margin:12px 0 0;padding:12px 16px;background:#f6efe5;border-left:3px solid #c6a97a;">${escapeHtml(input.message).replace(/\n/g, '<br />')}</p>` : ''}
     <p style="margin:18px 0 0;">
       Join with this link when it's time: <a href="${DISCOVERY_CALL_MEET_LINK}" style="color:#7c5b3b;">${DISCOVERY_CALL_MEET_LINK}</a>
     </p>

@@ -71,6 +71,8 @@ export type PaymentRow = {
   kind: string;
   note: string | null;
   createdAt: string;
+  /** A card payment with its own Stripe charge, not already refunded. */
+  refundable: boolean;
 };
 
 export type BookingRow = Lead;

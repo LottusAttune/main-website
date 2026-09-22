@@ -251,6 +251,24 @@ export async function getPaymentIntent(id: string): Promise<Json> {
   return stripe('GET', `/payment_intents/${id}`);
 }
 
+/**
+ * Refunds a card charge, in full or in part. Stripe finds the underlying
+ * charge from the PaymentIntent itself, so that id is all that's needed.
+ */
+export async function createRefund(
+  paymentIntentId: string,
+  amount: number,
+  idempotencyKey?: string
+): Promise<{ id: string; status: string }> {
+  const refund = await stripe(
+    'POST',
+    '/refunds',
+    { payment_intent: paymentIntentId, amount: Math.round(amount * 100) },
+    idempotencyKey
+  );
+  return { id: String(refund.id), status: String(refund.status) };
+}
+
 export async function getCheckoutSession(id: string): Promise<Json> {
   return stripe('GET', `/checkout/sessions/${id}`);
 }

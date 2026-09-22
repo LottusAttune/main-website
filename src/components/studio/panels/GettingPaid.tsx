@@ -341,15 +341,35 @@ function Receipts({
               </div>
               <div className={styles.recordValue}>{p.kind === 'refund' ? '−' : ''}{money(Math.abs(p.amount))}</div>
             </div>
-            {doc ? (
-              <div className={styles.recordActions}>
+            <div className={styles.recordActions}>
+              {doc ? (
                 <button type="button" className={`btn btn--outline ${styles.smallBtn}`} disabled={pending} onClick={() => void run({ action: 'resendReceipt', paymentId: p.id })}>
                   Resend receipt
                 </button>
+              ) : null}
+              {doc ? (
                 <a className={`btn btn--outline ${styles.smallBtn}`} href={`/d/${doc.token}`} target="_blank" rel="noreferrer">Invoice</a>
-                {balanceDue(doc) > 0 ? <span className={styles.priceNote}>{money(balanceDue(doc))} still due</span> : null}
-              </div>
-            ) : null}
+              ) : null}
+              {p.refundable ? (
+                <button
+                  type="button"
+                  className={styles.linkBtn}
+                  disabled={pending}
+                  onClick={() => {
+                    if (
+                      window.confirm(
+                        `Refund this card payment in full, including any card fee actually charged? This goes straight back to the client's card through Stripe and cannot be undone.`
+                      )
+                    ) {
+                      void run({ action: 'refundPayment', paymentId: p.id });
+                    }
+                  }}
+                >
+                  Refund
+                </button>
+              ) : null}
+              {doc && balanceDue(doc) > 0 ? <span className={styles.priceNote}>{money(balanceDue(doc))} still due</span> : null}
+            </div>
           </div>
         );
       })}

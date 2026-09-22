@@ -152,6 +152,16 @@ export async function getStudioData(): Promise<StudioData> {
 
   const documents = documentRows.rows.map(documentFromRow);
 
+  // A refund payment marks the original it reverses via `external_ref`
+  // (see refundPayment in lib/documents), so a payment already refunded
+  // once can't offer the button again.
+  const refundedIds = new Set(
+    paymentRows.rows
+      .map((row) => (row.external_ref ? String(row.external_ref) : null))
+      .filter((ref): ref is string => Boolean(ref?.startsWith('refund_of:')))
+      .map((ref) => ref.slice('refund_of:'.length))
+  );
+
   const payments: PaymentRow[] = paymentRows.rows.map((row) => ({
     id: String(row.id),
     documentId: row.document_id ? String(row.document_id) : null,
@@ -162,6 +172,12 @@ export async function getStudioData(): Promise<StudioData> {
     kind: String(row.kind),
     note: row.note ? String(row.note) : null,
     createdAt: new Date(String(row.created_at)).toISOString(),
+    refundable:
+      String(row.method) === 'card' &&
+      String(row.kind) !== 'refund' &&
+      Boolean(row.stripe_payment_intent) &&
+      Number(row.amount) > 0 &&
+      !refundedIds.has(String(row.id)),
   }));
 
   const giftCards: GiftCard[] = giftRows.rows.map((row) => ({

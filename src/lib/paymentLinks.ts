@@ -71,13 +71,17 @@ export async function deactivateAdhocPaymentLink(id: string): Promise<void> {
 }
 
 /** Called by the Stripe webhook when a checkout for one of these completes. */
-export async function recordAdhocPayment(id: string, sessionId: string | null): Promise<PaymentLinkRow | null> {
+export async function recordAdhocPayment(
+  id: string,
+  sessionId: string | null,
+  paymentIntentId: string | null = null
+): Promise<PaymentLinkRow | null> {
   const row = await sql`SELECT * FROM payment_links WHERE id = ${id}`;
   if (!row.rows[0]) return null;
   const link = paymentLinkFromRow(row.rows[0]);
   await sql`
-    INSERT INTO payments (amount, method, kind, stripe_checkout_session, note)
-    VALUES (${link.amount}, 'card', 'payment', ${sessionId}, ${`Payment link: ${link.description}${link.clientName ? ` (${link.clientName})` : ''}`})
+    INSERT INTO payments (amount, method, kind, stripe_checkout_session, stripe_payment_intent, note)
+    VALUES (${link.amount}, 'card', 'payment', ${sessionId}, ${paymentIntentId}, ${`Payment link: ${link.description}${link.clientName ? ` (${link.clientName})` : ''}`})
   `;
   await sql`
     UPDATE payment_links SET paid_at = COALESCE(paid_at, NOW()), paid_count = paid_count + 1 WHERE id = ${id}

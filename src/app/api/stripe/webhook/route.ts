@@ -36,7 +36,11 @@ export async function POST(request: Request) {
 
   if (!documentId && metadata.paymentLinkId) {
     try {
-      const link = await recordAdhocPayment(metadata.paymentLinkId, session.id ? String(session.id) : null);
+      const link = await recordAdhocPayment(
+        metadata.paymentLinkId,
+        session.id ? String(session.id) : null,
+        session.payment_intent ? String(session.payment_intent) : null
+      );
       if (link) {
         await sendOwnerNotification({
           subject: `Payment link paid: ${money(link.amount)} — ${link.description}`,

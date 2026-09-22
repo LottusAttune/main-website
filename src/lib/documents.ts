@@ -7,7 +7,7 @@ import {
   sendOwnerNotification,
 } from '@/lib/email';
 import { renderPdf } from '@/lib/pdfshift';
-import { createPaymentLink, deactivatePaymentLink, isStripeConfigured } from '@/lib/stripe';
+import { createPaymentLink, createRefund, deactivatePaymentLink, getPaymentIntent, isStripeConfigured, StripeError } from '@/lib/stripe';
 import {
   balanceDue,
   formatPlainDate,
@@ -1606,6 +1606,89 @@ export async function markDocument(
     documentId: doc.id,
     kind: `${doc.kind}_${status}`,
     body: `${doc.number}${method ? ` · ${method}` : ''}`,
+  });
+  return { ok: true };
+}
+
+/**
+ * Refunds one recorded card payment through Stripe and logs the reversal
+ * against the same invoice. Only a card payment with its own Stripe
+ * PaymentIntent can be refunded here - e-transfer, cash and "other" are
+ * outside the site's reach and stay a manual note. `external_ref` (already
+ * unique-indexed for e-transfer de-duplication) doubles as the guard against
+ * refunding the same payment twice: a second attempt collides on it and
+ * fails cleanly instead of drawing a second refund.
+ *
+ * Two different amounts are in play: `payments.amount` (and the invoice's
+ * `paid_amount`) is the pre-fee service amount our own ledger has always
+ * used, but the card was actually charged that plus the card fee. Stripe is
+ * asked to refund what it actually took - anything less would leave the
+ * client short by the fee - while the ledger reversal stays in the same
+ * pre-fee units as every other payment on the invoice.
+ */
+export async function refundPayment(paymentId: string): Promise<ActionResult> {
+  const rows = await sql`SELECT * FROM payments WHERE id = ${paymentId}`;
+  const payment = rows.rows[0];
+  if (!payment) return { ok: false, error: 'Payment not found.' };
+  if (payment.kind === 'refund') return { ok: false, error: 'That is already a refund.' };
+  if (payment.method !== 'card' || !payment.stripe_payment_intent) {
+    return { ok: false, error: 'Only a card payment can be refunded here - refund any other method directly with the client.' };
+  }
+
+  const intentId = String(payment.stripe_payment_intent);
+  const ledgerAmount = Number(payment.amount);
+  let refund: { id: string; status: string };
+  try {
+    const intent = await getPaymentIntent(intentId);
+    const chargedCents = Number(intent.amount_received ?? intent.amount ?? 0);
+    if (!(chargedCents > 0)) return { ok: false, error: 'Could not find what was actually charged on this payment.' };
+    refund = await createRefund(intentId, chargedCents / 100, `refund_${paymentId}`);
+  } catch (error) {
+    if (error instanceof StripeError) return { ok: false, error: error.message };
+    console.error('[documents] refund failed:', error);
+    return { ok: false, error: 'The refund could not be processed.' };
+  }
+
+  try {
+    await sql`
+      INSERT INTO payments (document_id, booking_id, gift_id, amount, method, kind, external_ref, note)
+      VALUES (
+        ${payment.document_id}, ${payment.booking_id}, ${payment.gift_id}, ${-ledgerAmount}, 'card', 'refund',
+        ${`refund_of:${paymentId}`}, ${`Stripe refund ${refund.id} - card fee included`}
+      )
+    `;
+  } catch (error) {
+    if (error instanceof Error && 'code' in error && (error as { code?: string }).code === '23505') {
+      return { ok: false, error: 'This payment has already been refunded.' };
+    }
+    throw error;
+  }
+
+  const documentId = payment.document_id ? String(payment.document_id) : null;
+  if (documentId) {
+    const doc = await getDocument(documentId);
+    if (doc) {
+      const paid = Math.max(0, doc.paidAmount - ledgerAmount);
+      const stillSettled = doc.total > 0 && paid >= doc.total;
+      await sql`
+        UPDATE documents SET
+          paid_amount = ${paid},
+          status = ${stillSettled ? 'paid' : doc.status === 'paid' ? 'sent' : doc.status},
+          paid_at = ${stillSettled ? doc.paidAt : null},
+          paid_method = ${stillSettled ? doc.paidMethod : null},
+          pdf = NULL, pdf_generated_at = NULL,
+          updated_at = NOW()
+        WHERE id = ${doc.id}
+      `;
+    }
+  }
+
+  await logActivity({
+    bookingId: payment.booking_id ? String(payment.booking_id) : null,
+    giftId: payment.gift_id ? String(payment.gift_id) : null,
+    documentId,
+    kind: 'refund',
+    body: `${money(ledgerAmount)} refunded by card, card fee included (Stripe ${refund.id})`,
   });
   return { ok: true };
 }

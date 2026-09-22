@@ -29,6 +29,7 @@ import {
   markDocument,
   publicUrl,
   recordPayment,
+  refundPayment,
   sendDocument,
   updateDocument,
 } from '@/lib/documents';
@@ -162,6 +163,7 @@ const action = z.discriminatedUnion('action', [
   }),
   z.object({ action: z.literal('deactivatePaymentLink'), id: z.string().uuid() }),
   z.object({ action: z.literal('resendReceipt'), paymentId: z.string().uuid() }),
+  z.object({ action: z.literal('refundPayment'), paymentId: z.string().uuid() }),
   z.object({ action: z.literal('sendDocument'), id: z.string().uuid() }),
   z.object({ action: z.literal('regeneratePdf'), id: z.string().uuid() }),
   z.object({ action: z.literal('deleteDocument'), id: z.string().uuid() }),
@@ -385,6 +387,13 @@ export async function POST(request: Request) {
         });
         if (!sent.ok) return NextResponse.json({ error: sent.error }, { status: 502 });
         await logActivity({ bookingId: doc.bookingId, giftId: doc.giftId, documentId: doc.id, kind: 'receipt_sent', body: `Receipt for ${money(chargedAmount)} resent to ${doc.clientEmail}` });
+        break;
+      }
+
+      case 'refundPayment': {
+        const result = await refundPayment(input.paymentId);
+        if (!result.ok) return NextResponse.json({ error: result.error }, { status: 400 });
+        revalidatePath('/studio');
         break;
       }
 

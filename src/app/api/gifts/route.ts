@@ -135,20 +135,25 @@ export async function POST(request: Request) {
         if (invoiceId && settings.business.autoSendInvoices && total > 0) {
           // E-transfer gets a plain ask to pay, never called an invoice and
           // never carrying a PDF - that's reserved for the one that says
-          // "paid" once the certificate itself goes out. Card already sends
-          // the buyer straight to Stripe, so the invoice email there is
-          // just their own copy of what they're paying, not an ask.
-          const sent =
-            payment?.method === 'etransfer'
-              ? await sendEtransferRequestEmail({
-                  to: input.buyerEmail,
-                  name: input.buyerName,
-                  amount: total,
-                  reference: referenceTail(payment.invoiceNumber),
-                  giftRecipient: input.recipientName,
-                })
-              : await sendDocument(invoiceId);
-          if (!sent.ok) await logActivity({ giftId, documentId: invoiceId, kind: 'email_failed', body: `Gift invoice: ${sent.error}` });
+          // "paid" once the certificate itself goes out. A working card
+          // checkout sends the buyer straight to Stripe - nothing to email
+          // them yet, same as a booking - the certificate email covers it
+          // once they've actually paid. Only if the checkout itself failed
+          // to create does the generic invoice go out, so they still have
+          // some way to pay instead of hitting a dead end.
+          if (payment?.method === 'etransfer') {
+            const sent = await sendEtransferRequestEmail({
+              to: input.buyerEmail,
+              name: input.buyerName,
+              amount: total,
+              reference: referenceTail(payment.invoiceNumber),
+              giftRecipient: input.recipientName,
+            });
+            if (!sent.ok) await logActivity({ giftId, documentId: invoiceId, kind: 'email_failed', body: `Gift invoice: ${sent.error}` });
+          } else if (!payment?.checkoutUrl) {
+            const sent = await sendDocument(invoiceId);
+            if (!sent.ok) await logActivity({ giftId, documentId: invoiceId, kind: 'email_failed', body: `Gift invoice: ${sent.error}` });
+          }
         }
         // A discount code can cover the whole gift - there is no payment
         // left to wait for, so settle it and issue the certificate right

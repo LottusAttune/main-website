@@ -938,8 +938,15 @@ function sessionBox(booking: BookingCtx): string {
 }
 
 function linesTable(doc: DocumentRow, business: BusinessSettings): string {
-  const showCardFee = doc.kind === 'invoice' && business.cardFeePercent > 0 && doc.status !== 'paid' && doc.status !== 'void';
-  const fee = showCardFee ? cardFee(doc.total, business.cardFeePercent) : 0;
+  // Paid by card: the fee was actually charged, so it belongs in the
+  // record itself, ahead of the total it changes - not hidden, and not a
+  // footnote below a total that would then be wrong.
+  const paidByCard = doc.status === 'paid' && doc.paidMethod === 'card';
+  // Not yet paid: the fee is only a preview of what card would cost, shown
+  // as a secondary line under the (unaffected) total.
+  const previewCardFee = doc.kind === 'invoice' && business.cardFeePercent > 0 && doc.status !== 'paid' && doc.status !== 'void';
+  const fee = paidByCard || previewCardFee ? cardFee(doc.total, business.cardFeePercent) : 0;
+  const grandTotal = paidByCard ? doc.total + fee : doc.total;
   return `
     <table class="lines">
       <thead><tr><th>Description</th><th class="amt">Amount</th></tr></thead>
@@ -953,8 +960,9 @@ function linesTable(doc: DocumentRow, business: BusinessSettings): string {
       <tr><td></td><td style="width:230px;"><table class="totals">
         <tr><td class="muted">Subtotal</td><td class="amt" style="text-align:right;">${money(doc.subtotal)}</td></tr>
         ${doc.taxRate > 0 ? `<tr><td class="muted">${escapeHtml(business.taxLabel)} ${doc.taxRate}%</td><td style="text-align:right;">${money(doc.tax)}</td></tr>` : ''}
-        <tr class="grand"><td>Total</td><td style="text-align:right;">${money(doc.total)} <span style="font-size:11px;font-family:Jost,Arial,sans-serif;color:#6f5f52;">CAD</span></td></tr>
-        ${showCardFee ? `<tr><td class="muted" style="font-size:10.5px;padding-top:6px;">+ ${money(fee)} card fee (${business.cardFeePercent}%)</td><td class="amt" style="text-align:right;font-size:10.5px;padding-top:6px;">${money(doc.total + fee)} by card</td></tr>` : ''}
+        ${paidByCard ? `<tr><td class="muted">Card processing fee (${business.cardFeePercent}%)</td><td class="amt" style="text-align:right;">${money(fee)}</td></tr>` : ''}
+        <tr class="grand"><td>Total</td><td style="text-align:right;">${money(grandTotal)} <span style="font-size:11px;font-family:Jost,Arial,sans-serif;color:#6f5f52;">CAD</span></td></tr>
+        ${previewCardFee ? `<tr><td class="muted" style="font-size:10.5px;padding-top:6px;">+ ${money(fee)} card fee (${business.cardFeePercent}%)</td><td class="amt" style="text-align:right;font-size:10.5px;padding-top:6px;">${money(doc.total + fee)} by card</td></tr>` : ''}
       </table></td></tr>
     </table>
   `;

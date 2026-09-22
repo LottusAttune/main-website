@@ -133,6 +133,7 @@ function compareDocs(a: DocumentRow, b: DocumentRow): number {
 const EXPORT_COLUMNS: CsvColumn<DocumentRow>[] = [
   { header: 'Number', value: (d) => d.number },
   { header: 'Kind', value: (d) => KIND_LABEL[d.kind] },
+  { header: 'For', value: (d) => whatFor(d) },
   { header: 'Client', value: (d) => d.clientName },
   { header: 'Email', value: (d) => d.clientEmail },
   { header: 'Issued', value: (d) => d.issuedOn },
@@ -147,6 +148,28 @@ const EXPORT_COLUMNS: CsvColumn<DocumentRow>[] = [
 function balanceText(doc: DocumentRow): string {
   if (doc.kind !== 'invoice' || doc.status === 'void' || doc.status === 'declined') return '—';
   return money(balanceDue(doc));
+}
+
+/**
+ * What the money is actually for - the same description already printed on
+ * the invoice/certificate itself (session format, participants, package,
+ * team-building add-on, or a gift certificate), so it can never drift from
+ * what the client sees.
+ */
+function whatFor(doc: DocumentRow): string {
+  if (doc.giftId) return 'Gift certificate';
+  let main = '';
+  const extras: string[] = [];
+  for (const line of doc.lines) {
+    if (/^(discount|gratuity|adjustment to quoted total)/i.test(line.label)) continue;
+    if (/team-building|team building/i.test(line.label)) {
+      extras.push('team-building add-on');
+      continue;
+    }
+    if (!main) main = line.label.replace(/^Immersive Soma Sound Experience[,:]?\s*/i, '');
+  }
+  if (!main) return doc.bookingId ? 'Session' : '—';
+  return extras.length ? `${main} + ${extras.join(', ')}` : main;
 }
 
 /** "in 3 days" / "5 days ago" under a due date that still matters. */
@@ -298,6 +321,7 @@ export function Invoices({ documents, payments, integrations, initialFilter = 'a
                   <tr>
                     <th>Number</th>
                     <th>Client</th>
+                    <th>For</th>
                     <th>Issued</th>
                     <th>Due</th>
                     <th>Total</th>
@@ -321,6 +345,7 @@ export function Invoices({ documents, payments, integrations, initialFilter = 'a
                             <div>{doc.clientName}</div>
                             <div className={styles.recordSub}>{doc.clientEmail}</div>
                           </td>
+                          <td>{whatFor(doc)}</td>
                           <td title={formatStudioDate(doc.issuedOn)} style={{ whiteSpace: 'nowrap' }}>
                             {formatShortDate(doc.issuedOn)}
                           </td>
@@ -346,7 +371,7 @@ export function Invoices({ documents, payments, integrations, initialFilter = 'a
                         </tr>
                         {open ? (
                           <tr>
-                            <td colSpan={8} className={local.expandCell}>
+                            <td colSpan={9} className={local.expandCell}>
                               <DocumentCard
                                 doc={doc}
                                 run={run}
@@ -377,7 +402,7 @@ export function Invoices({ documents, payments, integrations, initialFilter = 'a
                       <div className={local.grow}>
                         <div className={styles.recordTitle}>{doc.clientName}</div>
                         <div className={styles.recordSub}>
-                          {KIND_LABEL[doc.kind]} {doc.number} · issued{' '}
+                          {whatFor(doc)} · {KIND_LABEL[doc.kind]} {doc.number} · issued{' '}
                           {formatShortDate(doc.issuedOn)}
                           {doc.dueOn && isLive(doc)
                             ? ` · due ${formatShortDate(doc.dueOn)}${hint ? ` (${hint})` : ''}`

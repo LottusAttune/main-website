@@ -408,13 +408,12 @@ export async function ensureBookingDocument(
 
   const number = await nextNumber(kind, s.business.invoicePrefix || 'LA');
   const issued = todayIso();
-  // The deposit is due within the usual window, or sooner if the session
-  // itself is close: the balance date is the latest the deposit makes sense.
-  const invoiceDue = addDays(issued, s.business.invoiceDueDays);
+  // A booking invoice's due date is the deposit/balance date itself - N days
+  // before the session, per the settings - not a flat calendar window.
   const balanceDay = balanceDueOn(booking.sessionDate, s.business);
   const dueOn =
     kind === 'invoice'
-      ? balanceDay && balanceDay < invoiceDue ? balanceDay : invoiceDue
+      ? balanceDay ?? addDays(issued, s.business.invoiceDueDays)
       : addDays(issued, s.business.proposalValidDays);
 
   const inserted = await sql`
@@ -453,14 +452,16 @@ export async function insertBookingInvoice(input: {
   settings: SiteSettings;
   /** "full" when the client chose to pay everything now (e-transfer, or full by card). */
   paymentPlan?: 'deposit' | 'full';
-}): Promise<{ total: number; dueOn: string }> {
+}): Promise<{ total: number; dueOn: string | null }> {
   const { booking, settings: s } = input;
   const lines = bookingLines(booking, s);
   const { subtotal, tax, total } = totalsFor(lines, s.business.taxRatePercent);
   const issued = todayIso();
-  const invoiceDue = addDays(issued, s.business.invoiceDueDays);
+  // A deposit is due on the balance date - N days before the session - and
+  // nothing else has a forward due date: paying in full is expected right away.
   const balanceDay = balanceDueOn(booking.sessionDate, s.business);
-  const dueOn = balanceDay && balanceDay < invoiceDue ? balanceDay : invoiceDue;
+  const dueOn =
+    input.paymentPlan === 'full' ? null : balanceDay ?? addDays(issued, s.business.invoiceDueDays);
   await sql`
     INSERT INTO documents (
       id, token, kind, number, booking_id, client_name, client_email, client_company,
@@ -468,7 +469,7 @@ export async function insertBookingInvoice(input: {
     ) VALUES (
       ${input.id}, ${input.token}, 'invoice', ${input.number}, ${booking.id}, ${booking.name}, ${booking.email}, ${booking.company},
       ${JSON.stringify(lines)}::jsonb, ${subtotal}, ${s.business.taxRatePercent}, ${tax}, ${total},
-      ${issued}, ${input.paymentPlan === 'full' ? dueOn : dueOn}, ${input.paymentPlan === 'full' ? 'full' : null}
+      ${issued}, ${dueOn}, ${input.paymentPlan === 'full' ? 'full' : null}
     )
   `;
   return { total, dueOn };

@@ -594,7 +594,10 @@ export function Bookings({ bookings: allBookings, documents, integrations, busin
                   return (
                     <tr key={booking.id}>
                       <td style={{ whiteSpace: 'nowrap' }}>
-                        {formatShortDate(toTorontoDateIso(booking.createdAt))}
+                        <div>{formatShortDate(toTorontoDateIso(booking.createdAt))}</div>
+                        {booking.status === 'new_enquiry' ? (
+                          <div className={styles.priceNote}>{relativeDays(booking.createdAt, now)}</div>
+                        ) : null}
                       </td>
                       {isEditing ? (
                         <td colSpan={2}>
@@ -708,6 +711,7 @@ export function Bookings({ bookings: allBookings, documents, integrations, busin
                     <div className={styles.kvLabel}>Requested</div>
                     <div className={styles.kvValue}>
                       {formatStudioDate(toTorontoDateIso(booking.createdAt))}
+                      {booking.status === 'new_enquiry' ? ` (${relativeDays(booking.createdAt, now)})` : ''}
                     </div>
                     {booking.company ? (
                       <>

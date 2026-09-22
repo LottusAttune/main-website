@@ -5,6 +5,7 @@ import { useState } from 'react';
 import {
   documentStatusLabel,
   formatShortDate,
+  relativeDays,
   type DocumentKind,
   type DocumentRow,
   type GiftCard,
@@ -303,7 +304,10 @@ export function GiftCards({ cards, documents, integrations }: Props) {
                   </span>
 
                   <span className={styles.kvLabel}>Requested</span>
-                  <span className={styles.kvValue}>{formatShortDate(card.createdAt)}</span>
+                  <span className={styles.kvValue}>
+                    {formatShortDate(card.createdAt)}
+                    {card.status === 'requested' ? ` (${relativeDays(card.createdAt)})` : ''}
+                  </span>
 
                   <span className={styles.kvLabel}>Status</span>
                   <span className={styles.kvValue}>

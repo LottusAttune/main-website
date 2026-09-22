@@ -164,6 +164,7 @@ const action = z.discriminatedUnion('action', [
   z.object({ action: z.literal('resendReceipt'), paymentId: z.string().uuid() }),
   z.object({ action: z.literal('sendDocument'), id: z.string().uuid() }),
   z.object({ action: z.literal('regeneratePdf'), id: z.string().uuid() }),
+  z.object({ action: z.literal('deleteDocument'), id: z.string().uuid() }),
   z.object({
     action: z.literal('updateDocument'),
     id: z.string().uuid(),
@@ -404,6 +405,20 @@ export async function POST(request: Request) {
             { status: 502 }
           );
         }
+        break;
+      }
+
+      case 'deleteDocument': {
+        const doc = await getDocument(input.id);
+        if (!doc) return NextResponse.json({ error: 'Document not found.' }, { status: 404 });
+        // A real, settled payment stays a permanent record - void it
+        // instead if it needs to be superseded. Anything not yet paid
+        // (a test, a draft, an abandoned one) is fair to remove outright.
+        if (doc.status === 'paid') {
+          return NextResponse.json({ error: 'A paid document can be voided but not deleted.' }, { status: 400 });
+        }
+        await sql`DELETE FROM documents WHERE id = ${input.id}`;
+        revalidatePath('/studio');
         break;
       }
 

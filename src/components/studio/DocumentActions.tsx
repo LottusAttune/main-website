@@ -161,6 +161,20 @@ export function DocumentCard({
             Void
           </button>
         ) : null}
+        {doc.status !== 'paid' ? (
+          <button
+            type="button"
+            className={styles.linkBtn}
+            disabled={pending}
+            onClick={() => {
+              if (window.confirm(`Delete ${doc.number} permanently? This cannot be undone.`)) {
+                void run({ action: 'deleteDocument', id: doc.id });
+              }
+            }}
+          >
+            Delete
+          </button>
+        ) : null}
       </div>
 
       {paying ? (

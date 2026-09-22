@@ -354,9 +354,23 @@ export function balanceDue(doc: DocumentRow): number {
 }
 
 /** A human status for an invoice, including the partially-paid case. */
+const PAID_METHOD_LABEL: Record<string, string> = {
+  card: 'card',
+  'e-transfer': 'e-transfer',
+  cash: 'cash',
+  other: 'other',
+};
+
 export function documentStatusLabel(doc: DocumentRow, today = new Date()): string {
   if (doc.status === 'void') return 'Void';
-  if (doc.status === 'paid') return 'Paid';
+  if (doc.status === 'paid') {
+    const method = doc.paidMethod ? (PAID_METHOD_LABEL[doc.paidMethod] ?? doc.paidMethod) : null;
+    if (!method) return 'Paid';
+    // A gift invoice never carries a plan (always paid in full) - only a
+    // session invoice's deposit-vs-full choice is worth calling out.
+    const plan = doc.kind === 'invoice' ? (doc.paymentPlan === 'deposit' ? 'deposit' : 'full') : null;
+    return `Paid by ${method}${plan ? ` (${plan})` : ''}`;
+  }
   if (doc.status === 'declined') return 'Declined';
   if (doc.status === 'accepted') return 'Accepted';
   if (doc.kind === 'invoice' && doc.paidAmount > 0) return 'Deposit paid';

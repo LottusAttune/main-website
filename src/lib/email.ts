@@ -7,7 +7,7 @@ import { cardFee } from '@/lib/documents';
 import { buildDiscoveryCallIcs, buildGoogleCalendarLink } from '@/lib/ics';
 import type { DocumentKind, DocumentRow } from '@/lib/pipeline';
 import type { BusinessSettings } from '@/lib/settings';
-import { formatStudioDate } from '@/lib/pipeline';
+import { formatPlainDate, formatStudioDate } from '@/lib/pipeline';
 import { money, SITE, splitVenueDetails } from '@/lib/site';
 
 /**
@@ -385,7 +385,7 @@ export async function sendDocumentEmail(input: {
       <p style="margin:0 0 10px;">Hi ${escapeHtml(first)},</p>
       <p style="margin:0;">Thank you for your booking request. Your proposal is below${input.pdf ? ' and attached as a PDF' : ''}. When you're ready, accept it online and Silvana will confirm your date.</p>
       ${input.summaryHtml}
-      ${input.dueOn ? `<p style="margin:0 0 6px;font-size:13px;color:#6f5f52;">This proposal is valid until ${formatStudioDate(input.dueOn)}.</p>` : ''}
+      ${input.dueOn ? `<p style="margin:0 0 6px;font-size:13px;color:#6f5f52;">This proposal is valid until ${formatPlainDate(input.dueOn)}.</p>` : ''}
       ${BUTTON(input.viewUrl, 'View & accept proposal')}
       <p style="margin:12px 0 0;font-size:13px;">Questions or changes? Just reply to this email.</p>
       ${mottoHtml()}`;
@@ -393,7 +393,7 @@ export async function sendDocumentEmail(input: {
     subject = input.subject ?? `Invoice ${input.number} from Lotus Attune: ${money(input.total)}`;
     body = `
       <p style="margin:0 0 10px;">Hi ${escapeHtml(first)},</p>
-      <p style="margin:0;">${input.introHtml ?? `Please find your invoice below${input.pdf ? ' and attached as a PDF' : ''}.${input.dueOn ? ` Payment is due by <strong>${formatStudioDate(input.dueOn)}</strong>.` : ''}`}</p>
+      <p style="margin:0;">${input.introHtml ?? `Please find your invoice below${input.pdf ? ' and attached as a PDF' : ''}.${input.dueOn ? ` Payment is due by <strong>${formatPlainDate(input.dueOn)}</strong>.` : ''}`}</p>
       ${input.summaryHtml}
       <div style="margin:0 0 6px;"><div style="font-family:Arial,Helvetica,sans-serif;font-size:10.5px;letter-spacing:0.22em;text-transform:uppercase;color:#7c5b3b;margin-bottom:6px;">How to pay</div><div style="font-size:14px;">${input.paymentHtml.replace(/<a /g, '<a style="color:#7c5b3b;" ')}</div></div>
       ${BUTTON(input.viewUrl, 'View invoice')}
@@ -592,7 +592,7 @@ function balanceChargeHtml(balanceDue: number, feePercent: number, chargeDate: s
     return `<p style="margin:0 0 8px;">Remaining balance: <strong>${money(balanceDue)}</strong> due before your session.</p>`;
   }
   const total = balanceDue + cardFee(balanceDue, feePercent);
-  return `<p style="margin:0 0 8px;">Remaining balance: <strong>${money(total)}</strong> will be charged to your card on ${formatStudioDate(chargeDate)}.</p>`;
+  return `<p style="margin:0 0 8px;">Remaining balance: <strong>${money(total)}</strong> will be charged to your card on ${formatPlainDate(chargeDate)}.</p>`;
 }
 
 function paymentKindLabel(kind: string): string {
@@ -758,7 +758,7 @@ export async function sendBalanceRequestEmail(input: {
   const first = input.name.split(' ')[0] || input.name;
   const html = wrapperHtml(`
     <p style="margin:0 0 10px;">Hi ${escapeHtml(first)},</p>
-    <p style="margin:0 0 12px;">Your Lotus Attune experience is coming up on <strong>${formatStudioDate(input.sessionDate)}</strong>${input.sessionTime ? ` at ${escapeHtml(input.sessionTime)}` : ''}. The remaining balance of <strong>${money(input.balance)}</strong> on invoice ${escapeHtml(input.number)} is now due${input.dueOn ? `, by ${formatStudioDate(input.dueOn)}` : ''}.</p>
+    <p style="margin:0 0 12px;">Your Lotus Attune experience is coming up on <strong>${formatStudioDate(input.sessionDate)}</strong>${input.sessionTime ? ` at ${escapeHtml(input.sessionTime)}` : ''}. The remaining balance of <strong>${money(input.balance)}</strong> on invoice ${escapeHtml(input.number)} is now due${input.dueOn ? `, by ${formatPlainDate(input.dueOn)}` : ''}.</p>
     <div style="margin:0 0 6px;">${sectionTitle('How to pay')}<div style="font-size:14px;">${input.paymentHtml.replace(/<a /g, '<a style="color:#7c5b3b;" ')}</div></div>
     ${BUTTON(input.viewUrl, 'View invoice')}
     <p style="margin:12px 0 0;font-size:13px;">Already sent it? Thank you, please ignore this note.</p>

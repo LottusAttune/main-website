@@ -11,7 +11,7 @@ import {
   recordPayment,
   type BookingCtx,
 } from '@/lib/documents';
-import { formatStudioDate, type DocumentRow } from '@/lib/pipeline';
+import { formatPlainDate, formatStudioDate, type DocumentRow } from '@/lib/pipeline';
 import type { BusinessSettings } from '@/lib/settings';
 import { LOUNGE_MAX, money, SITE } from '@/lib/site';
 import { createCheckoutSession, getCheckoutSession, getPaymentIntent, isStripeConfigured } from '@/lib/stripe';
@@ -57,7 +57,7 @@ export async function createBookingCheckout(
     `Immersive Soma Sound Experience${who ? `, ${who}` : ''}${when ? `. ${when}` : ''}${venue ? `, ${venue}` : ''}.`,
     `Invoice ${doc.number}.`,
     plan === 'deposit'
-      ? `Paying this ${business.depositPercent}% deposit confirms your date. The remaining ${money(remaining)} is charged to this card ${business.balanceDaysBefore} days before the session${balanceDay ? `, on ${formatStudioDate(balanceDay)}` : ''}.`
+      ? `Paying this ${business.depositPercent}% deposit confirms your date. The remaining ${money(remaining)} is charged to this card ${business.balanceDaysBefore} days before the session${balanceDay ? `, on ${formatPlainDate(balanceDay)}` : ''}.`
       : 'Paid in full - there is nothing further due before your session.',
   ]
     .filter(Boolean)

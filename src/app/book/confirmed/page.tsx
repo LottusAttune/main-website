@@ -7,7 +7,7 @@ import { settleCheckoutById } from '@/lib/checkout';
 import { isDatabaseConfigured } from '@/lib/db';
 import { publicUrl } from '@/lib/documents';
 import { portalUrlForBooking } from '@/lib/portal';
-import { balanceDue, formatStudioDate } from '@/lib/pipeline';
+import { balanceDue, formatPlainDate } from '@/lib/pipeline';
 import { getSettings } from '@/lib/settings';
 import { money, SITE } from '@/lib/site';
 
@@ -73,7 +73,7 @@ export default async function BookingConfirmedPage({
                 We received {settled.plan === 'deposit' ? 'your deposit of' : 'your payment of'}{' '}
                 <strong>{money(settled.amount)}</strong> against invoice {doc.number}.
                 {remaining > 0
-                  ? ` The remaining ${money(remaining)} is charged to the same card ${settings.business.balanceDaysBefore} calendar days before your session${doc.dueOn ? `, on ${formatStudioDate(doc.dueOn)}` : ''}.`
+                  ? ` The remaining ${money(remaining)} is charged to the same card ${settings.business.balanceDaysBefore} calendar days before your session${doc.dueOn ? `, on ${formatPlainDate(doc.dueOn)}` : ''}.`
                   : ' Your invoice is paid in full.'}
               </p>
               <p className="body" style={{ fontSize: 16, lineHeight: 1.75, marginBottom: 22 }}>

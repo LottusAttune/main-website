@@ -10,6 +10,7 @@ import { renderPdf } from '@/lib/pdfshift';
 import { createPaymentLink, deactivatePaymentLink, isStripeConfigured } from '@/lib/stripe';
 import {
   balanceDue,
+  formatPlainDate,
   formatStudioDate,
   type DocumentKind,
   type DocumentLine,
@@ -876,10 +877,10 @@ function header(kind: DocumentKind, doc: DocumentRow, business: BusinessSettings
       <td style="vertical-align:top;text-align:right;">
         <div class="display" style="font-size:34px;line-height:1;margin-bottom:8px;">${title}</div>
         <div style="font-size:13px;letter-spacing:0.08em;">${escapeHtml(doc.number)}</div>
-        <div class="muted" style="margin-top:6px;">Issued ${formatStudioDate(doc.issuedOn)}</div>
-        ${doc.dueOn && kind === 'invoice' && balanceDue(doc) > 0 ? `<div class="muted">Due ${formatStudioDate(doc.dueOn)}</div>` : ''}
+        <div class="muted" style="margin-top:6px;">Issued ${formatPlainDate(doc.issuedOn)}</div>
+        ${doc.dueOn && kind === 'invoice' && balanceDue(doc) > 0 ? `<div class="muted">Due ${formatPlainDate(doc.dueOn)}</div>` : ''}
         ${kind === 'invoice' && balanceDue(doc) <= 0 ? `<div class="muted">Paid in full</div>` : ''}
-        ${doc.dueOn && kind === 'proposal' ? `<div class="muted">Valid until ${formatStudioDate(doc.dueOn)}</div>` : ''}
+        ${doc.dueOn && kind === 'proposal' ? `<div class="muted">Valid until ${formatPlainDate(doc.dueOn)}</div>` : ''}
       </td>
     </tr></table>
     <div class="rule"></div>
@@ -1006,15 +1007,15 @@ export function paymentOptionsHtml(
   } else if (deposit !== null) {
     parts.push(
       `<p style="margin:0 0 10px;">A ${business.depositPercent}% deposit of <strong>${money(deposit)}</strong> confirms your date. ` +
-        `The remaining ${money(doc.total - deposit)} is due ${business.balanceDaysBefore} calendar days before the session${balanceDay ? `, on ${formatStudioDate(balanceDay)}` : ''}.</p>`
+        `The remaining ${money(doc.total - deposit)} is due ${business.balanceDaysBefore} calendar days before the session${balanceDay ? `, on ${formatPlainDate(balanceDay)}` : ''}.</p>`
     );
   } else if (doc.bookingId && doc.paidAmount === 0 && doc.paymentPlan === 'full') {
     parts.push(
-      `<p style="margin:0 0 10px;">The full amount of <strong>${money(outstanding)}</strong> is due${doc.dueOn ? ` by ${formatStudioDate(doc.dueOn)}` : ''}. Your booking is confirmed as soon as it is received.</p>`
+      `<p style="margin:0 0 10px;">The full amount of <strong>${money(outstanding)}</strong> is due${doc.dueOn ? ` by ${formatPlainDate(doc.dueOn)}` : ''}. Your booking is confirmed as soon as it is received.</p>`
     );
   } else if (doc.paidAmount > 0 && outstanding > 0) {
     parts.push(
-      `<p style="margin:0 0 10px;">${money(doc.paidAmount)} received. The remaining <strong>${money(outstanding)}</strong> is due${doc.dueOn ? ` by ${formatStudioDate(doc.dueOn)}` : ''}.</p>`
+      `<p style="margin:0 0 10px;">${money(doc.paidAmount)} received. The remaining <strong>${money(outstanding)}</strong> is due${doc.dueOn ? ` by ${formatPlainDate(doc.dueOn)}` : ''}.</p>`
     );
   }
 
@@ -1069,7 +1070,7 @@ function paymentHistoryHtml(payments: { amount: number; method: string; kind: st
   return payments
     .map((p) => {
       const label = PAYMENT_KIND_LABEL[p.kind] ?? 'Payment';
-      const when = p.createdAt ? ` paid ${formatStudioDate(toTorontoDateIso(p.createdAt))}` : ' paid';
+      const when = p.createdAt ? ` paid ${formatPlainDate(toTorontoDateIso(p.createdAt))}` : ' paid';
       return `${label} <strong>${money(p.amount)}</strong>${when}`;
     })
     .join('<br />');
@@ -1091,11 +1092,11 @@ function paymentSummaryHtml(
   // even before the status column catches up - never show a "$0 due by..."
   // line for that.
   if (doc.status === 'paid' || outstanding <= 0) {
-    return `<p style="margin:0;">${history || `Paid in full${doc.paidAt ? ` ${formatStudioDate(toTorontoDateIso(doc.paidAt))}` : ''}${doc.paidMethod ? ` by ${escapeHtml(doc.paidMethod)}` : ''}`}.</p>`;
+    return `<p style="margin:0;">${history || `Paid in full${doc.paidAt ? ` ${formatPlainDate(toTorontoDateIso(doc.paidAt))}` : ''}${doc.paidMethod ? ` by ${escapeHtml(doc.paidMethod)}` : ''}`}.</p>`;
   }
 
   if (doc.paidAmount > 0) {
-    const balanceDay = doc.dueOn ? formatStudioDate(doc.dueOn) : `${business.balanceDaysBefore} days before the session`;
+    const balanceDay = doc.dueOn ? formatPlainDate(doc.dueOn) : `${business.balanceDaysBefore} days before the session`;
     const fee = cardFee(outstanding, business.cardFeePercent);
     const chargeLine =
       business.cardFeePercent > 0
@@ -1185,7 +1186,7 @@ export async function loadContext(doc: DocumentRow): Promise<DocumentContext> {
 function acceptanceHtml(doc: DocumentRow, ctx: DocumentContext): string {
   const a = ctx.acceptance;
   if (!a) return '';
-  const when = formatStudioDate(toTorontoDateIso(a.acceptedAt));
+  const when = formatPlainDate(toTorontoDateIso(a.acceptedAt));
   const sig = a.signaturePng && a.signaturePng.startsWith('data:image/png;base64,')
     ? `<img src="${a.signaturePng}" alt="Signature" style="display:block;height:64px;margin:6px 0 4px;" />`
     : '';
@@ -1341,8 +1342,8 @@ export async function sendDocument(id: string, introHtmlOverride?: string): Prom
   const depositIntro =
     deposit !== null
       ? `Thank you for your booking request. Your invoice is below${pdf ? ' and attached as a PDF' : ''}. ` +
-        `A ${ctx.business.depositPercent}% deposit of <strong>${money(deposit)}</strong> confirms your date${ready.dueOn ? `, due by <strong>${formatStudioDate(ready.dueOn)}</strong>` : ''}. ` +
-        `The remaining ${money(ready.total - deposit)} is due ${ctx.business.balanceDaysBefore} calendar days before your session${balanceDay ? `, on ${formatStudioDate(balanceDay)}` : ''}.`
+        `A ${ctx.business.depositPercent}% deposit of <strong>${money(deposit)}</strong> confirms your date${ready.dueOn ? `, due by <strong>${formatPlainDate(ready.dueOn)}</strong>` : ''}. ` +
+        `The remaining ${money(ready.total - deposit)} is due ${ctx.business.balanceDaysBefore} calendar days before your session${balanceDay ? `, on ${formatPlainDate(balanceDay)}` : ''}.`
       : undefined;
 
   const result = await sendDocumentEmail({

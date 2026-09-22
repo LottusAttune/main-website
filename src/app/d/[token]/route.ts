@@ -10,7 +10,7 @@ import {
   markViewed,
   paymentOptionsHtml,
 } from '@/lib/documents';
-import { formatStudioDate } from '@/lib/pipeline';
+import { formatPlainDate } from '@/lib/pipeline';
 import { portalUrlForBooking } from '@/lib/portal';
 import { money, SITE } from '@/lib/site';
 
@@ -80,7 +80,7 @@ export async function GET(request: Request, { params }: { params: Promise<{ toke
       const err = url.searchParams.get('error');
       banner = `
         <form class="bar sign" method="post" action="/d/${escapeHtml(token)}/accept" id="signForm">
-          <div class="signIntro">Ready to go ahead? Type your name and sign below${doc.dueOn ? ` (valid until ${formatStudioDate(doc.dueOn)})` : ''}.${err === 'name' ? ' <strong>Please type your name.</strong>' : err === 'accept' ? ' <strong>This proposal could not be accepted - please reply to the email.</strong>' : ''}</div>
+          <div class="signIntro">Ready to go ahead? Type your name and sign below${doc.dueOn ? ` (valid until ${formatPlainDate(doc.dueOn)})` : ''}.${err === 'name' ? ' <strong>Please type your name.</strong>' : err === 'accept' ? ' <strong>This proposal could not be accepted - please reply to the email.</strong>' : ''}</div>
           <label class="signLabel">Full name<input type="text" name="name" required maxlength="120" autocomplete="name" value="${escapeHtml(doc.clientName)}" /></label>
           <div class="signLabel">Signature <span class="signHint">draw with your finger or mouse</span>
             <canvas id="sigPad" width="600" height="180"></canvas>

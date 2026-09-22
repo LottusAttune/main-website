@@ -1,7 +1,7 @@
 import { Reveal } from '@/components/common/Reveal';
 import { SiteFooter } from '@/components/chrome/SiteFooter';
 import { SiteNav } from '@/components/chrome/SiteNav';
-import { formatStudioDate } from '@/lib/pipeline';
+import { formatPlainDate, formatStudioDate } from '@/lib/pipeline';
 import type { PortalData } from '@/lib/portal';
 import { money, SITE, splitVenueDetails, toTorontoDateIso } from '@/lib/site';
 import { Countdown } from './Countdown';
@@ -130,9 +130,9 @@ export function PortalView({ data }: { data: PortalData }) {
                           ? (() => {
                               const fee = Math.round((data.balance * settings.business.cardFeePercent) / 100);
                               const total = data.balance + fee;
-                              return `The balance of ${money(total)} is charged to your card on file ${settings.business.balanceDaysBefore} calendar days before the session${data.balanceDay ? `, on ${formatStudioDate(data.balanceDay)}` : ''}.`;
+                              return `The balance of ${money(total)} is charged to your card on file ${settings.business.balanceDaysBefore} calendar days before the session${data.balanceDay ? `, on ${formatPlainDate(data.balanceDay)}` : ''}.`;
                             })()
-                          : `The balance is due ${settings.business.balanceDaysBefore} calendar days before the session${data.balanceDay ? `, by ${formatStudioDate(data.balanceDay)}` : ''}. Pay by card below, or by e-transfer using the details on your invoice.`
+                          : `The balance is due ${settings.business.balanceDaysBefore} calendar days before the session${data.balanceDay ? `, by ${formatPlainDate(data.balanceDay)}` : ''}. Pay by card below, or by e-transfer using the details on your invoice.`
                         : `A ${settings.business.depositPercent}% deposit by card confirms your date, or send the full amount by Interac e-transfer using the details on your invoice.`}
                   </p>
                   <div className={styles.actions}>

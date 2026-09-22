@@ -414,6 +414,16 @@ export function formatStudioDateParts(iso: string | null): { date: string; weekd
   return { date: `${MONTHS_SHORT[month - 1]} ${String(day).padStart(2, '0')}, ${year}`, weekday };
 }
 
+/**
+ * "Sept 05, 2026" - `formatStudioDate` without the weekday. The weekday
+ * only earns its place next to the session date itself, so it's clear which
+ * day of the week the client is booked for; an issued/due/paid/valid-until
+ * date isn't a day anyone needs to recognize by name.
+ */
+export function formatPlainDate(iso: string | null): string {
+  return formatStudioDateParts(iso).date;
+}
+
 /** "3 days ago" / "today" / "in 2 days", from an ISO date or timestamp. */
 export function relativeDays(iso: string | null, now = new Date()): string {
   if (!iso) return '';

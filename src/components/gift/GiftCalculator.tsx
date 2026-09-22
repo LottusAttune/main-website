@@ -577,7 +577,7 @@ export function GiftCalculator({ pricing, codes, payTerms }: Props) {
                 value={recipientEmail}
                 onChange={(e) => setRecipientEmail(e.target.value)}
               />
-              <p className={styles.note} style={{ margin: '-4px 0 0' }}>
+              <p className={styles.note} style={{ margin: '-4px 0 0', padding: '0 18px' }}>
                 Add their email to send them a copy directly once it&apos;s paid. Leave it blank
                 if you&apos;d rather choose the moment yourself.
               </p>

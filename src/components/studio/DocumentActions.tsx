@@ -147,13 +147,17 @@ export function DocumentCard({
         >
           PDF
         </a>
-        {live && doc.status !== 'paid' ? (
+        {live ? (
           <button
             type="button"
             className={styles.linkBtn}
             disabled={pending}
             onClick={() => {
-              if (window.confirm(`Void ${doc.number}? A new one can be created afterwards.`)) {
+              const message =
+                doc.status === 'paid'
+                  ? `Void ${doc.number}? It has been marked paid - voiding it does not remove or refund that payment, it only takes the document out of your active list. A new one can be created afterwards.`
+                  : `Void ${doc.number}? A new one can be created afterwards.`;
+              if (window.confirm(message)) {
                 void run({ action: 'markDocument', id: doc.id, status: 'void' });
               }
             }}

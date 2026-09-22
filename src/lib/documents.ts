@@ -1264,7 +1264,7 @@ function certificateHtml(doc: DocumentRow, ctx: DocumentContext): string {
   return `<!doctype html><html><head><meta charset="utf-8" /><title>${escapeHtml(doc.number)}</title><style>
     @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,500&family=Jost:wght@400;500;600&display=swap');
     * { box-sizing: border-box; } body { margin: 0; background: #fff; font-family: 'Jost', Arial, sans-serif; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-    .cert { width: 7in; height: 4.5in; margin: 0 auto; padding: 5px; background: linear-gradient(135deg, #f0e2c4 0%, #a8875a 22%, #6b4f30 45%, #a8875a 68%, #ddc79a 86%, #f0e2c4 100%); display: flex; }
+    .cert { width: 7in; min-height: 4.5in; margin: 0 auto; padding: 5px; background: linear-gradient(135deg, #f0e2c4 0%, #a8875a 22%, #6b4f30 45%, #a8875a 68%, #ddc79a 86%, #f0e2c4 100%); display: flex; }
     .inner { flex: 1; position: relative; display: flex; flex-direction: column; background: radial-gradient(120% 90% at 50% 0%, rgba(198,169,122,0.16), transparent 62%), linear-gradient(170deg, #fffdfa 0%, #f5ede1 100%); }
     .inner::before { content: ''; position: absolute; inset: 8px; border: 1px solid rgba(139,106,69,0.55); pointer-events: none; }
     .content { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 14px 44px; }

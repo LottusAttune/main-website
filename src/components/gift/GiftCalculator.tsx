@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useId, useState } from 'react';
+import { useEffect, useId, useRef, useState } from 'react';
 
 import { IncludedModal } from '@/components/common/IncludedModal';
 import { giftQuoteFor } from '@/lib/quote';
@@ -69,6 +69,7 @@ export function GiftCalculator({ pricing, codes, payTerms }: Props) {
     Record<string, string[] | undefined>
   >({});
   const [sent, setSent] = useState(false);
+  const asideRef = useRef<HTMLElement>(null);
   const [issuedCode, setIssuedCode] = useState('');
   const [redirecting, setRedirecting] = useState(false);
   const [payBy, setPayBy] = useState<'card' | 'etransfer'>('card');
@@ -113,6 +114,14 @@ export function GiftCalculator({ pricing, codes, payTerms }: Props) {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  // The confirmation replaces the form controls in place - on a shorter
+  // screen (or scrolled down to reach the submit button) it can render
+  // below the fold, where "Thank you" is never seen without scrolling
+  // further by hand.
+  useEffect(() => {
+    if (sent) asideRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }, [sent]);
 
   const sessionsId = useId();
   const participantsId = useId();
@@ -449,7 +458,7 @@ export function GiftCalculator({ pricing, codes, payTerms }: Props) {
         ) : null}
       </div>
 
-      <aside className={styles.aside}>
+      <aside className={styles.aside} ref={asideRef}>
         {sent ? (
           <>
             <div className={styles.asideTitle}>Gift Certificate</div>

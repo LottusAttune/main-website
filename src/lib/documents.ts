@@ -941,7 +941,7 @@ function linesTable(doc: DocumentRow, business: BusinessSettings): string {
   // Paid by card: the fee was actually charged, so it belongs in the
   // record itself, ahead of the total it changes - not hidden, and not a
   // footnote below a total that would then be wrong.
-  const paidByCard = doc.status === 'paid' && doc.paidMethod === 'card';
+  const paidByCard = doc.kind === 'invoice' && doc.status === 'paid' && doc.paidMethod === 'card';
   // Not yet paid: the fee is only a preview of what card would cost, shown
   // as a secondary line under the (unaffected) total.
   const previewCardFee = doc.kind === 'invoice' && business.cardFeePercent > 0 && doc.status !== 'paid' && doc.status !== 'void';

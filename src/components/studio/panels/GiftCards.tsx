@@ -80,6 +80,7 @@ export function GiftCards({ cards, documents, integrations }: Props) {
   const [editRecipientEmail, setEditRecipientEmail] = useState('');
   const [editBuyerName, setEditBuyerName] = useState('');
   const [editBuyerEmail, setEditBuyerEmail] = useState('');
+  const [openPaperworkId, setOpenPaperworkId] = useState<string | null>(null);
 
   const startEdit = (card: GiftCard) => {
     setEditingId(card.id);
@@ -219,7 +220,12 @@ export function GiftCards({ cards, documents, integrations }: Props) {
                       <div className={styles.recordSub}>from {card.buyerName}</div>
                     ) : null}
                   </div>
-                  <div className={styles.recordValue}>{money(card.total)}</div>
+                  <div style={{ textAlign: 'right' }}>
+                    <div className={styles.recordValue}>{money(card.total)}</div>
+                    {invoice?.status === 'paid' ? (
+                      <div className={styles.priceNote}>{documentStatusLabel(invoice)}</div>
+                    ) : null}
+                  </div>
                 </div>
 
                 {editingId === card.id ? (
@@ -317,65 +323,78 @@ export function GiftCards({ cards, documents, integrations }: Props) {
                 )}
 
                 <div className={local.paperwork}>
-                  <div className={local.paperworkLabel}>Paperwork</div>
+                  <button
+                    type="button"
+                    className={`btn btn--outline ${styles.smallBtn}`}
+                    aria-expanded={openPaperworkId === card.id}
+                    onClick={() =>
+                      setOpenPaperworkId((current) => (current === card.id ? null : card.id))
+                    }
+                  >
+                    {openPaperworkId === card.id ? 'Hide paperwork' : 'Paperwork'}
+                  </button>
 
-                  {invoice ? (
-                    <DocumentCard
-                      doc={invoice}
-                      run={run}
-                      pending={pending}
-                      integrations={integrations}
-                    />
-                  ) : (
-                    <div className={local.createRow}>
-                      <button
-                        type="button"
-                        className={DARK}
-                        disabled={pending}
-                        onClick={() =>
-                          void run({
-                            action: 'createGiftDocument',
-                            giftId: card.id,
-                            kind: 'invoice',
-                          })
-                        }
-                      >
-                        Create invoice
-                      </button>
-                      <span className={styles.priceNote}>Sent to the buyer to pay.</span>
-                    </div>
-                  )}
+                  {openPaperworkId === card.id ? (
+                    <div className={local.paperworkBody}>
+                      {invoice ? (
+                        <DocumentCard
+                          doc={invoice}
+                          run={run}
+                          pending={pending}
+                          integrations={integrations}
+                        />
+                      ) : (
+                        <div className={local.createRow}>
+                          <button
+                            type="button"
+                            className={DARK}
+                            disabled={pending}
+                            onClick={() =>
+                              void run({
+                                action: 'createGiftDocument',
+                                giftId: card.id,
+                                kind: 'invoice',
+                              })
+                            }
+                          >
+                            Create invoice
+                          </button>
+                          <span className={styles.priceNote}>Sent to the buyer to pay.</span>
+                        </div>
+                      )}
 
-                  {certificate ? (
-                    <DocumentCard
-                      doc={certificate}
-                      run={run}
-                      pending={pending}
-                      integrations={integrations}
-                    />
-                  ) : (
-                    <div className={local.createRow}>
-                      <button
-                        type="button"
-                        className={invoice && invoicePaid ? DARK : OUTLINE}
-                        disabled={pending}
-                        onClick={() =>
-                          void run({
-                            action: 'createGiftDocument',
-                            giftId: card.id,
-                            kind: 'certificate',
-                          })
-                        }
-                      >
-                        Create certificate
-                      </button>
-                      {!invoicePaid ? (
-                        <span className={styles.priceNote}>
-                          Usually sent once the invoice is paid
-                        </span>
-                      ) : null}
+                      {certificate ? (
+                        <DocumentCard
+                          doc={certificate}
+                          run={run}
+                          pending={pending}
+                          integrations={integrations}
+                        />
+                      ) : (
+                        <div className={local.createRow}>
+                          <button
+                            type="button"
+                            className={invoice && invoicePaid ? DARK : OUTLINE}
+                            disabled={pending}
+                            onClick={() =>
+                              void run({
+                                action: 'createGiftDocument',
+                                giftId: card.id,
+                                kind: 'certificate',
+                              })
+                            }
+                          >
+                            Create certificate
+                          </button>
+                          {!invoicePaid ? (
+                            <span className={styles.priceNote}>
+                              Usually sent once the invoice is paid
+                            </span>
+                          ) : null}
+                        </div>
+                      )}
                     </div>
-                  )}
+                  ) : null}
                 </div>
 
                 <div className={styles.recordActions}>

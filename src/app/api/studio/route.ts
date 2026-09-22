@@ -19,6 +19,7 @@ import {
 } from '@/lib/calendar';
 import { isDatabaseConfigured, sql } from '@/lib/db';
 import {
+  cardFee,
   createStandaloneDocument,
   ensureBookingDocument,
   ensureGiftDocument,
@@ -34,6 +35,7 @@ import {
 import { sendReceiptEmail } from '@/lib/email';
 import { createAdhocPaymentLink, deactivateAdhocPaymentLink } from '@/lib/paymentLinks';
 import { balanceDue, STAGE_KEYS, STAGES } from '@/lib/pipeline';
+import { getSettings } from '@/lib/settings';
 import { money } from '@/lib/site';
 import { StripeError } from '@/lib/stripe';
 
@@ -363,18 +365,25 @@ export async function POST(request: Request) {
         if (!row?.document_id) return NextResponse.json({ error: 'No invoice on this payment.' }, { status: 400 });
         const doc = await getDocument(String(row.document_id));
         if (!doc) return NextResponse.json({ error: 'Invoice not found.' }, { status: 404 });
+        const amount = Number(row.amount);
+        const method = String(row.method);
+        // Same rule as every automatic payment: a card receipt quotes what
+        // actually left the card, not the pre-fee service amount recorded
+        // against the invoice.
+        const settings = await getSettings();
+        const chargedAmount = method === 'card' ? amount + cardFee(amount, settings.business.cardFeePercent) : amount;
         const sent = await sendReceiptEmail({
           name: doc.clientName,
           email: doc.clientEmail,
           number: doc.number,
-          amount: Number(row.amount),
-          method: String(row.method),
+          amount: chargedAmount,
+          method,
           kind: String(row.kind),
           balanceDue: balanceDue(doc),
           viewUrl: publicUrl(doc),
         });
         if (!sent.ok) return NextResponse.json({ error: sent.error }, { status: 502 });
-        await logActivity({ bookingId: doc.bookingId, giftId: doc.giftId, documentId: doc.id, kind: 'receipt_sent', body: `Receipt for ${money(Number(row.amount))} resent to ${doc.clientEmail}` });
+        await logActivity({ bookingId: doc.bookingId, giftId: doc.giftId, documentId: doc.id, kind: 'receipt_sent', body: `Receipt for ${money(chargedAmount)} resent to ${doc.clientEmail}` });
         break;
       }
 

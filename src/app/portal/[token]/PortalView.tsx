@@ -124,7 +124,7 @@ export function PortalView({ data }: { data: PortalData }) {
                   </div>
                   <p className={styles.note}>
                     {data.balance <= 0
-                      ? 'Paid in full - there is nothing further due before your session.'
+                      ? 'Paid in full - no further payment is required before your session.'
                       : data.paid > 0
                         ? booking.cardOnFile
                           ? (() => {
@@ -139,7 +139,7 @@ export function PortalView({ data }: { data: PortalData }) {
                     <p className={styles.note}>
                       Gift certificate <strong>{data.giftCreditRemaining.code}</strong> still has{' '}
                       <strong>{money(data.giftCreditRemaining.remaining)}</strong> left on it - keep the code for a
-                      future booking, it doesn&rsquo;t expire.
+                      future booking, with no expiration date.
                     </p>
                   ) : null}
                   <div className={styles.actions}>

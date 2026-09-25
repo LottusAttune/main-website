@@ -380,7 +380,7 @@ export function BookingForm({
               payment.giftApplied > 0
                 ? `A ${money(payment.giftApplied)} gift certificate credit was applied.${
                     payment.giftRemaining > 0
-                      ? ` ${money(payment.giftRemaining)} remains on it for a future booking - it doesn't expire.`
+                      ? ` ${money(payment.giftRemaining)} remains on it for a future booking, with no expiration date.`
                       : ''
                   } `
                 : '';
@@ -398,7 +398,7 @@ export function BookingForm({
                 <p className={styles.successBody}>
                   {giftNote}
                   {amountDue <= 0
-                    ? 'Nothing further is due - your booking is confirmed.'
+                    ? 'No further payment is required - your booking is confirmed.'
                     : payment.deposit != null
                       ? `A ${payment.depositPercent}% deposit of ${money(payment.deposit)} confirms your date. The remaining ${money(amountDue - payment.deposit)} is due four calendar days before your session.`
                       : payment.method === 'etransfer'
@@ -911,10 +911,10 @@ export function BookingForm({
             <div className={styles.payGroupNote}>
               {money(giftCreditApplied)} applied from {code.gift?.code}.{' '}
               {amountDue <= 0
-                ? 'That covers this booking in full - nothing more to pay now.'
+                ? 'That covers this booking in full - no further payment is required.'
                 : `${money(amountDue)} still to pay below.`}
               {code.gift && code.gift.remaining - giftCreditApplied > 0
-                ? ` ${money(code.gift.remaining - giftCreditApplied)} will still be left on the certificate as credit for a future booking - it doesn't expire.`
+                ? ` ${money(code.gift.remaining - giftCreditApplied)} will still be left on the certificate as credit for a future booking, with no expiration date.`
                 : ''}
             </div>
           </div>
@@ -951,7 +951,7 @@ export function BookingForm({
                   onClick={() => setPlan('full')}
                 >
                   <span className={styles.tierLabel}>Pay in full</span>
-                  <span className={styles.timeNote}>{money(fullWithFee)} now, nothing more to pay</span>
+                  <span className={styles.timeNote}>{money(fullWithFee)} now, no further payment required</span>
                 </button>
               </div>
               <div className={styles.payGroupNote}>
@@ -1034,7 +1034,7 @@ export function BookingForm({
         </button>
         <p className={styles.nextNote}>
           {amountDue <= 0 && people >= 1
-            ? 'Your gift certificate covers this booking - nothing more to pay. Your date is confirmed once we receive your request.'
+            ? 'Your gift certificate covers this booking - no further payment is required. Your date is confirmed once we receive your request.'
             : plan === 'etransfer'
               ? 'Next: the e-transfer details. Your booking is confirmed once we receive the transfer.'
               : 'Next: the secure card payment page (Stripe). Your date is held once the payment is made.'}

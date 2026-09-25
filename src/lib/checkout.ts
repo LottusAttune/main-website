@@ -58,7 +58,7 @@ export async function createBookingCheckout(
     `Invoice ${doc.number}.`,
     plan === 'deposit'
       ? `Paying this ${business.depositPercent}% deposit confirms your date. The remaining ${money(remaining)} is charged to this card ${business.balanceDaysBefore} days before the session${balanceDay ? `, on ${formatPlainDate(balanceDay)}` : ''}.`
-      : 'Paid in full - there is nothing further due before your session.',
+      : 'Paid in full - no further payment is required before your session.',
   ]
     .filter(Boolean)
     .join(' ');

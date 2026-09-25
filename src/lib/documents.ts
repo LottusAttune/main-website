@@ -1080,7 +1080,7 @@ export function paymentOptionsHtml(
   // invoice already nets to zero) leaves nothing to pay - never show a due
   // date or payment methods for money that isn't owed.
   if (outstanding <= 0) {
-    return withIntro ? '<p style="margin:0;">Nothing further is due - this invoice is paid in full.</p>' : '';
+    return withIntro ? '<p style="margin:0;">No further payment is required - this invoice is paid in full.</p>' : '';
   }
 
   const parts: string[] = [];
@@ -1175,7 +1175,7 @@ function paymentSummaryHtml(
   // even before the status column catches up - never show a "$0 due by..."
   // line for that.
   if (doc.status === 'paid' || outstanding <= 0) {
-    return `<p style="margin:0;">${history || `Paid in full${doc.paidAt ? ` ${formatPlainDate(toTorontoDateIso(doc.paidAt))}` : ''}${doc.paidMethod ? ` by ${escapeHtml(doc.paidMethod)}` : ''}`}.</p>`;
+    return `<p style="margin:0;">${history || `Paid in full${doc.paidAt ? ` ${formatPlainDate(toTorontoDateIso(doc.paidAt))}` : ''}${doc.paidMethod ? ` by ${escapeHtml(doc.paidMethod.replace(/_/g, ' '))}` : ''}`}.</p>`;
   }
 
   if (doc.paidAmount > 0) {

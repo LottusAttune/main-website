@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useMemo, useState, type ReactNode } from 'react';
 
 import { Calendar, formatDay, isoDay } from '@/components/booking/Calendar';
 import type { BlockedCallTime } from '@/lib/settings';
@@ -11,12 +11,15 @@ type Props = {
   blockedDates: string[];
   blockedCallTimes: BlockedCallTime[];
   leadDays: number;
+  /** The page's own title/intro, shown above the form - but not once it's been replaced by the confirmation. */
+  header?: ReactNode;
 };
 
 export function DiscoveryCallForm({
   blockedDates,
   blockedCallTimes,
   leadDays,
+  header,
 }: Props) {
   const [date, setDate] = useState<Date | null>(null);
   const [time, setTime] = useState<string | null>(null);
@@ -116,7 +119,9 @@ export function DiscoveryCallForm({
   }
 
   return (
-    <form className={styles.layout} onSubmit={handleSubmit} noValidate>
+    <>
+      {header}
+      <form className={styles.layout} onSubmit={handleSubmit} noValidate>
       {/* ---------- 01 Date ---------- */}
       <div className={styles.step}>
         <div className={styles.stepHead}>
@@ -246,5 +251,6 @@ export function DiscoveryCallForm({
         ) : null}
       </div>
     </form>
+    </>
   );
 }

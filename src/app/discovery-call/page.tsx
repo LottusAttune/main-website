@@ -33,39 +33,6 @@ export default async function DiscoveryCallPage() {
       <main>
         <section
           style={{
-            padding: 'clamp(28px, 4vw, 40px) var(--space-gutter) 24px',
-            maxWidth: 'var(--width-content)',
-            margin: '0 auto',
-          }}
-          aria-labelledby="discovery-heading"
-        >
-          <div className="eyebrow" style={{ fontSize: 15, marginBottom: 12 }}>
-            Discovery Call
-          </div>
-          <h1
-            id="discovery-heading"
-            className="display"
-            style={{
-              fontSize: 'clamp(26px, 3.4vw, 44px)',
-              lineHeight: 1.14,
-              margin: '0 0 10px',
-              maxWidth: 900,
-            }}
-          >
-            Have a question before you book?
-          </h1>
-          <p
-            className="lede"
-            style={{ maxWidth: 740, fontSize: 15.5, lineHeight: 1.65 }}
-          >
-            Please take a moment to explore the website first. If you
-            still have questions, Silvana is happy to connect on a short
-            call — no cost, no obligation.
-          </p>
-        </section>
-
-        <section
-          style={{
             padding: '0 var(--space-gutter) clamp(28px, 4vw, 48px)',
             maxWidth: 'var(--width-content)',
             margin: '0 auto',
@@ -76,6 +43,21 @@ export default async function DiscoveryCallPage() {
             blockedDates={closedDates}
             blockedCallTimes={closedTimes}
             leadDays={DISCOVERY_CALL_LEAD_DAYS}
+            header={
+              <section
+                style={{
+                  position: 'relative',
+                  padding: 'clamp(28px, 4vw, 40px) 0 24px',
+                  maxWidth: 'var(--width-content)',
+                  margin: '0 auto',
+                }}
+                aria-label="Discovery Call"
+              >
+                <div className="eyebrow" style={{ fontSize: 15 }}>
+                  Discovery Call
+                </div>
+              </section>
+            }
           />
         </section>
       </main>

@@ -358,6 +358,11 @@ export function BookingForm({
   };
 
   if (submitted) {
+    // This screen only ever shows for e-transfer (always the full amount,
+    // never a deposit, never Stripe) or a booking a gift certificate covers
+    // in full - a real card payment redirects straight to Stripe checkout
+    // and never lands here at all, so there is no "deposit" case to word for.
+    const amountDue = payment ? Math.max(0, payment.invoiceTotal - payment.giftApplied) : 0;
     return (
       <div className={`card ${styles.success}`} role="status" tabIndex={-1} ref={(el) => el?.focus()}>
         <h2 className={styles.successTitle}>Request confirmed</h2>
@@ -366,16 +371,16 @@ export function BookingForm({
           <div>
             <div className={styles.successLabel}>What you can expect</div>
             <p className={styles.successBody}>
-              Your date is held once payment is received
-              {payment ? `, against invoice ${payment.invoiceNumber}` : ''}.
-              {payment?.deposit != null ? ` A ${payment.depositPercent}% deposit confirms your date.` : ''}{' '}
-              You&rsquo;ll hear from us by email as soon as it&rsquo;s confirmed.
+              {amountDue <= 0
+                ? 'Your date is confirmed. A confirmation email is on its way to you with all the details.'
+                : `Your date is held until we receive your e-transfer${
+                    payment ? `, against invoice ${payment.invoiceNumber}` : ''
+                  }. You'll hear from us by email as soon as it's received.`}
             </p>
           </div>
         </div>
         {payment ? (
           (() => {
-            const amountDue = Math.max(0, payment.invoiceTotal - payment.giftApplied);
             const giftNote =
               payment.giftApplied > 0
                 ? `A ${money(payment.giftApplied)} gift certificate credit was applied.${

@@ -152,6 +152,8 @@ export async function POST(request: Request) {
       invoiceNumber: string;
       invoiceTotal: number;
       giftApplied: number;
+      /** What's left on the certificate after this booking, for a future one. */
+      giftRemaining: number;
       deposit: number | null;
       depositPercent: number;
       checkoutUrl: string | null;
@@ -196,10 +198,12 @@ export async function POST(request: Request) {
         // way the no-gift-code path does below.
         let checkout: { url: string; amount: number; plan: 'deposit' | 'full' } | null = null;
         let giftApplied = 0;
+        let giftRemaining = 0;
         if (giftCode) {
           await insertBookingInvoice({ id, token, number, booking, settings, paymentPlan: input.paymentPlan === 'deposit' ? 'deposit' : 'full' });
           const redeemed = await redeemGiftCredit(giftCode, id);
           giftApplied = redeemed.applied;
+          giftRemaining = redeemed.remainingAfter;
           if (giftApplied <= 0) {
             // The client already validated this code before submitting -
             // getting here means it was used up or voided in the meantime.
@@ -241,6 +245,7 @@ export async function POST(request: Request) {
           invoiceNumber: number,
           invoiceTotal,
           giftApplied,
+          giftRemaining,
           // E-transfer is always the full amount: nothing left to chase later.
           deposit: byCard && checkout?.plan === 'deposit' ? checkout.amount : null,
           depositPercent: settings.business.depositPercent,

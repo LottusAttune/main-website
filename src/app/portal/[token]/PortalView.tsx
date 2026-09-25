@@ -135,6 +135,13 @@ export function PortalView({ data }: { data: PortalData }) {
                           : `The balance is due ${settings.business.balanceDaysBefore} calendar days before the session${data.balanceDay ? `, by ${formatPlainDate(data.balanceDay)}` : ''}. Pay by card below, or by e-transfer using the details on your invoice.`
                         : `A ${settings.business.depositPercent}% deposit by card confirms your date, or send the full amount by Interac e-transfer using the details on your invoice.`}
                   </p>
+                  {data.giftCreditRemaining ? (
+                    <p className={styles.note}>
+                      Gift certificate <strong>{data.giftCreditRemaining.code}</strong> still has{' '}
+                      <strong>{money(data.giftCreditRemaining.remaining)}</strong> left on it - keep the code for a
+                      future booking.
+                    </p>
+                  ) : null}
                   <div className={styles.actions}>
                     {data.balance > 0 && data.payUrl && !(data.paid > 0 && booking.cardOnFile) ? (
                       <a className="btn btn--dark" href={data.payUrl}>

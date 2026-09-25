@@ -852,25 +852,25 @@ export async function recordPayment(input: {
 export async function redeemGiftCredit(
   code: string,
   documentId: string
-): Promise<{ applied: number; error?: string }> {
+): Promise<{ applied: number; remainingAfter: number; error?: string }> {
   const normalized = code.trim().toUpperCase();
-  if (!normalized) return { applied: 0 };
+  if (!normalized) return { applied: 0, remainingAfter: 0 };
 
   const rows = await sql`SELECT id, total, redeemed_amount, status FROM gift_requests WHERE code = ${normalized}`;
   const gift = rows.rows[0];
   if (!gift || gift.status !== 'active') {
-    return { applied: 0, error: 'That gift certificate code is not recognised.' };
+    return { applied: 0, remainingAfter: 0, error: 'That gift certificate code is not recognised.' };
   }
   const remaining = Number(gift.total) - Number(gift.redeemed_amount ?? 0);
   if (remaining <= 0) {
-    return { applied: 0, error: 'This gift certificate has already been fully used.' };
+    return { applied: 0, remainingAfter: 0, error: 'This gift certificate has already been fully used.' };
   }
 
   const doc = await getDocument(documentId);
-  if (!doc) return { applied: 0, error: 'Invoice not found.' };
+  if (!doc) return { applied: 0, remainingAfter: remaining, error: 'Invoice not found.' };
   const due = doc.total - doc.paidAmount;
   const applied = Math.min(remaining, due);
-  if (applied <= 0) return { applied: 0 };
+  if (applied <= 0) return { applied: 0, remainingAfter: remaining };
 
   const giftId = String(gift.id);
   await recordPayment({
@@ -880,10 +880,11 @@ export async function redeemGiftCredit(
     giftId,
     note: `Gift certificate ${normalized}`,
   });
+  const remainingAfter = remaining - applied;
   // Fully spent moves it into the same "Redeemed" bucket Studio's own
   // manual toggle uses, so it stops showing as active there too - a
   // partially-used certificate stays active, with its remaining credit.
-  const fullySpent = remaining - applied <= 0;
+  const fullySpent = remainingAfter <= 0;
   await sql`
     UPDATE gift_requests
     SET redeemed_amount = redeemed_amount + ${applied}, status = ${fullySpent ? 'redeemed' : 'active'}
@@ -894,10 +895,29 @@ export async function redeemGiftCredit(
     giftId,
     kind: 'gift_redeemed',
     body: `${money(applied)} applied from gift certificate ${normalized}${
-      remaining - applied > 0 ? ` - ${money(remaining - applied)} left as credit for a future booking` : ''
+      remainingAfter > 0 ? ` - ${money(remainingAfter)} left as credit for a future booking` : ''
     }`,
   });
-  return { applied };
+  return { applied, remainingAfter };
+}
+
+/**
+ * Whatever's left on the gift certificate that paid (part of) this
+ * invoice, read live rather than carried from the moment it was applied -
+ * so it stays right even if the same certificate is used again elsewhere
+ * before this invoice's own confirmation email or booking page loads.
+ */
+export async function giftCreditRemainingFor(documentId: string): Promise<{ code: string; remaining: number } | null> {
+  const rows = await sql`
+    SELECT g.code, g.total, g.redeemed_amount
+    FROM payments p JOIN gift_requests g ON g.id = p.gift_id
+    WHERE p.document_id = ${documentId} AND p.method = 'gift_certificate'
+    ORDER BY p.created_at DESC LIMIT 1
+  `;
+  const row = rows.rows[0];
+  if (!row) return null;
+  const remaining = Number(row.total) - Number(row.redeemed_amount ?? 0);
+  return remaining > 0 ? { code: String(row.code), remaining } : null;
 }
 
 // ---------------------------------------------------------------------------

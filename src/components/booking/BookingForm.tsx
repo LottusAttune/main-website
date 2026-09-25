@@ -59,6 +59,8 @@ type BookingPayment = {
   invoiceTotal: number;
   /** Credit already applied from a gift certificate - subtracted from invoiceTotal before anything else is asked for. */
   giftApplied: number;
+  /** Left on the certificate after this booking, for a future one. */
+  giftRemaining: number;
   deposit: number | null;
   depositPercent: number;
   checkoutUrl: string | null;
@@ -376,7 +378,11 @@ export function BookingForm({
             const amountDue = Math.max(0, payment.invoiceTotal - payment.giftApplied);
             const giftNote =
               payment.giftApplied > 0
-                ? `A ${money(payment.giftApplied)} gift certificate credit was applied. `
+                ? `A ${money(payment.giftApplied)} gift certificate credit was applied.${
+                    payment.giftRemaining > 0
+                      ? ` ${money(payment.giftRemaining)} remains on it for a future booking.`
+                      : ''
+                  } `
                 : '';
             return (
               <div className={styles.successPay}>

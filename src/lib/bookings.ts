@@ -9,6 +9,7 @@ import {
   ensurePaymentLinks,
   generatePdf,
   getDocument,
+  giftCreditRemainingFor,
   issueGiftCertificate,
   loadContext,
   logActivity,
@@ -113,6 +114,7 @@ async function sessionEmailInput(
     attendeeEmail: String(row.email),
   };
   const due = invoice ? balanceDue(invoice) : 0;
+  const giftCreditRemaining = invoice ? await giftCreditRemainingFor(invoice.id) : null;
   return {
     name: String(row.name),
     email: String(row.email),
@@ -139,6 +141,7 @@ async function sessionEmailInput(
         : null,
     cardFeePercent: settings.business.cardFeePercent,
     portalUrl: row.portal_token ? `${SITE.url}/portal/${String(row.portal_token)}` : null,
+    giftCreditRemaining,
   };
 }
 

@@ -8,6 +8,7 @@ import {
   bookingLines,
   ensurePaymentLinks,
   getDocument,
+  giftCreditRemainingFor,
   logActivity,
   publicUrl,
   updateDocument,
@@ -61,6 +62,7 @@ export type PortalData = {
   balanceDay: string | null;
   invoiceUrl: string | null;
   payUrl: string | null;
+  giftCreditRemaining: { code: string; remaining: number } | null;
 };
 
 export function portalUrl(token: string): string {
@@ -140,6 +142,7 @@ export async function loadPortal(token: string): Promise<PortalData | null> {
   }
   const paid = invoice?.paidAmount ?? 0;
   const balance = invoice ? balanceDue(invoice) : 0;
+  const giftCreditRemaining = invoice ? await giftCreditRemainingFor(invoice.id) : null;
   const venue = booking.participants <= LOUNGE_MAX ? 'Private Wellness Lounge' : 'Premium Signature Venue';
 
   let startsAt: string | null = null;
@@ -179,6 +182,7 @@ export async function loadPortal(token: string): Promise<PortalData | null> {
     balanceDay: invoice && paid > 0 ? invoice.dueOn : balanceDueOn(booking.sessionDate, settings.business),
     invoiceUrl: invoice ? publicUrl(invoice) : null,
     payUrl: invoice ? (paid === 0 ? invoice.payDepositUrl ?? invoice.payFullUrl : invoice.payFullUrl) : null,
+    giftCreditRemaining,
   };
 }
 

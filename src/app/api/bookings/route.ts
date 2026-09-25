@@ -22,7 +22,7 @@ import { sendEtransferRequestEmail, sendNewBookingOwnerNotification } from '@/li
 import { balanceDue } from '@/lib/pipeline';
 import { quoteFor } from '@/lib/quote';
 import { getSettings } from '@/lib/settings';
-import { LOUNGE_MAX, SITE } from '@/lib/site';
+import { isSlotAvailable, LOUNGE_MAX, SITE } from '@/lib/site';
 import { bookingSchema } from '@/lib/validation';
 
 function venueFor(participants: number): string {
@@ -85,16 +85,23 @@ export async function POST(request: Request) {
     settings.pricing
   );
 
-  // Reject dates the owner has closed, or that another booking already
-  // holds, even if the client somehow posted one (the calendar itself
-  // hides these, but never trust the client alone for a double-booking).
-  if (
-    settings.blockedDates.includes(input.sessionDate) ||
-    settings.bookedEventDates.includes(input.sessionDate) ||
-    (input.sessionDate2 &&
-      (settings.blockedDates.includes(input.sessionDate2) ||
-        settings.bookedEventDates.includes(input.sessionDate2)))
-  ) {
+  // Reject a date/time the owner has closed, or that another booking already
+  // holds, even if the client somehow posted one (the calendar itself hides
+  // these, but never trust the client alone for a double-booking). The
+  // Signature Venue can share a day across different time slots; the
+  // Wellness Lounge can't share a day with anything - see isSlotAvailable.
+  const datesToCheck: Array<{ date: string; time: string }> = [
+    { date: input.sessionDate, time: input.sessionTime },
+  ];
+  if (input.sessionDate2 && input.sessionTime2) {
+    datesToCheck.push({ date: input.sessionDate2, time: input.sessionTime2 });
+  }
+  const dateUnavailable =
+    datesToCheck.some(({ date }) => settings.blockedDates.includes(date)) ||
+    datesToCheck.some(
+      ({ date, time }) => !isSlotAvailable(date, time, input.participants, settings.bookedSessionSlots)
+    );
+  if (dateUnavailable) {
     return NextResponse.json(
       { error: 'That date is no longer available.' },
       { status: 409 }

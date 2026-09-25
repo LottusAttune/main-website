@@ -171,6 +171,88 @@ export function venueNoteFor(participants: number): string {
   return participants <= LOUNGE_MAX ? VENUE_NOTE.lounge : VENUE_NOTE.signature;
 }
 
+export type SessionSlot = { date: string; time: string; participants: number };
+
+export function venueForParticipants(participants: number): 'lounge' | 'signature' {
+  return participants <= LOUNGE_MAX ? 'lounge' : 'signature';
+}
+
+/**
+ * Whole days to grey out on the booking calendar for a party of this size.
+ * The Signature Venue can host more than one session a day, in different
+ * time slots, since the room is already held for the day either way - once
+ * every slot that day is taken, the day closes too. The Wellness Lounge is
+ * capped at one session a day (a 3-hour daily rental), and can never share a
+ * day with a Signature session in either direction - mixing the two venues
+ * in one day isn't something Silvana can manage.
+ */
+export function blockedDatesFor(
+  participants: number,
+  bookedSlots: readonly SessionSlot[],
+  manualBlocked: readonly string[],
+  openSlotLabels: readonly string[]
+): string[] {
+  const venue = venueForParticipants(participants);
+  const byDate = new Map<string, SessionSlot[]>();
+  for (const slot of bookedSlots) {
+    if (!byDate.has(slot.date)) byDate.set(slot.date, []);
+    byDate.get(slot.date)!.push(slot);
+  }
+
+  const blocked = new Set(manualBlocked);
+  for (const [date, daySlots] of byDate) {
+    const hasLounge = daySlots.some((s) => venueForParticipants(s.participants) === 'lounge');
+    if (hasLounge || venue === 'lounge') {
+      // A lounge day is fully spoken for either way, and a lounge request
+      // can't share a day that already has a signature session on it.
+      blocked.add(date);
+      continue;
+    }
+    const takenTimes = new Set(daySlots.map((s) => s.time));
+    if (openSlotLabels.every((label) => takenTimes.has(label))) {
+      blocked.add(date);
+    }
+  }
+  return [...blocked];
+}
+
+/** Time labels already spoken for on this date, for a party of this size. */
+export function blockedTimesFor(
+  date: string,
+  participants: number,
+  bookedSlots: readonly SessionSlot[]
+): Set<string> {
+  const venue = venueForParticipants(participants);
+  const daySlots = bookedSlots.filter((s) => s.date === date);
+  if (venue === 'lounge') {
+    // blockedDatesFor already keeps a lounge request off any date that has
+    // anything booked at all, so there is nothing left to disable here.
+    return new Set();
+  }
+  return new Set(
+    daySlots
+      .filter((s) => venueForParticipants(s.participants) === 'signature')
+      .map((s) => s.time)
+  );
+}
+
+/** The same check, run server-side before a booking is saved - never trust
+ *  the calendar the client saw, since another request may have landed since. */
+export function isSlotAvailable(
+  date: string,
+  time: string,
+  participants: number,
+  bookedSlots: readonly SessionSlot[]
+): boolean {
+  const venue = venueForParticipants(participants);
+  const daySlots = bookedSlots.filter((s) => s.date === date);
+  if (daySlots.some((s) => venueForParticipants(s.participants) === 'lounge')) return false;
+  if (venue === 'lounge') return daySlots.length === 0;
+  return !daySlots.some(
+    (s) => venueForParticipants(s.participants) === 'signature' && s.time === time
+  );
+}
+
 export function money(amount: number): string {
   return `$${amount.toLocaleString('en-CA')}`;
 }

@@ -191,6 +191,15 @@
   background: rgba(198, 169, 122, 0.2);
 }
 
+.timeBtnOff {
+  color: var(--color-disabled);
+  cursor: default;
+}
+
+.timeBtnOff:hover {
+  border-color: rgba(59, 46, 36, 0.22);
+}
+
 .timeLabel {
   display: block;
   font-family: var(--font-display);

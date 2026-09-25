@@ -1,7 +1,7 @@
 import 'server-only';
 
 import { isDatabaseConfigured, sql } from '@/lib/db';
-import { DEFAULT_LEAD_TIME, DEFAULT_PRICING, DEFAULT_SLOTS, SITE, type SlotKey } from '@/lib/site';
+import { DEFAULT_LEAD_TIME, DEFAULT_PRICING, DEFAULT_SLOTS, SITE, type SessionSlot, type SlotKey } from '@/lib/site';
 
 export type Pricing = {
   privateSession: number;
@@ -115,6 +115,10 @@ export type SiteSettings = {
   blockedCallTimes: BlockedCallTime[];
   /** Dates with a confirmed session booked - closed for discovery calls too. */
   bookedEventDates: string[];
+  /** Existing sessions' date, time and party size, so the booking calendar can
+   *  block per time-slot and per-venue instead of the whole day - see
+   *  blockedDatesFor/isSlotAvailable in lib/site.ts. */
+  bookedSessionSlots: SessionSlot[];
   /** Discovery call slots another client already holds - keeps two people
    *  from booking the exact same date and time. */
   bookedCallSlots: BookedCallSlot[];
@@ -128,6 +132,7 @@ const FALLBACK: SiteSettings = {
   blockedDates: [],
   blockedCallTimes: [],
   bookedEventDates: [],
+  bookedSessionSlots: [],
   bookedCallSlots: [],
   codes: [
     { code: 'WELCOME10', percentOff: 10, minParticipants: 2, isActive: true },
@@ -196,6 +201,7 @@ export async function getSettings(): Promise<SiteSettings> {
       codesResult,
       blockedCallResult,
       eventDatesResult,
+      sessionSlotsResult,
       bookedCallResult,
     ] = await Promise.all([
       sql`SELECT * FROM settings WHERE id = TRUE`,
@@ -220,6 +226,24 @@ export async function getSettings(): Promise<SiteSettings> {
         UNION
         SELECT DISTINCT session_date_2 AS day FROM bookings
         WHERE status = 'new_enquiry' AND session_date_2 IS NOT NULL
+          AND (payment_method = 'etransfer' OR (payment_method = 'card' AND created_at > NOW() - INTERVAL '30 minutes'))
+      `,
+      // Same bookings as above, but with time and party size kept per row
+      // instead of collapsed to a flat day list - the booking calendar needs
+      // both to block per time-slot and per-venue (see blockedDatesFor).
+      sql`
+        SELECT session_date AS day, session_time AS time, participants FROM bookings
+        WHERE status IN ('booked', 'complete') AND session_date IS NOT NULL AND session_time IS NOT NULL
+        UNION ALL
+        SELECT session_date_2 AS day, session_time_2 AS time, participants FROM bookings
+        WHERE status IN ('booked', 'complete') AND session_date_2 IS NOT NULL AND session_time_2 IS NOT NULL
+        UNION ALL
+        SELECT session_date AS day, session_time AS time, participants FROM bookings
+        WHERE status = 'new_enquiry' AND session_date IS NOT NULL AND session_time IS NOT NULL
+          AND (payment_method = 'etransfer' OR (payment_method = 'card' AND created_at > NOW() - INTERVAL '30 minutes'))
+        UNION ALL
+        SELECT session_date_2 AS day, session_time_2 AS time, participants FROM bookings
+        WHERE status = 'new_enquiry' AND session_date_2 IS NOT NULL AND session_time_2 IS NOT NULL
           AND (payment_method = 'etransfer' OR (payment_method = 'card' AND created_at > NOW() - INTERVAL '30 minutes'))
       `,
       sql`
@@ -258,6 +282,11 @@ export async function getSettings(): Promise<SiteSettings> {
         time: String(r.call_time),
       })),
       bookedEventDates: eventDatesResult.rows.map((r) => toIsoDay(r.day)),
+      bookedSessionSlots: sessionSlotsResult.rows.map((r) => ({
+        date: toIsoDay(r.day),
+        time: String(r.time),
+        participants: Number(r.participants),
+      })),
       bookedCallSlots: bookedCallResult.rows.map((r) => ({
         id: String(r.id),
         date: toIsoDay(r.call_date),

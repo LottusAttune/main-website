@@ -9,6 +9,8 @@ import type { LegalSection } from '@/components/legal/LegalPage';
 import { quoteFor } from '@/lib/quote';
 import type { DiscountCode, Pricing, Slots } from '@/lib/settings';
 import {
+  blockedDatesFor,
+  blockedTimesFor,
   CORPORATE_INTRO_MIN_PARTICIPANTS,
   corporateIntroPriceFor,
   MAX_PARTICIPANTS,
@@ -18,6 +20,7 @@ import {
   TWO_SESSION_THRESHOLD,
   groupPriceFor,
   money,
+  type SessionSlot,
   venueNoteFor,
 } from '@/lib/site';
 import { Calendar, formatDay, isoDay } from './Calendar';
@@ -27,6 +30,9 @@ type Props = {
   pricing: Pricing;
   slots: Slots;
   blockedDates: string[];
+  /** Existing sessions' date, time and party size - lets the calendar block
+   *  per time-slot and per-venue instead of the whole day. */
+  bookedSessionSlots: SessionSlot[];
   codes: DiscountCode[];
   leadTimeDays: number;
   terms: LegalSection[];
@@ -75,6 +81,7 @@ export function BookingForm({
   pricing,
   slots,
   blockedDates,
+  bookedSessionSlots,
   codes,
   leadTimeDays,
   terms,
@@ -151,6 +158,30 @@ export function BookingForm({
   const people = party ?? 0;
   const needsSecond = people > TWO_SESSION_THRESHOLD;
   const openSlots = TIME_SLOTS.filter((slot) => slots[slot.key] !== false);
+  const openSlotLabels = openSlots.map((slot) => slot.label);
+  // Which calendar days to grey out, and which of that day's time slots are
+  // already spoken for - both depend on how many people this party is,
+  // since the Wellness Lounge and Signature Venue follow different rules
+  // (see blockedDatesFor/blockedTimesFor in lib/site.ts).
+  const effectiveBlockedDates = blockedDatesFor(people, bookedSessionSlots, blockedDates, openSlotLabels);
+  const blockedTimesForDate = date ? blockedTimesFor(isoDay(date), people, bookedSessionSlots) : new Set<string>();
+
+  // A choice that was fine a moment ago can stop being available once the
+  // party size changes (it changes which venue applies) - drop it rather
+  // than silently submit a date/time that's no longer open.
+  useEffect(() => {
+    if (!date) return;
+    if (blockedDatesFor(people, bookedSessionSlots, blockedDates, openSlotLabels).includes(isoDay(date))) {
+      setDate(null);
+      setTime(null);
+      setTime2(null);
+      return;
+    }
+    const blockedNow = blockedTimesFor(isoDay(date), people, bookedSessionSlots);
+    if (time && blockedNow.has(time)) setTime(null);
+    if (time2 && blockedNow.has(time2)) setTime2(null);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [people]);
 
   // Drop these once the headcount no longer qualifies, rather than leaving a
   // checked-but-no-longer-applicable choice sitting there.
@@ -585,9 +616,14 @@ export function BookingForm({
             <Calendar
               label="Session date"
               earliest={earliest}
-              blocked={blockedDates}
+              blocked={effectiveBlockedDates}
               selected={date}
-              onSelect={setDate}
+              onSelect={(next) => {
+                setDate(next);
+                const blockedNow = blockedTimesFor(isoDay(next), people, bookedSessionSlots);
+                if (time && blockedNow.has(time)) setTime(null);
+                if (time2 && blockedNow.has(time2)) setTime2(null);
+              }}
             />
           </div>
           <p className={styles.calendarNote}>
@@ -611,12 +647,15 @@ export function BookingForm({
               const isOn = needsSecond
                 ? time === slot.label || time2 === slot.label
                 : time === slot.label;
+              const isBlocked = blockedTimesForDate.has(slot.label);
               return (
                 <button
                   key={slot.key}
                   type="button"
-                  className={`${styles.timeBtn} ${isOn ? styles.timeBtnOn : ''}`}
+                  disabled={isBlocked}
+                  className={`${styles.timeBtn} ${isOn ? styles.timeBtnOn : ''} ${isBlocked ? styles.timeBtnOff : ''}`}
                   aria-pressed={isOn}
+                  aria-label={isBlocked ? `${slot.label} — unavailable` : slot.label}
                   onClick={() => {
                     if (!needsSecond) {
                       setTime(slot.label);

@@ -138,7 +138,7 @@ export function DiscoveryCallForm({
               }
             }}
             compact
-            closedWeekdays={[0]}
+            closedWeekdays={[0, 6]}
           />
         </div>
         <p className={styles.calendarNote}>

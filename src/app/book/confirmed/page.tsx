@@ -76,13 +76,16 @@ export default async function BookingConfirmedPage({
                   ? ` The remaining ${money(remaining)} is charged to the same card ${settings.business.balanceDaysBefore} calendar days before your session${doc.dueOn ? `, on ${formatPlainDate(doc.dueOn)}` : ''}.`
                   : ' Your invoice is paid in full.'}
               </p>
-              <p className="body" style={{ fontSize: 16, lineHeight: 1.75, marginBottom: 22 }}>
+              <p className="body" style={{ fontSize: 16, lineHeight: 1.75, marginBottom: 6 }}>
                 A receipt, the updated invoice and your booking confirmation with venue details are on
                 their way to {doc.clientEmail}, together with the link to your booking page.
               </p>
+              <p className="body" style={{ fontSize: 14.5, lineHeight: 1.7, marginBottom: 22, color: 'var(--color-muted)' }}>
+                Don&rsquo;t see it soon? Check your spam or junk folder.
+              </p>
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12 }}>
                 {portal ? (
-                  <a className="btn btn--dark" href={portal}>
+                  <a className="btn btn--dark" href={portal} target="_blank" rel="noreferrer">
                     Open your booking page
                   </a>
                 ) : null}

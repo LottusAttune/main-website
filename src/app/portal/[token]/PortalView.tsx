@@ -149,14 +149,16 @@ export function PortalView({ data }: { data: PortalData }) {
                       </a>
                     ) : null}
                     {data.invoiceUrl ? (
-                      <a className="btn btn--outline" href={data.invoiceUrl}>
+                      <a className="btn btn--outline" href={data.invoiceUrl} target="_blank" rel="noreferrer">
                         View invoice
                       </a>
                     ) : null}
                   </div>
                 </>
               ) : (
-                <p className={styles.note}>Your invoice is on its way by email.</p>
+                <p className={styles.note}>
+                  Your invoice is on its way by email. Don&rsquo;t see it soon? Check your spam or junk folder.
+                </p>
               )}
             </div>
           </div>

@@ -426,11 +426,11 @@ export function BookingForm({
                   </div>
                 ) : null}
                 <div className={styles.successActions}>
-                  <a className="btn btn--dark" href={payment.invoiceUrl}>
+                  <a className="btn btn--dark" href={payment.invoiceUrl} target="_blank" rel="noreferrer">
                     {amountDue > 0 && payment.method !== 'etransfer' ? 'View invoice and pay' : 'View invoice'}
                   </a>
                   {payment.portalUrl ? (
-                    <a className="btn btn--outline" href={payment.portalUrl}>
+                    <a className="btn btn--outline" href={payment.portalUrl} target="_blank" rel="noreferrer">
                       Your booking page
                     </a>
                   ) : null}
@@ -446,6 +446,9 @@ export function BookingForm({
             );
           })()
         ) : null}
+        <p className={styles.successNote}>
+          Don&rsquo;t see our email soon? Check your spam or junk folder.
+        </p>
         <p className={styles.successNote}>
           Need to reach us sooner? Write to{' '}
           <a href={`mailto:${SITE.email}`}>{SITE.email}</a> or call {SITE.phone}.

@@ -85,8 +85,16 @@ export async function POST(request: Request) {
     settings.pricing
   );
 
-  // Reject dates the owner has closed, even if the client somehow posted one.
-  if (settings.blockedDates.includes(input.sessionDate)) {
+  // Reject dates the owner has closed, or that another booking already
+  // holds, even if the client somehow posted one (the calendar itself
+  // hides these, but never trust the client alone for a double-booking).
+  if (
+    settings.blockedDates.includes(input.sessionDate) ||
+    settings.bookedEventDates.includes(input.sessionDate) ||
+    (input.sessionDate2 &&
+      (settings.blockedDates.includes(input.sessionDate2) ||
+        settings.bookedEventDates.includes(input.sessionDate2)))
+  ) {
     return NextResponse.json(
       { error: 'That date is no longer available.' },
       { status: 409 }

@@ -157,7 +157,7 @@ export function PortalView({ data }: { data: PortalData }) {
                 </>
               ) : (
                 <p className={styles.note}>
-                  Your invoice is on its way by email. Don&rsquo;t see it soon? Check your spam or junk folder.
+                  Your invoice is on its way by email. If you don&rsquo;t see it soon, check your spam or junk folder.
                 </p>
               )}
             </div>

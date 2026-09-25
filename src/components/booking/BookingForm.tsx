@@ -375,7 +375,8 @@ export function BookingForm({
                 ? 'Your date is confirmed. A confirmation email is on its way to you with all the details.'
                 : `Your date is held until we receive your e-transfer${
                     payment ? `, against invoice ${payment.invoiceNumber}` : ''
-                  }. You'll hear from us by email as soon as it's received.`}
+                  }. You'll hear from us by email as soon as it's received.`}{' '}
+              If you don&rsquo;t see it soon, check your spam or junk folder.
             </p>
           </div>
         </div>
@@ -446,9 +447,6 @@ export function BookingForm({
             );
           })()
         ) : null}
-        <p className={styles.successNote}>
-          Don&rsquo;t see our email soon? Check your spam or junk folder.
-        </p>
         <p className={styles.successNote}>
           Need to reach us sooner? Write to{' '}
           <a href={`mailto:${SITE.email}`}>{SITE.email}</a> or call {SITE.phone}.

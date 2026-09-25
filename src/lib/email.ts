@@ -535,7 +535,7 @@ export async function sendEtransferRequestEmail(input: {
       <p style="margin:0 0 14px;"><strong>Send an Interac e-transfer to ${SITE.email}.</strong> Auto-deposit is on, so no security question is needed.</p>
       <p style="margin:14px 0 0;">Once we receive payment, you'll get your confirmation by email${input.giftRecipient ? ' along with the gift certificate' : ' with all the session details'}.</p>
       <p style="margin:14px 0 0;font-size:13px;">Questions? Just reply to this email.</p>
-      <p style="margin:10px 0 0;font-size:12px;color:#8a7a63;">Don't see it land later? Check your spam or junk folder.</p>
+      <p style="margin:10px 0 0;font-size:12px;color:#8a7a63;">If you don't see it land later, check your spam or junk folder.</p>
       ${mottoHtml()}`),
   });
 }

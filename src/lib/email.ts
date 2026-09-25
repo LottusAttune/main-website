@@ -689,7 +689,7 @@ export async function sendBookingConfirmationEmail(input: SessionEmailInput): Pr
         ? `<p style="margin:0 0 8px;">Your invoice is paid in full - there is nothing further due before your session.</p>`
         : '';
   const giftCredit = input.giftCreditRemaining
-    ? `<p style="margin:0 0 8px;">Gift certificate <strong>${escapeHtml(input.giftCreditRemaining.code)}</strong> still has <strong>${money(input.giftCreditRemaining.remaining)}</strong> left on it - keep the code for a future booking.</p>`
+    ? `<p style="margin:0 0 8px;">Gift certificate <strong>${escapeHtml(input.giftCreditRemaining.code)}</strong> still has <strong>${money(input.giftCreditRemaining.remaining)}</strong> left on it - keep the code for a future booking, it doesn't expire.</p>`
     : '';
   const html = wrapperHtml(`
     <p style="margin:0 0 10px;">Hi ${escapeHtml(first)},</p>

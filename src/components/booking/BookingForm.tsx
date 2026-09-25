@@ -380,7 +380,7 @@ export function BookingForm({
               payment.giftApplied > 0
                 ? `A ${money(payment.giftApplied)} gift certificate credit was applied.${
                     payment.giftRemaining > 0
-                      ? ` ${money(payment.giftRemaining)} remains on it for a future booking.`
+                      ? ` ${money(payment.giftRemaining)} remains on it for a future booking - it doesn't expire.`
                       : ''
                   } `
                 : '';
@@ -913,6 +913,9 @@ export function BookingForm({
               {amountDue <= 0
                 ? 'That covers this booking in full - nothing more to pay now.'
                 : `${money(amountDue)} still to pay below.`}
+              {code.gift && code.gift.remaining - giftCreditApplied > 0
+                ? ` ${money(code.gift.remaining - giftCreditApplied)} will still be left on the certificate as credit for a future booking - it doesn't expire.`
+                : ''}
             </div>
           </div>
         ) : null}

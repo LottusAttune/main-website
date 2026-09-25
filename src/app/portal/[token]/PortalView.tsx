@@ -139,7 +139,7 @@ export function PortalView({ data }: { data: PortalData }) {
                     <p className={styles.note}>
                       Gift certificate <strong>{data.giftCreditRemaining.code}</strong> still has{' '}
                       <strong>{money(data.giftCreditRemaining.remaining)}</strong> left on it - keep the code for a
-                      future booking.
+                      future booking, it doesn&rsquo;t expire.
                     </p>
                   ) : null}
                   <div className={styles.actions}>

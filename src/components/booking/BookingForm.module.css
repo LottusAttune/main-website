@@ -200,6 +200,11 @@
   border-color: rgba(59, 46, 36, 0.22);
 }
 
+.timeBtnOff .timeLabel,
+.timeBtnOff .timeNote {
+  color: var(--color-disabled);
+}
+
 .timeLabel {
   display: block;
   font-family: var(--font-display);

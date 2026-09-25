@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 
 import { IncludedModal } from '@/components/common/IncludedModal';
 import { PolicyModal } from '@/components/common/PolicyModal';
@@ -38,6 +38,8 @@ type Props = {
     cardFeePercent: number;
     balanceDaysBefore: number;
   };
+  /** The page's own title/intro, shown above the form - but not once it's been replaced by the confirmation. */
+  header?: ReactNode;
 };
 
 type CodeState = {
@@ -77,6 +79,7 @@ export function BookingForm({
   leadTimeDays,
   terms,
   payTerms,
+  header,
 }: Props) {
   const [plan, setPlan] = useState<'deposit' | 'full' | 'etransfer'>('deposit');
   const [party, setParty] = useState<number | null>(null);
@@ -456,7 +459,9 @@ export function BookingForm({
   }
 
   return (
-    <form className={styles.layout} onSubmit={handleSubmit} noValidate>
+    <>
+      {header}
+      <form className={styles.layout} onSubmit={handleSubmit} noValidate>
       <div>
         {/* ---------- 01 Participants ---------- */}
         <div className={styles.step}>
@@ -1068,6 +1073,7 @@ export function BookingForm({
           </button>
         </div>
       ) : null}
-    </form>
+      </form>
+    </>
   );
 }

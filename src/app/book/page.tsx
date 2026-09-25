@@ -48,31 +48,6 @@ export default async function BookPage() {
           <section
             style={{
               position: 'relative',
-              padding: 'clamp(20px, 3vw, 28px) var(--space-gutter) 16px',
-              maxWidth: 'var(--width-content)',
-              margin: '0 auto',
-            }}
-            aria-labelledby="book-heading"
-          >
-            <h1
-              id="book-heading"
-              className={`display ${styles.title}`}
-            >
-              Book
-            </h1>
-            <div className={styles.subtitle}>Reserve your Lotus Attune experience</div>
-            <p
-              className="lede"
-              style={{ maxWidth: 740, fontSize: 15.5, lineHeight: 1.65 }}
-            >
-              Dates open {settings.leadTimeDays} calendar days ahead so each
-              experience can be prepared with care.
-            </p>
-          </section>
-
-          <section
-            style={{
-              position: 'relative',
               padding: '0 var(--space-gutter) clamp(20px, 3vw, 32px)',
               maxWidth: 'var(--width-content)',
               margin: '0 auto',
@@ -93,6 +68,26 @@ export default async function BookPage() {
                 cardFeePercent: settings.business.cardFeePercent,
                 balanceDaysBefore: settings.business.balanceDaysBefore,
               }}
+              header={
+                <section
+                  style={{
+                    position: 'relative',
+                    padding: 'clamp(20px, 3vw, 28px) var(--space-gutter) 16px',
+                    maxWidth: 'var(--width-content)',
+                    margin: '0 auto',
+                  }}
+                  aria-labelledby="book-heading"
+                >
+                  <h1 id="book-heading" className={`display ${styles.title}`}>
+                    Book
+                  </h1>
+                  <div className={styles.subtitle}>Reserve your Lotus Attune experience</div>
+                  <p className="lede" style={{ maxWidth: 740, fontSize: 15.5, lineHeight: 1.65 }}>
+                    Dates open {settings.leadTimeDays} calendar days ahead so each
+                    experience can be prepared with care.
+                  </p>
+                </section>
+              }
             />
           </section>
         </div>

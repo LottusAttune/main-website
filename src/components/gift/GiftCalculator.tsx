@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useId, useRef, useState } from 'react';
+import { useEffect, useId, useRef, useState, type ReactNode } from 'react';
 
 import { IncludedModal } from '@/components/common/IncludedModal';
 import { giftQuoteFor } from '@/lib/quote';
@@ -40,9 +40,11 @@ type Props = {
   codes: DiscountCode[];
   /** Tax and card fee, so the button shows what the checkout will charge. */
   payTerms: { taxRatePercent: number; taxLabel: string; cardFeePercent: number };
+  /** The page's own title/intro and photo, shown above the calculator - but not once a certificate has been sent. */
+  header?: ReactNode;
 };
 
-export function GiftCalculator({ pricing, codes, payTerms }: Props) {
+export function GiftCalculator({ pricing, codes, payTerms, header }: Props) {
   const [format, setFormat] = useState<Format>('private');
   const [sessions, setSessions] = useState(1);
   const [participants, setParticipants] = useState(6);
@@ -297,7 +299,9 @@ export function GiftCalculator({ pricing, codes, payTerms }: Props) {
   );
 
   return (
-    <div className={styles.layout}>
+    <>
+      {!sent ? header : null}
+      <div className={styles.layout}>
       <div className={`card ${styles.panel}`}>
         <div className={styles.legend}>Experience</div>
         <div className={styles.formats}>
@@ -702,6 +706,7 @@ export function GiftCalculator({ pricing, codes, payTerms }: Props) {
           </div>
         </div>
       ) : null}
-    </div>
+      </div>
+    </>
   );
 }

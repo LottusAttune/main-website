@@ -451,8 +451,8 @@ export function BookingForm({
           })()
         ) : null}
         <p className={styles.successNote}>
-          Need to reach us sooner? Write to{' '}
-          <a href={`mailto:${SITE.email}`}>{SITE.email}</a> or call {SITE.phone}.
+          If you have further questions, write to{' '}
+          <a href={`mailto:${SITE.email}`}>{SITE.email}</a> or WhatsApp {SITE.phone}.
         </p>
       </div>
     );

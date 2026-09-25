@@ -11,6 +11,7 @@ import type { DiscountCode, Pricing, Slots } from '@/lib/settings';
 import {
   blockedDatesFor,
   blockedTimesFor,
+  type BookedCall,
   CORPORATE_INTRO_MIN_PARTICIPANTS,
   corporateIntroPriceFor,
   MAX_PARTICIPANTS,
@@ -33,6 +34,9 @@ type Props = {
   /** Existing sessions' date, time and party size - lets the calendar block
    *  per time-slot and per-venue instead of the whole day. */
   bookedSessionSlots: SessionSlot[];
+  /** Already-booked discovery calls - a session can't land too close to one
+   *  (see CALL_EVENT_BUFFER_MINUTES in lib/site). */
+  bookedCalls: BookedCall[];
   codes: DiscountCode[];
   leadTimeDays: number;
   terms: LegalSection[];
@@ -82,6 +86,7 @@ export function BookingForm({
   slots,
   blockedDates,
   bookedSessionSlots,
+  bookedCalls,
   codes,
   leadTimeDays,
   terms,
@@ -163,21 +168,33 @@ export function BookingForm({
   // already spoken for - both depend on how many people this party is,
   // since the Wellness Lounge and Signature Venue follow different rules
   // (see blockedDatesFor/blockedTimesFor in lib/site.ts).
-  const effectiveBlockedDates = blockedDatesFor(people, bookedSessionSlots, blockedDates, openSlotLabels);
-  const blockedTimesForDate = date ? blockedTimesFor(isoDay(date), people, bookedSessionSlots) : new Set<string>();
+  const effectiveBlockedDates = blockedDatesFor(
+    people,
+    bookedSessionSlots,
+    bookedCalls,
+    blockedDates,
+    openSlotLabels
+  );
+  const blockedTimesForDate = date
+    ? blockedTimesFor(isoDay(date), people, bookedSessionSlots, bookedCalls)
+    : new Set<string>();
 
   // A choice that was fine a moment ago can stop being available once the
   // party size changes (it changes which venue applies) - drop it rather
   // than silently submit a date/time that's no longer open.
   useEffect(() => {
     if (!date) return;
-    if (blockedDatesFor(people, bookedSessionSlots, blockedDates, openSlotLabels).includes(isoDay(date))) {
+    if (
+      blockedDatesFor(people, bookedSessionSlots, bookedCalls, blockedDates, openSlotLabels).includes(
+        isoDay(date)
+      )
+    ) {
       setDate(null);
       setTime(null);
       setTime2(null);
       return;
     }
-    const blockedNow = blockedTimesFor(isoDay(date), people, bookedSessionSlots);
+    const blockedNow = blockedTimesFor(isoDay(date), people, bookedSessionSlots, bookedCalls);
     if (time && blockedNow.has(time)) setTime(null);
     if (time2 && blockedNow.has(time2)) setTime2(null);
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -620,7 +637,7 @@ export function BookingForm({
               selected={date}
               onSelect={(next) => {
                 setDate(next);
-                const blockedNow = blockedTimesFor(isoDay(next), people, bookedSessionSlots);
+                const blockedNow = blockedTimesFor(isoDay(next), people, bookedSessionSlots, bookedCalls);
                 if (time && blockedNow.has(time)) setTime(null);
                 if (time2 && blockedNow.has(time2)) setTime2(null);
               }}

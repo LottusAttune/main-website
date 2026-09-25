@@ -99,7 +99,8 @@ export async function POST(request: Request) {
   const dateUnavailable =
     datesToCheck.some(({ date }) => settings.blockedDates.includes(date)) ||
     datesToCheck.some(
-      ({ date, time }) => !isSlotAvailable(date, time, input.participants, settings.bookedSessionSlots)
+      ({ date, time }) =>
+        !isSlotAvailable(date, time, input.participants, settings.bookedSessionSlots, settings.bookedCallSlots)
     );
   if (dateUnavailable) {
     return NextResponse.json(

@@ -59,6 +59,7 @@ export default async function BookPage() {
               slots={settings.slots}
               blockedDates={settings.blockedDates}
               bookedSessionSlots={settings.bookedSessionSlots}
+              bookedCalls={settings.bookedCallSlots}
               codes={settings.codes}
               leadTimeDays={settings.leadTimeDays}
               terms={termsSections(settings.business)}

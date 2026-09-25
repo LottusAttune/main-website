@@ -147,7 +147,6 @@ export const DISCOVERY_CALL_TIMES = [
   '11:00 am',
   '1:00 pm',
   '2:00 pm',
-  '3:00 pm',
   '4:00 pm',
   '5:00 pm',
   '6:00 pm',
@@ -172,23 +171,60 @@ export function venueNoteFor(participants: number): string {
 }
 
 export type SessionSlot = { date: string; time: string; participants: number };
+export type BookedCall = { date: string; time: string };
 
 export function venueForParticipants(participants: number): 'lounge' | 'signature' {
   return participants <= LOUNGE_MAX ? 'lounge' : 'signature';
+}
+
+const SESSION_START_MINUTES: Record<SlotKey, number> = {
+  midday: 12 * 60,
+  evening: 18 * 60,
+};
+
+/** Silvana needs to be at the venue an hour ahead of a session to set up and
+ *  welcome people 15 minutes before it starts - a discovery call any closer
+ *  than this to a session's start time doesn't leave room for that. */
+export const CALL_EVENT_BUFFER_MINUTES = 3 * 60;
+
+function parseClockMinutes(label: string): number {
+  const match = /^(\d+):(\d+)\s*(am|pm)$/i.exec(label.trim());
+  if (!match) return NaN;
+  let hour = Number(match[1]) % 12;
+  if (match[3].toLowerCase() === 'pm') hour += 12;
+  return hour * 60 + Number(match[2]);
+}
+
+/** Session time-slot labels too close to an already-booked discovery call
+ *  that day to be safe - see CALL_EVENT_BUFFER_MINUTES. */
+function slotsBlockedByCalls(date: string, bookedCalls: readonly BookedCall[]): Set<string> {
+  const callMinutes = bookedCalls
+    .filter((c) => c.date === date)
+    .map((c) => parseClockMinutes(c.time));
+  const blocked = new Set<string>();
+  for (const slot of TIME_SLOTS) {
+    const start = SESSION_START_MINUTES[slot.key];
+    if (callMinutes.some((m) => Math.abs(m - start) <= CALL_EVENT_BUFFER_MINUTES)) {
+      blocked.add(slot.label);
+    }
+  }
+  return blocked;
 }
 
 /**
  * Whole days to grey out on the booking calendar for a party of this size.
  * The Signature Venue can host more than one session a day, in different
  * time slots, since the room is already held for the day either way - once
- * every slot that day is taken, the day closes too. The Wellness Lounge is
- * capped at one session a day (a 3-hour daily rental), and can never share a
- * day with a Signature session in either direction - mixing the two venues
- * in one day isn't something Silvana can manage.
+ * every slot that day is taken (by another session, or by sitting too close
+ * to an already-booked discovery call), the day closes too. The Wellness
+ * Lounge is capped at one session a day (a 3-hour daily rental), and can
+ * never share a day with a Signature session in either direction - mixing
+ * the two venues in one day isn't something Silvana can manage.
  */
 export function blockedDatesFor(
   participants: number,
   bookedSlots: readonly SessionSlot[],
+  bookedCalls: readonly BookedCall[],
   manualBlocked: readonly string[],
   openSlotLabels: readonly string[]
 ): string[] {
@@ -198,17 +234,19 @@ export function blockedDatesFor(
     if (!byDate.has(slot.date)) byDate.set(slot.date, []);
     byDate.get(slot.date)!.push(slot);
   }
+  const candidateDates = new Set([...byDate.keys(), ...bookedCalls.map((c) => c.date)]);
 
   const blocked = new Set(manualBlocked);
-  for (const [date, daySlots] of byDate) {
+  for (const date of candidateDates) {
+    const daySlots = byDate.get(date) ?? [];
     const hasLounge = daySlots.some((s) => venueForParticipants(s.participants) === 'lounge');
-    if (hasLounge || venue === 'lounge') {
+    if (daySlots.length > 0 && (hasLounge || venue === 'lounge')) {
       // A lounge day is fully spoken for either way, and a lounge request
       // can't share a day that already has a signature session on it.
       blocked.add(date);
       continue;
     }
-    const takenTimes = new Set(daySlots.map((s) => s.time));
+    const takenTimes = blockedTimesFor(date, participants, bookedSlots, bookedCalls);
     if (openSlotLabels.every((label) => takenTimes.has(label))) {
       blocked.add(date);
     }
@@ -216,24 +254,27 @@ export function blockedDatesFor(
   return [...blocked];
 }
 
-/** Time labels already spoken for on this date, for a party of this size. */
+/** Time labels already spoken for on this date, for a party of this size -
+ *  either another session already holds it, or a discovery call sits too
+ *  close to it. */
 export function blockedTimesFor(
   date: string,
   participants: number,
-  bookedSlots: readonly SessionSlot[]
+  bookedSlots: readonly SessionSlot[],
+  bookedCalls: readonly BookedCall[]
 ): Set<string> {
   const venue = venueForParticipants(participants);
-  const daySlots = bookedSlots.filter((s) => s.date === date);
+  const callBlocked = slotsBlockedByCalls(date, bookedCalls);
   if (venue === 'lounge') {
-    // blockedDatesFor already keeps a lounge request off any date that has
-    // anything booked at all, so there is nothing left to disable here.
-    return new Set();
+    // blockedDatesFor already keeps a lounge request off any date that
+    // already has a session booked, so only the call buffer applies here.
+    return callBlocked;
   }
-  return new Set(
-    daySlots
-      .filter((s) => venueForParticipants(s.participants) === 'signature')
-      .map((s) => s.time)
-  );
+  const daySlots = bookedSlots.filter((s) => s.date === date);
+  const venueBlocked = daySlots
+    .filter((s) => venueForParticipants(s.participants) === 'signature')
+    .map((s) => s.time);
+  return new Set([...venueBlocked, ...callBlocked]);
 }
 
 /** The same check, run server-side before a booking is saved - never trust
@@ -242,15 +283,17 @@ export function isSlotAvailable(
   date: string,
   time: string,
   participants: number,
-  bookedSlots: readonly SessionSlot[]
+  bookedSlots: readonly SessionSlot[],
+  bookedCalls: readonly BookedCall[]
 ): boolean {
   const venue = venueForParticipants(participants);
   const daySlots = bookedSlots.filter((s) => s.date === date);
   if (daySlots.some((s) => venueForParticipants(s.participants) === 'lounge')) return false;
-  if (venue === 'lounge') return daySlots.length === 0;
-  return !daySlots.some(
-    (s) => venueForParticipants(s.participants) === 'signature' && s.time === time
-  );
+  if (venue === 'lounge' && daySlots.length > 0) return false;
+  if (daySlots.some((s) => venueForParticipants(s.participants) === 'signature' && s.time === time)) {
+    return false;
+  }
+  return !slotsBlockedByCalls(date, bookedCalls).has(time);
 }
 
 export function money(amount: number): string {

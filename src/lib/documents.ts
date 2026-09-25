@@ -734,7 +734,7 @@ export async function ensurePaymentLinks(
 export async function recordPayment(input: {
   documentId: string;
   amount: number;
-  method: 'card' | 'e-transfer' | 'cash' | 'other';
+  method: 'card' | 'e-transfer' | 'cash' | 'other' | 'gift_certificate';
   kind?: 'payment' | 'deposit' | 'balance' | 'cancellation_fee' | 'refund';
   stripePaymentIntent?: string | null;
   stripeCheckoutSession?: string | null;
@@ -743,6 +743,8 @@ export async function recordPayment(input: {
   /** Outside id of the notice this came from (an Interac email), for de-duplication. */
   externalRef?: string | null;
   note?: string | null;
+  /** The gift certificate this payment redeems, when it isn't this document's own (a booking invoice paid down by a certificate bought separately). Defaults to the document's own gift_id. */
+  giftId?: string | null;
 }): Promise<{ doc: DocumentRow; alreadyRecorded: boolean }> {
   const doc = await getDocument(input.documentId);
   if (!doc) throw new Error('Document not found.');
@@ -759,9 +761,10 @@ export async function recordPayment(input: {
   }
 
   const kind = input.kind ?? (input.amount >= doc.total - doc.paidAmount ? 'payment' : 'deposit');
+  const giftId = input.giftId !== undefined ? input.giftId : doc.giftId;
   await sql`
     INSERT INTO payments (document_id, booking_id, gift_id, amount, method, kind, stripe_payment_intent, stripe_checkout_session, external_ref, note)
-    VALUES (${doc.id}, ${doc.bookingId}, ${doc.giftId}, ${input.amount}, ${input.method}, ${kind},
+    VALUES (${doc.id}, ${doc.bookingId}, ${giftId}, ${input.amount}, ${input.method}, ${kind},
             ${input.stripePaymentIntent ?? null}, ${input.stripeCheckoutSession ?? null}, ${input.externalRef ?? null}, ${input.note ?? null})
   `;
 
@@ -835,6 +838,66 @@ export async function recordPayment(input: {
   );
 
   return { doc: (await getDocument(doc.id))!, alreadyRecorded: false };
+}
+
+/**
+ * Applies as much of a gift certificate's remaining value as the invoice
+ * still owes (or the certificate still has, whichever is less), recorded as
+ * a payment so every downstream amount - the checkout, the e-transfer ask,
+ * the balance shown - already accounts for it. This is a payment against
+ * the invoice, never a discount on it: tax is still charged on the full
+ * session price, exactly as it would be for anyone paying cash. Whatever
+ * the certificate has left over stays as credit for a future booking.
+ */
+export async function redeemGiftCredit(
+  code: string,
+  documentId: string
+): Promise<{ applied: number; error?: string }> {
+  const normalized = code.trim().toUpperCase();
+  if (!normalized) return { applied: 0 };
+
+  const rows = await sql`SELECT id, total, redeemed_amount, status FROM gift_requests WHERE code = ${normalized}`;
+  const gift = rows.rows[0];
+  if (!gift || gift.status !== 'active') {
+    return { applied: 0, error: 'That gift certificate code is not recognised.' };
+  }
+  const remaining = Number(gift.total) - Number(gift.redeemed_amount ?? 0);
+  if (remaining <= 0) {
+    return { applied: 0, error: 'This gift certificate has already been fully used.' };
+  }
+
+  const doc = await getDocument(documentId);
+  if (!doc) return { applied: 0, error: 'Invoice not found.' };
+  const due = doc.total - doc.paidAmount;
+  const applied = Math.min(remaining, due);
+  if (applied <= 0) return { applied: 0 };
+
+  const giftId = String(gift.id);
+  await recordPayment({
+    documentId,
+    amount: applied,
+    method: 'gift_certificate',
+    giftId,
+    note: `Gift certificate ${normalized}`,
+  });
+  // Fully spent moves it into the same "Redeemed" bucket Studio's own
+  // manual toggle uses, so it stops showing as active there too - a
+  // partially-used certificate stays active, with its remaining credit.
+  const fullySpent = remaining - applied <= 0;
+  await sql`
+    UPDATE gift_requests
+    SET redeemed_amount = redeemed_amount + ${applied}, status = ${fullySpent ? 'redeemed' : 'active'}
+    WHERE id = ${giftId}
+  `;
+  await logActivity({
+    documentId,
+    giftId,
+    kind: 'gift_redeemed',
+    body: `${money(applied)} applied from gift certificate ${normalized}${
+      remaining - applied > 0 ? ` - ${money(remaining - applied)} left as credit for a future booking` : ''
+    }`,
+  });
+  return { applied };
 }
 
 // ---------------------------------------------------------------------------

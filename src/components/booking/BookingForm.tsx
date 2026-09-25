@@ -42,6 +42,8 @@ type Props = {
 
 type CodeState = {
   applied: DiscountCode | null;
+  /** A gift certificate code instead of a discount code - a credit toward the invoice, not a price reduction. */
+  gift: { code: string; remaining: number } | null;
   message: string;
   ok: boolean;
 };
@@ -55,6 +57,8 @@ type BookingPayment = {
   method: 'card' | 'etransfer';
   invoiceNumber: string;
   invoiceTotal: number;
+  /** Credit already applied from a gift certificate - subtracted from invoiceTotal before anything else is asked for. */
+  giftApplied: number;
   deposit: number | null;
   depositPercent: number;
   checkoutUrl: string | null;
@@ -90,9 +94,11 @@ export function BookingForm({
   const [codeInput, setCodeInput] = useState('');
   const [code, setCode] = useState<CodeState>({
     applied: null,
+    gift: null,
     message: '',
     ok: false,
   });
+  const [checkingCode, setCheckingCode] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState('');
   const [fieldErrors, setFieldErrors] = useState<
@@ -180,47 +186,78 @@ export function BookingForm({
   // gratuity, then the deposit share, then the card fee on what is paid.
   const taxable = quote.total - quote.gratuity;
   const invoiceTotal = quote.total + Math.round((taxable * payTerms.taxRatePercent) / 100);
-  const depositOffered = payTerms.depositPercent > 0 && payTerms.depositPercent < 100;
+  // A gift certificate is a payment against the invoice, not a price
+  // discount - it comes off what's asked for now, same as the server does
+  // once the credit lands (see redeemGiftCredit in lib/documents). Once any
+  // of it is applied there is no more "deposit" to speak of, only what is
+  // still owed - so the deposit choice steps aside for a plain amount due.
+  const giftCreditApplied = code.gift ? Math.min(code.gift.remaining, invoiceTotal) : 0;
+  const amountDue = Math.max(0, invoiceTotal - giftCreditApplied);
+  const depositOffered = payTerms.depositPercent > 0 && payTerms.depositPercent < 100 && giftCreditApplied <= 0;
   const depositNow = Math.round((invoiceTotal * payTerms.depositPercent) / 100);
   const cardFee = (amount: number) => Math.round((amount * payTerms.cardFeePercent) / 100);
   const depositWithFee = depositNow + cardFee(depositNow);
-  const fullWithFee = invoiceTotal + cardFee(invoiceTotal);
+  const fullWithFee = amountDue + cardFee(amountDue);
 
-  const applyCode = () => {
+  const applyCode = async () => {
     const entered = codeInput.trim().toUpperCase();
     if (!entered) {
-      setCode({ applied: null, message: '', ok: false });
+      setCode({ applied: null, gift: null, message: '', ok: false });
       return;
     }
     const match = codes.find((c) => c.code === entered && c.isActive);
-    if (!match) {
+    if (match) {
+      if (people < match.minParticipants) {
+        setCode({
+          applied: null,
+          gift: null,
+          message: `${match.code} applies to bookings of ${match.minParticipants} or more.`,
+          ok: false,
+        });
+        return;
+      }
       setCode({
-        applied: null,
-        message: 'That code is not recognised.',
-        ok: false,
+        applied: match,
+        gift: null,
+        message: `${match.code} applied — ${
+          match.amountOff ? `${money(match.amountOff)} off` : `${match.percentOff}% off`
+        }.`,
+        ok: true,
       });
       return;
     }
-    if (people < match.minParticipants) {
-      setCode({
-        applied: null,
-        message: `${match.code} applies to bookings of ${match.minParticipants} or more.`,
-        ok: false,
+
+    // Not a discount code - it may be a gift certificate instead, which
+    // only the server can confirm (its remaining value lives in the
+    // database, not in anything already on this page).
+    setCheckingCode(true);
+    try {
+      const response = await fetch('/api/gift-code/check', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ code: entered }),
       });
-      return;
+      const data = (await response.json().catch(() => null)) as { ok?: boolean; remaining?: number; error?: string } | null;
+      if (response.ok && data?.ok && typeof data.remaining === 'number') {
+        setCode({
+          applied: null,
+          gift: { code: entered, remaining: data.remaining },
+          message: `${entered} applied — ${money(data.remaining)} gift certificate credit available.`,
+          ok: true,
+        });
+      } else {
+        setCode({ applied: null, gift: null, message: data?.error ?? 'That code is not recognised.', ok: false });
+      }
+    } catch {
+      setCode({ applied: null, gift: null, message: 'Could not check that code - please try again.', ok: false });
+    } finally {
+      setCheckingCode(false);
     }
-    setCode({
-      applied: match,
-      message: `${match.code} applied — ${
-        match.amountOff ? `${money(match.amountOff)} off` : `${match.percentOff}% off`
-      }.`,
-      ok: true,
-    });
   };
 
   const removeCode = () => {
     setCodeInput('');
-    setCode({ applied: null, message: '', ok: false });
+    setCode({ applied: null, gift: null, message: '', ok: false });
   };
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
@@ -266,6 +303,7 @@ export function BookingForm({
           isPackage,
           isCorporateIntro,
           discountCode: code.applied?.code ?? null,
+          giftCode: code.gift?.code ?? null,
           gratuityPercent: gratuityPercent ?? null,
           gratuityAmount: gratuityAmount ?? null,
           acceptTerms: agreed,
@@ -334,48 +372,68 @@ export function BookingForm({
           </div>
         </div>
         {payment ? (
-          <div className={styles.successPay}>
-            <div className={styles.successLabel}>
-              {payment.method === 'etransfer' ? 'Confirm your date by e-transfer' : payment.deposit != null ? 'Confirm your date now' : 'Pay now'}
-            </div>
-            <p className={styles.successBody}>
-              {payment.deposit != null
-                ? `A ${payment.depositPercent}% deposit of ${money(payment.deposit)} confirms your date. The remaining ${money(payment.invoiceTotal - payment.deposit)} is due four calendar days before your session.`
-                : payment.method === 'etransfer'
-                  ? `Your invoice comes to ${money(payment.invoiceTotal)}, paid in full by e-transfer with no card fee. Your booking is confirmed as soon as we receive the transfer, and you get a confirmation email with all the details.`
-                  : `Your invoice comes to ${money(payment.invoiceTotal)}.`}
-            </p>
-            {payment.method === 'etransfer' ? (
-              <div className={styles.etransferBox}>
-                <div className={styles.successLabel}>Send by Interac e-transfer</div>
-                <div className={styles.etransferRow}><span>Amount</span><strong>{money(payment.deposit ?? payment.invoiceTotal)}</strong></div>
-                <div className={styles.etransferRow}><span>Reference</span><strong>{payment.invoiceNumber.slice(-4)}</strong></div>
+          (() => {
+            const amountDue = Math.max(0, payment.invoiceTotal - payment.giftApplied);
+            const giftNote =
+              payment.giftApplied > 0
+                ? `A ${money(payment.giftApplied)} gift certificate credit was applied. `
+                : '';
+            return (
+              <div className={styles.successPay}>
+                <div className={styles.successLabel}>
+                  {amountDue <= 0
+                    ? 'Your date is confirmed'
+                    : payment.method === 'etransfer'
+                      ? 'Confirm your date by e-transfer'
+                      : payment.deposit != null
+                        ? 'Confirm your date now'
+                        : 'Pay now'}
+                </div>
                 <p className={styles.successBody}>
-                  Please include <strong>{payment.invoiceNumber.slice(-4)}</strong> in your bank
-                  transfer&apos;s message - this will allow us to match your payment automatically.
+                  {giftNote}
+                  {amountDue <= 0
+                    ? 'Nothing further is due - your booking is confirmed.'
+                    : payment.deposit != null
+                      ? `A ${payment.depositPercent}% deposit of ${money(payment.deposit)} confirms your date. The remaining ${money(amountDue - payment.deposit)} is due four calendar days before your session.`
+                      : payment.method === 'etransfer'
+                        ? `The remaining ${money(amountDue)} is paid in full by e-transfer with no card fee. Your booking is confirmed as soon as we receive the transfer, and you get a confirmation email with all the details.`
+                        : `The remaining ${money(amountDue)} is due now.`}
                 </p>
-                <p className={styles.successBody}>
-                  <strong>Send an Interac e-transfer to {SITE.email}.</strong> Auto-deposit is on,
-                  so no security question is needed.
-                </p>
+                {amountDue > 0 && payment.method === 'etransfer' ? (
+                  <div className={styles.etransferBox}>
+                    <div className={styles.successLabel}>Send by Interac e-transfer</div>
+                    <div className={styles.etransferRow}><span>Amount</span><strong>{money(payment.deposit ?? amountDue)}</strong></div>
+                    <div className={styles.etransferRow}><span>Reference</span><strong>{payment.invoiceNumber.slice(-4)}</strong></div>
+                    <p className={styles.successBody}>
+                      Please include <strong>{payment.invoiceNumber.slice(-4)}</strong> in your bank
+                      transfer&apos;s message - this will allow us to match your payment automatically.
+                    </p>
+                    <p className={styles.successBody}>
+                      <strong>Send an Interac e-transfer to {SITE.email}.</strong> Auto-deposit is on,
+                      so no security question is needed.
+                    </p>
+                  </div>
+                ) : null}
+                <div className={styles.successActions}>
+                  <a className="btn btn--dark" href={payment.invoiceUrl}>
+                    {amountDue > 0 && payment.method !== 'etransfer' ? 'View invoice and pay' : 'View invoice'}
+                  </a>
+                  {payment.portalUrl ? (
+                    <a className="btn btn--outline" href={payment.portalUrl}>
+                      Your booking page
+                    </a>
+                  ) : null}
+                </div>
+                {amountDue > 0 ? (
+                  <p className={styles.successNote}>
+                    {payment.method === 'etransfer'
+                      ? 'These details are also in your email. Changed your mind? The invoice has a card option too.'
+                      : `Or send ${money(payment.deposit ?? amountDue)} by e-transfer using the details in your email.`}
+                  </p>
+                ) : null}
               </div>
-            ) : null}
-            <div className={styles.successActions}>
-              <a className="btn btn--dark" href={payment.invoiceUrl}>
-                {payment.method === 'etransfer' ? 'View invoice' : 'View invoice and pay'}
-              </a>
-              {payment.portalUrl ? (
-                <a className="btn btn--outline" href={payment.portalUrl}>
-                  Your booking page
-                </a>
-              ) : null}
-            </div>
-            <p className={styles.successNote}>
-              {payment.method === 'etransfer'
-                ? 'These details are also in your email. Changed your mind? The invoice has a card option too.'
-                : `Or send ${money(payment.deposit ?? payment.invoiceTotal)} by e-transfer using the details in your email.`}
-            </p>
-          </div>
+            );
+          })()
         ) : null}
         <p className={styles.successNote}>
           Need to reach us sooner? Write to{' '}
@@ -810,24 +868,25 @@ export function BookingForm({
 
         <div className={styles.codeBlock}>
           <label className="visually-hidden" htmlFor="discount-code">
-            Discount code
+            Discount or gift certificate code
           </label>
           <div className={styles.codeRow}>
             <input
               id="discount-code"
               className={`field ${styles.codeInput}`}
               type="text"
-              placeholder="Enter discount code"
+              placeholder="Discount or gift certificate code"
               value={codeInput}
-              disabled={Boolean(code.applied)}
+              disabled={Boolean(code.applied || code.gift)}
               onChange={(e) => setCodeInput(e.target.value)}
             />
             <button
               type="button"
               className={styles.codeApply}
-              onClick={code.applied ? removeCode : applyCode}
+              disabled={checkingCode}
+              onClick={() => void (code.applied || code.gift ? removeCode() : applyCode())}
             >
-              {code.applied ? 'REMOVE' : 'APPLY'}
+              {code.applied || code.gift ? 'REMOVE' : checkingCode ? 'CHECKING…' : 'APPLY'}
             </button>
           </div>
           {code.message ? (
@@ -840,7 +899,19 @@ export function BookingForm({
           ) : null}
         </div>
 
-        {people >= 1 ? (
+        {people >= 1 && giftCreditApplied > 0 ? (
+          <div className={styles.payToday}>
+            <div className={styles.payTitle}>Gift certificate credit</div>
+            <div className={styles.payGroupNote}>
+              {money(giftCreditApplied)} applied from {code.gift?.code}.{' '}
+              {amountDue <= 0
+                ? 'That covers this booking in full - nothing more to pay now.'
+                : `${money(amountDue)} still to pay below.`}
+            </div>
+          </div>
+        ) : null}
+
+        {people >= 1 && amountDue > 0 ? (
           <div className={styles.payToday}>
             <div className={styles.payTitle}>Make your payment</div>
 
@@ -891,7 +962,7 @@ export function BookingForm({
                   onClick={() => setPlan('etransfer')}
                 >
                   <span className={styles.tierLabel}>Pay in full</span>
-                  <span className={styles.timeNote}>{money(invoiceTotal)} now, no card fee</span>
+                  <span className={styles.timeNote}>{money(amountDue)} now, no card fee</span>
                 </button>
               </div>
               <div className={styles.payGroupNote}>
@@ -944,16 +1015,20 @@ export function BookingForm({
             ? 'Opening the secure payment page…'
             : submitting
               ? 'Saving your request…'
-              : plan === 'etransfer'
+              : amountDue <= 0 && people >= 1
                 ? 'Confirm booking'
-                : people >= 1
-                  ? `Continue to pay ${money(plan === 'deposit' && depositOffered ? depositWithFee : fullWithFee)}`
-                  : 'Continue to payment'}
+                : plan === 'etransfer'
+                  ? 'Confirm booking'
+                  : people >= 1
+                    ? `Continue to pay ${money(plan === 'deposit' && depositOffered ? depositWithFee : fullWithFee)}`
+                    : 'Continue to payment'}
         </button>
         <p className={styles.nextNote}>
-          {plan === 'etransfer'
-            ? 'Next: the e-transfer details. Your booking is confirmed once we receive the transfer.'
-            : 'Next: the secure card payment page (Stripe). Your date is held once the payment is made.'}
+          {amountDue <= 0 && people >= 1
+            ? 'Your gift certificate covers this booking - nothing more to pay. Your date is confirmed once we receive your request.'
+            : plan === 'etransfer'
+              ? 'Next: the e-transfer details. Your booking is confirmed once we receive the transfer.'
+              : 'Next: the secure card payment page (Stripe). Your date is held once the payment is made.'}
         </p>
 
         {submitError ? (

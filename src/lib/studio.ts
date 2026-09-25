@@ -192,6 +192,7 @@ export async function getStudioData(): Promise<StudioData> {
     teamAddon: Boolean((row.addons as Record<string, boolean> | null)?.team),
     code: row.code ? String(row.code) : null,
     total: Number(row.total),
+    redeemedAmount: Number(row.redeemed_amount ?? 0),
     gratuity: Number(row.gratuity ?? 0),
     status: String(row.status),
     createdAt: new Date(String(row.created_at)).toISOString(),

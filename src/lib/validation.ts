@@ -29,6 +29,7 @@ export const bookingSchema = z
     isPackage: z.boolean().default(false),
     isCorporateIntro: z.boolean().default(false),
     discountCode: z.string().trim().max(40).optional().nullable(),
+    giftCode: z.string().trim().max(40).optional().nullable(),
     gratuityPercent: z.coerce.number().int().min(0).max(100).optional().nullable(),
     gratuityAmount: z.coerce.number().min(0).max(100_000).optional().nullable(),
     paymentPlan: z.enum(['deposit', 'full', 'etransfer']).default('deposit'),

@@ -89,6 +89,8 @@ export type GiftCard = {
   teamAddon: boolean;
   code: string | null;
   total: number;
+  /** How much of the certificate's value has been used toward a booking so far. */
+  redeemedAmount: number;
   gratuity: number;
   status: string;
   createdAt: string;
@@ -361,6 +363,7 @@ const PAID_METHOD_LABEL: Record<string, string> = {
   'e-transfer': 'e-transfer',
   cash: 'cash',
   other: 'other',
+  gift_certificate: 'gift certificate',
 };
 
 export function documentStatusLabel(doc: DocumentRow, today = new Date()): string {

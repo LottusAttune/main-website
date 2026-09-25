@@ -186,6 +186,14 @@ ALTER TABLE gift_requests ADD COLUMN IF NOT EXISTS buyer_name TEXT;
 ALTER TABLE gift_requests ADD COLUMN IF NOT EXISTS code TEXT;
 CREATE UNIQUE INDEX IF NOT EXISTS gift_requests_code_idx ON gift_requests (code);
 
+-- How much of the certificate's value has been redeemed toward a booking so
+-- far - a certificate can be used across more than one booking; whatever
+-- isn't used on the first stays as credit ("total" - "redeemed_amount") for
+-- the next. Applied as a recorded payment against the new invoice (see
+-- redeemGiftCredit in src/lib/documents.ts), never as a price discount, so
+-- tax is still charged on the full session price.
+ALTER TABLE gift_requests ADD COLUMN IF NOT EXISTS redeemed_amount INTEGER NOT NULL DEFAULT 0;
+
 -- ---------------------------------------------------------------------------
 -- Discovery call requests. A fixed video link is sent by email, not stored
 -- per row - see src/lib/email.ts.

@@ -13,11 +13,13 @@ import {
   nextNumber,
   prepareBookingInvoice,
   recordPayment,
+  redeemGiftCredit,
   referenceTail,
   totalsFor,
   type BookingCtx,
 } from '@/lib/documents';
 import { sendEtransferRequestEmail, sendNewBookingOwnerNotification } from '@/lib/email';
+import { balanceDue } from '@/lib/pipeline';
 import { quoteFor } from '@/lib/quote';
 import { getSettings } from '@/lib/settings';
 import { LOUNGE_MAX, SITE } from '@/lib/site';
@@ -64,6 +66,8 @@ export async function POST(request: Request) {
 
   const eligibleDiscount =
     discount && input.participants >= discount.minParticipants ? discount : undefined;
+
+  const giftCode = input.giftCode ? input.giftCode.trim().toUpperCase() : null;
 
   const { total, gratuity } = quoteFor(
     {
@@ -147,6 +151,7 @@ export async function POST(request: Request) {
       method: 'card' | 'etransfer';
       invoiceNumber: string;
       invoiceTotal: number;
+      giftApplied: number;
       deposit: number | null;
       depositPercent: number;
       checkoutUrl: string | null;
@@ -182,21 +187,60 @@ export async function POST(request: Request) {
         const token = randomUUID();
         // The total is known before the insert: the checkout needs it too.
         const { total: invoiceTotal } = totalsFor(bookingLines(booking, settings), settings.business.taxRatePercent);
-        const [, checkout] = await Promise.all([
-          insertBookingInvoice({ id, token, number, booking, settings, paymentPlan: input.paymentPlan === 'deposit' ? 'deposit' : 'full' }),
-          byCard
-            ? createBookingCheckout(
-                { id, kind: 'invoice', number, total: invoiceTotal, paidAmount: 0, bookingId, clientEmail: input.email, token },
-                settings.business,
-                input.paymentPlan === 'full' ? 'full' : 'deposit',
-                booking
-              )
-            : Promise.resolve(null),
-        ]);
+
+        // A gift certificate is applied as a payment against the invoice
+        // (never a price discount - tax is still charged on the full
+        // amount), so it has to land before the checkout is created: the
+        // checkout must ask for what is actually still owed, not the full
+        // total. That means this can't run in parallel with the insert the
+        // way the no-gift-code path does below.
+        let checkout: { url: string; amount: number; plan: 'deposit' | 'full' } | null = null;
+        let giftApplied = 0;
+        if (giftCode) {
+          await insertBookingInvoice({ id, token, number, booking, settings, paymentPlan: input.paymentPlan === 'deposit' ? 'deposit' : 'full' });
+          const redeemed = await redeemGiftCredit(giftCode, id);
+          giftApplied = redeemed.applied;
+          if (giftApplied <= 0) {
+            // The client already validated this code before submitting -
+            // getting here means it was used up or voided in the meantime.
+            // Charge the full amount rather than fail the booking outright,
+            // but leave a clear trail so it doesn't just vanish unnoticed.
+            await logActivity({
+              bookingId,
+              kind: 'email_failed',
+              body: `Gift certificate ${giftCode} could not be applied: ${redeemed.error ?? 'no credit available'}`,
+            });
+          }
+          const dueNow = invoiceTotal - giftApplied;
+          checkout =
+            byCard && dueNow > 0
+              ? await createBookingCheckout(
+                  { id, kind: 'invoice', number, total: invoiceTotal, paidAmount: giftApplied, bookingId, clientEmail: input.email, token },
+                  settings.business,
+                  input.paymentPlan === 'full' ? 'full' : 'deposit',
+                  booking
+                )
+              : null;
+        } else {
+          const [, created] = await Promise.all([
+            insertBookingInvoice({ id, token, number, booking, settings, paymentPlan: input.paymentPlan === 'deposit' ? 'deposit' : 'full' }),
+            byCard
+              ? createBookingCheckout(
+                  { id, kind: 'invoice', number, total: invoiceTotal, paidAmount: 0, bookingId, clientEmail: input.email, token },
+                  settings.business,
+                  input.paymentPlan === 'full' ? 'full' : 'deposit',
+                  booking
+                )
+              : Promise.resolve(null),
+          ]);
+          checkout = created;
+        }
+
         payment = {
           method: byCard ? 'card' : 'etransfer',
           invoiceNumber: number,
           invoiceTotal,
+          giftApplied,
           // E-transfer is always the full amount: nothing left to chase later.
           deposit: byCard && checkout?.plan === 'deposit' ? checkout.amount : null,
           depositPercent: settings.business.depositPercent,
@@ -249,28 +293,34 @@ export async function POST(request: Request) {
         try {
           const prepared = await prepareBookingInvoice(bookingId, settings);
           invoiceSummary = { number: prepared.number, total: prepared.total, deposit: prepared.deposit };
-          // A discount code can cover the whole invoice - there is no
-          // payment left to wait for, so settle it and confirm right away
-          // rather than leaving the booking stuck forever waiting for a
-          // Stripe or e-transfer payment that will never happen.
-          if (prepared.total <= 0) {
-            await recordPayment({
-              documentId: prepared.doc.id,
-              amount: 0,
-              method: 'other',
-              kind: 'payment',
-              note: 'Comped — a discount code covered the full amount; nothing owed.',
-            });
+          // A discount code can cover the whole invoice, or a gift
+          // certificate's credit can cover what's left of it (recorded as a
+          // payment already, at creation, in redeemGiftCredit) - either way
+          // there is no payment left to wait for, so settle it and confirm
+          // right away rather than leaving the booking stuck forever
+          // waiting for a Stripe or e-transfer payment that will never come.
+          if (balanceDue(prepared.doc) <= 0) {
+            if (prepared.doc.paidAmount <= 0) {
+              await recordPayment({
+                documentId: prepared.doc.id,
+                amount: 0,
+                method: 'other',
+                kind: 'payment',
+                note: 'Comped — a discount code covered the full amount; nothing owed.',
+              });
+            }
             await sendBookingConfirmation(bookingId);
             activateNow = true;
           } else if (payment?.method === 'etransfer') {
             // The only thing an e-transfer client hears before paying: a
             // plain ask, never called an invoice and never carrying a PDF -
-            // that's reserved for the one that says "paid".
+            // that's reserved for the one that says "paid". The amount is
+            // the invoice's real remaining balance, not the pre-gift-credit
+            // total - a certificate may have already covered part of it.
             const sent = await sendEtransferRequestEmail({
               to: input.email,
               name: input.name,
-              amount: payment.invoiceTotal,
+              amount: balanceDue(prepared.doc),
               reference: referenceTail(payment.invoiceNumber),
               sessionDate: input.sessionDate,
               sessionTime: input.sessionTime,

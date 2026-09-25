@@ -34,6 +34,14 @@ const PAYMENT_KIND: Record<string, string> = {
   refund: 'Refund',
 };
 
+const PAYMENT_METHOD: Record<string, string> = {
+  card: 'card',
+  'e-transfer': 'e-transfer',
+  cash: 'cash',
+  other: 'other',
+  gift_certificate: 'gift certificate',
+};
+
 function CopyButton({ text, label = 'Copy link' }: { text: string; label?: string }) {
   const [done, setDone] = useState(false);
   return (
@@ -335,7 +343,7 @@ function Receipts({
               <div>
                 <div className={styles.recordTitle}>{doc?.clientName ?? p.note ?? 'Payment'}</div>
                 <div className={styles.recordSub}>
-                  {formatShortDate(p.createdAt.slice(0, 10))} · {p.method} · {PAYMENT_KIND[p.kind] ?? p.kind}
+                  {formatShortDate(p.createdAt.slice(0, 10))} · {PAYMENT_METHOD[p.method] ?? p.method} · {PAYMENT_KIND[p.kind] ?? p.kind}
                   {doc ? ` · ${doc.number}` : ''}{p.note && doc ? ` · ${p.note}` : ''}
                 </div>
               </div>

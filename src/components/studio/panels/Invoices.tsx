@@ -73,6 +73,7 @@ const METHOD: Record<string, string> = {
   cash: 'Cash',
   card: 'Card',
   other: 'Other',
+  gift_certificate: 'Gift certificate',
 };
 
 /** "cancellation_fee" → "Cancellation fee" when a value isn't in the table. */

@@ -225,6 +225,13 @@ export function GiftCards({ cards, documents, integrations }: Props) {
                     {invoice?.status === 'paid' ? (
                       <div className={styles.priceNote}>{documentStatusLabel(invoice)}</div>
                     ) : null}
+                    {card.redeemedAmount > 0 ? (
+                      <div className={styles.priceNote}>
+                        {card.status === 'redeemed'
+                          ? 'Fully redeemed'
+                          : `${money(card.total - card.redeemedAmount)} credit left`}
+                      </div>
+                    ) : null}
                   </div>
                 </div>
 

@@ -48,7 +48,7 @@ export function PortalView({ data }: { data: PortalData }) {
           </h1>
           <p className={styles.intro}>
             {cancelled
-              ? `If this is unexpected, write to ${SITE.email} or call ${SITE.phone}.`
+              ? `If this is unexpected, write to ${SITE.email} or WhatsApp ${SITE.phone}.`
               : booking.confirmed
                 ? 'Your date is confirmed. Everything for the day is here, and you can add to your experience any time before it.'
                 : 'Your date is held once the deposit on your invoice is received. Everything else for the day is here.'}
@@ -238,7 +238,7 @@ export function PortalView({ data }: { data: PortalData }) {
           ) : null}
 
           <p className={styles.intro} style={{ marginTop: 8 }}>
-            Questions? Write to <a href={`mailto:${SITE.email}`}>{SITE.email}</a> or call {SITE.phone}.
+            Questions? Write to <a href={`mailto:${SITE.email}`}>{SITE.email}</a> or WhatsApp {SITE.phone}.
           </p>
         </section>
       </main>

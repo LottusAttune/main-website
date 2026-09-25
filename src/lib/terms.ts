@@ -71,7 +71,7 @@ export function termsSections(business: BusinessSettings): LegalSection[] {
     {
       title: 'Questions',
       paragraphs: [
-        `Write to ${SITE.email} or call ${SITE.phone}. These terms are governed by the laws of Ontario, Canada.`,
+        `Write to ${SITE.email} or WhatsApp ${SITE.phone}. These terms are governed by the laws of Ontario, Canada.`,
       ],
     },
   ];

@@ -99,7 +99,7 @@ export async function POST(request: Request) {
     return NextResponse.json(
       {
         error:
-          'Online booking is not connected yet. Please email or call us and we will reserve your session.',
+          'Online booking is not connected yet. Please email or WhatsApp us and we will reserve your session.',
       },
       { status: 503 }
     );

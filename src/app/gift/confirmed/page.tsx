@@ -80,7 +80,7 @@ export default async function GiftConfirmedPage({
                 options are in your email.
               </p>
               <p className="body" style={{ fontSize: 16, lineHeight: 1.75 }}>
-                Questions? Write to <a href={`mailto:${SITE.email}`}>{SITE.email}</a> or call {SITE.phone}.
+                Questions? Write to <a href={`mailto:${SITE.email}`}>{SITE.email}</a> or WhatsApp {SITE.phone}.
               </p>
             </>
           )}

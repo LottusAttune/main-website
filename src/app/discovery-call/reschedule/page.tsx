@@ -78,7 +78,7 @@ export default async function ReschedulePage({
           >
             {existing
               ? "Pick a new date and time below — we'll update your confirmation right away."
-              : `This reschedule link is invalid or has expired. Please email ${SITE.email} or call ${SITE.phone} and we'll sort out a new time.`}
+              : `This reschedule link is invalid or has expired. Please email ${SITE.email} or WhatsApp ${SITE.phone} and we'll sort out a new time.`}
           </p>
         </section>
 

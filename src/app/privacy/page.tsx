@@ -45,7 +45,7 @@ const sections = [
   {
     title: 'Contact',
     paragraphs: [
-      `Questions about your information? Write to ${SITE.email} or call ${SITE.phone}.`,
+      `Questions about your information? Write to ${SITE.email} or WhatsApp ${SITE.phone}.`,
     ],
   },
 ];

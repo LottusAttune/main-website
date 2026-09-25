@@ -84,7 +84,7 @@ export function RescheduleForm({
     } catch (error) {
       setSubmitError(
         error instanceof Error
-          ? `${error.message} Please email ${SITE.email} or call ${SITE.phone}.`
+          ? `${error.message} Please email ${SITE.email} or WhatsApp ${SITE.phone}.`
           : 'Something went wrong.'
       );
     } finally {

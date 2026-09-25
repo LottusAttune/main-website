@@ -328,7 +328,7 @@ export function BookingForm({
         setSubmitError(
           body?.issues
             ? message
-            : `${message} Please email ${SITE.email} or call ${SITE.phone}.`
+            : `${message} Please email ${SITE.email} or WhatsApp ${SITE.phone}.`
         );
         return;
       }
@@ -352,7 +352,7 @@ export function BookingForm({
     } catch (error) {
       setSubmitError(
         error instanceof Error
-          ? `${error.message} Please email ${SITE.email} or call ${SITE.phone}.`
+          ? `${error.message} Please email ${SITE.email} or WhatsApp ${SITE.phone}.`
           : 'Something went wrong.'
       );
     } finally {

@@ -132,6 +132,16 @@ export async function POST(request: Request) {
 
       after(async () => {
         await logActivity({ giftId, kind: 'received', body: 'Gift certificate requested from the website' });
+
+        // A card attempt isn't real until it's paid - see afterPayment in
+        // lib/bookings.ts for the same rule on a booking. Nothing here
+        // (owner notification included) should fire for a card checkout
+        // that was only ever started, never completed; the certificate
+        // email itself already followed this rule (issueGiftCertificate is
+        // only ever called once payment lands). E-transfer and a comped
+        // $0 gift are both already a real commitment, so they activate now.
+        let activateNow = payment?.method !== 'card';
+
         if (invoiceId && settings.business.autoSendInvoices && total > 0) {
           // E-transfer gets a plain ask to pay, never called an invoice and
           // never carrying a PDF - that's reserved for the one that says
@@ -169,17 +179,18 @@ export async function POST(request: Request) {
           });
           const issued = await issueGiftCertificate(giftId);
           if (!issued.ok) await logActivity({ giftId, documentId: invoiceId, kind: 'email_failed', body: `Certificate: ${issued.error}` });
+          activateNow = true;
         }
-        await sendOwnerNotification({
-          subject: `New gift certificate request: ${input.buyerName} for ${input.recipientName}, ${money(total)}`,
-          html: `<p style="margin:0 0 8px;">${input.buyerName} (${input.buyerEmail}) is buying a ${money(total)} gift certificate for ${input.recipientName}${input.recipientEmail ? ` (${input.recipientEmail})` : ''}.</p><p style="margin:0;">${
-            payment?.checkoutUrl
-              ? 'They were sent to the card checkout; the certificate goes out on its own once paid.'
-              : total <= 0
+        if (activateNow) {
+          await sendOwnerNotification({
+            subject: `New gift certificate request: ${input.buyerName} for ${input.recipientName}, ${money(total)}`,
+            html: `<p style="margin:0 0 8px;">${input.buyerName} (${input.buyerEmail}) is buying a ${money(total)} gift certificate for ${input.recipientName}${input.recipientEmail ? ` (${input.recipientEmail})` : ''}.</p><p style="margin:0;">${
+              total <= 0
                 ? 'Nothing was owed - the certificate is already on its way to them.'
                 : 'The e-transfer request went to them by email.'
-          }</p>`,
-        });
+            }</p>`,
+          });
+        }
       });
 
       return NextResponse.json({ id: giftId, code, total, payment }, { status: 201 });

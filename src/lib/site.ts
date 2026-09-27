@@ -18,7 +18,7 @@ export const SITE = {
 
 /** Social handles are placeholders until the client confirms the real ones. */
 export const SOCIAL = [
-  { label: 'LinkedIn', href: 'https://www.linkedin.com/company/lotusattune' },
+  { label: 'LinkedIn', href: 'https://www.linkedin.com/in/lotusattune/' },
   { label: 'Instagram', href: 'https://www.instagram.com/lotusattune' },
   { label: 'Facebook', href: 'https://www.facebook.com/lotusattune' },
   { label: 'YouTube', href: 'https://www.youtube.com/@lotusattune' },

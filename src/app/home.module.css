@@ -585,15 +585,25 @@
   grid-area: accordion;
 }
 
+/* .sticky-col's position:sticky assumes the intro is the whole left column,
+   but the FAQ card sits below it in that same column - once an accordion
+   answer is expanded, the right column (which the two rows share height
+   with) grows taller than intro+card combined, giving the sticky intro
+   room to drift down and visually overlap the card as the page scrolls.
+   Turned off at every width, not just narrow ones, since the bug is about
+   content height, not viewport width - this doesn't change how the section
+   looks at rest, only stops it sticking while scrolling. */
+.faqGrid :global(.sticky-col) {
+  position: static;
+  top: auto;
+}
+
 /* Below ~590px the grid above has already collapsed to one column (two
    260px columns no longer fit) - the FAQ card and the accordion below it
-   stack instead of sitting side by side, and .sticky-col's own
-   position:sticky (meant for that side-by-side layout) then pins the card
-   in place while the accordion scrolls underneath it. Mobile/tablet pass:
-   desktop is untouched, this only applies once the grid has already
-   stacked. The FAQ card also moves after the accordion here - reading the
-   answers already provided before being invited to ask a new one, rather
-   than the reverse. */
+   stack instead of sitting side by side. Mobile/tablet pass: desktop is
+   untouched, this only applies once the grid has already stacked. The FAQ
+   card also moves after the accordion here - reading the answers already
+   provided before being invited to ask a new one, rather than the reverse. */
 @media (max-width: 590px) {
   .faqGrid {
     grid-template-columns: 1fr;
@@ -603,11 +613,6 @@
        gap plus the lede's own margin-bottom added up. Tightened here only;
        side-by-side tablet/desktop never shows this relationship at all. */
     gap: 18px;
-  }
-
-  .faqGrid :global(.sticky-col) {
-    position: static;
-    top: auto;
   }
 }
 

@@ -68,7 +68,7 @@ export function SiteFooter() {
               {SOCIAL.filter((s) => s.label in SOCIAL_ICONS).map((s) => {
                 const Icon = SOCIAL_ICONS[s.label as keyof typeof SOCIAL_ICONS];
                 return (
-                  <SocialIconButton key={s.label} label={s.label}>
+                  <SocialIconButton key={s.label} label={s.label} href={s.confirmed ? s.href : undefined}>
                     <Icon />
                   </SocialIconButton>
                 );

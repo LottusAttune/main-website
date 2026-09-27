@@ -16,12 +16,14 @@ export const SITE = {
   url: process.env.NEXT_PUBLIC_SITE_URL ?? 'https://lotusattune.com',
 } as const;
 
-/** Social handles are placeholders until the client confirms the real ones. */
+/** Social handles are placeholders until the client confirms the real ones -
+ *  `confirmed` gates whether the footer icon is a real link or a "Coming
+ *  soon" placeholder (see SocialIconButton). */
 export const SOCIAL = [
-  { label: 'LinkedIn', href: 'https://www.linkedin.com/in/lotusattune/' },
-  { label: 'Instagram', href: 'https://www.instagram.com/lotusattune' },
-  { label: 'Facebook', href: 'https://www.facebook.com/lotusattune' },
-  { label: 'YouTube', href: 'https://www.youtube.com/@lotusattune' },
+  { label: 'LinkedIn', href: 'https://www.linkedin.com/in/lotusattune/', confirmed: true },
+  { label: 'Instagram', href: 'https://www.instagram.com/lotusattune', confirmed: false },
+  { label: 'Facebook', href: 'https://www.facebook.com/lotusattune', confirmed: false },
+  { label: 'YouTube', href: 'https://www.youtube.com/@lotusattune', confirmed: false },
 ] as const;
 
 export const NAV_LINKS = [

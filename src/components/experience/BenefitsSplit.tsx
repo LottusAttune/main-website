@@ -1,12 +1,7 @@
-'use client';
-
-import { useState } from 'react';
-
-import { ChevronIcon } from '@/components/common/ChevronIcon';
 import styles from '@/app/experience/experience.module.css';
 
 type BenefitsGroup = {
-  items: readonly { title: string; body: string }[];
+  items: readonly string[];
   note: string;
 };
 
@@ -15,44 +10,19 @@ type Props = {
   individual: BenefitsGroup;
 };
 
-/** One toggle per side reveals all 3 of that side's descriptions at once
-    (2 clicks total to see everything, not 6) - a single "See details" click
-    rather than opening each benefit individually. Opens on click, closes on
-    click-away or on leaving the panel with the mouse. The two sides are
-    independent, so opening one never affects the other. */
+/** Each side lists its benefits in full, straight away - no titles and no
+    "See details" toggle to open first. */
 export function BenefitsSplit({ teams, individual }: Props) {
-  const [openSide, setOpenSide] = useState<'teams' | 'individual' | null>(null);
-
-  const renderColumn = (group: BenefitsGroup, side: 'teams' | 'individual', tone: 'Dark' | 'Light') => {
-    const open = openSide === side;
-    return (
-      <div
-        className={`${styles.benefitsCell} ${styles[`benefitsCell${tone}`]} ${styles.benefitsCellItems}`}
-        onMouseLeave={() => {
-          if (open) setOpenSide(null);
-        }}
-      >
-        {group.items.map((item) => (
-          <div key={item.title} className={styles.benefitsItemRow}>
-            <span className={styles.benefitsItemTitle}>{item.title}</span>
-            {open ? <p className={styles.benefitsFlyoutBody}>{item.body}</p> : null}
-          </div>
-        ))}
-
-        <button
-          type="button"
-          className={styles.benefitsItemToggle}
-          onClick={() => setOpenSide((current) => (current === side ? null : side))}
-          aria-expanded={open}
-        >
-          <span>{open ? 'Hide details' : 'See details'}</span>
-          <span className={`${styles.benefitsItemArrow} ${open ? styles.benefitsItemArrowOpen : ''}`}>
-            <ChevronIcon />
-          </span>
-        </button>
-      </div>
-    );
-  };
+  const renderColumn = (group: BenefitsGroup, tone: 'Dark' | 'Light') => (
+    <ul className={`${styles.benefitsCell} ${styles[`benefitsCell${tone}`]} ${styles.benefitsCellItems}`}>
+      {group.items.map((item) => (
+        <li key={item} className={styles.benefitsItemRow}>
+          <span className={styles.benefitsItemMark} aria-hidden="true" />
+          <span className={styles.benefitsItemText}>{item}</span>
+        </li>
+      ))}
+    </ul>
+  );
 
   return (
     <div className={styles.benefitsSplit}>
@@ -67,7 +37,7 @@ export function BenefitsSplit({ teams, individual }: Props) {
           </p>
         </div>
 
-        {renderColumn(teams, 'teams', 'Dark')}
+        {renderColumn(teams, 'Dark')}
 
         <div className={`${styles.benefitsCell} ${styles.benefitsCellDark} ${styles.benefitsCellClosing}`}>
           <p className={styles.benefitsClosing}>{teams.note}</p>
@@ -84,7 +54,7 @@ export function BenefitsSplit({ teams, individual }: Props) {
           </p>
         </div>
 
-        {renderColumn(individual, 'individual', 'Light')}
+        {renderColumn(individual, 'Light')}
 
         <div className={`${styles.benefitsCell} ${styles.benefitsCellLight} ${styles.benefitsCellClosing}`}>
           <p className={styles.benefitsClosing}>{individual.note}</p>

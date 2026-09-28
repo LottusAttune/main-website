@@ -139,36 +139,18 @@ export const INCLUDED_FULL = [
 
 export const BENEFITS_INDIVIDUAL = {
   items: [
-    {
-      title: 'Rest & Restore',
-      body: 'Reduce stress, tension, and emotional fatigue so you can feel more like yourself',
-    },
-    {
-      title: 'Clear & Balanced Mind',
-      body: 'Support clearer thinking and greater emotional balance through guided practices',
-    },
-    {
-      title: 'Meaningful Connection',
-      body: 'Make unique and unforgettable memories together with friends, family, and loved ones',
-    },
+    'Reduce stress, tension, and emotional fatigue so you can feel more like yourself',
+    'Support clearer thinking and greater emotional balance through guided practices',
+    'Make unique and unforgettable memories together with friends, family, and loved ones',
   ],
   note: 'Ideal for birthdays, anniversaries, family gatherings, any meaningful occasions, celebrations, or just to treat yourself',
 } as const;
 
 export const BENEFITS_TEAMS = {
   items: [
-    {
-      title: 'Culture that Lasts',
-      body: 'An innovative approach for employee well-being that drives connection, collaboration and retention',
-    },
-    {
-      title: 'Stronger Together',
-      body: 'Promote healthier, more engaged, and resilient workplace cultures. Help teams reset, refocus, and strengthen collaboration',
-    },
-    {
-      title: 'Performance and Clarity',
-      body: 'Enhance mental clarity and support sustainable performance',
-    },
+    'An innovative approach for employee well-being that drives connection, collaboration and retention',
+    'Promote healthier, more engaged, and resilient workplace cultures. Help teams reset, refocus, and strengthen collaboration',
+    'Enhance mental clarity and support sustainable performance',
   ],
   note: 'A unique and impactful experience for teams, departmental or leadership meetings, employee appreciation and Health & Wellness events',
 } as const;

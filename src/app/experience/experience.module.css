@@ -498,11 +498,12 @@
   color: var(--color-gold-text);
 }
 
-/* Wraps all 3 item titles plus the single "See details" toggle for this
-   side. */
+/* Wraps this side's benefit lines - shown in full, no toggle. */
 .benefitsCellItems {
-  padding-top: 12px;
-  padding-bottom: 16px;
+  margin: 0;
+  padding-top: 14px;
+  padding-bottom: 18px;
+  list-style: none;
   border-top: 1px solid;
 }
 
@@ -514,86 +515,72 @@
   border-color: var(--hairline-light);
 }
 
+/* Marker + line side by side, so a wrapped second line stays aligned with
+   the first rather than running back under the marker. */
 .benefitsItemRow {
-  padding: 8px 0;
+  display: grid;
+  grid-template-columns: 7px 1fr;
+  column-gap: 16px;
+  align-items: baseline;
+  padding: 9px 0;
 }
 
-.benefitsItemRow + .benefitsItemRow {
-  border-top: 1px solid;
+/* A small decorative gold diamond - --color-gold is the decorative gold,
+   fine here since it carries no words. */
+.benefitsItemMark {
+  width: 7px;
+  height: 7px;
+  background: var(--color-gold);
+  transform: translateY(-3px) rotate(45deg);
 }
 
-.benefitsCellDark .benefitsItemRow + .benefitsItemRow {
-  border-color: var(--hairline-dark);
-}
-
-.benefitsCellLight .benefitsItemRow + .benefitsItemRow {
-  border-color: var(--hairline-light);
-}
-
-.benefitsItemTitle {
-  display: block;
+/* The serif the old item titles used, so each line still reads as a
+   headline rather than small print. */
+.benefitsItemText {
   font-family: var(--font-display);
   font-weight: 400;
   font-size: 18px;
+  line-height: 1.45;
 }
 
-/* One toggle per side reveals all 3 descriptions at once (see
-   .benefitsItemRow above) instead of opening each individually - unstyled
-   button, small and understated since it's a secondary action below the
-   titles it controls. */
-.benefitsItemToggle {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin-top: 10px;
-  padding: 0;
-  background: none;
-  border: none;
-  color: inherit;
-  font-size: 13px;
-  letter-spacing: 0.03em;
-  text-transform: uppercase;
-  cursor: pointer;
-}
-
-.benefitsItemArrow {
-  flex: none;
-  display: inline-flex;
-  color: inherit;
-  transition: transform 0.2s ease;
-}
-
-.benefitsItemArrowOpen {
-  transform: rotate(180deg);
-}
-
-/* Sits inline right under each title once "See details" is clicked - not
-   the full-screen modal used for the Experience cards/reviews (these
-   one-line benefits are too short to earn a full dialog), and not an
-   absolutely-positioned overlay either, so it just pushes the rest of this
-   side down in normal flow with no leftover blank space when closed. */
-.benefitsFlyoutBody {
-  margin: 6px 0 0;
-  font-size: 14px;
-  line-height: 1.5;
-}
-
-/* 14px on both sides reads small on a phone/tablet screen - desktop keeps
-   its own size, kept identical on both sides so neither reads bolder than
-   the other (same rule as everywhere else this panel is mirrored). */
 @media (max-width: 1079px) {
-  .benefitsFlyoutBody {
-    font-size: 15.5px;
-    line-height: 1.55;
+  .benefitsItemText {
+    font-size: 19px;
+    line-height: 1.5;
   }
 }
 
-.benefitsCellDark .benefitsFlyoutBody {
+/* Same colours the old descriptions used on each side - mirrors the
+   heading/body hierarchy on both panels (~8:1 on each). */
+.benefitsCellDark .benefitsItemText {
   color: #d7cbb6;
 }
 
-.benefitsCellLight .benefitsFlyoutBody {
+.benefitsCellLight .benefitsItemText {
   color: var(--color-ink-body);
+}
+
+/* Side by side, both panels share one set of rows (header, each benefit
+   line, closing line) through subgrid, so a line that wraps longer on one
+   side still keeps every row level with its partner on the other, and both
+   panels end at the same height. */
+@media (min-width: 761px) {
+  .benefitsSplit {
+    grid-template-rows: auto auto auto auto auto;
+    align-items: stretch;
+  }
+
+  .benefitsCol {
+    display: grid;
+    grid-row: 1 / -1;
+    grid-template-rows: subgrid;
+  }
+
+  .benefitsCellItems {
+    display: grid;
+    grid-row: span 3;
+    grid-template-rows: subgrid;
+  }
 }
 
 .benefitsClosing {

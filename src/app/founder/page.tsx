@@ -73,7 +73,7 @@ export default async function FounderPage() {
               <p className={styles.closingQuote}>
                 ”I bridge the gap between performance and restoration,
                 <br />
-                productivity and well-being, and excellence and human connection.”
+                productivity and well-being, and excellence and connection.”
               </p>
               <span className={styles.signature}>
                 <Wave className={styles.wave} />

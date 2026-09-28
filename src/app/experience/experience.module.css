@@ -501,8 +501,8 @@
 /* Wraps this side's benefit lines - shown in full, no toggle. */
 .benefitsCellItems {
   margin: 0;
-  padding-top: 14px;
-  padding-bottom: 18px;
+  padding-top: 10px;
+  padding-bottom: 12px;
   list-style: none;
   border-top: 1px solid;
 }
@@ -519,19 +519,19 @@
    the first rather than running back under the marker. */
 .benefitsItemRow {
   display: grid;
-  grid-template-columns: 7px 1fr;
-  column-gap: 16px;
+  grid-template-columns: 6px 1fr;
+  column-gap: 14px;
   align-items: baseline;
-  padding: 9px 0;
+  padding: 5px 0;
 }
 
 /* A small decorative gold diamond - --color-gold is the decorative gold,
    fine here since it carries no words. */
 .benefitsItemMark {
-  width: 7px;
-  height: 7px;
+  width: 6px;
+  height: 6px;
   background: var(--color-gold);
-  transform: translateY(-3px) rotate(45deg);
+  transform: translateY(-2px) rotate(45deg);
 }
 
 /* The serif the old item titles used, so each line still reads as a
@@ -539,14 +539,14 @@
 .benefitsItemText {
   font-family: var(--font-display);
   font-weight: 400;
-  font-size: 18px;
-  line-height: 1.45;
+  font-size: 16px;
+  line-height: 1.4;
 }
 
 @media (max-width: 1079px) {
   .benefitsItemText {
-    font-size: 19px;
-    line-height: 1.5;
+    font-size: 17px;
+    line-height: 1.45;
   }
 }
 

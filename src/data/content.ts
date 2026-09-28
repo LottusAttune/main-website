@@ -150,7 +150,7 @@ export const BENEFITS_TEAMS = {
   items: [
     'An innovative approach for employee well-being that drives connection, collaboration and retention',
     'Promote healthier, more engaged, and resilient workplace cultures',
-    'Help teams reset, refocus, and improve sustainable performance',
+    'Help teams reset, refocus, and support sustainable performance',
   ],
   note: 'A unique and impactful experience for teams, departmental or leadership meetings, employee appreciation and Health & Wellness events',
 } as const;

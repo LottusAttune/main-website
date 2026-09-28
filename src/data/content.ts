@@ -344,7 +344,7 @@ export const TRAINING = [
     items: [
       'Toronto Zen School Ensemble - Handpan musician and performer - 2025',
       'BUMI Festival - Handpan Performance - 2026',
-      'Toronto Wellness Festival - Handpan Performance - 2026',
+      'Toronto Wellness Festival, Mel Lastman Square - Handpan Performance - 2026',
       'Drum & Soul in Motion - Monthly handpan-guided meditations - 2026',
     ],
   },

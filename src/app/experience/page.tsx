@@ -75,14 +75,14 @@ export default function ExperiencePage() {
           />
         </section>
 
-        {/* ---------- Benefits ---------- */}
+        {/* ---------- The Impact ---------- */}
         <section
-          id="benefits"
+          id="impact"
           className={`section--soft ${styles.benefitsSection}`}
-          aria-label="Benefits"
+          aria-label="The Impact"
         >
           <div className={`shell ${styles.benefitsShell}`}>
-            <h2 className={`display ${styles.benefitsHeading}`}>Benefits</h2>
+            <h2 className={`display ${styles.benefitsHeading}`}>The Impact</h2>
           </div>
 
           <div className="shell">

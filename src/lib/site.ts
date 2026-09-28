@@ -56,7 +56,7 @@ export const NAV_SECTIONS = [
     href: '/experience',
     sections: [
       { label: 'Journey', hash: '#experience-heading' },
-      { label: 'Benefits', hash: '#benefits' },
+      { label: 'The Impact', hash: '#impact' },
       { label: "What's Included", hash: '#included' },
     ],
   },

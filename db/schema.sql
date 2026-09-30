@@ -456,3 +456,23 @@ CREATE UNIQUE INDEX IF NOT EXISTS payments_external_ref_idx ON payments (externa
 CREATE UNIQUE INDEX IF NOT EXISTS payments_intent_idx  ON payments (stripe_payment_intent) WHERE stripe_payment_intent IS NOT NULL;
 CREATE INDEX IF NOT EXISTS payments_document_idx       ON payments (document_id);
 CREATE INDEX IF NOT EXISTS payments_booking_idx        ON payments (booking_id);
+
+-- Row-Level Security on every table (enabled on the live database
+-- 2026-09-30; see db/migrations/2026-09-30_enable_rls.sql). No policies on
+-- purpose: the site connects as `postgres`, which owns these tables and
+-- bypasses RLS, while the public anon key gets nothing. Any table added to
+-- this file must get its own line here.
+ALTER TABLE settings            ENABLE ROW LEVEL SECURITY;
+ALTER TABLE blocked_dates       ENABLE ROW LEVEL SECURITY;
+ALTER TABLE blocked_call_times  ENABLE ROW LEVEL SECURITY;
+ALTER TABLE discount_codes      ENABLE ROW LEVEL SECURITY;
+ALTER TABLE bookings            ENABLE ROW LEVEL SECURITY;
+ALTER TABLE gift_requests       ENABLE ROW LEVEL SECURITY;
+ALTER TABLE discovery_calls     ENABLE ROW LEVEL SECURITY;
+ALTER TABLE reviews             ENABLE ROW LEVEL SECURITY;
+ALTER TABLE contact_messages    ENABLE ROW LEVEL SECURITY;
+ALTER TABLE documents           ENABLE ROW LEVEL SECURITY;
+ALTER TABLE document_counters   ENABLE ROW LEVEL SECURITY;
+ALTER TABLE activity            ENABLE ROW LEVEL SECURITY;
+ALTER TABLE payment_links       ENABLE ROW LEVEL SECURITY;
+ALTER TABLE payments            ENABLE ROW LEVEL SECURITY;

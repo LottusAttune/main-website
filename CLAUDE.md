@@ -246,6 +246,12 @@ drag it along — if it ever gets in the way, delete it.
   single place every dashboard write is authorised. It fails closed by design.
 - `db/schema.sql` — a change here needs a matching migration run in Supabase, or
   the live site breaks.
+  **Every new table must have Row-Level Security on from the start:** add
+  `ALTER TABLE <name> ENABLE ROW LEVEL SECURITY;` in the same change that
+  creates it (no policies needed — the site connects as `postgres`, which
+  bypasses RLS; see `db/migrations/2026-09-30_enable_rls.sql`). Never read or
+  write the database through the Supabase anon/publishable key or from
+  browser code — all access stays server-side in `src/lib/db.ts`.
 - Anything under `/studio` while Silvana has real bookings in it.
 
 ---

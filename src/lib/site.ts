@@ -158,6 +158,30 @@ export const DISCOVERY_CALL_TIMES = [
   '6:00 pm',
 ] as const;
 
+/** One-off extra discovery-call time (ISO `YYYY-MM-DD`) added on top of the
+ *  usual times - the week of Oct 5, including the open Saturday. */
+const DISCOVERY_CALL_EXTRA_TIME = '12:00 pm';
+const DISCOVERY_CALL_EXTRA_TIME_DATES: readonly string[] = [
+  '2026-10-05',
+  '2026-10-06',
+  '2026-10-07',
+  '2026-10-08',
+  '2026-10-09',
+  '2026-10-10',
+];
+
+/** The discovery-call times offered on a given date (ISO), in clock order. */
+export function discoveryCallTimesFor(isoDate: string | null | undefined): readonly string[] {
+  if (!isoDate || !DISCOVERY_CALL_EXTRA_TIME_DATES.includes(isoDate)) {
+    return DISCOVERY_CALL_TIMES;
+  }
+  return [
+    ...DISCOVERY_CALL_TIMES.filter((t) => t === '9:00 am' || t === '10:00 am' || t === '11:00 am'),
+    DISCOVERY_CALL_EXTRA_TIME,
+    ...DISCOVERY_CALL_TIMES.filter((t) => t !== '9:00 am' && t !== '10:00 am' && t !== '11:00 am'),
+  ];
+}
+
 export const TIME_SLOTS = [
   { key: 'midday', label: '12 – 2 pm', note: 'Midday pause' },
   { key: 'evening', label: '6 – 8 pm', note: 'Evening unwind' },

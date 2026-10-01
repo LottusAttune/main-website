@@ -4,7 +4,7 @@ import { useState } from 'react';
 
 import type { BusinessSettings, Pricing, SiteSettings, Slots } from '@/lib/settings';
 import type { Integrations } from '@/lib/pipeline';
-import { DISCOVERY_CALL_TIMES, TIME_SLOTS, money } from '@/lib/site';
+import { discoveryCallTimesFor, TIME_SLOTS, money } from '@/lib/site';
 import { useStudioAction } from '../useStudioAction';
 import styles from '../studio.module.css';
 
@@ -441,7 +441,7 @@ export function Settings({ settings, integrations }: { settings: SiteSettings; i
           </label>
 
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
-            {DISCOVERY_CALL_TIMES.map((slot) => {
+            {discoveryCallTimesFor(callDay).map((slot) => {
               const off = blockedCallTimeSet.has(slot);
               return (
                 <button

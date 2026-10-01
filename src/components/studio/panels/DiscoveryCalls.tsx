@@ -3,7 +3,7 @@
 import { useMemo, useState } from 'react';
 
 import { formatStudioDate, relativeDays, type DiscoveryCallRow } from '@/lib/pipeline';
-import { DISCOVERY_CALL_TIMES } from '@/lib/site';
+import { discoveryCallTimesFor } from '@/lib/site';
 import { RowActionsMenu } from '../RowActionsMenu';
 import { useStudioAction } from '../useStudioAction';
 import { ExportButton } from '../ExportButton';
@@ -144,7 +144,7 @@ export function DiscoveryCalls({ calls }: { calls: DiscoveryCallRow[] }) {
           value={editTime}
           onChange={(e) => setEditTime(e.target.value)}
         >
-          {DISCOVERY_CALL_TIMES.map((slot) => (
+          {discoveryCallTimesFor(editDate).map((slot) => (
             <option key={slot} value={slot}>
               {slot}
             </option>

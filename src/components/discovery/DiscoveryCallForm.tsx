@@ -4,7 +4,7 @@ import { useMemo, useState, type ReactNode } from 'react';
 
 import { Calendar, formatDay, isoDay } from '@/components/booking/Calendar';
 import type { BlockedCallTime } from '@/lib/settings';
-import { DISCOVERY_CALL_EXTRA_OPEN_DATES, DISCOVERY_CALL_TIMES, SITE } from '@/lib/site';
+import { DISCOVERY_CALL_EXTRA_OPEN_DATES, discoveryCallTimesFor, SITE } from '@/lib/site';
 import styles from './DiscoveryCallForm.module.css';
 
 type Props = {
@@ -159,7 +159,7 @@ export function DiscoveryCallForm({
           <h2 className={styles.stepTitle}>What time?</h2>
         </div>
         <div className={`${styles.times} ${styles.indent}`}>
-          {DISCOVERY_CALL_TIMES.map((slot) => {
+          {discoveryCallTimesFor(date ? isoDay(date) : null).map((slot) => {
             const isBlocked = blockedTimesForDate.has(slot);
             return (
             <button

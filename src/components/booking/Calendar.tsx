@@ -33,6 +33,8 @@ type Props = {
   compact?: boolean;
   /** Days of the week (0 = Sunday) always closed, every week. */
   closedWeekdays?: readonly number[];
+  /** ISO days that stay open even when their weekday is in `closedWeekdays`. */
+  openDates?: readonly string[];
 };
 
 export function Calendar({
@@ -43,6 +45,7 @@ export function Calendar({
   label,
   compact,
   closedWeekdays,
+  openDates,
 }: Props) {
   const [view, setView] = useState({
     year: earliest.getFullYear(),
@@ -113,7 +116,8 @@ export function Calendar({
           const date = new Date(view.year, view.month, n);
           const isBlocked =
             blockedSet.has(isoDay(date)) ||
-            (closedWeekdays?.includes(date.getDay()) ?? false);
+            ((closedWeekdays?.includes(date.getDay()) ?? false) &&
+              !(openDates?.includes(isoDay(date)) ?? false));
           const tooSoon = date < earliest;
           const open = !isBlocked && !tooSoon;
           const isSelected =

@@ -141,6 +141,10 @@ export function groupPriceFor(participants: number): number {
 /** Calendar days between today and the earliest bookable discovery call. */
 export const DISCOVERY_CALL_LEAD_DAYS = 2;
 
+/** Weekend dates (ISO `YYYY-MM-DD`) opened for discovery calls as a one-off,
+ *  with the usual times. Weekends are otherwise closed. */
+export const DISCOVERY_CALL_EXTRA_OPEN_DATES: readonly string[] = ['2026-10-10'];
+
 /** Fixed times offered for a discovery call - shorter and more specific than
  *  the two-hour session windows above, since a call only runs 15-20 minutes. */
 export const DISCOVERY_CALL_TIMES = [

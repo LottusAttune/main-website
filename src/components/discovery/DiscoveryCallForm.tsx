@@ -4,7 +4,7 @@ import { useMemo, useState, type ReactNode } from 'react';
 
 import { Calendar, formatDay, isoDay } from '@/components/booking/Calendar';
 import type { BlockedCallTime } from '@/lib/settings';
-import { DISCOVERY_CALL_TIMES, SITE } from '@/lib/site';
+import { DISCOVERY_CALL_EXTRA_OPEN_DATES, DISCOVERY_CALL_TIMES, SITE } from '@/lib/site';
 import styles from './DiscoveryCallForm.module.css';
 
 type Props = {
@@ -144,6 +144,7 @@ export function DiscoveryCallForm({
             }}
             compact
             closedWeekdays={[0, 6]}
+            openDates={DISCOVERY_CALL_EXTRA_OPEN_DATES}
           />
         </div>
         <p className={styles.calendarNote}>

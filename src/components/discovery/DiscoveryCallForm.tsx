@@ -177,9 +177,9 @@ export function DiscoveryCallForm({
           })}
         </div>
         <p className={styles.timesNote}>
-          Prefer not to book a call? Email us at{' '}
+          None of these times suit you? Email us at{' '}
           <a href={`mailto:${SITE.email}`}>{SITE.email}</a> or WhatsApp{' '}
-          {SITE.phone}.
+          {SITE.phone} and we&apos;ll arrange an alternative.
         </p>
       </div>
 

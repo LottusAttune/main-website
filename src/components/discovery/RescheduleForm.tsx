@@ -167,6 +167,11 @@ export function RescheduleForm({
             );
           })}
         </div>
+        <p className={styles.timesNote}>
+          None of these times suit you? Email us at{' '}
+          <a href={`mailto:${SITE.email}`}>{SITE.email}</a> or WhatsApp{' '}
+          {SITE.phone} and we&apos;ll arrange an alternative.
+        </p>
 
         <button
           type="submit"

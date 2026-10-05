@@ -707,7 +707,7 @@ export async function sendBookingConfirmationEmail(input: SessionEmailInput): Pr
     <p style="margin:0 0 16px;">Answers to common questions - what to wear, what to expect, what is included and more - are on our <a href="${SITE.url}/#faq-heading" style="color:#7c5b3b;">FAQ page</a>.</p>
     ${input.cancellationPolicy ? `${sectionTitle('Cancellation & Rescheduling Policy')}<p style="margin:0 0 16px;">${escapeHtml(input.cancellationPolicy).replace(/\n/g, '<br />')}</p>` : ''}
     ${sectionTitle('Terms & Conditions')}
-    <p style="margin:0 0 16px;">The Terms &amp; Conditions you accepted when booking ${input.termsPdf ? 'are attached to this email and ' : ''}can be read any time at <a href="${SITE.url}/terms" style="color:#7c5b3b;">${SITE.url.replace(/^https?:\/\//, '')}/terms</a>.</p>
+    <p style="margin:0 0 16px;">The Terms &amp; Conditions you accepted when booking ${input.termsPdf ? 'are attached to this email and ' : ''}can be read any time on our <a href="${SITE.url}/terms" style="color:#7c5b3b;">Terms &amp; Conditions page</a>.</p>
     <p style="margin:0 0 10px;">We're looking forward to welcoming you and creating space for a truly restorative reset!</p>
     <p style="margin:0;">In resonance,<br />— Silvana, Founder &amp; Facilitator</p>
     ${mottoHtml()}`);

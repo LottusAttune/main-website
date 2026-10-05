@@ -43,7 +43,7 @@ export function termsHtml(business: BusinessSettings): string {
   <div class="eyebrow">${escapeHtml(SITE.name)}</div>
   <h1>Terms &amp; Conditions</h1>
   ${sections}
-  <div class="foot">The current version is always at ${escapeHtml(SITE.url)}/terms</div>
+  <div class="foot">The current version is always on our <a href="${escapeHtml(SITE.url)}/terms" style="color:#7c5b3b;">Terms &amp; Conditions page</a>.</div>
 </body></html>`;
 }
 

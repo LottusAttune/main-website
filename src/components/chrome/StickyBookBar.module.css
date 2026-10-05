@@ -166,6 +166,23 @@
     flex-wrap: nowrap;
     gap: 14px;
     padding: 6px clamp(16px, 4vw, 28px) calc(6px + env(safe-area-inset-bottom));
+
+    /* Phones/tablets only. Hiding the bar by translating it 100% below its
+       sticky slot pushes it past the end of the page, which iOS Safari/Chrome
+       can count as extra scrollable height and, as the toolbars collapse and
+       expand, leave as a blank band under the footer. Fading it in place
+       (opacity + visibility, no transform) keeps the page's height exactly
+       the content's height. Desktop keeps the slide. */
+    transform: none;
+    transition:
+      opacity 0.35s ease,
+      visibility 0s linear 0.35s;
+  }
+
+  .barDark.barShown {
+    transition:
+      opacity 0.35s ease,
+      visibility 0s;
   }
 
   .label,

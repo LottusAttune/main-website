@@ -1,10 +1,10 @@
 import { z } from 'zod';
 
-import { MAX_PARTICIPANTS, TIME_SLOTS } from '@/lib/site';
+import { EXTRA_SESSION_SLOT, MAX_PARTICIPANTS, TIME_SLOTS } from '@/lib/site';
 
-const TIME_LABELS = TIME_SLOTS.map((slot) => slot.label) as [
-  string,
-  ...string[],
+const TIME_LABELS: [string, ...string[]] = [
+  EXTRA_SESSION_SLOT.label,
+  ...TIME_SLOTS.map((slot) => slot.label),
 ];
 
 const isoDay = z

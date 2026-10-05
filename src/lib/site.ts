@@ -189,6 +189,32 @@ export const TIME_SLOTS = [
 
 export type SlotKey = (typeof TIME_SLOTS)[number]['key'];
 
+/** One-off morning session window that takes the place of the midday one on
+ *  a single date. It sits outside TIME_SLOTS on purpose - those keys are
+ *  stored as settings columns and the studio's open/closed toggles. */
+export const EXTRA_SESSION_SLOT = {
+  key: 'morning',
+  date: '2026-11-23',
+  label: '10 am – 12 pm',
+  note: 'Morning',
+  startMinutes: 10 * 60,
+  replaces: 'midday',
+} as const;
+
+/** Session windows on offer for a date (ISO): the regular ones, except on the
+ *  one-off date, where the morning window replaces the midday one. Ignores
+ *  the studio's open/closed toggles - callers filter the regular ones
+ *  against those themselves. */
+export function sessionSlotsFor(
+  isoDate: string | null | undefined
+): readonly { key: string; label: string; note: string }[] {
+  if (isoDate !== EXTRA_SESSION_SLOT.date) return TIME_SLOTS;
+  return [
+    EXTRA_SESSION_SLOT,
+    ...TIME_SLOTS.filter((slot) => slot.key !== EXTRA_SESSION_SLOT.replaces),
+  ];
+}
+
 export const VENUE_NOTE = {
   lounge:
     'Wellness Lounge — an intimate space with exclusive access to both the Arrival Lounge and the Experience Room. Venue rental included.',
@@ -232,10 +258,18 @@ function slotsBlockedByCalls(date: string, bookedCalls: readonly BookedCall[]): 
     .filter((c) => c.date === date)
     .map((c) => parseClockMinutes(c.time));
   const blocked = new Set<string>();
-  for (const slot of TIME_SLOTS) {
-    const start = SESSION_START_MINUTES[slot.key];
+  const windows: { label: string; start: number }[] = TIME_SLOTS.filter(
+    (slot) => date !== EXTRA_SESSION_SLOT.date || slot.key !== EXTRA_SESSION_SLOT.replaces
+  ).map((slot) => ({
+    label: slot.label,
+    start: SESSION_START_MINUTES[slot.key],
+  }));
+  if (date === EXTRA_SESSION_SLOT.date) {
+    windows.push({ label: EXTRA_SESSION_SLOT.label, start: EXTRA_SESSION_SLOT.startMinutes });
+  }
+  for (const { label, start } of windows) {
     if (callMinutes.some((m) => Math.abs(m - start) <= CALL_EVENT_BUFFER_MINUTES)) {
-      blocked.add(slot.label);
+      blocked.add(label);
     }
   }
   return blocked;
@@ -277,7 +311,12 @@ export function blockedDatesFor(
       continue;
     }
     const takenTimes = blockedTimesFor(date, participants, bookedSlots, bookedCalls);
-    if (openSlotLabels.every((label) => takenTimes.has(label))) {
+    const midday = TIME_SLOTS.find((slot) => slot.key === EXTRA_SESSION_SLOT.replaces)!.label;
+    const dayLabels =
+      date === EXTRA_SESSION_SLOT.date
+        ? [...openSlotLabels.filter((label) => label !== midday), EXTRA_SESSION_SLOT.label]
+        : openSlotLabels;
+    if (dayLabels.every((label) => takenTimes.has(label))) {
       blocked.add(date);
     }
   }
@@ -316,6 +355,15 @@ export function isSlotAvailable(
   bookedSlots: readonly SessionSlot[],
   bookedCalls: readonly BookedCall[]
 ): boolean {
+  // The one-off morning window only exists on its own date.
+  const onExtraDate = date === EXTRA_SESSION_SLOT.date;
+  if (time === EXTRA_SESSION_SLOT.label && !onExtraDate) return false;
+  if (
+    onExtraDate &&
+    time === TIME_SLOTS.find((slot) => slot.key === EXTRA_SESSION_SLOT.replaces)!.label
+  ) {
+    return false;
+  }
   const venue = venueForParticipants(participants);
   const daySlots = bookedSlots.filter((s) => s.date === date);
   if (daySlots.some((s) => venueForParticipants(s.participants) === 'lounge')) return false;

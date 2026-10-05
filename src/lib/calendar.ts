@@ -182,15 +182,17 @@ export function sessionSlotWindow(
   sessionDate: string,
   sessionTime: string
 ): { startISO: string; endISO: string } {
-  const match = sessionTime.match(/^(\d+)\s*[–-]\s*(\d+)\s*(am|pm)$/i);
-  if (!match) throw new Error(`Unrecognized time slot: ${sessionTime}`);
-  const [, startStr, endStr, ampm] = match;
+  // "10 am – 12 pm": each end carries its own am/pm.
+  const split = sessionTime.match(/^(\d+)\s*(am|pm)\s*[–-]\s*(\d+)\s*(am|pm)$/i);
+  const shared = sessionTime.match(/^(\d+)\s*[–-]\s*(\d+)\s*(am|pm)$/i);
+  if (!split && !shared) throw new Error(`Unrecognized time slot: ${sessionTime}`);
+  const [startStr, startAmPm, endStr, endAmPm] = split
+    ? [split[1], split[2], split[3], split[4]]
+    : [shared![1], shared![3], shared![2], shared![3]];
   let startHour = Number(startStr) % 12;
   let endHour = Number(endStr) % 12;
-  if (ampm.toLowerCase() === 'pm') {
-    startHour += 12;
-    endHour += 12;
-  }
+  if (startAmPm.toLowerCase() === 'pm') startHour += 12;
+  if (endAmPm.toLowerCase() === 'pm') endHour += 12;
   return {
     startISO: `${sessionDate}T${pad(startHour)}:00:00`,
     endISO: `${sessionDate}T${pad(endHour)}:00:00`,

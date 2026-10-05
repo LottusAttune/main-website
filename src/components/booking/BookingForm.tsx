@@ -14,6 +14,7 @@ import {
   type BookedCall,
   CORPORATE_INTRO_MIN_PARTICIPANTS,
   corporateIntroPriceFor,
+  EXTRA_SESSION_SLOT,
   MAX_PARTICIPANTS,
   SITE,
   TEAM_ADDON_MIN_PARTICIPANTS,
@@ -22,6 +23,8 @@ import {
   groupPriceFor,
   money,
   type SessionSlot,
+  sessionSlotsFor,
+  type SlotKey,
   venueNoteFor,
 } from '@/lib/site';
 import { Calendar, formatDay, isoDay } from './Calendar';
@@ -178,6 +181,11 @@ export function BookingForm({
   const blockedTimesForDate = date
     ? blockedTimesFor(isoDay(date), people, bookedSessionSlots, bookedCalls)
     : new Set<string>();
+  // The slots shown for the chosen date: the usual open ones, except on the
+  // one-off date where a morning window replaces the midday one.
+  const slotsForDate = sessionSlotsFor(date ? isoDay(date) : null).filter(
+    (slot) => slot.key === EXTRA_SESSION_SLOT.key || slots[slot.key as SlotKey] !== false
+  );
 
   // A choice that was fine a moment ago can stop being available once the
   // party size changes (it changes which venue applies) - drop it rather
@@ -638,8 +646,10 @@ export function BookingForm({
               onSelect={(next) => {
                 setDate(next);
                 const blockedNow = blockedTimesFor(isoDay(next), people, bookedSessionSlots, bookedCalls);
-                if (time && blockedNow.has(time)) setTime(null);
-                if (time2 && blockedNow.has(time2)) setTime2(null);
+                // A slot picked for another date may not exist on this one.
+                const offered = new Set(sessionSlotsFor(isoDay(next)).map((slot) => slot.label));
+                if (time && (blockedNow.has(time) || !offered.has(time))) setTime(null);
+                if (time2 && (blockedNow.has(time2) || !offered.has(time2))) setTime2(null);
               }}
             />
           </div>
@@ -660,7 +670,7 @@ export function BookingForm({
               : 'Each session runs two hours'}
           </p>
           <div className={`${styles.times} ${styles.indent}`}>
-            {openSlots.map((slot) => {
+            {slotsForDate.map((slot) => {
               const isOn = needsSecond
                 ? time === slot.label || time2 === slot.label
                 : time === slot.label;

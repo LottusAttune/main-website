@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from 'react';
 
-import { money, TIME_SLOTS, toTorontoDateIso } from '@/lib/site';
+import { money, sessionSlotsFor, toTorontoDateIso } from '@/lib/site';
 import {
   balanceDue,
   documentStatusLabel,
@@ -313,7 +313,7 @@ export function Bookings({ bookings: allBookings, documents, integrations, busin
             value={editTime}
             onChange={(e) => setEditTime(e.target.value)}
           >
-            {TIME_SLOTS.map((slot) => (
+            {sessionSlotsFor(editDate).map((slot) => (
               <option key={slot.key} value={slot.label}>
                 {slot.label}
               </option>
@@ -335,7 +335,7 @@ export function Bookings({ bookings: allBookings, documents, integrations, busin
               value={editTime2}
               onChange={(e) => setEditTime2(e.target.value)}
             >
-              {TIME_SLOTS.map((slot) => (
+              {sessionSlotsFor(editDate2).map((slot) => (
                 <option key={slot.key} value={slot.label}>
                   {slot.label}
                 </option>

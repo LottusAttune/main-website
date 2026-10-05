@@ -575,6 +575,8 @@ export type SessionEmailInput = {
   paymentJustReceived?: { amount: number; method: string; kind: string } | null;
   invoiceNumber?: string | null;
   invoicePdf?: Buffer | null;
+  /** The Terms & Conditions as a PDF, attached to the booking confirmation. */
+  termsPdf?: Buffer | null;
   /** Left on a gift certificate that paid (part of) this invoice - null once nothing remains or none was used. */
   giftCreditRemaining?: { code: string; remaining: number } | null;
 };
@@ -704,6 +706,8 @@ export async function sendBookingConfirmationEmail(input: SessionEmailInput): Pr
     ${sectionTitle('Good to know')}
     <p style="margin:0 0 16px;">Answers to common questions - what to wear, what to expect, what is included and more - are on our <a href="${SITE.url}/#faq-heading" style="color:#7c5b3b;">FAQ page</a>.</p>
     ${input.cancellationPolicy ? `${sectionTitle('Cancellation & Rescheduling Policy')}<p style="margin:0 0 16px;">${escapeHtml(input.cancellationPolicy).replace(/\n/g, '<br />')}</p>` : ''}
+    ${sectionTitle('Terms & Conditions')}
+    <p style="margin:0 0 16px;">The Terms &amp; Conditions you accepted when booking ${input.termsPdf ? 'are attached to this email and ' : ''}can be read any time at <a href="${SITE.url}/terms" style="color:#7c5b3b;">${SITE.url.replace(/^https?:\/\//, '')}/terms</a>.</p>
     <p style="margin:0 0 10px;">We're looking forward to welcoming you and creating space for a truly restorative reset!</p>
     <p style="margin:0;">In resonance,<br />— Silvana, Founder &amp; Facilitator</p>
     ${mottoHtml()}`);
@@ -712,10 +716,12 @@ export async function sendBookingConfirmationEmail(input: SessionEmailInput): Pr
     to: input.email,
     subject: `Confirmed: your Lotus Attune experience on ${formatStudioDate(input.sessionDate)}`,
     html,
-    attachments:
-      input.invoicePdf && input.invoiceNumber
+    attachments: [
+      ...(input.invoicePdf && input.invoiceNumber
         ? [{ filename: `${input.invoiceNumber}.pdf`, content: input.invoicePdf }]
-        : undefined,
+        : []),
+      ...(input.termsPdf ? [{ filename: 'Lotus-Attune-Terms-and-Conditions.pdf', content: input.termsPdf }] : []),
+    ],
   });
 }
 

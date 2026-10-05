@@ -29,6 +29,7 @@ import {
 import { buildIcs, googleCalendarUrl } from '@/lib/ics';
 import { balanceDue, type DocumentRow } from '@/lib/pipeline';
 import { getSettings, type SiteSettings } from '@/lib/settings';
+import { renderTermsPdf } from '@/lib/terms-pdf';
 import { chargeSavedCard, isStripeConfigured, StripeError } from '@/lib/stripe';
 import { LOUNGE_MAX, money, SITE, splitAddressForCalendar, splitVenueDetails } from '@/lib/site';
 
@@ -167,6 +168,8 @@ export async function sendBookingConfirmation(
     input.invoiceNumber = invoice?.number ?? null;
     input.invoicePdf = payment.pdf;
   }
+
+  input.termsPdf = await renderTermsPdf(settings.business);
 
   const sent = await sendBookingConfirmationEmail(input);
   if (!sent.ok) {

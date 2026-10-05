@@ -21,7 +21,7 @@ export function termsHtml(business: BusinessSettings): string {
   const sections = termsSections(business)
     .map(
       (s) => `
-      <h2>${escapeHtml(s.title)}</h2>
+      ${s.title === 'Bookings' ? '' : `<h2>${escapeHtml(s.title)}</h2>`}
       ${s.paragraphs
         .filter(Boolean)
         .map((p) => `<p>${escapeHtml(p).replace(/\n/g, '<br />')}</p>`)
@@ -37,13 +37,11 @@ export function termsHtml(business: BusinessSettings): string {
   h1 { font-family: Georgia, serif; font-weight: 400; font-size: 28px; margin: 8px 0 6px; }
   h2 { font-family: Georgia, serif; font-weight: 400; font-size: 17px; margin: 22px 0 6px; }
   p { margin: 0 0 8px; color: #5c4c40; }
-  .lede { margin-bottom: 4px; }
   .foot { margin-top: 30px; padding-top: 12px; border-top: 1px solid #e6dccd; font-size: 11px; color: #5c4c40; }
 </style></head>
 <body>
   <div class="eyebrow">${escapeHtml(SITE.name)}</div>
   <h1>Terms &amp; Conditions</h1>
-  <p class="lede">The plain-language terms for booking, paying for and attending a Lotus Attune experience.</p>
   ${sections}
   <div class="foot">The current version is always at ${escapeHtml(SITE.url)}/terms</div>
 </body></html>`;

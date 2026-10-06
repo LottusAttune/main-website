@@ -2,7 +2,7 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import { asset } from '@/lib/images';
 import type { SiteSettings } from '@/lib/settings';
@@ -40,6 +40,39 @@ export function StudioShell({ data, settings, databaseReady }: Props) {
   const [leadToOpen, setLeadToOpen] = useState<string | null>(null);
   const mark = asset('logo-circle');
 
+  /** When Bookings was last opened on this device - anything created after it
+   *  shows as "new" until the next visit. Browser-only, so it never touches the
+   *  database. null until read (avoids a flash of everything as new). */
+  const [bookingsSeenAt, setBookingsSeenAt] = useState<string | null>(null);
+  useEffect(() => {
+    try {
+      const stored = window.localStorage.getItem('studio.bookingsSeenAt');
+      if (stored) {
+        setBookingsSeenAt(stored);
+      } else {
+        const now = new Date().toISOString();
+        window.localStorage.setItem('studio.bookingsSeenAt', now);
+        setBookingsSeenAt(now);
+      }
+    } catch {
+      setBookingsSeenAt(new Date().toISOString());
+    }
+  }, []);
+  useEffect(() => {
+    if (view !== 'leads') return;
+    const now = new Date().toISOString();
+    setBookingsSeenAt(now);
+    try {
+      window.localStorage.setItem('studio.bookingsSeenAt', now);
+    } catch {
+      /* private mode: the badge just resets on reload */
+    }
+  }, [view, data.leads]);
+  const newBookings =
+    bookingsSeenAt && view !== 'leads'
+      ? data.leads.filter((l) => l.status !== 'cancelled' && l.createdAt > bookingsSeenAt).length
+      : 0;
+
   const awaitingPayment = data.leads.filter(
     (lead) => lead.status !== 'booked' && lead.status !== 'complete' && lead.status !== 'cancelled'
   ).length;
@@ -52,9 +85,9 @@ export function StudioShell({ data, settings, databaseReady }: Props) {
   ).length;
   const giftsToDo = data.giftCards.filter((g) => g.status === 'requested').length;
 
-  const nav: Array<{ key: ViewKey; label: string; count?: number; alert?: boolean }> = [
+  const nav: Array<{ key: ViewKey; label: string; count?: number; alert?: boolean; fresh?: number }> = [
     { key: 'today', label: 'Today' },
-    { key: 'leads', label: 'Bookings', count: awaitingPayment },
+    { key: 'leads', label: 'Bookings', count: awaitingPayment, fresh: newBookings },
     { key: 'invoices', label: 'Getting paid', count: openInvoices.length, alert: overdue > 0 },
     { key: 'gifts', label: 'Gift cards', count: giftsToDo },
     { key: 'calls', label: 'Discovery calls', count: data.discoveryCalls.filter((c) => c.status !== 'cancelled' && c.callDate >= new Date().toISOString().slice(0, 10)).length },
@@ -92,14 +125,24 @@ export function StudioShell({ data, settings, databaseReady }: Props) {
       }}
     >
       <span>{item.label}</span>
-      {item.count !== undefined && item.count > 0 ? (
-        <span
-          className={styles.badge}
-          style={item.alert ? { background: 'var(--status-alert-bg)', color: 'var(--status-alert)' } : undefined}
-        >
-          {item.count}
-        </span>
-      ) : null}
+      <span style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+        {item.count !== undefined && item.count > 0 ? (
+          <span
+            className={styles.badge}
+            style={item.alert ? { background: 'var(--status-alert-bg)', color: 'var(--status-alert)' } : undefined}
+          >
+            {item.count}
+          </span>
+        ) : null}
+        {item.fresh ? (
+          <span
+            className={styles.badge}
+            style={{ background: 'var(--color-ink)', color: 'var(--color-cream-text)' }}
+          >
+            {item.fresh} new
+          </span>
+        ) : null}
+      </span>
     </button>
   ));
 

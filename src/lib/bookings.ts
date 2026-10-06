@@ -167,6 +167,15 @@ export async function sendBookingConfirmation(
     input.paymentJustReceived = { amount: payment.amount, method: payment.method, kind: payment.kind };
     input.invoiceNumber = invoice?.number ?? null;
     input.invoicePdf = payment.pdf;
+  } else if (invoice) {
+    // No payment to fold in (a free booking, or a resend from the studio):
+    // still attach the invoice as it stands.
+    try {
+      input.invoiceNumber = invoice.number;
+      input.invoicePdf = await generatePdf(invoice, await loadContext(invoice));
+    } catch (error) {
+      console.error('[bookings] confirmation invoice PDF failed:', error);
+    }
   }
 
   input.termsPdf = await renderTermsPdf(settings.business);

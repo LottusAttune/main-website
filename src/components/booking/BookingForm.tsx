@@ -572,6 +572,17 @@ export function BookingForm({
             <div className={`${styles.venueNote} ${styles.indent}`}>{venueNoteFor(people)}</div>
           )}
 
+          {people >= 7 && (
+            <div className={`${styles.venueNote} ${styles.indent}`}>
+              Groups of 7 or more are by request, please{' '}
+              <a href={`mailto:${SITE.email}`}>email me</a> or send me a{' '}
+              <a href={SITE.whatsappHref} target="_blank" rel="noopener noreferrer">
+                WhatsApp
+              </a>{' '}
+              with your event date, time and group size, and I will confirm venue availability before you book.
+            </div>
+          )}
+
           {people === 1 && (
             <div className={`${styles.tierChoice} ${styles.indent}`}>
               <button

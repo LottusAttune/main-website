@@ -76,9 +76,9 @@ async function sessionEmailInput(
   row: Row,
   settings: SiteSettings,
   invoice: DocumentRow | null,
-  /** The booking confirmation leaves arrival instructions, lobby directions
-   *  and parking out (they follow in the reminder); the reminder carries them. */
-  arrivalDetails: boolean
+  /** The booking confirmation leaves the "once inside the lobby" directions
+   *  out (they follow in the reminder); the reminder carries them. */
+  lobbyDirections: boolean
 ): Promise<SessionEmailInput | null> {
   const sessionDate = toIso(row.session_date);
   const sessionTime = row.session_time ? String(row.session_time) : null;
@@ -101,8 +101,8 @@ async function sessionEmailInput(
   const description = [
     `${venue}:`,
     extra,
-    arrivalDetails ? arrival : null,
-    arrivalDetails ? venueDirections : null,
+    arrival,
+    lobbyDirections ? venueDirections : null,
     'Please arrive 15 minutes prior to the start of your session to settle in. Allow extra time for parking and rush-hour traffic.',
   ]
     .filter(Boolean)
@@ -132,7 +132,7 @@ async function sessionEmailInput(
     venueCopy: VENUE_COPY_BOOKING,
     venueDetails: settings.business.venueDetails,
     venueDirections,
-    arrivalDetails,
+    lobbyDirections,
     parking: settings.business.parking,
     cancellationPolicy: settings.business.cancellationPolicy || DEFAULT_CANCELLATION_POLICY,
     faqs: CONFIRMATION_FAQS,

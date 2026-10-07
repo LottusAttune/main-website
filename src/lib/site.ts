@@ -390,10 +390,10 @@ export function toTorontoDateIso(timestamp: string | Date): string {
   return new Intl.DateTimeFormat('en-CA', { timeZone: 'America/Toronto' }).format(date);
 }
 
-/** Arrival instructions and lobby directions are only sent once the reminder
- *  window opens (the reminder email goes out `reminderDaysBefore` days ahead),
- *  so a booking made weeks ahead isn't tied to directions that may change.
- *  The calendar event a client downloads follows the same rule. */
+/** The "once inside the lobby" directions depend on the room, so they are only
+ *  shown once the reminder window opens (the reminder email goes out
+ *  `reminderDaysBefore` days ahead). The booking page and the calendar event a
+ *  client downloads follow the same rule. */
 export function directionsReleased(sessionDate: string, reminderDaysBefore: number): boolean {
   const [y, m, d] = sessionDate.split('-').map(Number);
   const releaseOn = new Date(Date.UTC(y, m - 1, d - reminderDaysBefore)).toISOString().slice(0, 10);

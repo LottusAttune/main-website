@@ -75,7 +75,10 @@ async function invoiceFor(bookingId: string): Promise<DocumentRow | null> {
 async function sessionEmailInput(
   row: Row,
   settings: SiteSettings,
-  invoice: DocumentRow | null
+  invoice: DocumentRow | null,
+  /** The booking confirmation leaves arrival instructions, lobby directions
+   *  and parking out (they follow in the reminder); the reminder carries them. */
+  arrivalDetails: boolean
 ): Promise<SessionEmailInput | null> {
   const sessionDate = toIso(row.session_date);
   const sessionTime = row.session_time ? String(row.session_time) : null;
@@ -98,8 +101,8 @@ async function sessionEmailInput(
   const description = [
     `${venue}:`,
     extra,
-    arrival,
-    venueDirections,
+    arrivalDetails ? arrival : null,
+    arrivalDetails ? venueDirections : null,
     'Please arrive 15 minutes prior to the start of your session to settle in. Allow extra time for parking and rush-hour traffic.',
   ]
     .filter(Boolean)
@@ -129,6 +132,7 @@ async function sessionEmailInput(
     venueCopy: VENUE_COPY_BOOKING,
     venueDetails: settings.business.venueDetails,
     venueDirections,
+    arrivalDetails,
     parking: settings.business.parking,
     cancellationPolicy: settings.business.cancellationPolicy || DEFAULT_CANCELLATION_POLICY,
     faqs: CONFIRMATION_FAQS,
@@ -161,7 +165,7 @@ export async function sendBookingConfirmation(
 
   const settings = await getSettings();
   const invoice = await invoiceFor(bookingId);
-  const input = await sessionEmailInput(row, settings, invoice);
+  const input = await sessionEmailInput(row, settings, invoice, false);
   if (!input) return { ok: false, error: 'This booking has no session date yet.' };
   if (payment) {
     input.paymentJustReceived = { amount: payment.amount, method: payment.method, kind: payment.kind };
@@ -197,7 +201,7 @@ export async function sendBookingReminder(bookingId: string): Promise<ActionResu
 
   const settings = await getSettings();
   const invoice = await invoiceFor(bookingId);
-  const input = await sessionEmailInput(row, settings, invoice);
+  const input = await sessionEmailInput(row, settings, invoice, true);
   if (!input) return { ok: false, error: 'This booking has no session date yet.' };
 
   const sent = await sendReminderEmail(input);

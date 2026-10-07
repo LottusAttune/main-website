@@ -26,7 +26,7 @@ export function PortalView({ data }: { data: PortalData }) {
   const extras = [booking.teamAddon ? 'Team-building add-on' : null].filter(Boolean);
   const { location, arrival } = splitVenueDetails(settings.business.venueDetails);
   const lobbyReleased = booking.sessionDate
-    ? directionsReleased(booking.sessionDate, settings.business.reminderDaysBefore)
+    ? directionsReleased(booking.sessionDate, settings.business.reminderDaysBefore, booking.bookedOn)
     : false;
   const minRescheduleDate = (() => {
     const [y, m, d] = toTorontoDateIso(new Date()).split('-').map(Number);

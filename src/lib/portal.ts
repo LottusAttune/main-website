@@ -19,7 +19,7 @@ import { buildIcs, googleCalendarUrl, zonedTimeToUtc, type CalendarEvent } from 
 import { balanceDue, formatStudioDate, type DocumentRow } from '@/lib/pipeline';
 import { MIN_GROUP_SIZE, quoteFor } from '@/lib/quote';
 import { getSettings, type SiteSettings } from '@/lib/settings';
-import { directionsReleased, LOUNGE_MAX, money, SITE, splitAddressForCalendar, splitVenueDetails, TEAM_ADDON_MIN_PARTICIPANTS, TIME_SLOTS, type SlotKey } from '@/lib/site';
+import { directionsReleased, LOUNGE_MAX, money, SITE, splitAddressForCalendar, splitVenueDetails, TEAM_ADDON_MIN_PARTICIPANTS, TIME_SLOTS, toTorontoDateIso, type SlotKey } from '@/lib/site';
 
 function escapeHtml(value: string): string {
   return value.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
@@ -43,7 +43,7 @@ export type Upsell = {
 
 export type PortalData = {
   token: string;
-  booking: BookingCtx & { cardOnFile: boolean; confirmed: boolean };
+  booking: BookingCtx & { cardOnFile: boolean; confirmed: boolean; bookedOn: string | null };
   invoice: DocumentRow | null;
   settings: SiteSettings;
   venue: string;
@@ -145,6 +145,7 @@ export async function loadPortal(token: string): Promise<PortalData | null> {
   const giftCreditRemaining = invoice ? await giftCreditRemainingFor(invoice.id) : null;
   const venue = booking.participants <= LOUNGE_MAX ? 'Private Wellness Lounge' : 'Premium Signature Venue';
 
+  const bookedOn = row.created_at ? toTorontoDateIso(row.created_at as string | Date) : null;
   let startsAt: string | null = null;
   let endsAt: string | null = null;
   let calendar: string | null = null;
@@ -153,7 +154,7 @@ export async function loadPortal(token: string): Promise<PortalData | null> {
       const { startISO, endISO } = sessionSlotWindow(booking.sessionDate, booking.sessionTime);
       startsAt = zonedTimeToUtc(startISO, 'America/Toronto').toISOString();
       endsAt = zonedTimeToUtc(endISO, 'America/Toronto').toISOString();
-      calendar = googleCalendarUrl(calendarEvent(booking, settings, venue));
+      calendar = googleCalendarUrl(calendarEvent(booking, settings, venue, bookedOn));
     } catch {
       // An unrecognised slot label: no countdown, the rest still works.
     }
@@ -161,7 +162,7 @@ export async function loadPortal(token: string): Promise<PortalData | null> {
 
   return {
     token,
-    booking: { ...booking, cardOnFile: Boolean(row.stripe_payment_method_id), confirmed: paid > 0 },
+    booking: { ...booking, cardOnFile: Boolean(row.stripe_payment_method_id), confirmed: paid > 0, bookedOn },
     invoice,
     settings,
     venue,
@@ -186,7 +187,12 @@ export async function loadPortal(token: string): Promise<PortalData | null> {
   };
 }
 
-export function calendarEvent(booking: BookingCtx, settings: SiteSettings, venue: string): CalendarEvent {
+export function calendarEvent(
+  booking: BookingCtx,
+  settings: SiteSettings,
+  venue: string,
+  bookedOn: string | null
+): CalendarEvent {
   const { startISO, endISO } = sessionSlotWindow(booking.sessionDate!, booking.sessionTime!);
   // Location is for the calendar app's own map/directions lookup - just the
   // street address, not any trailing descriptive sentence (which some
@@ -199,9 +205,10 @@ export function calendarEvent(booking: BookingCtx, settings: SiteSettings, venue
     venue === 'Private Wellness Lounge'
       ? settings.business.venueDirectionsLounge
       : settings.business.venueDirectionsSignature;
-  // The lobby directions join the event once the reminder goes out; a
-  // calendar file downloaded earlier carries the address and buzzer text.
-  const withDirections = directionsReleased(booking.sessionDate!, settings.business.reminderDaysBefore);
+  // The lobby directions join the event once released (7 days after booking,
+  // or when the reminder window opens); an earlier file has the address and
+  // buzzer text.
+  const withDirections = directionsReleased(booking.sessionDate!, settings.business.reminderDaysBefore, bookedOn);
   const description = [
     `${venue}:`,
     extra,
@@ -226,7 +233,7 @@ export function calendarEvent(booking: BookingCtx, settings: SiteSettings, venue
 export async function portalIcs(token: string): Promise<string | null> {
   const data = await loadPortal(token);
   if (!data || !data.booking.sessionDate || !data.booking.sessionTime) return null;
-  return buildIcs(calendarEvent(data.booking, data.settings, data.venue));
+  return buildIcs(calendarEvent(data.booking, data.settings, data.venue, data.booking.bookedOn));
 }
 
 /**

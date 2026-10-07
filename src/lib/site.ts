@@ -390,14 +390,27 @@ export function toTorontoDateIso(timestamp: string | Date): string {
   return new Intl.DateTimeFormat('en-CA', { timeZone: 'America/Toronto' }).format(date);
 }
 
-/** The "once inside the lobby" directions depend on the room, so they are only
- *  shown once the reminder window opens (the reminder email goes out
- *  `reminderDaysBefore` days ahead). The booking page and the calendar event a
- *  client downloads follow the same rule. */
-export function directionsReleased(sessionDate: string, reminderDaysBefore: number): boolean {
-  const [y, m, d] = sessionDate.split('-').map(Number);
-  const releaseOn = new Date(Date.UTC(y, m - 1, d - reminderDaysBefore)).toISOString().slice(0, 10);
-  return toTorontoDateIso(new Date()) >= releaseOn;
+/** Days after booking when the "once inside the lobby" directions appear on
+ *  the booking page, by which time the room has long been confirmed. */
+export const LOBBY_DIRECTIONS_DAYS_AFTER_BOOKING = 7;
+
+/** The "once inside the lobby" directions depend on the room, so they are not
+ *  shown the moment someone books. They appear on the booking page (and in a
+ *  calendar file downloaded from it) once the room is settled: 7 days after the
+ *  booking, or when the reminder window opens (`reminderDaysBefore` days before
+ *  the session), whichever comes first. `bookedOn` is the Toronto booking date. */
+export function directionsReleased(
+  sessionDate: string,
+  reminderDaysBefore: number,
+  bookedOn: string | null
+): boolean {
+  const shift = (iso: string, days: number) => {
+    const [y, m, d] = iso.split('-').map(Number);
+    return new Date(Date.UTC(y, m - 1, d + days)).toISOString().slice(0, 10);
+  };
+  const today = toTorontoDateIso(new Date());
+  if (today >= shift(sessionDate, -reminderDaysBefore)) return true;
+  return bookedOn !== null && today >= shift(bookedOn, LOBBY_DIRECTIONS_DAYS_AFTER_BOOKING);
 }
 
 export function splitVenueDetails(text: string): { location: string; arrival: string | null } {

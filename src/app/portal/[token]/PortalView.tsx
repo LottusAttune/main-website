@@ -3,7 +3,7 @@ import { SiteFooter } from '@/components/chrome/SiteFooter';
 import { SiteNav } from '@/components/chrome/SiteNav';
 import { formatPlainDate, formatStudioDate } from '@/lib/pipeline';
 import type { PortalData } from '@/lib/portal';
-import { money, SITE, splitVenueDetails, toTorontoDateIso } from '@/lib/site';
+import { directionsReleased, money, SITE, splitVenueDetails, toTorontoDateIso } from '@/lib/site';
 import { Countdown } from './Countdown';
 import { PortalAddons } from './PortalAddons';
 import { PortalReschedule } from './PortalReschedule';
@@ -25,6 +25,9 @@ export function PortalView({ data }: { data: PortalData }) {
         : `${booking.participants} participants`;
   const extras = [booking.teamAddon ? 'Team-building add-on' : null].filter(Boolean);
   const { location, arrival } = splitVenueDetails(settings.business.venueDetails);
+  const lobbyReleased = booking.sessionDate
+    ? directionsReleased(booking.sessionDate, settings.business.reminderDaysBefore)
+    : false;
   const minRescheduleDate = (() => {
     const [y, m, d] = toTorontoDateIso(new Date()).split('-').map(Number);
     return new Date(Date.UTC(y, m - 1, d + settings.leadTimeDays)).toISOString().slice(0, 10);
@@ -200,7 +203,7 @@ export function PortalView({ data }: { data: PortalData }) {
                   {arrival}
                 </p>
               ) : null}
-              {booking.confirmed && data.venueDirections ? (
+              {booking.confirmed && lobbyReleased && data.venueDirections ? (
                 <p className={styles.body} style={{ whiteSpace: 'pre-line' }}>
                   <strong>Once inside the lobby:</strong>
                   <br />

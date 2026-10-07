@@ -199,13 +199,13 @@ export function calendarEvent(booking: BookingCtx, settings: SiteSettings, venue
     venue === 'Private Wellness Lounge'
       ? settings.business.venueDirectionsLounge
       : settings.business.venueDirectionsSignature;
-  // Buzzer and lobby directions join the event once the reminder goes out;
-  // a calendar file downloaded earlier carries just the address and time.
+  // The lobby directions join the event once the reminder goes out; a
+  // calendar file downloaded earlier carries the address and buzzer text.
   const withDirections = directionsReleased(booking.sessionDate!, settings.business.reminderDaysBefore);
   const description = [
     `${venue}:`,
     extra,
-    withDirections ? arrival : null,
+    arrival,
     withDirections ? venueDirections : null,
     'Please arrive 15 minutes prior to the start of your session to settle in. Allow extra time for parking and rush-hour traffic.',
   ]

@@ -558,11 +558,11 @@ export type SessionEmailInput = {
   venueDetails: string;
   /** How to find this specific venue once inside the building. */
   venueDirections: string;
-  /** False on the booking confirmation: arrival instructions, lobby
-   *  directions and parking wait for the reminder (and Silvana's own room
-   *  confirmation), so a date booked weeks ahead isn't tied to details that
-   *  may change. True on the reminder. */
-  arrivalDetails: boolean;
+  /** False on the booking confirmation: the "once inside the lobby"
+   *  directions depend on the room, so they follow in Silvana's own room
+   *  confirmation and in the reminder (true). Address, buzzer instructions
+   *  and parking are fixed and always shown. */
+  lobbyDirections: boolean;
   parking: string;
   cancellationPolicy: string;
   faqs: ReadonlyArray<{ q: string; a: string }>;
@@ -674,13 +674,10 @@ function venueSection(input: SessionEmailInput): string {
     ${sectionTitle('Getting there')}
     ${input.venueCopy.map((p) => `<p style="margin:0 0 8px;">${escapeHtml(p)}</p>`).join('')}
     ${location ? `<p style="margin:0 0 8px;"><strong>Location:</strong><br />${escapeHtml(location)}</p>` : ''}
-    ${
-      input.arrivalDetails
-        ? `${arrival ? `<p style="margin:0 0 8px;"><strong>Arrival instructions:</strong><br />${escapeHtml(arrival).replace(/\n/g, '<br />')}</p>` : ''}
-    ${input.venueDirections ? `<p style="margin:0 0 8px;"><strong>Once inside the lobby:</strong><br />${escapeHtml(input.venueDirections).replace(/\n/g, '<br />')}</p>` : ''}
-    ${input.parking ? `<p style="margin:0 0 8px;"><strong>Parking:</strong><br />${escapeHtml(input.parking).replace(/\n/g, '<br />')}</p>` : ''}`
-        : `<p style="margin:0 0 8px;">Your room is confirmed within 24 hours, based on group size and availability. Arrival instructions, lobby directions and parking details will follow by email before your session.</p>`
-    }
+    ${arrival ? `<p style="margin:0 0 8px;"><strong>Arrival instructions:</strong><br />${escapeHtml(arrival).replace(/\n/g, '<br />')}</p>` : ''}
+    ${input.lobbyDirections && input.venueDirections ? `<p style="margin:0 0 8px;"><strong>Once inside the lobby:</strong><br />${escapeHtml(input.venueDirections).replace(/\n/g, '<br />')}</p>` : ''}
+    ${input.parking ? `<p style="margin:0 0 8px;"><strong>Parking:</strong><br />${escapeHtml(input.parking).replace(/\n/g, '<br />')}</p>` : ''}
+    ${input.lobbyDirections ? '' : `<p style="margin:0 0 8px;">Your venue will be confirmed by email within 24 hours of your booking, based on group size and availability.</p>`}
     <table role="presentation" cellpadding="0" cellspacing="0" style="margin:10px 0 4px;"><tr>
       <td style="background:#241b14;border-radius:999px;"><a href="${input.googleCalendarUrl}" style="display:inline-block;padding:12px 24px;font-family:Arial,Helvetica,sans-serif;font-size:11px;letter-spacing:0.2em;text-transform:uppercase;color:#f6efe5;text-decoration:none;">Add to Google Calendar</a></td>
     </tr></table>

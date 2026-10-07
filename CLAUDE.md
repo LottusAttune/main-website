@@ -364,6 +364,27 @@ Ask Silvana about these rather than guessing:
    other image — no stock/AI substitute in the meantime). Ask her before
    adding a placeholder or using any interim image.
 
+   **Reminder only — when she mentions adding the Theatre, do not build
+   anything. First recap this plan to her and ask how she wants to proceed.**
+   Plan agreed in conversation (Oct 2026), not yet built:
+   - Rooms by group size: Wellness Lounge (Media + Billiards) up to 6,
+     Immersive Theatre up to 8 (name and wording are hers to approve),
+     Premium Signature Venue (Party Room) 7 and up. Until the Theatre photos
+     exist the site keeps just the Lounge and Premium Venue.
+   - Backups when a first-choice room is taken: Theatre → Media + Billiards
+     (6 or fewer) or Party Room (7-8). She only books a Condo Control room
+     after a client has paid and never holds rooms ahead of time.
+   - Today the room is chosen purely by headcount (`LOUNGE_MAX` in
+     `src/lib/site.ts`, repeated in bookings/portal/documents/checkout/studio)
+     and lobby directions come from two Studio settings. Once the Theatre is
+     a first choice, a small group may be in the Theatre or the Lounge, so a
+     per-booking "which room" field in Studio is needed (needs a DB migration;
+     ask first) plus a Theatre directions setting, so emails, calendar and the
+     reminder name the room actually used.
+   - Also planned: a "groups of 7 or more are by request" notice on the
+     booking page, and arrival directions kept out of the first automatic
+     email (they go in her own room-confirmation email and the reminder).
+
 The landscape film (`src/data/content.ts`, `FILM.landscape`) was replaced with
 her final cut. One standing caution stays relevant regardless of which video
 ID is live: the frame shows a still until Vimeo confirms the player is

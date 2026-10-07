@@ -19,7 +19,7 @@ import { buildIcs, googleCalendarUrl, zonedTimeToUtc, type CalendarEvent } from 
 import { balanceDue, formatStudioDate, type DocumentRow } from '@/lib/pipeline';
 import { MIN_GROUP_SIZE, quoteFor } from '@/lib/quote';
 import { getSettings, type SiteSettings } from '@/lib/settings';
-import { LOUNGE_MAX, money, SITE, splitAddressForCalendar, splitVenueDetails, TEAM_ADDON_MIN_PARTICIPANTS, TIME_SLOTS, type SlotKey } from '@/lib/site';
+import { directionsReleased, LOUNGE_MAX, money, SITE, splitAddressForCalendar, splitVenueDetails, TEAM_ADDON_MIN_PARTICIPANTS, TIME_SLOTS, type SlotKey } from '@/lib/site';
 
 function escapeHtml(value: string): string {
   return value.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
@@ -199,11 +199,14 @@ export function calendarEvent(booking: BookingCtx, settings: SiteSettings, venue
     venue === 'Private Wellness Lounge'
       ? settings.business.venueDirectionsLounge
       : settings.business.venueDirectionsSignature;
+  // Buzzer and lobby directions join the event once the reminder goes out;
+  // a calendar file downloaded earlier carries just the address and time.
+  const withDirections = directionsReleased(booking.sessionDate!, settings.business.reminderDaysBefore);
   const description = [
     `${venue}:`,
     extra,
-    arrival,
-    venueDirections,
+    withDirections ? arrival : null,
+    withDirections ? venueDirections : null,
     'Please arrive 15 minutes prior to the start of your session to settle in. Allow extra time for parking and rush-hour traffic.',
   ]
     .filter(Boolean)

@@ -135,6 +135,7 @@ const EXPORT_COLUMNS: CsvColumn<DocumentRow>[] = [
   { header: 'Number', value: (d) => d.number },
   { header: 'Kind', value: (d) => KIND_LABEL[d.kind] },
   { header: 'For', value: (d) => whatFor(d) },
+  { header: 'Discount', value: (d) => discountUsed(d) ?? '' },
   { header: 'Client', value: (d) => d.clientName },
   { header: 'Email', value: (d) => d.clientEmail },
   { header: 'Issued', value: (d) => d.issuedOn },
@@ -171,6 +172,22 @@ function whatFor(doc: DocumentRow): string {
   }
   if (!main) return doc.bookingId ? 'Session' : '—';
   return extras.length ? `${main} + ${extras.join(', ')}` : main;
+}
+
+/**
+ * The discount code (or other reduction) taken off an invoice, read from the
+ * same lines the client sees: "CORP100OFF: $100 off" shows as
+ * "CORP100OFF · $100 off". Gratuity and quote-adjustment lines are not
+ * discounts. Null when nothing was taken off.
+ */
+function discountUsed(doc: DocumentRow): string | null {
+  const taken = doc.lines
+    .filter((line) => line.amount < 0 && !/^(gratuity|adjustment to quoted total)/i.test(line.label))
+    .map((line) => {
+      const [code, ...rest] = line.label.split(': ');
+      return rest.length ? `${code} · ${rest.join(': ')}` : `${line.label} · ${money(Math.abs(line.amount))} off`;
+    });
+  return taken.length ? taken.join(', ') : null;
 }
 
 /** "in 3 days" / "5 days ago" under a due date that still matters. */
@@ -346,7 +363,12 @@ export function Invoices({ documents, payments, integrations, initialFilter = 'a
                             <div>{doc.clientName}</div>
                             <div className={styles.recordSub}>{doc.clientEmail}</div>
                           </td>
-                          <td>{whatFor(doc)}</td>
+                          <td>
+                            {whatFor(doc)}
+                            {discountUsed(doc) ? (
+                              <div className={styles.recordSub}>Discount: {discountUsed(doc)}</div>
+                            ) : null}
+                          </td>
                           <td title={formatStudioDate(doc.issuedOn)} style={{ whiteSpace: 'nowrap' }}>
                             {formatShortDate(doc.issuedOn)}
                           </td>
@@ -409,6 +431,7 @@ export function Invoices({ documents, payments, integrations, initialFilter = 'a
                             ? ` · due ${formatShortDate(doc.dueOn)}${hint ? ` (${hint})` : ''}`
                             : ''}
                           {partPaid ? ` · ${money(doc.paidAmount)} of ${money(doc.total)} paid` : ''}
+                          {discountUsed(doc) ? ` · Discount: ${discountUsed(doc)}` : ''}
                         </div>
                       </div>
                       <div className={styles.recordValue}>

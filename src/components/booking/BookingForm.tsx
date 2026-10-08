@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 
+import { ContactLink } from '@/components/common/ContactLink';
 import { IncludedModal } from '@/components/common/IncludedModal';
 import { PolicyModal } from '@/components/common/PolicyModal';
 import { TermsModal } from '@/components/common/TermsModal';
@@ -574,11 +575,14 @@ export function BookingForm({
 
           {people >= 7 && (
             <div className={`${styles.venueNote} ${styles.indent}`}>
-              Groups of 7 or more are by request, please{' '}
-              <a href={`mailto:${SITE.email}`}>email me</a> or send me a{' '}
-              <a href={SITE.whatsappHref} target="_blank" rel="noopener noreferrer">
-                WhatsApp
-              </a>{' '}
+              Groups of 7 or more are by request, please email me at{' '}
+              <ContactLink href={`mailto:${SITE.email}`} value={SITE.email}>
+                {SITE.email}
+              </ContactLink>{' '}
+              or send me a WhatsApp at{' '}
+              <ContactLink href={SITE.whatsappHref} value={SITE.phone.replace(/\u2011/g, '-')} external>
+                {SITE.phone}
+              </ContactLink>{' '}
               with your event date, time and group size, and I will confirm venue availability before you book.
             </div>
           )}

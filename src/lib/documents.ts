@@ -85,9 +85,21 @@ function todayIso(): string {
   return new Intl.DateTimeFormat('en-CA', { timeZone: 'America/Toronto' }).format(new Date());
 }
 
+function parseLines(text: string): unknown {
+  try {
+    return JSON.parse(text);
+  } catch {
+    return [];
+  }
+}
+
 export function documentFromRow(row: Row): DocumentRow {
-  const lines = Array.isArray(row.lines)
-    ? (row.lines as DocumentLine[]).map((l) => ({
+  // The database driver turns a string bound to a jsonb parameter into a JSON
+  // string, not an array, so a document saved that way holds its lines as text.
+  // Read both shapes: an invoice with lines stored as text must still list them.
+  const storedLines: unknown = typeof row.lines === 'string' ? parseLines(row.lines) : row.lines;
+  const lines = Array.isArray(storedLines)
+    ? (storedLines as DocumentLine[]).map((l) => ({
         label: String(l.label),
         amount: Number(l.amount),
       }))
@@ -423,7 +435,7 @@ export async function ensureBookingDocument(
       lines, subtotal, tax_rate, tax, total, issued_on, due_on
     ) VALUES (
       ${kind}, ${number}, ${bookingId}, ${booking.name}, ${booking.email}, ${booking.company},
-      ${JSON.stringify(lines)}::jsonb, ${subtotal}, ${s.business.taxRatePercent}, ${tax}, ${grand},
+      ${JSON.stringify(lines)}::text::jsonb, ${subtotal}, ${s.business.taxRatePercent}, ${tax}, ${grand},
       ${issued}, ${dueOn}
     )
     RETURNING id
@@ -469,7 +481,7 @@ export async function insertBookingInvoice(input: {
       lines, subtotal, tax_rate, tax, total, issued_on, due_on, payment_plan
     ) VALUES (
       ${input.id}, ${input.token}, 'invoice', ${input.number}, ${booking.id}, ${booking.name}, ${booking.email}, ${booking.company},
-      ${JSON.stringify(lines)}::jsonb, ${subtotal}, ${s.business.taxRatePercent}, ${tax}, ${total},
+      ${JSON.stringify(lines)}::text::jsonb, ${subtotal}, ${s.business.taxRatePercent}, ${tax}, ${total},
       ${issued}, ${dueOn}, ${input.paymentPlan === 'full' ? 'full' : null}
     )
   `;
@@ -509,7 +521,7 @@ export async function ensureGiftDocument(
       lines, subtotal, tax_rate, tax, total, issued_on, due_on
     ) VALUES (
       ${kind}, ${number}, ${giftId}, ${toName}, ${to},
-      ${JSON.stringify(lines)}::jsonb, ${subtotal}, ${rate}, ${tax}, ${total},
+      ${JSON.stringify(lines)}::text::jsonb, ${subtotal}, ${rate}, ${tax}, ${total},
       ${issued}, ${dueOn}
     )
     RETURNING id
@@ -583,7 +595,7 @@ export async function updateDocument(
   const { subtotal, tax, total } = totalsFor(lines, current.taxRate);
   await sql`
     UPDATE documents SET
-      lines = ${JSON.stringify(lines)}::jsonb,
+      lines = ${JSON.stringify(lines)}::text::jsonb,
       subtotal = ${subtotal}, tax = ${tax}, total = ${total},
       notes = ${patch.notes === undefined ? current.notes : patch.notes},
       due_on = ${patch.dueOn === undefined ? current.dueOn : patch.dueOn},
@@ -1564,7 +1576,7 @@ export async function createStandaloneDocument(input: {
       lines, subtotal, tax_rate, tax, total, issued_on, due_on, notes
     ) VALUES (
       ${input.kind}, ${number}, ${input.clientName}, ${input.clientEmail}, ${input.clientCompany ?? null},
-      ${JSON.stringify(input.lines)}::jsonb, ${subtotal}, ${rate}, ${tax}, ${total},
+      ${JSON.stringify(input.lines)}::text::jsonb, ${subtotal}, ${rate}, ${tax}, ${total},
       ${issued}, ${dueOn}, ${input.notes ?? null}
     )
     RETURNING id

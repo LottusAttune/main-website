@@ -85,7 +85,7 @@ export async function POST(request: Request) {
           ${input.recipientName}, ${input.recipientEmail ?? null}, ${input.buyerName}, ${input.buyerEmail}, ${input.format},
           ${input.format === 'private' ? input.sessions : null},
           ${input.format === 'group' ? input.participants : null},
-          ${JSON.stringify(input.addons)}::jsonb,
+          ${JSON.stringify(input.addons)}::text::jsonb,
           ${eligibleDiscount?.code ?? null},
           ${code},
           ${total},

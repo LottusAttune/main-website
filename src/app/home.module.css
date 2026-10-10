@@ -569,6 +569,11 @@
   display: grid;
   grid-template-columns: minmax(260px, 1fr) minmax(260px, 1fr);
   grid-template-areas: 'intro accordion' 'card accordion';
+  /* The accordion spans both rows. Without an explicit row template, any
+     height it adds beyond intro + card is shared into row 1, and the sticky
+     intro then slides down that extra space on scroll, over the card. The
+     spare height goes to row 2 instead, so the intro has nowhere to travel. */
+  grid-template-rows: auto 1fr;
   gap: clamp(28px, 4vw, 56px);
   align-items: start;
 }
@@ -598,6 +603,7 @@
   .faqGrid {
     grid-template-columns: 1fr;
     grid-template-areas: 'intro' 'accordion' 'card';
+    grid-template-rows: none;
     /* The lede ("...fully guided from start to finish.") to the first
        question read as a bigger gap than intended once stacked - this row
        gap plus the lede's own margin-bottom added up. Tightened here only;

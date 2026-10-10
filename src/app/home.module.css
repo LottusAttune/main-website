@@ -582,6 +582,13 @@
   grid-area: intro;
 }
 
+/* Never sticky, at any width: a pinned intro can be driven down over the
+   card beneath it while the taller accordion scrolls. */
+.faqGrid :global(.sticky-col) {
+  position: static;
+  top: auto;
+}
+
 .faqCard {
   grid-area: card;
 }
@@ -611,10 +618,6 @@
     gap: 18px;
   }
 
-  .faqGrid :global(.sticky-col) {
-    position: static;
-    top: auto;
-  }
 }
 
 .faqHeading {

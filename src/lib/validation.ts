@@ -77,7 +77,7 @@ export type GiftRequest = z.infer<typeof giftSchema>;
 export const discoveryCallSchema = z.object({
   name: trimmed(120),
   email: z.string().trim().email().max(200),
-  phone: z.string().trim().max(60).optional().nullable(),
+  phone: trimmed(60),
   company: z.string().trim().max(160).optional().nullable(),
   callDate: isoDay,
   callTime: trimmed(40),

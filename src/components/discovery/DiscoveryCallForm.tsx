@@ -214,8 +214,9 @@ export function DiscoveryCallForm({
             className={`field ${invalid('phone') ? 'field--invalid' : ''}`}
             type="tel"
             name="phone"
-            placeholder="Phone (optional)"
-            aria-label="Phone (optional)"
+            required
+            placeholder="Phone | WhatsApp"
+            aria-label="Phone or WhatsApp"
             aria-invalid={invalid('phone') || undefined}
             autoComplete="tel"
           />

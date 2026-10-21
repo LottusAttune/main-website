@@ -56,6 +56,8 @@ export async function sendEmail(input: {
   html: string;
   attachments?: Attachment[];
   replyTo?: string;
+  /** A hidden copy, so Silvana sees exactly what the client received. */
+  bcc?: string;
 }): Promise<EmailResult> {
   if (!resend) {
     return {
@@ -68,6 +70,7 @@ export async function sendEmail(input: {
     const { error } = await resend.emails.send({
       from: FROM,
       to: input.to,
+      bcc: input.bcc,
       replyTo: input.replyTo ?? SITE.email,
       subject: input.subject,
       html: input.html,
@@ -761,6 +764,7 @@ export async function sendReminderEmail(input: SessionEmailInput): Promise<Email
     to: input.email,
     subject: `See you soon: ${formatStudioDate(input.sessionDate)} at ${input.sessionTime}`,
     html,
+    bcc: SITE.email,
   });
 }
 

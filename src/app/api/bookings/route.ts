@@ -198,6 +198,7 @@ export async function POST(request: Request) {
           gratuity,
           total,
           status: 'new_enquiry',
+          venueOverride: null,
         };
         const number = await numberPromise;
         if (!number) throw new Error('No invoice number.');

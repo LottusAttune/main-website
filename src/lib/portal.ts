@@ -19,7 +19,7 @@ import { buildIcs, googleCalendarUrl, zonedTimeToUtc, type CalendarEvent } from 
 import { balanceDue, formatStudioDate, type DocumentRow } from '@/lib/pipeline';
 import { MIN_GROUP_SIZE, quoteFor } from '@/lib/quote';
 import { getSettings, type SiteSettings } from '@/lib/settings';
-import { directionsReleased, LOUNGE_MAX, money, SITE, splitAddressForCalendar, splitVenueDetails, TEAM_ADDON_MIN_PARTICIPANTS, TIME_SLOTS, toTorontoDateIso, type SlotKey } from '@/lib/site';
+import { directionsReleased, money, SITE, splitAddressForCalendar, splitVenueDetails, TEAM_ADDON_MIN_PARTICIPANTS, TIME_SLOTS, toTorontoDateIso, venueNameFor, type SlotKey } from '@/lib/site';
 
 function escapeHtml(value: string): string {
   return value.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
@@ -99,6 +99,7 @@ function ctxFromRow(row: Record<string, unknown>): BookingCtx {
     gratuity: Number(row.gratuity ?? 0),
     total: Number(row.estimated_total ?? 0),
     status: String(row.status),
+    venueOverride: row.venue_override === 'lounge' || row.venue_override === 'signature' ? row.venue_override : null,
   };
 }
 
@@ -143,7 +144,7 @@ export async function loadPortal(token: string): Promise<PortalData | null> {
   const paid = invoice?.paidAmount ?? 0;
   const balance = invoice ? balanceDue(invoice) : 0;
   const giftCreditRemaining = invoice ? await giftCreditRemainingFor(invoice.id) : null;
-  const venue = booking.participants <= LOUNGE_MAX ? 'Private Wellness Lounge' : 'Premium Signature Venue';
+  const venue = venueNameFor(booking.participants, booking.venueOverride);
 
   const bookedOn = row.created_at ? toTorontoDateIso(row.created_at as string | Date) : null;
   let startsAt: string | null = null;

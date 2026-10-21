@@ -143,6 +143,10 @@ ALTER TABLE bookings ADD COLUMN IF NOT EXISTS gratuity INTEGER NOT NULL DEFAULT 
 ALTER TABLE bookings ADD COLUMN IF NOT EXISTS calendar_event_id TEXT;
 ALTER TABLE bookings ADD COLUMN IF NOT EXISTS calendar_event_id_2 TEXT;
 
+-- Optional per-booking room; NULL keeps the headcount rule (see db/migrations/2026-10-21_booking_venue_override.sql).
+ALTER TABLE bookings ADD COLUMN IF NOT EXISTS venue_override TEXT
+  CHECK (venue_override IN ('lounge', 'signature'));
+
 CREATE INDEX IF NOT EXISTS bookings_status_idx ON bookings (status);
 CREATE INDEX IF NOT EXISTS bookings_created_idx ON bookings (created_at DESC);
 

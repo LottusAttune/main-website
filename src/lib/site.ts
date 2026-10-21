@@ -222,8 +222,21 @@ export const VENUE_NOTE = {
     'Premium Signature Venue — an ample, high-end space with three private gender-inclusive washrooms and kitchen. Venue rental included.',
 } as const;
 
-export function venueNoteFor(participants: number): string {
-  return participants <= LOUNGE_MAX ? VENUE_NOTE.lounge : VENUE_NOTE.signature;
+export type VenueKey = 'lounge' | 'signature';
+
+/** The room for one booking. Normally decided by headcount; a booking can
+ *  carry its own `venue_override` when the room confirmed differs (e.g. a
+ *  group of 6 held in the Signature Venue). */
+export function venueKeyFor(participants: number, override?: VenueKey | null): VenueKey {
+  return override ?? (participants <= LOUNGE_MAX ? 'lounge' : 'signature');
+}
+
+export function venueNameFor(participants: number, override?: VenueKey | null): string {
+  return venueKeyFor(participants, override) === 'lounge' ? 'Private Wellness Lounge' : 'Premium Signature Venue';
+}
+
+export function venueNoteFor(participants: number, override?: VenueKey | null): string {
+  return VENUE_NOTE[venueKeyFor(participants, override)];
 }
 
 export type SessionSlot = { date: string; time: string; participants: number };

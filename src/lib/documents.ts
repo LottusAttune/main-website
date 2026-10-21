@@ -19,7 +19,7 @@ import {
 } from '@/lib/pipeline';
 import { giftQuoteFor, quoteFor } from '@/lib/quote';
 import { getSettings, type BusinessSettings, type SiteSettings } from '@/lib/settings';
-import { LOUNGE_MAX, money, SITE, toTorontoDateIso, venueNoteFor } from '@/lib/site';
+import { money, SITE, toTorontoDateIso, venueNameFor, venueNoteFor, type VenueKey } from '@/lib/site';
 
 /**
  * Proposals, invoices and gift certificates.
@@ -227,6 +227,8 @@ export type BookingCtx = {
   gratuity: number;
   total: number;
   status: string;
+  /** Set when the room confirmed differs from the headcount rule. */
+  venueOverride: VenueKey | null;
 };
 
 function bookingCtx(row: Row): BookingCtx {
@@ -249,6 +251,7 @@ function bookingCtx(row: Row): BookingCtx {
     gratuity: Number(row.gratuity ?? 0),
     total: Number(row.estimated_total ?? 0),
     status: String(row.status),
+    venueOverride: row.venue_override === 'lounge' || row.venue_override === 'signature' ? row.venue_override : null,
   };
 }
 
@@ -1000,7 +1003,7 @@ function header(kind: DocumentKind, doc: DocumentRow, business: BusinessSettings
 }
 
 function sessionBox(booking: BookingCtx): string {
-  const venue = booking.participants <= LOUNGE_MAX ? 'Private Wellness Lounge' : 'Premium Signature Venue';
+  const venue = venueNameFor(booking.participants, booking.venueOverride);
   const format =
     booking.participants === 1
       ? booking.isPackage ? 'Private — package of four sessions' : 'Private session'
@@ -1029,7 +1032,7 @@ function sessionBox(booking: BookingCtx): string {
       <table>${rows
         .map(([k, v]) => `<tr><td class="k">${escapeHtml(k)}</td><td class="v">${escapeHtml(v)}</td></tr>`)
         .join('')}</table>
-      <div style="font-size:11.5px;color:rgba(239,230,218,0.75);margin-top:10px;line-height:1.55;">${escapeHtml(venueNoteFor(booking.participants))}</div>
+      <div style="font-size:11.5px;color:rgba(239,230,218,0.75);margin-top:10px;line-height:1.55;">${escapeHtml(venueNoteFor(booking.participants, booking.venueOverride))}</div>
     </div>
   `;
 }

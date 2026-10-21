@@ -31,7 +31,7 @@ import { balanceDue, type DocumentRow } from '@/lib/pipeline';
 import { getSettings, type SiteSettings } from '@/lib/settings';
 import { renderTermsPdf } from '@/lib/terms-pdf';
 import { chargeSavedCard, isStripeConfigured, StripeError } from '@/lib/stripe';
-import { LOUNGE_MAX, money, SITE, splitAddressForCalendar, splitVenueDetails } from '@/lib/site';
+import { money, SITE, venueKeyFor, venueNameFor, splitAddressForCalendar, splitVenueDetails } from '@/lib/site';
 
 /**
  * Everything that happens to a booking after the client says yes:
@@ -85,9 +85,10 @@ async function sessionEmailInput(
   if (!sessionDate || !sessionTime) return null;
 
   const participants = Number(row.participants);
-  const venue = participants <= LOUNGE_MAX ? 'Private Wellness Lounge' : 'Premium Signature Venue';
+  const venueOverride = row.venue_override === 'lounge' || row.venue_override === 'signature' ? row.venue_override : null;
+  const venue = venueNameFor(participants, venueOverride);
   const venueDirections =
-    participants <= LOUNGE_MAX
+    venueKeyFor(participants, venueOverride) === 'lounge'
       ? settings.business.venueDirectionsLounge
       : settings.business.venueDirectionsSignature;
   const { startISO, endISO } = sessionSlotWindow(sessionDate, sessionTime);
@@ -228,7 +229,10 @@ async function ensureCalendarHold(bookingId: string): Promise<void> {
   const sessionTime2 = row.session_time_2 ? String(row.session_time_2) : null;
 
   const participants = Number(row.participants);
-  const venue = participants <= LOUNGE_MAX ? 'Private Wellness Lounge' : 'Premium Signature Venue';
+  const venue = venueNameFor(
+    participants,
+    row.venue_override === 'lounge' || row.venue_override === 'signature' ? row.venue_override : null
+  );
   const description = [
     `Email: ${row.email}`,
     row.phone ? `Phone: ${row.phone}` : null,

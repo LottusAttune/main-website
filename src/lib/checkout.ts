@@ -13,7 +13,7 @@ import {
 } from '@/lib/documents';
 import { formatPlainDate, formatStudioDate, type DocumentRow } from '@/lib/pipeline';
 import type { BusinessSettings } from '@/lib/settings';
-import { LOUNGE_MAX, money, SITE } from '@/lib/site';
+import { money, SITE, venueNameFor } from '@/lib/site';
 import { createCheckoutSession, getCheckoutSession, getPaymentIntent, isStripeConfigured } from '@/lib/stripe';
 
 /**
@@ -50,7 +50,7 @@ export async function createBookingCheckout(
       ? 'private session'
       : `${booking.participants} participants`
     : null;
-  const venue = booking ? (booking.participants <= LOUNGE_MAX ? 'Private Wellness Lounge' : 'Premium Signature Venue') : null;
+  const venue = booking ? venueNameFor(booking.participants, booking.venueOverride) : null;
   const balanceDay = balanceDueOn(booking?.sessionDate ?? null, business);
   const remaining = doc.total - amount;
   const details = [

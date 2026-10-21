@@ -17,17 +17,13 @@ import {
   type StageKey,
   type StudioData,
 } from '@/lib/pipeline';
-import { LOUNGE_MAX, SITE } from '@/lib/site';
+import { SITE, venueNameFor } from '@/lib/site';
 import { isStripeConfigured } from '@/lib/stripe';
 
 function typeFor(participants: number): string {
   if (participants === 1) return '1 : 1';
   if (participants > 12) return 'Corporate';
   return 'Private Group';
-}
-
-function venueFor(participants: number): string {
-  return participants <= LOUNGE_MAX ? 'Private Wellness Lounge' : 'Premium Signature Venue';
 }
 
 function toIso(value: unknown): string | null {
@@ -126,7 +122,10 @@ export async function getStudioData(): Promise<StudioData> {
             : 'new_enquiry',
       createdAt: new Date(String(row.created_at)).toISOString(),
       type: typeFor(participants),
-      venue: venueFor(participants),
+      venue: venueNameFor(
+        participants,
+        row.venue_override === 'lounge' || row.venue_override === 'signature' ? row.venue_override : null
+      ),
       calendarEventId: row.calendar_event_id ? String(row.calendar_event_id) : null,
       calendarEventId2: row.calendar_event_id_2 ? String(row.calendar_event_id_2) : null,
       cardOnFile: Boolean(row.stripe_payment_method_id),

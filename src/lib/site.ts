@@ -390,6 +390,10 @@ export function toTorontoDateIso(timestamp: string | Date): string {
   return new Intl.DateTimeFormat('en-CA', { timeZone: 'America/Toronto' }).format(date);
 }
 
+/** The closing line of every arrival instruction (emails, booking page, calendar). */
+export const ARRIVE_EARLY_NOTE =
+  'Please arrive 15 minutes before the start to settle in, and allow extra time for parking and rush-hour traffic.';
+
 /** The two arrival photos shown with the address in every confirmation,
  *  reminder and on the booking page. Each has a web copy (`<name>.webp`) and
  *  an email copy (`email-<name>.jpg`, since many mail apps cannot show WebP). */
@@ -448,5 +452,11 @@ export function splitAddressForCalendar(location: string): { mapLocation: string
   const match = location.match(/^([^.]+\.)\s*([\s\S]*)$/);
   if (!match) return { mapLocation: location.trim(), extra: null };
   const [, first, rest] = match;
-  return { mapLocation: first.trim(), extra: rest.trim() || null };
+  // A trailing ", just south of ..." clause is a description, not part of the
+  // address a map should look up (it names a second street).
+  const descriptor = first.match(/,\s*(just [^,.]+)/i);
+  const mapLocation = first.replace(/,\s*just [^,.]+/i, '').trim();
+  const lead = descriptor ? `${descriptor[1].charAt(0).toUpperCase()}${descriptor[1].slice(1)}.` : null;
+  const extra = [lead, rest.trim() || null].filter(Boolean).join(' ');
+  return { mapLocation, extra: extra || null };
 }

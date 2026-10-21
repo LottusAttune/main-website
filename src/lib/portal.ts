@@ -19,7 +19,7 @@ import { buildIcs, googleCalendarUrl, zonedTimeToUtc, type CalendarEvent } from 
 import { balanceDue, formatStudioDate, type DocumentRow } from '@/lib/pipeline';
 import { MIN_GROUP_SIZE, quoteFor } from '@/lib/quote';
 import { getSettings, type SiteSettings } from '@/lib/settings';
-import { directionsReleased, LOUNGE_MAX, money, SITE, splitAddressForCalendar, splitVenueDetails, TEAM_ADDON_MIN_PARTICIPANTS, TIME_SLOTS, toTorontoDateIso, type SlotKey } from '@/lib/site';
+import { ARRIVE_EARLY_NOTE, directionsReleased, LOUNGE_MAX, money, SITE, splitAddressForCalendar, splitVenueDetails, TEAM_ADDON_MIN_PARTICIPANTS, TIME_SLOTS, toTorontoDateIso, type SlotKey } from '@/lib/site';
 
 function escapeHtml(value: string): string {
   return value.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
@@ -214,7 +214,7 @@ export function calendarEvent(
     extra,
     arrival,
     withDirections ? venueDirections : null,
-    'Please arrive 15 minutes prior to the start of your session to settle in. Allow extra time for parking and rush-hour traffic.',
+    ARRIVE_EARLY_NOTE,
   ]
     .filter(Boolean)
     .join(' ');

@@ -5,7 +5,7 @@ import { SiteNav } from '@/components/chrome/SiteNav';
 import { formatPlainDate, formatStudioDate } from '@/lib/pipeline';
 import { asset } from '@/lib/images';
 import type { PortalData } from '@/lib/portal';
-import { ARRIVAL_PHOTOS, directionsReleased, money, SITE, splitVenueDetails, toTorontoDateIso } from '@/lib/site';
+import { ARRIVAL_PHOTOS, ARRIVE_EARLY_NOTE, directionsReleased, money, SITE, splitVenueDetails, toTorontoDateIso } from '@/lib/site';
 import { Countdown } from './Countdown';
 import { PortalAddons } from './PortalAddons';
 import { PortalReschedule } from './PortalReschedule';
@@ -94,8 +94,7 @@ export function PortalView({ data }: { data: PortalData }) {
               </div>
               {!cancelled && booking.sessionTime ? (
                 <p className={styles.note}>
-                  To ensure a smooth experience, please arrive 15 minutes prior to the start of the session to
-                  settle in. Allow extra time for parking and rush-hour traffic.
+                  {ARRIVE_EARLY_NOTE}
                 </p>
               ) : null}
               {data.googleCalendarUrl ? (

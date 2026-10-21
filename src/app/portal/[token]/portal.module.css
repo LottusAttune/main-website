@@ -231,3 +231,22 @@
   font-size: 14.5px;
   color: var(--status-alert);
 }
+
+.arrivalPhoto {
+  margin: 4px 0 16px;
+  max-width: 640px;
+}
+
+.arrivalPhotoImg {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 0;
+}
+
+.arrivalPhotoCaption {
+  font-size: 13.5px;
+  line-height: 1.6;
+  margin-top: 8px;
+  color: var(--color-ink-body);
+}

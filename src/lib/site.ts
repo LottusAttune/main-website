@@ -390,6 +390,22 @@ export function toTorontoDateIso(timestamp: string | Date): string {
   return new Intl.DateTimeFormat('en-CA', { timeZone: 'America/Toronto' }).format(date);
 }
 
+/** The two arrival photos shown with the address in every confirmation,
+ *  reminder and on the booking page. Each has a web copy (`<name>.webp`) and
+ *  an email copy (`email-<name>.jpg`, since many mail apps cannot show WebP). */
+export const ARRIVAL_PHOTOS = [
+  {
+    name: 'arrival-entrance',
+    caption: 'The entrance: 28 Ted Rogers Way. Look for the “Couture” sign above the door.',
+    alt: 'The front entrance of 28 Ted Rogers Way, with the Couture sign above the door',
+  },
+  {
+    name: 'arrival-street-view',
+    caption: 'Across the street: the Rogers Communications Corporate Headquarters.',
+    alt: 'Ted Rogers Way looking toward the Rogers Communications Corporate Headquarters',
+  },
+] as const;
+
 /** Days after booking when the "once inside the lobby" directions appear on
  *  the booking page, by which time the room has long been confirmed. */
 export const LOBBY_DIRECTIONS_DAYS_AFTER_BOOKING = 7;

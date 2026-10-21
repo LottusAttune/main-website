@@ -1,9 +1,11 @@
+import Image from 'next/image';
 import { Reveal } from '@/components/common/Reveal';
 import { SiteFooter } from '@/components/chrome/SiteFooter';
 import { SiteNav } from '@/components/chrome/SiteNav';
 import { formatPlainDate, formatStudioDate } from '@/lib/pipeline';
+import { asset } from '@/lib/images';
 import type { PortalData } from '@/lib/portal';
-import { directionsReleased, money, SITE, splitVenueDetails, toTorontoDateIso } from '@/lib/site';
+import { ARRIVAL_PHOTOS, directionsReleased, money, SITE, splitVenueDetails, toTorontoDateIso } from '@/lib/site';
 import { Countdown } from './Countdown';
 import { PortalAddons } from './PortalAddons';
 import { PortalReschedule } from './PortalReschedule';
@@ -203,6 +205,24 @@ export function PortalView({ data }: { data: PortalData }) {
                   {arrival}
                 </p>
               ) : null}
+              {booking.confirmed && location
+                ? ARRIVAL_PHOTOS.map((photo) => {
+                    const img = asset(photo.name);
+                    return (
+                      <figure key={photo.name} className={styles.arrivalPhoto}>
+                        <Image
+                          src={img.src}
+                          width={img.width}
+                          height={img.height}
+                          alt={photo.alt}
+                          sizes="(max-width: 700px) 100vw, 640px"
+                          className={styles.arrivalPhotoImg}
+                        />
+                        <figcaption className={styles.arrivalPhotoCaption}>{photo.caption}</figcaption>
+                      </figure>
+                    );
+                  })
+                : null}
               {booking.confirmed && lobbyReleased && data.venueDirections ? (
                 <p className={styles.body} style={{ whiteSpace: 'pre-line' }}>
                   <strong>Once inside the lobby:</strong>

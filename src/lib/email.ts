@@ -7,7 +7,7 @@ import { buildDiscoveryCallIcs, buildGoogleCalendarLink } from '@/lib/ics';
 import type { DocumentKind, DocumentRow } from '@/lib/pipeline';
 import type { BusinessSettings } from '@/lib/settings';
 import { formatPlainDate, formatStudioDate } from '@/lib/pipeline';
-import { money, SITE, splitVenueDetails } from '@/lib/site';
+import { ARRIVAL_PHOTOS, money, SITE, splitVenueDetails } from '@/lib/site';
 
 /**
  * Permanent Google Meet room, reused for every discovery call rather than
@@ -668,6 +668,15 @@ function sectionTitle(text: string): string {
   return `<div style="font-family:Arial,Helvetica,sans-serif;font-size:14px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#5c4531;margin:24px 0 10px;">${text}</div>`;
 }
 
+/** The entrance and street-view photos, with a caption under each. */
+function arrivalPhotosHtml(): string {
+  return ARRIVAL_PHOTOS.map(
+    (photo) => `
+    <img src="${SITE.url}/assets/email-${photo.name}.jpg" width="560" alt="${escapeHtml(photo.alt)}" style="display:block;width:100%;max-width:560px;height:auto;border:0;margin:12px 0 6px;" />
+    <p style="margin:0 0 14px;font-size:12.5px;color:#6f5f52;">${escapeHtml(photo.caption)}</p>`
+  ).join('');
+}
+
 function venueSection(input: SessionEmailInput): string {
   const { location, arrival } = splitVenueDetails(input.venueDetails);
   return `
@@ -675,6 +684,7 @@ function venueSection(input: SessionEmailInput): string {
     ${input.venueCopy.map((p) => `<p style="margin:0 0 8px;">${escapeHtml(p)}</p>`).join('')}
     ${location ? `<p style="margin:0 0 8px;"><strong>Location:</strong><br />${escapeHtml(location)}</p>` : ''}
     ${arrival ? `<p style="margin:0 0 8px;"><strong>Arrival instructions:</strong><br />${escapeHtml(arrival).replace(/\n/g, '<br />')}</p>` : ''}
+    ${arrivalPhotosHtml()}
     ${input.lobbyDirections && input.venueDirections ? `<p style="margin:0 0 8px;"><strong>Once inside the lobby:</strong><br />${escapeHtml(input.venueDirections).replace(/\n/g, '<br />')}</p>` : ''}
     ${input.parking ? `<p style="margin:0 0 8px;"><strong>Parking:</strong><br />${escapeHtml(input.parking).replace(/\n/g, '<br />')}</p>` : ''}
     ${input.lobbyDirections ? '' : `<p style="margin:0 0 8px;">Your venue will be confirmed by email within 24 hours of your booking, based on group size and availability.</p>`}

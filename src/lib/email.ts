@@ -7,7 +7,7 @@ import { buildDiscoveryCallIcs, buildGoogleCalendarLink } from '@/lib/ics';
 import type { DocumentKind, DocumentRow } from '@/lib/pipeline';
 import type { BusinessSettings } from '@/lib/settings';
 import { formatPlainDate, formatStudioDate } from '@/lib/pipeline';
-import { ARRIVAL_PHOTOS, ARRIVE_EARLY_NOTE, money, SITE, splitVenueDetails } from '@/lib/site';
+import { ARRIVAL_PHOTOS, money, SITE, splitVenueDetails } from '@/lib/site';
 
 /**
  * Permanent Google Meet room, reused for every discovery call rather than
@@ -661,7 +661,7 @@ function sessionBoxHtml(input: SessionEmailInput, eyebrow: string): string {
 
 /** Right under the date/time box, so it's seen alongside the session time itself. */
 function arrivalNoteHtml(): string {
-  return `<p style="margin:8px 0 16px;font-size:12.5px;color:#6f5f52;">${escapeHtml(ARRIVE_EARLY_NOTE)}</p>`;
+  return `<p style="margin:8px 0 16px;font-size:12.5px;color:#6f5f52;">To ensure a smooth experience, please arrive 15 minutes prior to the start of the session to settle in. Allow extra time for parking and rush-hour traffic.</p>`;
 }
 
 function sectionTitle(text: string): string {

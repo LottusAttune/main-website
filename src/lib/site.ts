@@ -390,10 +390,6 @@ export function toTorontoDateIso(timestamp: string | Date): string {
   return new Intl.DateTimeFormat('en-CA', { timeZone: 'America/Toronto' }).format(date);
 }
 
-/** The closing line of every arrival instruction (emails, booking page, calendar). */
-export const ARRIVE_EARLY_NOTE =
-  'Please arrive 15 minutes before the start to settle in, and allow extra time for parking and rush-hour traffic.';
-
 /** The two arrival photos shown with the address in every confirmation,
  *  reminder and on the booking page. Each has a web copy (`<name>.webp`) and
  *  an email copy (`email-<name>.jpg`, since many mail apps cannot show WebP). */

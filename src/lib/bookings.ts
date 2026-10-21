@@ -31,7 +31,7 @@ import { balanceDue, type DocumentRow } from '@/lib/pipeline';
 import { getSettings, type SiteSettings } from '@/lib/settings';
 import { renderTermsPdf } from '@/lib/terms-pdf';
 import { chargeSavedCard, isStripeConfigured, StripeError } from '@/lib/stripe';
-import { ARRIVE_EARLY_NOTE, LOUNGE_MAX, money, SITE, splitAddressForCalendar, splitVenueDetails } from '@/lib/site';
+import { LOUNGE_MAX, money, SITE, splitAddressForCalendar, splitVenueDetails } from '@/lib/site';
 
 /**
  * Everything that happens to a booking after the client says yes:
@@ -103,7 +103,7 @@ async function sessionEmailInput(
     extra,
     arrival,
     lobbyDirections ? venueDirections : null,
-    ARRIVE_EARLY_NOTE,
+    'Please arrive 15 minutes prior to the start of your session to settle in. Allow extra time for parking and rush-hour traffic.',
   ]
     .filter(Boolean)
     .join(' ');

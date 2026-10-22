@@ -22,6 +22,7 @@ const sections = [
     title: 'How we use it',
     paragraphs: [
       'To respond to your request, prepare your proposal and invoice, confirm and remind you about your session, issue receipts and gift certificates, and to reach you about your booking. We do not sell your information or use it for advertising.',
+      'If you submit a lead form on LinkedIn, we receive the details you share there, such as your name, work email, company, job title and any answer you give. We use them only to contact you about Lotus Attune and your enquiry.',
     ],
   },
   {

@@ -13,14 +13,12 @@ export const metadata: Metadata = {
 const sections = [
   {
     title: 'What we collect',
-    paragraphs: [
-      'The details you share in this form, such as your name, email, company, job title and any answers you give.',
-    ],
+    paragraphs: ['Your name, email, company, job title and any answers you give in this form.'],
   },
   {
     title: 'How we use it',
     paragraphs: [
-      'Only to reply to your enquiry and to contact you about Lotus Attune team sessions. By submitting this form, you agree that Silvana may contact you by email for this purpose.',
+      'Only to reply to your enquiry and to contact you about Lotus Attune. By submitting this form, you agree that Lotus Attune may contact you by email.',
     ],
   },
   {
@@ -29,19 +27,13 @@ const sections = [
   },
   {
     title: 'Who handles it',
-    paragraphs: [
-      'LinkedIn collects the form on our behalf and handles it under its own privacy policy. We keep your details in a private account and spreadsheet.',
-    ],
+    paragraphs: ['LinkedIn collects the form and handles it under its own privacy policy.'],
   },
   {
-    title: 'How long we keep it',
+    title: 'Your choices',
     paragraphs: [
-      'As long as needed to follow up with you. You can ask us to correct or delete your details at any time.',
+      `You can ask us to correct or delete your details at any time. Write to ${SITE.email}.`,
     ],
-  },
-  {
-    title: 'Contact',
-    paragraphs: [`Questions about your information? Write to ${SITE.email}.`],
   },
 ];
 

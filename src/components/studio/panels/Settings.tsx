@@ -88,10 +88,6 @@ export function Settings({ settings, integrations }: { settings: SiteSettings; i
     }
     return todayIso;
   });
-  const [callView, setCallView] = useState(() => {
-    const [y, m] = callDay.split('-').map(Number);
-    return { year: y, month: m - 1 };
-  });
   const [closedFilter, setClosedFilter] = useState('');
   const callDayClosedReason = discoveryDayClosedReason(callDay, settings.blockedDates, settings.bookedEventDates);
   const blockedCallTimeSet = new Set(
@@ -490,7 +486,7 @@ export function Settings({ settings, integrations }: { settings: SiteSettings; i
                 className={styles.blockNav}
                 aria-label="Previous month"
                 onClick={() =>
-                  setCallView((v) => {
+                  setView((v) => {
                     const d = new Date(v.year, v.month - 1, 1);
                     return { year: d.getFullYear(), month: d.getMonth() };
                   })
@@ -499,14 +495,14 @@ export function Settings({ settings, integrations }: { settings: SiteSettings; i
                 ‹
               </button>
               <span className={styles.blockMonth}>
-                {new Date(callView.year, callView.month, 1).toLocaleDateString('en-CA', { month: 'long', year: 'numeric' })}
+                {new Date(view.year, view.month, 1).toLocaleDateString('en-CA', { month: 'long', year: 'numeric' })}
               </span>
               <button
                 type="button"
                 className={styles.blockNav}
                 aria-label="Next month"
                 onClick={() =>
-                  setCallView((v) => {
+                  setView((v) => {
                     const d = new Date(v.year, v.month + 1, 1);
                     return { year: d.getFullYear(), month: d.getMonth() };
                   })
@@ -522,11 +518,11 @@ export function Settings({ settings, integrations }: { settings: SiteSettings; i
                   {d}
                 </div>
               ))}
-              {Array.from({ length: (new Date(callView.year, callView.month, 1).getDay() + 6) % 7 }, (_, i) => (
+              {Array.from({ length: (new Date(view.year, view.month, 1).getDay() + 6) % 7 }, (_, i) => (
                 <div key={`cpad-${i}`} className={styles.blockPad} />
               ))}
-              {Array.from({ length: new Date(callView.year, callView.month + 1, 0).getDate() }, (_, i) => {
-                const day = isoDay(callView.year, callView.month, i + 1);
+              {Array.from({ length: new Date(view.year, view.month + 1, 0).getDate() }, (_, i) => {
+                const day = isoDay(view.year, view.month, i + 1);
                 const reason = discoveryDayClosedReason(day, settings.blockedDates, settings.bookedEventDates);
                 const blockedWholeDay = settings.blockedDates.includes(day);
                 const someClosed = settings.blockedCallTimes.some((e) => e.date === day);
@@ -643,7 +639,7 @@ export function Settings({ settings, integrations }: { settings: SiteSettings; i
                         style={{ background: 'none', border: 0, padding: 0, textAlign: 'left', cursor: 'pointer' }}
                         onClick={() => {
                           setCallDay(date);
-                          setCallView({ year: Number(date.slice(0, 4)), month: Number(date.slice(5, 7)) - 1 });
+                          setView({ year: Number(date.slice(0, 4)), month: Number(date.slice(5, 7)) - 1 });
                         }}
                       >
                         {fmt(date)} &middot; {times.join(', ')}

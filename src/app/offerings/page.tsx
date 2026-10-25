@@ -43,12 +43,12 @@ export default async function OfferingsPage() {
             <SessionConfigurator
               pricing={pricing}
               footnote={
-                <p className={styles.discoveryNote}>
-                  Still have a question?{' '}
-                  <Link href="/discovery-call">
+                <div className={styles.discoveryNote}>
+                  <p>Still have a question?</p>
+                  <Link href="/discovery-call" className="btn btn--dark">
                     Book a discovery call
                   </Link>
-                </p>
+                </div>
               }
             />
           </div>

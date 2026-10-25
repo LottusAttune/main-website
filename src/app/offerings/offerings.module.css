@@ -43,9 +43,17 @@
 }
 
 .discoveryNote {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
   text-align: center;
   font-size: 14px;
   color: var(--color-muted);
+}
+
+.discoveryNote p {
+  margin: 0;
 }
 
 @media (max-width: 1079px) {
@@ -54,13 +62,4 @@
   }
 }
 
-.discoveryNote a {
-  color: var(--color-gold-text);
-  text-decoration: underline;
-  text-underline-offset: 3px;
-}
-
-.discoveryNote a:hover {
-  color: var(--color-gold-deep);
-}
 

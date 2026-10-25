@@ -537,8 +537,8 @@ export function Settings({ settings, integrations }: { settings: SiteSettings; i
         <div className={`card ${styles.settingsCard}`}>
           <h3 className={styles.settingsTitle}>Discovery call times</h3>
           <p className={styles.priceNote} style={{ marginBottom: 14 }}>
-            Click a day, then click a time to close just that slot. Greyed days are not offered on the website. Red days
-            are blocked in Blocked dates above. Saved immediately.
+            Click a day, then click a time to close just that slot. Days and times crossed out in red are not offered on
+            the website. Tinted days have some times open or closed. Saved immediately.
           </p>
 
           <div>
@@ -593,8 +593,7 @@ export function Settings({ settings, integrations }: { settings: SiteSettings; i
                 const selected = day === callDay;
                 const cls = [
                   styles.blockDay,
-                  blockedWholeDay && !callsOpened ? styles.blockDayOff : '',
-                  reason && !blockedWholeDay ? styles.blockDayDisabled : '',
+                  reason ? styles.blockDayOff : '',
                   (!reason && someClosed) || callsOpened ? styles.blockDayPartial : '',
                   selected ? styles.blockDaySel : '',
                 ].join(' ');
@@ -633,7 +632,7 @@ export function Settings({ settings, integrations }: { settings: SiteSettings; i
               return (
                 <div style={{ marginTop: 8 }}>
                   <p className={styles.priceNote}>
-                    Blocked for events. Click the times you are available for discovery calls (outlined = open).
+                    Blocked for events. Click a time to open it for discovery calls. Crossed out in red = closed.
                     Sessions stay blocked.
                   </p>
                   <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginTop: 8 }}>
@@ -645,7 +644,7 @@ export function Settings({ settings, integrations }: { settings: SiteSettings; i
                           type="button"
                           aria-pressed={open}
                           aria-label={`${slot}${open ? ' — open for calls' : ' — closed'}`}
-                          className={`${styles.blockDay} ${open ? styles.blockDaySel : ''}`}
+                          className={`${styles.blockDay} ${open ? '' : styles.blockDayOff}`}
                           style={{ width: 'auto', padding: '0 14px' }}
                           onClick={() => void run({ action: 'toggleOpenCallTime', day: callDay, time: slot, open: !open })}
                         >

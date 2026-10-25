@@ -145,6 +145,34 @@ export const DISCOVERY_CALL_LEAD_DAYS = 2;
  *  with the usual times. Weekends are otherwise closed. */
 export const DISCOVERY_CALL_EXTRA_OPEN_DATES: readonly string[] = ['2026-10-10'];
 
+/** Days blocked for events that are closed for discovery calls too. A manual
+ *  event block no longer closes calls on its own: a blocked day with call
+ *  times opened by hand stays open for calls, at those times only. */
+export function callClosedDates(
+  blockedDates: readonly string[],
+  callOpenTimes: readonly { date: string; time: string }[]
+): string[] {
+  return blockedDates.filter((date) => !callOpenTimes.some((o) => o.date === date));
+}
+
+/** Discovery-call times closed by hand, plus, on a blocked day opened for
+ *  calls, every usual time that was not opened. */
+export function callClosedTimes(
+  blockedDates: readonly string[],
+  blockedCallTimes: readonly { date: string; time: string }[],
+  callOpenTimes: readonly { date: string; time: string }[]
+): { date: string; time: string }[] {
+  const closed = [...blockedCallTimes];
+  for (const date of blockedDates) {
+    const opened = callOpenTimes.filter((o) => o.date === date);
+    if (opened.length === 0) continue;
+    for (const time of discoveryCallTimesFor(date)) {
+      if (!opened.some((o) => o.time === time)) closed.push({ date, time });
+    }
+  }
+  return closed;
+}
+
 /** Fixed times offered for a discovery call - shorter and more specific than
  *  the two-hour session windows above, since a call only runs 15-20 minutes. */
 export const DISCOVERY_CALL_TIMES = [

@@ -488,3 +488,11 @@ CREATE TABLE IF NOT EXISTS blocked_session_slots (
   PRIMARY KEY (day, time_label)
 );
 ALTER TABLE blocked_session_slots ENABLE ROW LEVEL SECURITY;
+
+-- Discovery-call times opened by hand on a day blocked for events.
+CREATE TABLE IF NOT EXISTS discovery_call_open_times (
+  call_date DATE NOT NULL,
+  call_time TEXT NOT NULL,
+  PRIMARY KEY (call_date, call_time)
+);
+ALTER TABLE discovery_call_open_times ENABLE ROW LEVEL SECURITY;

@@ -82,6 +82,12 @@ const action = z.discriminatedUnion('action', [
     blocked: z.boolean(),
   }),
   z.object({
+    action: z.literal('toggleOpenCallTime'),
+    day: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
+    time: z.string().max(40),
+    open: z.boolean(),
+  }),
+  z.object({
     action: z.literal('toggleBlockedSessionSlot'),
     day: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
     time: z.string().max(40),
@@ -602,6 +608,15 @@ export async function POST(request: Request) {
           await sql`INSERT INTO blocked_call_times (call_date, call_time) VALUES (${input.day}, ${input.time}) ON CONFLICT DO NOTHING`;
         } else {
           await sql`DELETE FROM blocked_call_times WHERE call_date = ${input.day} AND call_time = ${input.time}`;
+        }
+        revalidatePath('/discovery-call');
+        break;
+
+      case 'toggleOpenCallTime':
+        if (input.open) {
+          await sql`INSERT INTO discovery_call_open_times (call_date, call_time) VALUES (${input.day}, ${input.time}) ON CONFLICT DO NOTHING`;
+        } else {
+          await sql`DELETE FROM discovery_call_open_times WHERE call_date = ${input.day} AND call_time = ${input.time}`;
         }
         revalidatePath('/discovery-call');
         break;

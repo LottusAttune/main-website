@@ -2,6 +2,7 @@ import 'server-only';
 
 import { isDatabaseConfigured, sql } from '@/lib/db';
 import type { SiteSettings } from '@/lib/settings';
+import { callClosedDates, callClosedTimes } from '@/lib/site';
 
 export type DiscoveryCallByToken = {
   id: string;
@@ -59,7 +60,7 @@ export function findDiscoveryCallSlotError(
   callTime: string,
   settings: Pick<
     SiteSettings,
-    'blockedDates' | 'blockedCallTimes' | 'bookedEventDates' | 'bookedCallSlots'
+    'blockedDates' | 'blockedCallTimes' | 'callOpenTimes' | 'bookedEventDates' | 'bookedCallSlots'
   >,
   excludeCallId?: string
 ): string | null {
@@ -68,14 +69,14 @@ export function findDiscoveryCallSlotError(
 
   if (
     isSunday ||
-    settings.blockedDates.includes(callDate) ||
+    callClosedDates(settings.blockedDates, settings.callOpenTimes).includes(callDate) ||
     settings.bookedEventDates.includes(callDate)
   ) {
     return 'That date is no longer available.';
   }
 
   if (
-    settings.blockedCallTimes.some(
+    callClosedTimes(settings.blockedDates, settings.blockedCallTimes, settings.callOpenTimes).some(
       (entry) => entry.date === callDate && entry.time === callTime
     )
   ) {

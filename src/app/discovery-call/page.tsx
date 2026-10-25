@@ -4,7 +4,7 @@ import { Reveal } from '@/components/common/Reveal';
 import { SiteFooter } from '@/components/chrome/SiteFooter';
 import { SiteNav } from '@/components/chrome/SiteNav';
 import { DiscoveryCallForm } from '@/components/discovery/DiscoveryCallForm';
-import { DISCOVERY_CALL_LEAD_DAYS } from '@/lib/site';
+import { callClosedDates, callClosedTimes, DISCOVERY_CALL_LEAD_DAYS } from '@/lib/site';
 import { getSettings } from '@/lib/settings';
 
 export const metadata: Metadata = {
@@ -17,11 +17,11 @@ export const metadata: Metadata = {
 export const dynamic = 'force-dynamic';
 
 export default async function DiscoveryCallPage() {
-  const { blockedDates, blockedCallTimes, bookedEventDates, bookedCallSlots } =
+  const { blockedDates, blockedCallTimes, callOpenTimes, bookedEventDates, bookedCallSlots } =
     await getSettings();
-  const closedDates = [...new Set([...blockedDates, ...bookedEventDates])];
+  const closedDates = [...new Set([...callClosedDates(blockedDates, callOpenTimes), ...bookedEventDates])];
   const closedTimes = [
-    ...blockedCallTimes,
+    ...callClosedTimes(blockedDates, blockedCallTimes, callOpenTimes),
     ...bookedCallSlots.map(({ date, time }) => ({ date, time })),
   ];
 

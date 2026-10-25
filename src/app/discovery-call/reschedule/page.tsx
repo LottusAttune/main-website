@@ -6,7 +6,7 @@ import { SiteNav } from '@/components/chrome/SiteNav';
 import { RescheduleForm } from '@/components/discovery/RescheduleForm';
 import { getDiscoveryCallByToken } from '@/lib/discoveryCalls';
 import { getSettings } from '@/lib/settings';
-import { DISCOVERY_CALL_LEAD_DAYS, SITE } from '@/lib/site';
+import { callClosedDates, callClosedTimes, DISCOVERY_CALL_LEAD_DAYS, SITE } from '@/lib/site';
 
 export const metadata: Metadata = {
   robots: { index: false, follow: false },
@@ -25,19 +25,20 @@ export default async function ReschedulePage({
   const { token } = await searchParams;
   const existing = token ? await getDiscoveryCallByToken(token) : null;
 
-  const { blockedDates, blockedCallTimes, bookedEventDates, bookedCallSlots } =
+  const { blockedDates, blockedCallTimes, callOpenTimes, bookedEventDates, bookedCallSlots } =
     existing
       ? await getSettings()
       : {
           blockedDates: [],
           blockedCallTimes: [],
+          callOpenTimes: [],
           bookedEventDates: [],
           bookedCallSlots: [],
         };
-  const closedDates = [...new Set([...blockedDates, ...bookedEventDates])];
+  const closedDates = [...new Set([...callClosedDates(blockedDates, callOpenTimes), ...bookedEventDates])];
   // Exclude this booking's own current slot - it isn't "someone else's".
   const closedTimes = [
-    ...blockedCallTimes,
+    ...callClosedTimes(blockedDates, blockedCallTimes, callOpenTimes),
     ...bookedCallSlots
       .filter((slot) => slot.id !== existing?.id)
       .map(({ date, time }) => ({ date, time })),

@@ -4,7 +4,13 @@ import { useState } from 'react';
 
 import type { BusinessSettings, Pricing, SiteSettings, Slots } from '@/lib/settings';
 import type { Integrations } from '@/lib/pipeline';
-import { discoveryCallTimesFor, TIME_SLOTS, money } from '@/lib/site';
+import {
+  DISCOVERY_CALL_EXTRA_OPEN_DATES,
+  DISCOVERY_CALL_LEAD_DAYS,
+  discoveryCallTimesFor,
+  TIME_SLOTS,
+  money,
+} from '@/lib/site';
 import { useStudioAction } from '../useStudioAction';
 import styles from '../studio.module.css';
 
@@ -19,6 +25,29 @@ const WEEKDAYS = ['M', 'T', 'W', 'T', 'F', 'S', 'S'];
 
 function isoDay(year: number, month: number, day: number): string {
   return `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+}
+
+/** Why a date is not open for discovery calls on the website, or null when
+ *  it is open. Mirrors the website: weekends closed (Sundays always, Saturdays
+ *  unless opened as a one-off), blocked days, session days and the lead time. */
+function discoveryDayClosedReason(
+  iso: string,
+  blockedDates: readonly string[],
+  bookedEventDates: readonly string[]
+): string | null {
+  const [y, m, d] = iso.split('-').map(Number);
+  const day = new Date(y, m - 1, d);
+  const weekday = day.getDay();
+  if (weekday === 0) return 'Closed: Sundays are not open for discovery calls.';
+  if (weekday === 6 && !DISCOVERY_CALL_EXTRA_OPEN_DATES.includes(iso)) {
+    return 'Closed: Saturdays are not open for discovery calls.';
+  }
+  if (blockedDates.includes(iso)) return 'Closed: this whole day is blocked.';
+  if (bookedEventDates.includes(iso)) return 'Closed: a session is booked on this day.';
+  const now = new Date();
+  const earliest = new Date(now.getFullYear(), now.getMonth(), now.getDate() + DISCOVERY_CALL_LEAD_DAYS);
+  if (day < earliest) return 'Closed: too soon. Calls open from ' + DISCOVERY_CALL_LEAD_DAYS + ' days ahead.';
+  return null;
 }
 
 type TextKey = {
@@ -50,7 +79,16 @@ export function Settings({ settings, integrations }: { settings: SiteSettings; i
   const daysInMonth = new Date(view.year, view.month + 1, 0).getDate();
 
   const todayIso = isoDay(now.getFullYear(), now.getMonth(), now.getDate());
-  const [callDay, setCallDay] = useState(todayIso);
+  // Start on the first date the website actually offers for discovery calls.
+  const [callDay, setCallDay] = useState(() => {
+    for (let i = 0; i < 60; i++) {
+      const d = new Date(now.getFullYear(), now.getMonth(), now.getDate() + i);
+      const iso = isoDay(d.getFullYear(), d.getMonth(), d.getDate());
+      if (!discoveryDayClosedReason(iso, settings.blockedDates, settings.bookedEventDates)) return iso;
+    }
+    return todayIso;
+  });
+  const callDayClosedReason = discoveryDayClosedReason(callDay, settings.blockedDates, settings.bookedEventDates);
   const blockedCallTimeSet = new Set(
     settings.blockedCallTimes.filter((entry) => entry.date === callDay).map((entry) => entry.time)
   );
@@ -432,7 +470,8 @@ export function Settings({ settings, integrations }: { settings: SiteSettings; i
         <div className={`card ${styles.settingsCard}`}>
           <h3 className={styles.settingsTitle}>Discovery call times</h3>
           <p className={styles.priceNote} style={{ marginBottom: 14 }}>
-            Pick a date, then click a time to close just that slot for discovery calls. Saved immediately.
+            Pick a date, then click a time to close just that slot for discovery calls. Saved immediately. Only dates and
+            times open on the website are shown.
           </p>
 
           <label className={styles.priceField} style={{ marginBottom: 14 }}>
@@ -440,8 +479,10 @@ export function Settings({ settings, integrations }: { settings: SiteSettings; i
             <input className="field" type="date" min={todayIso} value={callDay} onChange={(e) => setCallDay(e.target.value)} />
           </label>
 
+          {callDayClosedReason ? <p className={styles.priceNote}>{callDayClosedReason}</p> : null}
+
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
-            {discoveryCallTimesFor(callDay).map((slot) => {
+            {(callDayClosedReason ? [] : discoveryCallTimesFor(callDay)).map((slot) => {
               const off = blockedCallTimeSet.has(slot);
               return (
                 <button

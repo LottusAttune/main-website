@@ -574,6 +574,32 @@
   padding: 26px 26px 30px;
 }
 
+/* The two calendars (Blocked dates, Discovery call times) sit side by side
+   and share their title, intro and calendar rows, so the grids line up. */
+.calendarPair {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-rows: auto auto 1fr;
+  gap: 0 20px;
+  align-items: start;
+}
+
+.calendarPair > .settingsCard {
+  display: grid;
+  grid-template-rows: subgrid;
+  grid-row: span 3;
+  align-content: start;
+}
+
+.calendarPair > .settingsCard > .settingsTitle {
+  margin-bottom: 8px;
+}
+
+.calendarPair > .settingsCard > p {
+  margin: 0 0 14px;
+}
+
 .settingsTitle {
   font-family: var(--font-display);
   font-weight: 300;
@@ -1459,6 +1485,17 @@
    ============================================================ */
 
 @media (max-width: 900px) {
+  .calendarPair {
+    grid-template-columns: 1fr;
+    grid-template-rows: none;
+    gap: 20px;
+  }
+
+  .calendarPair > .settingsCard {
+    display: block;
+    grid-row: auto;
+  }
+
   .shell {
     flex-direction: column;
   }

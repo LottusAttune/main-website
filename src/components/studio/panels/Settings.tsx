@@ -393,12 +393,14 @@ export function Settings({ settings, integrations }: { settings: SiteSettings; i
           </label>
         </div>
 
+        <div className={styles.calendarPair}>
         <div className={`card ${styles.settingsCard}`}>
           <h3 className={styles.settingsTitle}>Blocked dates</h3>
           <p className={styles.priceNote} style={{ marginBottom: 14 }}>
             Click a date to close it. Closed dates are struck through and unclickable on the booking page. Saved immediately.
           </p>
 
+          <div>
           <div className={styles.blockCalendar}>
             <div className={styles.blockHead}>
               <button
@@ -470,6 +472,7 @@ export function Settings({ settings, integrations }: { settings: SiteSettings; i
               Clear all
             </button>
           </div>
+          </div>
         </div>
 
         <div className={`card ${styles.settingsCard}`}>
@@ -479,6 +482,7 @@ export function Settings({ settings, integrations }: { settings: SiteSettings; i
             are blocked in Blocked dates above. Saved immediately.
           </p>
 
+          <div>
           <div className={styles.blockCalendar}>
             <div className={styles.blockHead}>
               <button
@@ -681,6 +685,8 @@ export function Settings({ settings, integrations }: { settings: SiteSettings; i
               </div>
             );
           })()}
+          </div>
+        </div>
         </div>
 
         <div className={`card ${styles.settingsCard}`}>

@@ -537,8 +537,9 @@ export function Settings({ settings, integrations }: { settings: SiteSettings; i
         <div className={`card ${styles.settingsCard}`}>
           <h3 className={styles.settingsTitle}>Discovery call times</h3>
           <p className={styles.priceNote} style={{ marginBottom: 14 }}>
-            Click a day, then click a time to close just that slot. Days and times crossed out in red are not offered on
-            the website. Tinted days have some times open or closed. Saved immediately.
+            Click a day, then click a time to close just that slot. Times crossed out in red are closed. Greyed days are
+            not offered on the website, red days are blocked for events, tinted days have some times open or closed.
+            Saved immediately.
           </p>
 
           <div>
@@ -593,7 +594,8 @@ export function Settings({ settings, integrations }: { settings: SiteSettings; i
                 const selected = day === callDay;
                 const cls = [
                   styles.blockDay,
-                  reason ? styles.blockDayOff : '',
+                  blockedWholeDay && !callsOpened ? styles.blockDayOff : '',
+                  reason && !blockedWholeDay ? styles.blockDayDisabled : '',
                   (!reason && someClosed) || callsOpened ? styles.blockDayPartial : '',
                   selected ? styles.blockDaySel : '',
                 ].join(' ');

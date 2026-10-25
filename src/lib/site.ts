@@ -174,11 +174,14 @@ export function callClosedTimes(
 }
 
 /** Fixed times offered for a discovery call - shorter and more specific than
- *  the two-hour session windows above, since a call only runs 15-20 minutes. */
+ *  the two-hour session windows above, since a call only runs 15-20 minutes.
+ *  Noon is offered every weekday: a day with a session booked is closed for
+ *  calls as a whole, so it never clashes with the midday window. */
 export const DISCOVERY_CALL_TIMES = [
   '9:00 am',
   '10:00 am',
   '11:00 am',
+  '12:00 pm',
   '1:00 pm',
   '2:00 pm',
   '4:00 pm',
@@ -186,28 +189,9 @@ export const DISCOVERY_CALL_TIMES = [
   '6:00 pm',
 ] as const;
 
-/** One-off extra discovery-call time (ISO `YYYY-MM-DD`) added on top of the
- *  usual times - the week of Oct 5, including the open Saturday. */
-const DISCOVERY_CALL_EXTRA_TIME = '12:00 pm';
-const DISCOVERY_CALL_EXTRA_TIME_DATES: readonly string[] = [
-  '2026-10-05',
-  '2026-10-06',
-  '2026-10-07',
-  '2026-10-08',
-  '2026-10-09',
-  '2026-10-10',
-];
-
 /** The discovery-call times offered on a given date (ISO), in clock order. */
-export function discoveryCallTimesFor(isoDate: string | null | undefined): readonly string[] {
-  if (!isoDate || !DISCOVERY_CALL_EXTRA_TIME_DATES.includes(isoDate)) {
-    return DISCOVERY_CALL_TIMES;
-  }
-  return [
-    ...DISCOVERY_CALL_TIMES.filter((t) => t === '9:00 am' || t === '10:00 am' || t === '11:00 am'),
-    DISCOVERY_CALL_EXTRA_TIME,
-    ...DISCOVERY_CALL_TIMES.filter((t) => t !== '9:00 am' && t !== '10:00 am' && t !== '11:00 am'),
-  ];
+export function discoveryCallTimesFor(_isoDate?: string | null): readonly string[] {
+  return DISCOVERY_CALL_TIMES;
 }
 
 export const TIME_SLOTS = [

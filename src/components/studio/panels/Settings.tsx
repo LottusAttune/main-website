@@ -8,6 +8,7 @@ import {
   DISCOVERY_CALL_EXTRA_OPEN_DATES,
   DISCOVERY_CALL_LEAD_DAYS,
   discoveryCallTimesFor,
+  sessionSlotsFor,
   TIME_SLOTS,
   money,
 } from '@/lib/site';
@@ -89,6 +90,7 @@ export function Settings({ settings, integrations }: { settings: SiteSettings; i
     return todayIso;
   });
   const [closedFilter, setClosedFilter] = useState('');
+  const [eventDay, setEventDay] = useState<string | null>(null);
   const callDayClosedReason = discoveryDayClosedReason(callDay, settings.blockedDates, settings.bookedEventDates);
   const blockedCallTimeSet = new Set(
     settings.blockedCallTimes.filter((entry) => entry.date === callDay).map((entry) => entry.time)
@@ -393,7 +395,8 @@ export function Settings({ settings, integrations }: { settings: SiteSettings; i
         <div className={`card ${styles.settingsCard}`}>
           <h3 className={styles.settingsTitle}>Blocked dates</h3>
           <p className={styles.priceNote} style={{ marginBottom: 14 }}>
-            Click a date to close it. Closed dates are struck through and unclickable on the booking page. Saved immediately.
+            Click a date, then close the whole day or just one time window. Red days are closed all day, tinted days
+            have one window closed. Saved immediately.
           </p>
 
           <div>
@@ -442,14 +445,16 @@ export function Settings({ settings, integrations }: { settings: SiteSettings; i
               {Array.from({ length: daysInMonth }, (_, i) => {
                 const day = isoDay(view.year, view.month, i + 1);
                 const off = blockedSet.has(day);
+                const partial = !off && settings.blockedSessionSlots.some((w) => w.date === day);
+                const selected = day === eventDay;
                 return (
                   <button
                     key={day}
                     type="button"
-                    aria-pressed={off}
-                    aria-label={`${day}${off ? ' — closed' : ''}`}
-                    className={`${styles.blockDay} ${off ? styles.blockDayOff : ''}`}
-                    onClick={() => void run({ action: 'toggleBlockedDate', day, blocked: !off })}
+                    aria-pressed={selected}
+                    aria-label={`${day}${off ? ' — closed all day' : partial ? ' — one window closed' : ''}`}
+                    className={`${styles.blockDay} ${off ? styles.blockDayOff : ''} ${partial ? styles.blockDayPartial : ''} ${selected ? styles.blockDaySel : ''}`}
+                    onClick={() => setEventDay(day)}
                   >
                     {i + 1}
                   </button>
@@ -457,6 +462,61 @@ export function Settings({ settings, integrations }: { settings: SiteSettings; i
               })}
             </div>
           </div>
+
+          {eventDay ? (
+            <div style={{ marginTop: 16 }}>
+              <span className={styles.priceLabel}>
+                {new Date(
+                  Number(eventDay.slice(0, 4)),
+                  Number(eventDay.slice(5, 7)) - 1,
+                  Number(eventDay.slice(8, 10))
+                ).toLocaleDateString('en-CA', { weekday: 'long', month: 'long', day: 'numeric' })}
+              </span>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginTop: 8 }}>
+                <button
+                  type="button"
+                  aria-pressed={blockedSet.has(eventDay)}
+                  className={`${styles.blockDay} ${blockedSet.has(eventDay) ? styles.blockDayOff : ''}`}
+                  style={{ width: 'auto', padding: '0 14px' }}
+                  onClick={() => void run({ action: 'toggleBlockedDate', day: eventDay, blocked: !blockedSet.has(eventDay) })}
+                >
+                  {blockedSet.has(eventDay) ? 'Whole day closed' : 'Close whole day'}
+                </button>
+                {blockedSet.has(eventDay)
+                  ? null
+                  : sessionSlotsFor(eventDay).map((slot) => {
+                      const windowOff = settings.blockedSessionSlots.some(
+                        (w) => w.date === eventDay && w.time === slot.label
+                      );
+                      return (
+                        <button
+                          key={slot.label}
+                          type="button"
+                          aria-pressed={windowOff}
+                          aria-label={`${slot.label}${windowOff ? ' — closed' : ''}`}
+                          className={`${styles.blockDay} ${windowOff ? styles.blockDayOff : ''}`}
+                          style={{ width: 'auto', padding: '0 14px' }}
+                          onClick={() =>
+                            void run({
+                              action: 'toggleBlockedSessionSlot',
+                              day: eventDay,
+                              time: slot.label,
+                              blocked: !windowOff,
+                            })
+                          }
+                        >
+                          {slot.label}
+                        </button>
+                      );
+                    })}
+              </div>
+              {blockedSet.has(eventDay) ? (
+                <p className={styles.priceNote} style={{ marginTop: 6 }}>
+                  Open the whole day to close a single window instead.
+                </p>
+              ) : null}
+            </div>
+          ) : null}
 
           <div style={{ marginTop: 14 }}>
             <button

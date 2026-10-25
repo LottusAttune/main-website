@@ -100,7 +100,14 @@ export async function POST(request: Request) {
     datesToCheck.some(({ date }) => settings.blockedDates.includes(date)) ||
     datesToCheck.some(
       ({ date, time }) =>
-        !isSlotAvailable(date, time, input.participants, settings.bookedSessionSlots, settings.bookedCallSlots)
+        !isSlotAvailable(
+          date,
+          time,
+          input.participants,
+          settings.bookedSessionSlots,
+          settings.bookedCallSlots,
+          settings.blockedSessionSlots
+        )
     );
   if (dateUnavailable) {
     return NextResponse.json(

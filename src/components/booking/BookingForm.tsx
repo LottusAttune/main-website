@@ -41,6 +41,8 @@ type Props = {
   /** Already-booked discovery calls - a session can't land too close to one
    *  (see CALL_EVENT_BUFFER_MINUTES in lib/site). */
   bookedCalls: BookedCall[];
+  /** Single session windows closed by hand (date + time label). */
+  blockedWindows?: BookedCall[];
   codes: DiscountCode[];
   leadTimeDays: number;
   terms: LegalSection[];
@@ -89,6 +91,7 @@ export function BookingForm({
   pricing,
   slots,
   blockedDates,
+  blockedWindows = [],
   bookedSessionSlots,
   bookedCalls,
   codes,
@@ -177,10 +180,11 @@ export function BookingForm({
     bookedSessionSlots,
     bookedCalls,
     blockedDates,
-    openSlotLabels
+    openSlotLabels,
+    blockedWindows
   );
   const blockedTimesForDate = date
-    ? blockedTimesFor(isoDay(date), people, bookedSessionSlots, bookedCalls)
+    ? blockedTimesFor(isoDay(date), people, bookedSessionSlots, bookedCalls, blockedWindows)
     : new Set<string>();
   // The slots shown for the chosen date: the usual open ones, except on the
   // one-off date where a morning window replaces the midday one.
@@ -194,7 +198,7 @@ export function BookingForm({
   useEffect(() => {
     if (!date) return;
     if (
-      blockedDatesFor(people, bookedSessionSlots, bookedCalls, blockedDates, openSlotLabels).includes(
+      blockedDatesFor(people, bookedSessionSlots, bookedCalls, blockedDates, openSlotLabels, blockedWindows).includes(
         isoDay(date)
       )
     ) {
@@ -203,7 +207,7 @@ export function BookingForm({
       setTime2(null);
       return;
     }
-    const blockedNow = blockedTimesFor(isoDay(date), people, bookedSessionSlots, bookedCalls);
+    const blockedNow = blockedTimesFor(isoDay(date), people, bookedSessionSlots, bookedCalls, blockedWindows);
     if (time && blockedNow.has(time)) setTime(null);
     if (time2 && blockedNow.has(time2)) setTime2(null);
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -660,7 +664,7 @@ export function BookingForm({
               selected={date}
               onSelect={(next) => {
                 setDate(next);
-                const blockedNow = blockedTimesFor(isoDay(next), people, bookedSessionSlots, bookedCalls);
+                const blockedNow = blockedTimesFor(isoDay(next), people, bookedSessionSlots, bookedCalls, blockedWindows);
                 // A slot picked for another date may not exist on this one.
                 const offered = new Set(sessionSlotsFor(isoDay(next)).map((slot) => slot.label));
                 if (time && (blockedNow.has(time) || !offered.has(time))) setTime(null);

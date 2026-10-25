@@ -303,7 +303,9 @@ export function blockedDatesFor(
   bookedSlots: readonly SessionSlot[],
   bookedCalls: readonly BookedCall[],
   manualBlocked: readonly string[],
-  openSlotLabels: readonly string[]
+  openSlotLabels: readonly string[],
+  /** Single windows closed by hand (date + time label), without closing the day. */
+  manualWindows: readonly BookedCall[] = []
 ): string[] {
   const venue = venueForParticipants(participants);
   const byDate = new Map<string, SessionSlot[]>();
@@ -311,7 +313,11 @@ export function blockedDatesFor(
     if (!byDate.has(slot.date)) byDate.set(slot.date, []);
     byDate.get(slot.date)!.push(slot);
   }
-  const candidateDates = new Set([...byDate.keys(), ...bookedCalls.map((c) => c.date)]);
+  const candidateDates = new Set([
+    ...byDate.keys(),
+    ...bookedCalls.map((c) => c.date),
+    ...manualWindows.map((w) => w.date),
+  ]);
 
   const blocked = new Set(manualBlocked);
   for (const date of candidateDates) {
@@ -323,7 +329,7 @@ export function blockedDatesFor(
       blocked.add(date);
       continue;
     }
-    const takenTimes = blockedTimesFor(date, participants, bookedSlots, bookedCalls);
+    const takenTimes = blockedTimesFor(date, participants, bookedSlots, bookedCalls, manualWindows);
     const midday = TIME_SLOTS.find((slot) => slot.key === EXTRA_SESSION_SLOT.replaces)!.label;
     const dayLabels =
       date === EXTRA_SESSION_SLOT.date
@@ -343,20 +349,23 @@ export function blockedTimesFor(
   date: string,
   participants: number,
   bookedSlots: readonly SessionSlot[],
-  bookedCalls: readonly BookedCall[]
+  bookedCalls: readonly BookedCall[],
+  manualWindows: readonly BookedCall[] = []
 ): Set<string> {
   const venue = venueForParticipants(participants);
   const callBlocked = slotsBlockedByCalls(date, bookedCalls);
+  const manual = manualWindows.filter((w) => w.date === date).map((w) => w.time);
   if (venue === 'lounge') {
     // blockedDatesFor already keeps a lounge request off any date that
-    // already has a session booked, so only the call buffer applies here.
-    return callBlocked;
+    // already has a session booked, so only the call buffer and windows
+    // closed by hand apply here.
+    return new Set([...callBlocked, ...manual]);
   }
   const daySlots = bookedSlots.filter((s) => s.date === date);
   const venueBlocked = daySlots
     .filter((s) => venueForParticipants(s.participants) === 'signature')
     .map((s) => s.time);
-  return new Set([...venueBlocked, ...callBlocked]);
+  return new Set([...venueBlocked, ...callBlocked, ...manual]);
 }
 
 /** The same check, run server-side before a booking is saved - never trust
@@ -366,8 +375,10 @@ export function isSlotAvailable(
   time: string,
   participants: number,
   bookedSlots: readonly SessionSlot[],
-  bookedCalls: readonly BookedCall[]
+  bookedCalls: readonly BookedCall[],
+  manualWindows: readonly BookedCall[] = []
 ): boolean {
+  if (manualWindows.some((w) => w.date === date && w.time === time)) return false;
   // The one-off morning window only exists on its own date.
   const onExtraDate = date === EXTRA_SESSION_SLOT.date;
   if (time === EXTRA_SESSION_SLOT.label && !onExtraDate) return false;

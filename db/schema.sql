@@ -480,3 +480,11 @@ ALTER TABLE document_counters   ENABLE ROW LEVEL SECURITY;
 ALTER TABLE activity            ENABLE ROW LEVEL SECURITY;
 ALTER TABLE payment_links       ENABLE ROW LEVEL SECURITY;
 ALTER TABLE payments            ENABLE ROW LEVEL SECURITY;
+
+-- One session window blocked on one date (the whole day lives in blocked_dates).
+CREATE TABLE IF NOT EXISTS blocked_session_slots (
+  day        DATE NOT NULL,
+  time_label TEXT NOT NULL,
+  PRIMARY KEY (day, time_label)
+);
+ALTER TABLE blocked_session_slots ENABLE ROW LEVEL SECURITY;

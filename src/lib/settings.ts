@@ -113,6 +113,9 @@ export type SiteSettings = {
   codes: DiscountCode[];
   /** Specific discovery-call time slots closed for a specific date. */
   blockedCallTimes: BlockedCallTime[];
+  /** Session windows (date + time label) closed on their own, without closing
+   *  the whole day. */
+  blockedSessionSlots: Array<{ date: string; time: string }>;
   /** Dates with a confirmed session booked - closed for discovery calls too. */
   bookedEventDates: string[];
   /** Existing sessions' date, time and party size, so the booking calendar can
@@ -131,6 +134,7 @@ const FALLBACK: SiteSettings = {
   business: { ...DEFAULT_BUSINESS },
   blockedDates: [],
   blockedCallTimes: [],
+  blockedSessionSlots: [],
   bookedEventDates: [],
   bookedSessionSlots: [],
   bookedCallSlots: [],
@@ -203,6 +207,7 @@ export async function getSettings(): Promise<SiteSettings> {
       eventDatesResult,
       sessionSlotsResult,
       bookedCallResult,
+      blockedSessionResult,
     ] = await Promise.all([
       sql`SELECT * FROM settings WHERE id = TRUE`,
       sql`SELECT day FROM blocked_dates ORDER BY day`,
@@ -250,6 +255,7 @@ export async function getSettings(): Promise<SiteSettings> {
         SELECT id, call_date, call_time FROM discovery_calls
         WHERE status != 'cancelled'
       `,
+      sql`SELECT day, time_label FROM blocked_session_slots ORDER BY day, time_label`,
     ]);
 
     const row = settingsResult.rows[0];
@@ -280,6 +286,10 @@ export async function getSettings(): Promise<SiteSettings> {
       blockedCallTimes: blockedCallResult.rows.map((r) => ({
         date: toIsoDay(r.call_date),
         time: String(r.call_time),
+      })),
+      blockedSessionSlots: blockedSessionResult.rows.map((r) => ({
+        date: toIsoDay(r.day),
+        time: String(r.time_label),
       })),
       bookedEventDates: eventDatesResult.rows.map((r) => toIsoDay(r.day)),
       bookedSessionSlots: sessionSlotsResult.rows.map((r) => ({

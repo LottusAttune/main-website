@@ -111,6 +111,8 @@
 
   /* ---------- Radius ---------- */
   --radius-pill: 999px;
+  /* A barely-there softening for small flat buttons (square is the default). */
+  --radius-soft: 3px;
   --radius-lg: 30px;
   --radius-card: 26px;
   --radius-md: 20px;

@@ -56,11 +56,14 @@
   margin: 0;
 }
 
-/* Flat, square black button, like "See what's included" in the estimate card. */
+/* Flat black button with a thin gold edge and barely-softened corners. */
 .discoveryBtn.discoveryBtn {
   background: var(--color-ink-deepest);
   border: 1.5px solid var(--color-gold-light);
-  border-radius: 0;
+  border-radius: var(--radius-soft);
+  padding: 11px 28px;
+  min-height: 42px;
+  font-size: 12px;
   color: var(--color-cream-text);
   box-shadow: var(--shadow-pill-dark);
 }

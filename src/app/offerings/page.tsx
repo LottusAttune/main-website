@@ -45,7 +45,7 @@ export default async function OfferingsPage() {
               footnote={
                 <div className={styles.discoveryNote}>
                   <p>Still have a question?</p>
-                  <Link href="/discovery-call" className="btn btn--dark">
+                  <Link href="/discovery-call" className={`btn ${styles.discoveryBtn}`}>
                     Book a discovery call
                   </Link>
                 </div>

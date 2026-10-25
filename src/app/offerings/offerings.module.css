@@ -56,6 +56,20 @@
   margin: 0;
 }
 
+/* Flat, square black button, like "See what's included" in the estimate card. */
+.discoveryBtn.discoveryBtn {
+  background: var(--color-ink-deepest);
+  border: 1.5px solid var(--color-gold-light);
+  border-radius: 0;
+  color: var(--color-cream-text);
+  box-shadow: var(--shadow-pill-dark);
+}
+
+.discoveryBtn.discoveryBtn:hover {
+  color: var(--color-cream-text);
+  box-shadow: var(--shadow-pill-hover);
+}
+
 @media (max-width: 1079px) {
   .discoveryNote {
     font-size: 15.5px;

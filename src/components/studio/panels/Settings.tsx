@@ -589,6 +589,164 @@ export function Settings({ settings, integrations }: { settings: SiteSettings; i
               ))}
               {Array.from({ length: new Date(view.year, view.month + 1, 0).getDate() }, (_, i) => {
                 const day = isoDay(view.year, view.month, i + 1);
+                const eventDay = settings.blockedDates.includes(day) || settings.bookedEventDates.includes(day);
+                const notOffered = discoveryDayClosedReason(day, [], [], []); // weekend or too soon
+                const callsOpened = eventDay && settings.callOpenTimes.some((o) => o.date === day);
+                const someClosed = settings.blockedCallTimes.some((e) => e.date === day);
+                // Every call time closed by hand counts as a closed day too.
+                const allClosed =
+                  !eventDay &&
+                  !notOffered &&
+                  discoveryCallTimesFor(day).every((t) =>
+                    settings.blockedCallTimes.some((e) => e.date === day && e.time === t)
+                  );
+                const closedRed = !notOffered && ((eventDay && !callsOpened) || allClosed);
+                const selected = day === callDay;
+                const cls = [
+                  styles.blockDay,
+                  closedRed ? styles.blockDayOff : '',
+                  notOffered ? styles.blockDayDisabled : '',
+                  !closedRed && !notOffered && (someClosed || callsOpened) ? styles.blockDayPartial : '',
+                  selected ? styles.blockDaySel : '',
+                ].join(' ');
+                const reason = notOffered ?? (closedRed ? (allClosed ? 'All times closed' : 'Closed for discovery calls') : null);
+                return (
+                  <button
+                    key={day}
+                    type="button"
+                    aria-pressed={selected}
+                    aria-label={`${day}${off ? ' — closed all day' : partial ? ' — one window closed' : ''}`}
+                    className={`${styles.blockDay} ${off ? styles.blockDayOff : ''} ${partial ? styles.blockDayPartial : ''} ${selected ? styles.blockDaySel : ''}`}
+                    onClick={() => setEventDay(day)}
+                  >
+                    {i + 1}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
+          {eventDay ? (
+            <div style={{ marginTop: 16 }}>
+              <span className={styles.priceLabel}>
+                {new Date(
+                  Number(eventDay.slice(0, 4)),
+                  Number(eventDay.slice(5, 7)) - 1,
+                  Number(eventDay.slice(8, 10))
+                ).toLocaleDateString('en-CA', { weekday: 'long', month: 'long', day: 'numeric' })}
+              </span>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginTop: 8 }}>
+                <button
+                  type="button"
+                  aria-pressed={blockedSet.has(eventDay)}
+                  className={`${styles.blockDay} ${blockedSet.has(eventDay) ? styles.blockDayOff : ''}`}
+                  style={{ width: 'auto', padding: '0 14px' }}
+                  onClick={() => void run({ action: 'toggleBlockedDate', day: eventDay, blocked: !blockedSet.has(eventDay) })}
+                >
+                  {blockedSet.has(eventDay) ? 'Whole day closed' : 'Close whole day'}
+                </button>
+                {blockedSet.has(eventDay)
+                  ? null
+                  : sessionSlotsFor(eventDay).map((slot) => {
+                      const windowOff = settings.blockedSessionSlots.some(
+                        (w) => w.date === eventDay && w.time === slot.label
+                      );
+                      return (
+                        <button
+                          key={slot.label}
+                          type="button"
+                          aria-pressed={windowOff}
+                          aria-label={`${slot.label}${windowOff ? ' — closed' : ''}`}
+                          className={`${styles.blockDay} ${windowOff ? styles.blockDayOff : ''}`}
+                          style={{ width: 'auto', padding: '0 14px' }}
+                          onClick={() =>
+                            void run({
+                              action: 'toggleBlockedSessionSlot',
+                              day: eventDay,
+                              time: slot.label,
+                              blocked: !windowOff,
+                            })
+                          }
+                        >
+                          {slot.label}
+                        </button>
+                      );
+                    })}
+              </div>
+              {blockedSet.has(eventDay) ? (
+                <p className={styles.priceNote} style={{ marginTop: 6 }}>
+                  Open the whole day to close a single window instead.
+                </p>
+              ) : null}
+            </div>
+          ) : null}
+
+          <div style={{ marginTop: 14 }}>
+            <button
+              type="button"
+              className={`btn btn--outline ${styles.smallBtn}`}
+              disabled={settings.blockedDates.length === 0}
+              onClick={() => void run({ action: 'clearBlockedDates' })}
+            >
+              Clear all
+            </button>
+          </div>
+          </div>
+        </div>
+
+        <div className={`card ${styles.settingsCard}`}>
+          <h3 className={styles.settingsTitle}>Discovery call times</h3>
+          <p className={styles.priceNote} style={{ marginBottom: 14 }}>
+            Click a day, then click a time to close just that slot. Times crossed out in red are closed. Greyed days are
+            not offered on the website, red days are blocked for events, tinted days have some times open or closed.
+            Saved immediately.
+          </p>
+
+          <div>
+          <div className={styles.blockCalendar}>
+            <div className={styles.blockHead}>
+              <button
+                type="button"
+                className={styles.blockNav}
+                aria-label="Previous month"
+                onClick={() =>
+                  setView((v) => {
+                    const d = new Date(v.year, v.month - 1, 1);
+                    return { year: d.getFullYear(), month: d.getMonth() };
+                  })
+                }
+              >
+                ‹
+              </button>
+              <span className={styles.blockMonth}>
+                {new Date(view.year, view.month, 1).toLocaleDateString('en-CA', { month: 'long', year: 'numeric' })}
+              </span>
+              <button
+                type="button"
+                className={styles.blockNav}
+                aria-label="Next month"
+                onClick={() =>
+                  setView((v) => {
+                    const d = new Date(v.year, v.month + 1, 1);
+                    return { year: d.getFullYear(), month: d.getMonth() };
+                  })
+                }
+              >
+                ›
+              </button>
+            </div>
+
+            <div className={styles.blockGrid}>
+              {WEEKDAYS.map((d, i) => (
+                <div key={`c-${d}-${i}`} className={styles.priceNote} style={{ textAlign: 'center' }}>
+                  {d}
+                </div>
+              ))}
+              {Array.from({ length: (new Date(view.year, view.month, 1).getDay() + 6) % 7 }, (_, i) => (
+                <div key={`cpad-${i}`} className={styles.blockPad} />
+              ))}
+              {Array.from({ length: new Date(view.year, view.month + 1, 0).getDate() }, (_, i) => {
+                const day = isoDay(view.year, view.month, i + 1);
                 const reason = discoveryDayClosedReason(day, settings.blockedDates, settings.bookedEventDates, settings.callOpenTimes);
                 const blockedWholeDay = settings.blockedDates.includes(day);
                 const callsOpened =
@@ -609,7 +767,7 @@ export function Settings({ settings, integrations }: { settings: SiteSettings; i
                     type="button"
                     aria-pressed={selected}
                     aria-label={`${day}${reason ? ' — ' + reason : someClosed ? ' — some times closed' : ''}`}
-                    title={callsOpened ? 'Blocked for events, discovery calls open at some times' : reason ?? (someClosed ? 'Some times closed' : 'Open')}
+                    title={callsOpened ? 'Closed for events, discovery calls open at some times' : reason ?? (someClosed ? 'Some times closed' : 'Open')}
                     className={cls}
                     onClick={() => setCallDay(day)}
                   >

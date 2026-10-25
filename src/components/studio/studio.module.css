@@ -738,6 +738,21 @@
   height: 38px;
 }
 
+.blockDaySel {
+  border-color: var(--color-gold);
+  box-shadow: inset 0 0 0 1px var(--color-gold);
+}
+
+.blockDayDisabled {
+  color: var(--color-muted);
+  opacity: 0.55;
+  background: var(--hairline-light-soft);
+}
+
+.blockDayPartial {
+  background: var(--gold-rim);
+}
+
 /* ---------- Codes ---------- */
 
 .codeRow {

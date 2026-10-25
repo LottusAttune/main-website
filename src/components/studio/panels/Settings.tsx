@@ -88,6 +88,11 @@ export function Settings({ settings, integrations }: { settings: SiteSettings; i
     }
     return todayIso;
   });
+  const [callView, setCallView] = useState(() => {
+    const [y, m] = callDay.split('-').map(Number);
+    return { year: y, month: m - 1 };
+  });
+  const [closedFilter, setClosedFilter] = useState('');
   const callDayClosedReason = discoveryDayClosedReason(callDay, settings.blockedDates, settings.bookedEventDates);
   const blockedCallTimeSet = new Set(
     settings.blockedCallTimes.filter((entry) => entry.date === callDay).map((entry) => entry.time)
@@ -470,57 +475,212 @@ export function Settings({ settings, integrations }: { settings: SiteSettings; i
         <div className={`card ${styles.settingsCard}`}>
           <h3 className={styles.settingsTitle}>Discovery call times</h3>
           <p className={styles.priceNote} style={{ marginBottom: 14 }}>
-            Pick a date, then click a time to close just that slot for discovery calls. Saved immediately. Only dates and
-            times open on the website are shown.
+            Click a day, then click a time to close just that slot. Greyed days are not offered on the website. Red days
+            are blocked in Blocked dates above. Saved immediately.
           </p>
 
-          <label className={styles.priceField} style={{ marginBottom: 14 }}>
-            <span className={styles.priceLabel}>Date</span>
-            <input className="field" type="date" min={todayIso} value={callDay} onChange={(e) => setCallDay(e.target.value)} />
-          </label>
+          <div className={styles.blockCalendar}>
+            <div className={styles.blockHead}>
+              <button
+                type="button"
+                className={styles.blockNav}
+                aria-label="Previous month"
+                onClick={() =>
+                  setCallView((v) => {
+                    const d = new Date(v.year, v.month - 1, 1);
+                    return { year: d.getFullYear(), month: d.getMonth() };
+                  })
+                }
+              >
+                ‹
+              </button>
+              <span className={styles.blockMonth}>
+                {new Date(callView.year, callView.month, 1).toLocaleDateString('en-CA', { month: 'long', year: 'numeric' })}
+              </span>
+              <button
+                type="button"
+                className={styles.blockNav}
+                aria-label="Next month"
+                onClick={() =>
+                  setCallView((v) => {
+                    const d = new Date(v.year, v.month + 1, 1);
+                    return { year: d.getFullYear(), month: d.getMonth() };
+                  })
+                }
+              >
+                ›
+              </button>
+            </div>
 
-          {callDayClosedReason ? <p className={styles.priceNote}>{callDayClosedReason}</p> : null}
-
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
-            {(callDayClosedReason ? [] : discoveryCallTimesFor(callDay)).map((slot) => {
-              const off = blockedCallTimeSet.has(slot);
-              return (
-                <button
-                  key={slot}
-                  type="button"
-                  aria-pressed={off}
-                  aria-label={`${slot}${off ? ' — closed' : ''}`}
-                  className={`${styles.blockDay} ${off ? styles.blockDayOff : ''}`}
-                  style={{ width: 'auto', padding: '0 14px' }}
-                  onClick={() => void run({ action: 'toggleBlockedCallTime', day: callDay, time: slot, blocked: !off })}
-                >
-                  {slot}
-                </button>
-              );
-            })}
+            <div className={styles.blockGrid}>
+              {WEEKDAYS.map((d, i) => (
+                <div key={`c-${d}-${i}`} className={styles.priceNote} style={{ textAlign: 'center' }}>
+                  {d}
+                </div>
+              ))}
+              {Array.from({ length: (new Date(callView.year, callView.month, 1).getDay() + 6) % 7 }, (_, i) => (
+                <div key={`cpad-${i}`} className={styles.blockPad} />
+              ))}
+              {Array.from({ length: new Date(callView.year, callView.month + 1, 0).getDate() }, (_, i) => {
+                const day = isoDay(callView.year, callView.month, i + 1);
+                const reason = discoveryDayClosedReason(day, settings.blockedDates, settings.bookedEventDates);
+                const blockedWholeDay = settings.blockedDates.includes(day);
+                const someClosed = settings.blockedCallTimes.some((e) => e.date === day);
+                const selected = day === callDay;
+                const cls = [
+                  styles.blockDay,
+                  blockedWholeDay ? styles.blockDayOff : '',
+                  reason && !blockedWholeDay ? styles.blockDayDisabled : '',
+                  !reason && someClosed ? styles.blockDayPartial : '',
+                  selected ? styles.blockDaySel : '',
+                ].join(' ');
+                return (
+                  <button
+                    key={day}
+                    type="button"
+                    aria-pressed={selected}
+                    aria-label={`${day}${reason ? ' — ' + reason : someClosed ? ' — some times closed' : ''}`}
+                    title={reason ?? (someClosed ? 'Some times closed' : 'Open')}
+                    className={cls}
+                    onClick={() => setCallDay(day)}
+                  >
+                    {i + 1}
+                  </button>
+                );
+              })}
+            </div>
           </div>
 
-          {sortedBlockedCallTimes.length > 0 ? (
-            <div style={{ marginTop: 20 }}>
-              <span className={styles.priceLabel}>Currently closed</span>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 6, marginTop: 8 }}>
-                {sortedBlockedCallTimes.map((entry) => (
-                  <div key={`${entry.date}-${entry.time}`} className={styles.codeRow}>
-                    <span className={styles.priceNote}>
-                      {entry.date} &middot; {entry.time}
-                    </span>
+          <div style={{ marginTop: 16 }}>
+            <span className={styles.priceLabel}>
+              {new Date(Number(callDay.slice(0, 4)), Number(callDay.slice(5, 7)) - 1, Number(callDay.slice(8, 10))).toLocaleDateString('en-CA', { weekday: 'long', month: 'long', day: 'numeric' })}
+            </span>
+
+            {callDayClosedReason ? (
+              <div style={{ marginTop: 8 }}>
+                <p className={styles.priceNote}>{callDayClosedReason}</p>
+                {settings.blockedDates.includes(callDay) ? (
+                  <div style={{ marginTop: 8 }}>
                     <button
                       type="button"
                       className={`btn btn--outline ${styles.smallBtn}`}
-                      onClick={() => void run({ action: 'toggleBlockedCallTime', day: entry.date, time: entry.time, blocked: false })}
+                      onClick={() => void run({ action: 'toggleBlockedDate', day: callDay, blocked: false })}
                     >
-                      Unblock
+                      Open this day
+                    </button>
+                    <p className={styles.priceNote} style={{ marginTop: 6 }}>
+                      This also opens the day for sessions, because Blocked dates covers both.
+                    </p>
+                  </div>
+                ) : null}
+              </div>
+            ) : (
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginTop: 8 }}>
+                {discoveryCallTimesFor(callDay).map((slot) => {
+                  const off = blockedCallTimeSet.has(slot);
+                  return (
+                    <button
+                      key={slot}
+                      type="button"
+                      aria-pressed={off}
+                      aria-label={`${slot}${off ? ' — closed' : ''}`}
+                      className={`${styles.blockDay} ${off ? styles.blockDayOff : ''}`}
+                      style={{ width: 'auto', padding: '0 14px' }}
+                      onClick={() => void run({ action: 'toggleBlockedCallTime', day: callDay, time: slot, blocked: !off })}
+                    >
+                      {slot}
+                    </button>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+
+          {(() => {
+            const fmt = (iso: string) =>
+              new Date(Number(iso.slice(0, 4)), Number(iso.slice(5, 7)) - 1, Number(iso.slice(8, 10))).toLocaleDateString('en-CA', {
+                weekday: 'short',
+                month: 'short',
+                day: 'numeric',
+              });
+            const byDate = new Map<string, string[]>();
+            const stale: Array<{ date: string; time: string }> = [];
+            for (const entry of sortedBlockedCallTimes) {
+              if (entry.date < todayIso) continue;
+              if (discoveryDayClosedReason(entry.date, settings.blockedDates, settings.bookedEventDates)) {
+                stale.push(entry);
+                continue;
+              }
+              byDate.set(entry.date, [...(byDate.get(entry.date) ?? []), entry.time]);
+            }
+            const needle = closedFilter.trim().toLowerCase();
+            const groups = [...byDate.entries()].filter(
+              ([date, times]) => !needle || `${fmt(date)} ${times.join(' ')}`.toLowerCase().includes(needle)
+            );
+            if (byDate.size === 0 && stale.length === 0) return null;
+            return (
+              <div style={{ marginTop: 20 }}>
+                <span className={styles.priceLabel}>Days with closed times</span>
+                {byDate.size > 3 ? (
+                  <input
+                    className="field"
+                    style={{ marginTop: 8 }}
+                    placeholder="Search, for example Nov or 4:00 pm"
+                    value={closedFilter}
+                    onChange={(e) => setClosedFilter(e.target.value)}
+                  />
+                ) : null}
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 6, marginTop: 8 }}>
+                  {groups.map(([date, times]) => (
+                    <div key={date} className={styles.codeRow}>
+                      <button
+                        type="button"
+                        className={styles.priceNote}
+                        style={{ background: 'none', border: 0, padding: 0, textAlign: 'left', cursor: 'pointer' }}
+                        onClick={() => {
+                          setCallDay(date);
+                          setCallView({ year: Number(date.slice(0, 4)), month: Number(date.slice(5, 7)) - 1 });
+                        }}
+                      >
+                        {fmt(date)} &middot; {times.join(', ')}
+                      </button>
+                      <button
+                        type="button"
+                        className={`btn btn--outline ${styles.smallBtn}`}
+                        onClick={async () => {
+                          for (const time of times) {
+                            await run({ action: 'toggleBlockedCallTime', day: date, time, blocked: false });
+                          }
+                        }}
+                      >
+                        Reopen day
+                      </button>
+                    </div>
+                  ))}
+                  {groups.length === 0 && byDate.size > 0 ? <span className={styles.priceNote}>No match.</span> : null}
+                </div>
+                {stale.length > 0 ? (
+                  <div style={{ marginTop: 14 }}>
+                    <p className={styles.priceNote}>
+                      {stale.length} closed times are on days that are already closed (weekends, blocked days or session days), so they do nothing.
+                    </p>
+                    <button
+                      type="button"
+                      className={`btn btn--outline ${styles.smallBtn}`}
+                      style={{ marginTop: 6 }}
+                      onClick={async () => {
+                        for (const entry of stale) {
+                          await run({ action: 'toggleBlockedCallTime', day: entry.date, time: entry.time, blocked: false });
+                        }
+                      }}
+                    >
+                      Remove them
                     </button>
                   </div>
-                ))}
+                ) : null}
               </div>
-            </div>
-          ) : null}
+            );
+          })()}
         </div>
 
         <div className={`card ${styles.settingsCard}`}>

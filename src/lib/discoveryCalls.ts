@@ -67,16 +67,16 @@ export function findDiscoveryCallSlotError(
   const [year, month, day] = callDate.split('-').map(Number);
   const isSunday = new Date(year, month - 1, day).getDay() === 0;
 
-  if (
-    isSunday ||
-    callClosedDates(settings.blockedDates, settings.callOpenTimes).includes(callDate) ||
-    settings.bookedEventDates.includes(callDate)
-  ) {
+  // A day blocked for events, or with a session booked, is closed for calls
+  // unless Silvana opened specific call times on it.
+  const eventDays = [...new Set([...settings.blockedDates, ...settings.bookedEventDates])];
+
+  if (isSunday || callClosedDates(eventDays, settings.callOpenTimes).includes(callDate)) {
     return 'That date is no longer available.';
   }
 
   if (
-    callClosedTimes(settings.blockedDates, settings.blockedCallTimes, settings.callOpenTimes).some(
+    callClosedTimes(eventDays, settings.blockedCallTimes, settings.callOpenTimes).some(
       (entry) => entry.date === callDate && entry.time === callTime
     )
   ) {

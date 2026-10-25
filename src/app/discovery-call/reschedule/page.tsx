@@ -35,10 +35,11 @@ export default async function ReschedulePage({
           bookedEventDates: [],
           bookedCallSlots: [],
         };
-  const closedDates = [...new Set([...callClosedDates(blockedDates, callOpenTimes), ...bookedEventDates])];
+  const eventDays = [...new Set([...blockedDates, ...bookedEventDates])];
+  const closedDates = callClosedDates(eventDays, callOpenTimes);
   // Exclude this booking's own current slot - it isn't "someone else's".
   const closedTimes = [
-    ...callClosedTimes(blockedDates, blockedCallTimes, callOpenTimes),
+    ...callClosedTimes(eventDays, blockedCallTimes, callOpenTimes),
     ...bookedCallSlots
       .filter((slot) => slot.id !== existing?.id)
       .map(({ date, time }) => ({ date, time })),

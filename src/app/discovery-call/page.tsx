@@ -19,9 +19,12 @@ export const dynamic = 'force-dynamic';
 export default async function DiscoveryCallPage() {
   const { blockedDates, blockedCallTimes, callOpenTimes, bookedEventDates, bookedCallSlots } =
     await getSettings();
-  const closedDates = [...new Set([...callClosedDates(blockedDates, callOpenTimes), ...bookedEventDates])];
+  // A day blocked for events, or with a session booked, is closed for calls
+  // unless Silvana opened specific call times on it.
+  const eventDays = [...new Set([...blockedDates, ...bookedEventDates])];
+  const closedDates = callClosedDates(eventDays, callOpenTimes);
   const closedTimes = [
-    ...callClosedTimes(blockedDates, blockedCallTimes, callOpenTimes),
+    ...callClosedTimes(eventDays, blockedCallTimes, callOpenTimes),
     ...bookedCallSlots.map(({ date, time }) => ({ date, time })),
   ];
 

@@ -44,10 +44,12 @@ function discoveryDayClosedReason(
   if (weekday === 6 && !DISCOVERY_CALL_EXTRA_OPEN_DATES.includes(iso)) {
     return 'Closed: Saturdays are not open for discovery calls.';
   }
-  if (blockedDates.includes(iso) && !callOpenTimes.some((o) => o.date === iso)) {
-    return 'Blocked for events. No discovery calls unless you open times.';
+  if (!callOpenTimes.some((o) => o.date === iso)) {
+    if (blockedDates.includes(iso)) return 'Blocked for events. No discovery calls unless you open times.';
+    if (bookedEventDates.includes(iso)) {
+      return 'A session is booked on this day. No discovery calls unless you open times.';
+    }
   }
-  if (bookedEventDates.includes(iso)) return 'Closed: a session is booked on this day.';
   const now = new Date();
   const earliest = new Date(now.getFullYear(), now.getMonth(), now.getDate() + DISCOVERY_CALL_LEAD_DAYS);
   if (day < earliest) return 'Closed: too soon. Calls open from ' + DISCOVERY_CALL_LEAD_DAYS + ' days ahead.';
@@ -589,7 +591,9 @@ export function Settings({ settings, integrations }: { settings: SiteSettings; i
                 const day = isoDay(view.year, view.month, i + 1);
                 const reason = discoveryDayClosedReason(day, settings.blockedDates, settings.bookedEventDates, settings.callOpenTimes);
                 const blockedWholeDay = settings.blockedDates.includes(day);
-                const callsOpened = blockedWholeDay && settings.callOpenTimes.some((o) => o.date === day);
+                const callsOpened =
+                  (blockedWholeDay || settings.bookedEventDates.includes(day)) &&
+                  settings.callOpenTimes.some((o) => o.date === day);
                 const someClosed = settings.blockedCallTimes.some((e) => e.date === day);
                 const selected = day === callDay;
                 const cls = [
@@ -622,7 +626,8 @@ export function Settings({ settings, integrations }: { settings: SiteSettings; i
             </span>
 
             {(() => {
-              const baseReason = discoveryDayClosedReason(callDay, [], settings.bookedEventDates, []);
+              const baseReason = discoveryDayClosedReason(callDay, [], [], []);
+              const eventDay = settings.blockedDates.includes(callDay) || settings.bookedEventDates.includes(callDay);
               if (baseReason) {
                 return (
                   <div style={{ marginTop: 8 }}>
@@ -630,12 +635,12 @@ export function Settings({ settings, integrations }: { settings: SiteSettings; i
                   </div>
                 );
               }
-              if (!settings.blockedDates.includes(callDay)) return null;
+              if (!eventDay) return null;
               return (
                 <div style={{ marginTop: 8 }}>
                   <p className={styles.priceNote}>
-                    Blocked for events. Click a time to open it for discovery calls. Crossed out in red = closed.
-                    Sessions stay blocked.
+                    {settings.blockedDates.includes(callDay) ? 'Blocked for events' : 'A session is booked on this day'}.
+                    Click a time to open it for discovery calls. Crossed out in red = closed. Sessions are not affected.
                   </p>
                   <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginTop: 8 }}>
                     {discoveryCallTimesFor(callDay).map((slot) => {
@@ -659,7 +664,9 @@ export function Settings({ settings, integrations }: { settings: SiteSettings; i
               );
             })()}
 
-            {!discoveryDayClosedReason(callDay, [], settings.bookedEventDates, []) && !settings.blockedDates.includes(callDay) ? (
+            {!discoveryDayClosedReason(callDay, [], [], []) &&
+            !settings.blockedDates.includes(callDay) &&
+            !settings.bookedEventDates.includes(callDay) ? (
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginTop: 8 }}>
                 {discoveryCallTimesFor(callDay).map((slot) => {
                   const off = blockedCallTimeSet.has(slot);

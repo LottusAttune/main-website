@@ -32,9 +32,9 @@ const PATH_PHOTO_POSITION: Record<string, string> = {
 };
 
 export const metadata: Metadata = {
-  title: 'Lotus Attune — Reset. Align. Thrive',
+   title: { absolute: 'Sound Bath in Toronto | Lotus Attune – Group & Corporate Wellness' },
   description:
-    'An immersive wellness experience designed to support relaxation, nervous system regulation and deep inner connection.',
+    'Immersive two-hour sound bath experiences in downtown Toronto (Bloor–Yonge). Book a group, private or corporate wellness session.',
 };
 
 export default function HomePage() {

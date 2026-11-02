@@ -16,6 +16,19 @@ export const metadata: Metadata = {
 /** Availability changes from the dashboard, so this must never be cached. */
 export const dynamic = 'force-dynamic';
 
+/**
+ * The intro mentions a team's year-end reset during the holiday season, then
+ * switches back to the timeless wording on its own on January 1 (Toronto time).
+ * The page is rendered per request (force-dynamic), so no redeploy is needed.
+ */
+const YEAR_END_LAST_DAY = '2026-12-31';
+
+function introLine(): string {
+  const today = new Intl.DateTimeFormat('en-CA', { timeZone: 'America/Toronto' }).format(new Date());
+  const ending = today <= YEAR_END_LAST_DAY ? 'a group or your team\u2019s year-end reset' : 'a group or your team';
+  return `A video call to answer all your questions and find the right fit, whether it\u2019s for yourself, ${ending}.`;
+}
+
 export default async function DiscoveryCallPage() {
   const { blockedDates, blockedCallTimes, callOpenTimes, bookedEventDates, bookedCallSlots } =
     await getSettings();
@@ -63,8 +76,7 @@ export default async function DiscoveryCallPage() {
                   className="lede"
                   style={{ maxWidth: 640, fontSize: 15.5, lineHeight: 1.65, marginTop: 12 }}
                 >
-                  A video call to answer all your questions and find the right fit, whether
-                  it&rsquo;s for yourself, a group or your team.
+                  {introLine()}
                 </p>
               </section>
             }

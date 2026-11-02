@@ -32,7 +32,7 @@ const PATH_PHOTO_POSITION: Record<string, string> = {
 };
 
 export const metadata: Metadata = {
-   title: { absolute: 'Sound Bath in Toronto | Lotus Attune – Group & Corporate Wellness' },
+     title: { absolute: 'Wellness & Sound Bath Toronto | Groups & Corporate | Lotus Attune' },
   description:
     'Immersive two-hour sound bath experiences in downtown Toronto (Bloor–Yonge). Book a group, private or corporate wellness session.',
 };

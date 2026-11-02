@@ -128,7 +128,7 @@ export function DiscoveryCallForm({
           <div className={styles.stepNumber}>01</div>
           <h2 className={styles.stepTitle}>When works for you?</h2>
         </div>
-        <p className={styles.stepNote}>A 15-20 minute call, over video</p>
+        <p className={styles.stepNote}>20-minute video call · flexible length</p>
         <div className={styles.indent}>
           <Calendar
             label="Call date"

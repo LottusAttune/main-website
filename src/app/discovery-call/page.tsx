@@ -63,7 +63,7 @@ export default async function DiscoveryCallPage() {
                   className="lede"
                   style={{ maxWidth: 640, fontSize: 15.5, lineHeight: 1.65, marginTop: 12 }}
                 >
-                  A quick video call to answer your questions and find the right fit, whether
+                  A video call to answer all your questions and find the right fit, whether
                   it&rsquo;s for yourself, a group or your team.
                 </p>
               </section>

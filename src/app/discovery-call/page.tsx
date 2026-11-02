@@ -61,9 +61,9 @@ export default async function DiscoveryCallPage() {
                 </div>
                 <p
                   className="lede"
-                  style={{ maxWidth: 740, fontSize: 15.5, lineHeight: 1.65, marginTop: 12 }}
+                  style={{ maxWidth: 640, fontSize: 15.5, lineHeight: 1.65, marginTop: 12 }}
                 >
-                  A quick call to answer your questions and find the right fit, whether
+                  A quick video call to answer your questions and find the right fit, whether
                   it&rsquo;s for yourself, a group or your team.
                 </p>
               </section>

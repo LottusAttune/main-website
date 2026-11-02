@@ -18,10 +18,10 @@ export const dynamic = 'force-dynamic';
 
 /**
  * The intro mentions a team's year-end reset during the holiday season, then
- * switches back to the timeless wording on its own on January 1 (Toronto time).
+ * switches back to the timeless wording on its own on December 29 (Toronto time).
  * The page is rendered per request (force-dynamic), so no redeploy is needed.
  */
-const YEAR_END_LAST_DAY = '2026-12-31';
+const YEAR_END_LAST_DAY = '2026-12-28';
 
 function introLine(): string {
   const today = new Intl.DateTimeFormat('en-CA', { timeZone: 'America/Toronto' }).format(new Date());

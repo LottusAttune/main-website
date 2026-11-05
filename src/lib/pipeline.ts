@@ -133,6 +133,8 @@ export type Client = {
   discoveryCalls: number;
   /** Ids of their bookings, newest first, for the card's history. */
   leadIds: string[];
+  /** A private note exists somewhere in their history - shown as a flag in the list. */
+  hasNote: boolean;
 };
 
 /** Human labels for the activity feed, shared by every panel. */
@@ -176,6 +178,7 @@ export function buildContacts(input: {
   payments: PaymentRow[];
   giftCards: GiftCard[];
   discoveryCalls: DiscoveryCallRow[];
+  activity: ActivityEntry[];
 }): Client[] {
   const today = new Date().toISOString().slice(0, 10);
   const byKey = new Map<string, Client>();
@@ -191,6 +194,7 @@ export function buildContacts(input: {
         lifetimeValue: 0, paidValue: 0, outstanding: 0,
         lastSession: null, nextSession: null, firstSeen: seen,
         cardOnFile: false, termsAcceptedAt: null, giftCardsBought: 0, discoveryCalls: 0, leadIds: [],
+        hasNote: false,
       };
       byKey.set(key, c);
     } else {
@@ -244,6 +248,16 @@ export function buildContacts(input: {
   for (const call of input.discoveryCalls) {
     const c = ensure(call.email, call.name, call.phone, call.company, call.createdAt);
     c.discoveryCalls += 1;
+  }
+
+  for (const entry of input.activity) {
+    if (entry.kind !== 'note') continue;
+    const c = entry.clientEmail
+      ? byKey.get(keyOf(entry.clientEmail))
+      : entry.bookingId
+        ? [...byKey.values()].find((client) => client.leadIds.includes(entry.bookingId!))
+        : undefined;
+    if (c) c.hasNote = true;
   }
 
   return [...byKey.values()].sort((a, b) => {

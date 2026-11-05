@@ -71,6 +71,14 @@ function RepeatPill() {
   return <span className={`${styles.pill} ${styles.pillSuccess}`}>Repeat</span>;
 }
 
+function NotePill() {
+  return (
+    <span className={`${styles.pill} ${styles.pillNeutral}`} title="Has a private note">
+      Note
+    </span>
+  );
+}
+
 function kindOf(client: Client): string {
   if (client.sessions > 0) return client.sessions > 1 ? 'Repeat client' : 'Client';
   if (client.requests > 0) return 'Enquiry';
@@ -446,9 +454,10 @@ export function Clients({ clients, leads, documents, payments, giftCards, discov
                     <td>
                       <div>{client.name}</div>
                       <div className={styles.priceNote}>{kindOf(client)}</div>
-                      {client.sessions > 1 ? (
-                        <div style={{ marginTop: 6 }}>
-                          <RepeatPill />
+                      {client.sessions > 1 || client.hasNote ? (
+                        <div style={{ marginTop: 6, display: 'flex', gap: 6 }}>
+                          {client.sessions > 1 ? <RepeatPill /> : null}
+                          {client.hasNote ? <NotePill /> : null}
                         </div>
                       ) : null}
                     </td>
@@ -496,6 +505,7 @@ export function Clients({ clients, leads, documents, payments, giftCards, discov
                     <div className={styles.recordTitle}>
                       {client.name}
                       {client.sessions > 1 ? <> {' '}<RepeatPill /></> : null}
+                      {client.hasNote ? <> {' '}<NotePill /></> : null}
                     </div>
                     <div className={styles.recordSub}>{client.company ?? kindOf(client)}</div>
                   </div>

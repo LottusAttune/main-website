@@ -232,7 +232,7 @@ export async function getStudioData(): Promise<StudioData> {
       body: String(row.body),
       isPublished: Boolean(row.is_published),
     })),
-    clients: buildContacts({ leads, documents, payments, giftCards, discoveryCalls }),
+    clients: buildContacts({ leads, documents, payments, giftCards, discoveryCalls, activity }),
     discoveryCalls,
     documents,
     payments,

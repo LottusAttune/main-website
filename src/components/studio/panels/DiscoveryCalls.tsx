@@ -50,20 +50,26 @@ function clockKey(time: string): string {
   return `${String(hour).padStart(2, '0')}:${minute}`;
 }
 
-function bucketOf(call: DiscoveryCallRow, today: string): Bucket {
+function bucketOf(call: DiscoveryCallRow, now: Date): Bucket {
   if (call.status === 'cancelled') return 'cancelled';
+  const today = toIso(now);
   if (call.callDate < today) return 'past';
-  return 'upcoming';
+  if (call.callDate > today) return 'upcoming';
+  // Same day - a call earlier today is past, not "upcoming" until midnight.
+  const [hour, minute] = clockKey(call.callTime).split(':').map(Number);
+  const callMoment = new Date(now);
+  callMoment.setHours(hour, minute, 0, 0);
+  return callMoment <= now ? 'past' : 'upcoming';
 }
 
 const BUCKET_RANK: Record<Bucket, number> = { upcoming: 0, past: 1, cancelled: 2 };
 
 /** Upcoming soonest first, then past most-recent first, cancelled last. */
-function sortCalls(calls: DiscoveryCallRow[], today: string): DiscoveryCallRow[] {
+function sortCalls(calls: DiscoveryCallRow[], now: Date): DiscoveryCallRow[] {
   const key = (c: DiscoveryCallRow) => `${c.callDate} ${clockKey(c.callTime)}`;
   return [...calls].sort((a, b) => {
-    const ba = bucketOf(a, today);
-    const bb = bucketOf(b, today);
+    const ba = bucketOf(a, now);
+    const bb = bucketOf(b, now);
     if (ba !== bb) return BUCKET_RANK[ba] - BUCKET_RANK[bb];
     return ba === 'upcoming'
       ? key(a).localeCompare(key(b))
@@ -79,10 +85,9 @@ export function DiscoveryCalls({ calls }: { calls: DiscoveryCallRow[] }) {
   const [editTime, setEditTime] = useState('');
 
   const now = new Date();
-  const today = toIso(now);
-  const sorted = useMemo(() => sortCalls(calls, today), [calls, today]);
+  const sorted = useMemo(() => sortCalls(calls, now), [calls, now]);
   const visible =
-    filter === 'all' ? sorted : sorted.filter((c) => bucketOf(c, today) === filter);
+    filter === 'all' ? sorted : sorted.filter((c) => bucketOf(c, now) === filter);
 
   if (calls.length === 0) {
     return (

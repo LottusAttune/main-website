@@ -281,7 +281,7 @@ export const CREDENTIALS = [
 
 export const TRAINING = [
   {
-    title: 'Meditation & Mindfulness (12+ years of dedicated practice)',
+    title: 'Meditation & Mindfulness (10+ years of dedicated practice)',
     items: [
       'Meditation Facilitator | Guided meditation for corporate teams (including Metrolinx) and Sahaja Yoga, Toronto',
       'Mindfulness Training Programs through the Mindfulness Clinic',

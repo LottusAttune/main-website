@@ -21,7 +21,7 @@ export const SITE = {
  *  soon" placeholder (see SocialIconButton). */
 export const SOCIAL = [
   { label: 'LinkedIn', href: 'https://www.linkedin.com/in/lotusattune/', confirmed: true },
-  { label: 'Instagram', href: 'https://www.instagram.com/lotusattune', confirmed: false },
+  { label: 'Instagram', href: 'https://www.instagram.com/lotusattune', confirmed: true },
   { label: 'Facebook', href: 'https://www.facebook.com/lotusattune', confirmed: false },
   { label: 'YouTube', href: 'https://www.youtube.com/@lotusattune', confirmed: false },
 ] as const;

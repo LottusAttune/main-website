@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { Accordion } from '@/components/common/Accordion';
 import { ReviewsCarousel } from '@/components/home/ReviewsCarousel';
 import { ExpandableNote } from '@/components/chrome/ExpandableNote';
+import { CardsArrive } from '@/components/landing/CardsArrive';
 import { InstagramIcon, LinkedInIcon, MailIcon, WhatsAppIcon } from '@/components/chrome/FooterIcons';
 import { StickyBookBar } from '@/components/chrome/StickyBookBar';
 import { LandingReturnTracker } from '@/components/landing/LandingReturnTracker';
@@ -175,18 +176,17 @@ export default async function LandingPage({
               {audience.problemTitle}
             </h2>
           </div>
-          <div className={`${styles.painGrid} ${audience.pains.length === 4 ? styles.painGridFour : ''}`}>
-            {audience.pains.map((pain, i) => (
-              <div
-                key={pain}
-                className={`card ${styles.painCard}`}
-                style={{ ['--pain-i' as string]: i }}
-              >
-                <span className={styles.painGlow} aria-hidden="true" />
+          <div
+            className={`${styles.painGrid} ${audience.pains.length === 4 ? styles.painGridFour : ''}`}
+            data-pain-grid=""
+          >
+            {audience.pains.map((pain) => (
+              <div key={pain} className={`card ${styles.painCard}`}>
                 <span className={styles.painText}>{pain}</span>
               </div>
             ))}
           </div>
+          <CardsArrive pending={styles.painPending} arrived={styles.painArrived} />
         </section>
 
         {/* ---------- Guide ---------- */}

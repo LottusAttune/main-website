@@ -5,10 +5,9 @@ import { useEffect } from 'react';
 /**
  * Arriving at /#watch (the ad pages' "Discover more" link): place the video
  * so it sits whole on one screen, between the top nav and the bottom bar,
- * instead of wherever the plain anchor jump lands. When the heading and the
- * video fit together, the section starts right under the nav (nothing from
- * the section above showing); when they don't (a tall phone video), the
- * video starts just under the nav.
+ * instead of wherever the plain anchor jump lands: with "Watch" and the
+ * heading above it when they fit, with just the heading when only that
+ * fits, otherwise the video alone just under the nav.
  */
 export function WatchLanding() {
   useEffect(() => {
@@ -18,6 +17,12 @@ export function WatchLanding() {
       const section = document.getElementById('watch');
       const frame = section?.querySelector<HTMLElement>('[data-watch-frame]');
       if (!section || !frame) return;
+      // Settle this section's fade-up at once: measured mid-slide, its
+      // heading sits 22px lower than where it ends up.
+      section.querySelectorAll<HTMLElement>('[data-reveal]').forEach((el) => {
+        el.style.transition = 'none';
+        el.setAttribute('data-reveal', 'shown');
+      });
       const nav = document.querySelector('header');
       const navH = nav ? nav.getBoundingClientRect().height : 83;
       const bar = document.querySelector<HTMLElement>('[class*="StickyBookBar_bar"]');
@@ -25,17 +30,23 @@ export function WatchLanding() {
       const room = window.innerHeight - navH - barH;
 
       const y = window.scrollY;
-      const sectionTop = section.getBoundingClientRect().top + y;
+      const abs = (el: Element | null | undefined) =>
+        el ? el.getBoundingClientRect().top + y : null;
       const frameRect = frame.getBoundingClientRect();
-      const frameTop = frameRect.top + y;
-      const frameBottom = frameTop + frameRect.height;
+      const frameBottom = frameRect.bottom + y;
 
-      const top =
-        frameBottom - sectionTop <= room
-          ? sectionTop - navH
-          : // Video only, starting just under the nav - a few px of the
-            // section's own cream above it, never a cut-off heading.
-            frameTop - navH - Math.max(0, Math.min(12, room - frameRect.height));
+      // Best first: "Watch" + heading + video, then heading + video, then
+      // the video alone - the first that fits whole between nav and bar.
+      const starts = [
+        abs(section.querySelector('.eyebrow')),
+        abs(document.getElementById('watch-heading')),
+        frameRect.top + y,
+      ].filter((v): v is number => v !== null);
+      const start = starts.find((t) => frameBottom - t <= room) ?? starts[starts.length - 1];
+      // A little breathing room above, never so much that the line above
+      // (or the section before) peeks in.
+      const gap = Math.max(0, Math.min(12, room - (frameBottom - start)));
+      const top = start - navH - gap;
       window.scrollTo({ top: Math.max(0, top), behavior: 'instant' as ScrollBehavior });
     };
 

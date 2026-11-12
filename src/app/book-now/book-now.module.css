@@ -292,9 +292,9 @@
   inset: -40%;
   background: radial-gradient(
     closest-side,
-    rgba(214, 172, 108, 0.62),
-    rgba(214, 172, 108, 0.22) 45%,
-    rgba(214, 172, 108, 0) 72%
+    color-mix(in srgb, var(--color-gold-light) 50%, transparent),
+    color-mix(in srgb, var(--color-gold-light) 18%, transparent) 45%,
+    transparent 72%
   );
   pointer-events: none;
   animation: painDrift 10s ease-in-out infinite alternate;
@@ -1224,9 +1224,9 @@
   border-radius: 50%;
   background: radial-gradient(
     closest-side,
-    rgba(255, 214, 150, 0.55),
-    rgba(255, 196, 120, 0.18) 45%,
-    rgba(255, 196, 120, 0) 100%
+    color-mix(in srgb, var(--color-gold-pale) 70%, transparent),
+    color-mix(in srgb, var(--color-gold-pale) 22%, transparent) 45%,
+    transparent 100%
   );
   mix-blend-mode: screen;
   pointer-events: none;
@@ -1306,9 +1306,9 @@
   height: 140%;
   background: radial-gradient(
     closest-side,
-    rgba(255, 236, 200, 0.75),
-    rgba(255, 236, 200, 0.28) 50%,
-    rgba(255, 236, 200, 0) 100%
+    color-mix(in srgb, var(--color-cream-raised) 90%, transparent),
+    color-mix(in srgb, var(--color-cream-raised) 35%, transparent) 50%,
+    transparent 100%
   );
   pointer-events: none;
   animation: lightDrift 26s ease-in-out infinite alternate;
@@ -1327,5 +1327,89 @@
   .lightSection::before {
     animation-duration: 26s !important;
     animation-iteration-count: infinite !important;
+  }
+}
+
+/* Computers: "Five components, one seamless journey" on one line, and a
+   little less empty space under the What is included list. */
+@media (min-width: 1100px) {
+  .headingWide {
+    max-width: none;
+  }
+
+  .washSection {
+    padding-bottom: 44px;
+  }
+}
+
+/* ---------- Every section on one screen (tablets and computers) ----------
+   Measured against the space between the logo bar and the Book/Gift bar
+   (window height minus about 135px), down to a 1366x768 laptop. */
+@media (min-width: 601px) {
+  .section {
+    padding-top: clamp(36px, 3.6vw, 52px);
+    padding-bottom: clamp(36px, 3.6vw, 52px);
+  }
+
+  .head {
+    margin-bottom: 24px;
+  }
+
+  .head :global(.eyebrow) {
+    margin-bottom: 12px !important;
+  }
+
+  /* The handpan photo: the whole section (photo plus its top and bottom
+     space) fits on one screen, not just the photo. */
+  .guidePortrait img {
+    max-height: calc(100vh - 240px);
+    max-height: calc(100svh - 240px);
+  }
+
+  .componentRow {
+    padding: 13px 0;
+  }
+
+  .offerTitle {
+    margin: 10px 0 8px;
+  }
+
+  .offerBody {
+    margin-bottom: 12px;
+  }
+
+  .offerNote {
+    margin: 4px 0 14px;
+  }
+
+  .headNote {
+    margin-top: 8px;
+  }
+
+  /* Before you arrive: tighter question rows, and the photo column narrowed
+     to match so the photo stays exactly as tall as the list - whole photo,
+     no empty space beside the questions. */
+  .faqLayout [class*='Accordion_head__'] {
+    padding: 19px 0;
+  }
+
+  .faqLayout {
+    grid-template-columns: minmax(0, 272px) minmax(0, 1fr);
+  }
+
+  .washSection {
+    padding-bottom: 36px;
+  }
+}
+
+/* Phones: the two sections that ran slightly past one screen. */
+@media (max-width: 600px) {
+  .componentRow {
+    padding: 9px 0;
+  }
+
+  .faqPhoto {
+    height: min(255px, calc(100vh - 470px));
+    height: min(255px, calc(100svh - 470px));
   }
 }

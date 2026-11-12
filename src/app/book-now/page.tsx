@@ -251,7 +251,7 @@ export default async function LandingPage({
             <div className="eyebrow" style={{ marginBottom: 22 }}>
               Inside the two hours
             </div>
-            <h2 id="lp-components" className={`display ${styles.heading}`}>
+            <h2 id="lp-components" className={`display ${styles.heading} ${styles.headingWide}`}>
               Five components, one seamless journey
             </h2>
           </div>

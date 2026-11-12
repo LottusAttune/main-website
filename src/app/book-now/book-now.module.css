@@ -874,25 +874,61 @@
   }
 }
 
-/* ---------- Tablets: a lighter version of the same tightening ---------- */
-@media (min-width: 601px) and (max-width: 1079px) {
+/* ---------- Tablets and computers: a little tighter overall ----------
+   Same structure as before, just less air between and inside sections. */
+@media (min-width: 601px) {
+  .section {
+    padding-top: clamp(52px, 6vw, 80px);
+    padding-bottom: clamp(52px, 6vw, 80px);
+  }
+
   .head {
-    margin-bottom: 30px;
+    margin-bottom: 34px;
+  }
+
+  /* Sound familiar: card text closer in size to the three steps cards. */
+  .painCard {
+    padding: 26px 26px 24px;
+  }
+
+  .painText {
+    font-family: var(--font-body);
+    font-size: 17px;
+    line-height: 1.6;
+    color: var(--color-ink-strong);
+  }
+
+  .planCard {
+    padding: 26px 26px;
+  }
+
+  .planTitle {
+    font-size: 23px;
+    margin-bottom: 8px;
   }
 
   .componentRow {
     padding: 18px 0;
   }
 
-  .includedList :global(.numbered-row) {
-    padding: 16px 0;
+  .componentIcon {
+    width: 56px;
+    height: 56px;
   }
 
-  .planCard {
-    padding: 24px 24px;
+  .componentBody {
+    line-height: 1.65;
+  }
+
+  .includedList :global(.numbered-row) {
+    padding: 18px 0;
   }
 
   .offerCard {
-    padding: 26px 26px 24px;
+    padding: 28px 28px 26px;
+  }
+
+  .offerBody {
+    margin-bottom: 18px;
   }
 }

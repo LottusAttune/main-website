@@ -55,7 +55,11 @@ export default async function LandingPage({
   searchParams: Promise<{ aud?: string }>;
 }) {
   const params = await searchParams;
-  const audience = AUDIENCES[resolveAudience(params.aud)];
+  const audienceKey = resolveAudience(params.aud);
+  const audience = AUDIENCES[audienceKey];
+  // LinkedIn ads lead with LinkedIn under "Get social"; Instagram ads with Instagram.
+  const socialOrder =
+    audienceKey === 'corporate' ? ['LinkedIn', 'Instagram'] : ['Instagram', 'LinkedIn'];
   const { leadTimeDays } = await getSettings();
 
   const hero = asset('somatic-main');
@@ -406,7 +410,7 @@ export default async function LandingPage({
             },
             {
               title: 'Get social',
-              rows: ['Instagram', 'LinkedIn'].flatMap((name) =>
+              rows: socialOrder.flatMap((name) =>
                 SOCIAL.filter((s) => s.confirmed && s.label === name).map((s) => ({
                   label: s.label,
                   href: s.href,

@@ -172,8 +172,18 @@ export default async function LandingPage({
             <div className="eyebrow" style={{ marginBottom: 22 }}>
               {audience.problemEyebrow}
             </div>
-            <h2 id="lp-problem" className={`display ${styles.heading}`}>
-              {audience.problemTitle}
+            <h2
+              id="lp-problem"
+              className={`display ${styles.heading} ${audience.problemTitleLines ? styles.headingLines : ''}`}
+            >
+              {audience.problemTitleLines ? (
+                <>
+                  {audience.problemTitleLines[0]}
+                  <br className={styles.wideBreak} /> {audience.problemTitleLines[1]}
+                </>
+              ) : (
+                audience.problemTitle
+              )}
             </h2>
           </div>
           <div
@@ -391,11 +401,18 @@ export default async function LandingPage({
               />
               <span className={styles.candleGlow} aria-hidden="true" />
             </div>
-            <div className={styles.faqList}>
+            <div className={styles.faqList} data-arrive="faq">
               <Accordion
                 items={LANDING_FAQS.map((faq) => ({ title: faq.q, answer: faq.a }))}
+                compact
               />
             </div>
+            <ArriveOnce
+              target="faq"
+              items="[class*='Accordion_item__']"
+              pending={styles.arrivePending}
+              shown={styles.arriveShown}
+            />
           </div>
         </section>
 

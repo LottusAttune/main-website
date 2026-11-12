@@ -1210,11 +1210,6 @@
     top: 20%;
   }
 
-  /* Slightly tighter questions, so all five fit with the photo. */
-  .faqLayout [class*='Accordion_head__'] {
-    padding: 15px 0;
-    font-size: 19px;
-  }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -1326,12 +1321,9 @@
   /* Before you arrive: tighter question rows, and the photo column narrowed
      to match so the photo stays exactly as tall as the list - whole photo,
      no empty space beside the questions. */
-  .faqLayout [class*='Accordion_head__'] {
-    padding: 19px 0;
-  }
 
   .faqLayout {
-    grid-template-columns: minmax(0, 272px) minmax(0, 1fr);
+    grid-template-columns: minmax(0, 217px) minmax(0, 1fr);
   }
 
   .washSection {
@@ -1355,7 +1347,8 @@
    The website's own reveal: up 22px and in, just under a second, once. */
 .arrivePending .painCard,
 .arrivePending > .head,
-.arrivePending > .componentRow {
+.arrivePending > .componentRow,
+.arrivePending [class*='Accordion_item__'] {
   opacity: 0;
   transform: translateY(22px);
   transition:
@@ -1364,7 +1357,8 @@
 }
 
 .arrivePending .arriveShown.painCard,
-.arrivePending > .arriveShown {
+.arrivePending > .arriveShown,
+.arrivePending .arriveShown[class*='Accordion_item__'] {
   opacity: 1;
   transform: none;
 }
@@ -1372,7 +1366,23 @@
 @media (prefers-reduced-motion: reduce) {
   .arrivePending .painCard,
   .arrivePending > .head,
-  .arrivePending > .componentRow {
+  .arrivePending > .componentRow,
+  .arrivePending [class*='Accordion_item__'] {
     transition-duration: 0.9s !important;
+  }
+}
+
+/* A heading split at a chosen point (LinkedIn page's "The most productive
+   thing your team / can do is pause"): two centred lines on wider screens,
+   natural wrapping on phones. */
+@media (min-width: 601px) {
+  .headingLines {
+    max-width: none;
+  }
+}
+
+@media (max-width: 600px) {
+  .wideBreak {
+    display: none;
   }
 }

@@ -27,6 +27,9 @@ export const AUDIENCES: Record<
     problemEyebrow: string;
     /** Heading over the three cards in the "Sound familiar" section. */
     problemTitle: string;
+    /** Optional: where that heading breaks onto a second line on wider
+     *  screens (the text is the same as problemTitle, split in two). */
+    problemTitleLines?: readonly [string, string];
     /** Body of step 01, "Choose your session". */
     stepOne: string;
     offersTitle: string;
@@ -70,6 +73,7 @@ export const AUDIENCES: Record<
     sub: 'An immersive wellness experience for organizations — designed to reduce stress, restore focus and bring teams back together',
     problemEyebrow: 'The cost of a depleted team',
     problemTitle: 'The most productive thing your team can do is pause',
+    problemTitleLines: ['The most productive thing your team', 'can do is pause'],
     stepOne: 'Your team, department or leadership group, from 4 to 25 people',
     offersTitle: 'For your team, department or leadership group',
     pains: [

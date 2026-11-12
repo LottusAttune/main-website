@@ -292,11 +292,11 @@
   inset: -40%;
   background: radial-gradient(
     closest-side,
-    rgba(198, 169, 122, 0.3),
+    rgba(198, 169, 122, 0.4),
     rgba(198, 169, 122, 0) 70%
   );
   pointer-events: none;
-  animation: painDrift 14s ease-in-out infinite alternate;
+  animation: painDrift 10s ease-in-out infinite alternate;
   animation-delay: calc(var(--pain-i, 0) * -3.5s);
 }
 
@@ -304,8 +304,8 @@
    timing (different length and starting point per card), so the row feels
    gently alive without ever moving in step. */
 .painCard {
-  animation: painFloat calc(8s + var(--pain-i, 0) * 1.7s) ease-in-out infinite alternate;
-  animation-delay: calc(var(--pain-i, 0) * -2.6s);
+  animation: painFloat calc(6s + var(--pain-i, 0) * 1.4s) ease-in-out infinite alternate;
+  animation-delay: calc(var(--pain-i, 0) * -2.2s);
 }
 
 @keyframes painFloat {
@@ -313,7 +313,7 @@
     transform: translateY(0);
   }
   to {
-    transform: translateY(-5px);
+    transform: translateY(-9px);
   }
 }
 

@@ -40,9 +40,9 @@ export const AUDIENCES: Record<
     problemTitle: 'Your nervous system is asking for a break',
     offersTitle: 'For you, your people, or your team',
     pains: [
-      'Tension you carry from one day into the next.',
-      'You know you need to slow down, but you don’t know how to switch off.',
-      'You’ve tried meditation apps and breathing exercises, and stillness never sticks.',
+      'Tension you carry from one day into the next',
+      'You know you need to slow down, but you don’t know how to switch off',
+      'You’ve tried meditation apps and breathing exercises, and stillness never sticks',
     ],
     order: ['one', 'group'],
   },
@@ -54,9 +54,9 @@ export const AUDIENCES: Record<
     problemTitle: 'Your nervous system is asking for a break',
     offersTitle: 'For you, or for the people you love',
     pains: [
-      'Tension you carry from one day into the next.',
-      'You know you need to slow down, but you don’t know how to switch off.',
-      'You’ve tried meditation apps and breathing exercises, and stillness never sticks.',
+      'Tension you carry from one day into the next',
+      'You know you need to slow down, but you don’t know how to switch off',
+      'You’ve tried meditation apps and breathing exercises, and stillness never sticks',
     ],
     order: ['one', 'group'],
   },
@@ -68,10 +68,10 @@ export const AUDIENCES: Record<
     problemTitle: 'The most productive thing your team can do is pause',
     offersTitle: 'For your team, department or leadership group',
     pains: [
-      'Your team is productive but quietly depleted.',
-      'Burnout shows up as sick days, turnover and disengagement.',
-      'Wellness perks go unused, and team-building days are forgotten by Monday.',
-      'You want a team experience that means something, not another forgettable team outing.',
+      'Your team is productive but quietly depleted',
+      'Burnout shows up as sick days, turnover and disengagement',
+      'Wellness perks go unused, and team-building days are forgotten by Monday',
+      'You want a meaningful team experience, not another forgettable team outing',
     ],
     order: ['group', 'one'],
   },
@@ -84,17 +84,17 @@ export const LANDING_STEPS = [
   {
     n: '01',
     title: 'Choose your session',
-    body: 'One-on-one, a private group of friends and family, or a corporate team of up to 25.',
+    body: 'One-on-one, a private group of friends and family, or a corporate team of up to 25',
   },
   {
     n: '02',
     title: 'Pick a date',
-    body: 'Send your preferred date and time. We confirm every booking personally, at least six days ahead.',
+    body: 'Send your preferred date and time. We confirm every booking personally, at least six days ahead',
   },
   {
     n: '03',
     title: 'Arrive and let go',
-    body: 'Mats, pillows, blankets, eye masks and refreshments are all provided. Bring yourself.',
+    body: 'Mats, pillows, blankets, eye masks and refreshments are all provided. Bring yourself',
   },
 ] as const;
 

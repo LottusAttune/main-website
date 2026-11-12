@@ -269,25 +269,7 @@
 .painCard {
   position: relative;
   overflow: hidden;
-  padding: 58px 28px 34px;
-}
-
-/* A short gold rule that draws itself across the top once the card has
-   arrived - visible by default, so it is never missing without JS. */
-.painCard::before {
-  content: '';
-  position: absolute;
-  top: 34px;
-  left: 28px;
-  width: 44px;
-  height: 2px;
-  background: var(--color-gold);
-  transform-origin: left;
-  transition: transform 0.9s var(--ease-out) calc(var(--pain-i, 0) * 140ms + 350ms);
-}
-
-.painCard[data-reveal='hidden']::before {
-  transform: scaleX(0);
+  padding: 34px 28px 32px;
 }
 
 /* A soft warm light that drifts slowly inside each card, each one on its
@@ -759,4 +741,158 @@
    than the rounded pill used across the main site. */
 .page :global(.btn) {
   border-radius: var(--radius-soft);
+}
+
+/* ---------- Phones: tighter sections, less scrolling ----------
+   Each section aims to read in about one screen. Desktop is unchanged. */
+@media (max-width: 600px) {
+  .section {
+    padding-top: 40px;
+    padding-bottom: 40px;
+  }
+
+  .head {
+    margin-bottom: 22px;
+  }
+
+  /* The eyebrows carry an inline 22px margin on every section. */
+  .head :global(.eyebrow) {
+    margin-bottom: 12px !important;
+  }
+
+  .headNote {
+    margin-top: 10px;
+    font-size: 14.5px;
+  }
+
+  /* Sound familiar */
+  .painGrid {
+    gap: 10px;
+  }
+
+  .painCard {
+    padding: 18px 20px;
+  }
+
+  .painText {
+    font-size: 19px;
+    line-height: 1.35;
+  }
+
+  /* Three steps: number beside the title rather than above it. */
+  .planGrid {
+    gap: 10px;
+  }
+
+  .planCard {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    align-items: baseline;
+    column-gap: 12px;
+    padding: 18px 20px;
+  }
+
+  .planN {
+    margin: 0;
+    font-size: 16px;
+  }
+
+  .planTitle {
+    margin: 0 0 6px;
+    font-size: 21px;
+  }
+
+  .planBody {
+    grid-column: 1 / -1;
+    font-size: 14.5px;
+    line-height: 1.6;
+  }
+
+  /* Five components: smaller icon beside the title, body underneath. */
+  .componentRow {
+    gap: 4px 12px;
+    padding: 11px 0;
+  }
+
+  .componentIcon {
+    width: 36px;
+    height: 36px;
+  }
+
+  .componentTitle {
+    flex: 1 1 0;
+    font-size: 20px;
+  }
+
+  .componentBody {
+    flex-basis: 100%;
+    font-size: 14.5px;
+    line-height: 1.5;
+  }
+
+  /* Everything is provided */
+  .includedList :global(.numbered-row) {
+    padding: 10px 0;
+  }
+
+  .includedList :global(.numbered-row__text) {
+    font-size: 14.5px;
+    line-height: 1.5;
+  }
+
+  /* Choose your session */
+  .offerGrid {
+    gap: 12px;
+  }
+
+  .offerCard {
+    padding: 20px 20px 20px;
+  }
+
+  .offerTitle {
+    margin: 10px 0 6px;
+    font-size: 24px;
+  }
+
+  .offerBody {
+    margin-bottom: 12px;
+    font-size: 14.5px;
+    line-height: 1.55;
+  }
+
+  .offerPrice {
+    font-size: 28px;
+  }
+
+  .offerNote {
+    margin: 4px 0 14px;
+    font-size: 13px;
+  }
+
+  .offerBtn {
+    min-height: 48px;
+  }
+}
+
+/* ---------- Tablets: a lighter version of the same tightening ---------- */
+@media (min-width: 601px) and (max-width: 1079px) {
+  .head {
+    margin-bottom: 30px;
+  }
+
+  .componentRow {
+    padding: 18px 0;
+  }
+
+  .includedList :global(.numbered-row) {
+    padding: 16px 0;
+  }
+
+  .planCard {
+    padding: 24px 24px;
+  }
+
+  .offerCard {
+    padding: 26px 26px 24px;
+  }
 }

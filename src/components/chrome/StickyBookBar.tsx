@@ -65,7 +65,7 @@ export function StickyBookBar({ twoButtons = false, hideAction }: Props) {
         aria-hidden={!shown}
       >
         <span className={styles.label}>
-          Two-hour sessions &nbsp;·&nbsp; 1 to 24 people &nbsp;·&nbsp; downtown Toronto
+          Two-hour sessions &nbsp;·&nbsp; 1 to 25 people &nbsp;·&nbsp; downtown Toronto
         </span>
         <Link
           href="/book"
@@ -77,14 +77,14 @@ export function StickyBookBar({ twoButtons = false, hideAction }: Props) {
         {/* Tablet has room for the same single-line format as desktop, just
             bigger - only true phone widths need the stacked 3-line version. */}
         <span className={styles.tabletLabel}>
-          Two-hour sessions &nbsp;·&nbsp; 1 to 24 people &nbsp;·&nbsp; downtown Toronto
+          Two-hour sessions &nbsp;·&nbsp; 1 to 25 people &nbsp;·&nbsp; downtown Toronto
         </span>
         <span className={styles.mobileLabel}>
           Two hour session
           <br />
           Downtown Toronto
           <br />
-          1-24 people
+          1-25 people
         </span>
         <div className={styles.mobileActions}>
           {hideAction !== 'book' && (
@@ -116,7 +116,7 @@ export function StickyBookBar({ twoButtons = false, hideAction }: Props) {
       aria-hidden={!shown}
     >
       <span className={styles.label}>
-        Two-hour sessions &nbsp;·&nbsp; 1 to 24 people &nbsp;·&nbsp; downtown Toronto
+        Two-hour sessions &nbsp;·&nbsp; 1 to 25 people &nbsp;·&nbsp; downtown Toronto
       </span>
       <div className={styles.actions}>
         <Link

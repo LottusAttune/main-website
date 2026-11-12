@@ -16,7 +16,7 @@ export const HERO = {
 export const TRUST = [
   { figure: '10+ years', label: 'In wellness and restorative practices' },
   { figure: '2 hrs', label: 'Fully guided' },
-  { figure: '1–24', label: 'Participants' },
+  { figure: '1–25', label: 'Participants' },
   { figure: 'Toronto', label: 'Premium venue' },
 ] as const;
 
@@ -95,7 +95,7 @@ export const PATHS = [
     img: 'somatic-main',
     tag: 'Private Groups',
     tone: 'group',
-    eyebrow: '2–24 Participants',
+    eyebrow: '2–25 Participants',
     title: 'Friends, Families & Groups',
     body: 'Ideal for gatherings, birthdays, celebrations, and other special occasions',
     price: '$280 per participant',
@@ -127,7 +127,7 @@ export const INCLUDED_SHORT = [
 
 /** Experience-page "What's included" — the full nine-line version. */
 export const INCLUDED_FULL = [
-  'Premium Signature Venue (for 7-24 participants). Features an ample, high-end space with three private gender-inclusive washrooms and kitchen. Venue rental is included in the package price',
+  'Premium Signature Venue (for 7-25 participants). Features an ample, high-end space with three private gender-inclusive washrooms and kitchen. Venue rental is included in the package price',
   'Wellness Lounge (for up to 6 participants). Intimate space that supports a personalized and warm atmosphere. Venue rental is included in the package price and provides exclusive access to both the Arrival Lounge and the Experience Room',
   'Fully guided somatic and mindfulness practices, a sensory connection exercise, and end-of-session stretching and reintegration',
   'An immersive sound session layered with multiple professional-grade sound healing instruments, all sourced from recognized makers renowned for their exceptional acoustic quality',

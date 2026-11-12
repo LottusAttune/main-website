@@ -12,7 +12,7 @@ import styles from './offerings.module.css';
 export const metadata: Metadata = {
   title: 'Offerings',
   description:
-    'Private sessions at $340, group and corporate wellness at $280 per participant. Two-hour sessions for 1 to 24 people in downtown Toronto.',
+    'Private sessions at $250 and group sessions from $450. Two-hour sessions for 1 to 25 people in downtown Toronto.',
 };
 
 /** Pricing reads from the database; never let that block the build. */

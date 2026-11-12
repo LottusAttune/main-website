@@ -31,7 +31,7 @@ export const AUDIENCES: Record<
   }
 > = {
   everyone: {
-    eyebrow: 'Downtown Toronto · 1 to 24 people',
+    eyebrow: 'Downtown Toronto · 1 to 25 people',
     title: 'Two hours that give you your calm back',
     sub: 'An immersive wellness experience designed to support relaxation, nervous system regulation and deep inner connection',
     problemEyebrow: 'Sound familiar',
@@ -57,7 +57,7 @@ export const AUDIENCES: Record<
     order: ['one', 'group'],
   },
   corporate: {
-    eyebrow: 'Downtown Toronto · Teams of up to 24',
+    eyebrow: 'Downtown Toronto · Teams of up to 25',
     title: 'A team reset your people will actually remember',
     sub: 'An immersive wellness experience for organizations — designed to reduce stress, restore focus and bring teams back together',
     problemEyebrow: 'The cost of a depleted team',
@@ -78,7 +78,7 @@ export const LANDING_STEPS = [
   {
     n: '01',
     title: 'Choose your session',
-    body: 'One-on-one, a private group of friends and family, or a corporate team of up to 24.',
+    body: 'One-on-one, a private group of friends and family, or a corporate team of up to 25.',
   },
   {
     n: '02',
@@ -128,9 +128,9 @@ export const LANDING_OFFERS = [
     tag: '1 : 1',
     title: 'Private Sessions',
     body: 'Customizable based on individual preferences',
-    price: '$340',
+    price: '$250',
     unit: 'per session',
-    note: 'Package of four: $1,200 — save $160',
+    note: 'Package of four: $900 — save $100',
   },
   {
     tone: 'group' as OfferTone,
@@ -139,7 +139,7 @@ export const LANDING_OFFERS = [
     body: 'Ideal for gatherings, birthdays, celebrations, and other special occasions',
     price: '$280',
     unit: 'per participant',
-    note: '2–24 participants · everything provided',
+    note: '2–25 participants · everything provided',
   },
   {
     tone: 'corp' as OfferTone,

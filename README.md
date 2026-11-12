@@ -156,6 +156,6 @@ not animate.
    confirmed is intended for now. Stripe Payment Links are the lightest route if
    that changes.
 5. **Gift certificate maximum** — her notes said "more than 12 up to 21" while
-   the rest of her material says 2–24. The site uses **24** throughout; confirm.
+   the rest of her material says 2–24. The site uses **25** throughout (the group maximum since the November 2026 pricing update).
 6. **Venue street address** — omitted from the LocalBusiness structured data
    until the client confirms it should be public.

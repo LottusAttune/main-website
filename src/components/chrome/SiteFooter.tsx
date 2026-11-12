@@ -10,7 +10,7 @@ import styles from './SiteFooter.module.css';
 
 const SPECS = [
   { label: 'Session length', value: '2 hours' },
-  { label: 'Participants', value: '1 – 24' },
+  { label: 'Participants', value: '1 – 25' },
   { label: 'Booking notice', value: '6 days' },
 ];
 

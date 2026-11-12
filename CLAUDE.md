@@ -349,7 +349,8 @@ Ask Silvana about these rather than guessing:
 
 1. **Social handles** — footer links are placeholders (`/lotusattune`).
 2. **Gift certificate maximum** — her notes said "up to 21", the rest of her
-   material says 2–24. The site uses 24.
+   material says 2–24. The site uses 25 (the group maximum since the
+   November 2026 pricing update).
 3. ~~Venue street address~~ — resolved: Silvana wants it kept private (it's her
    home address, not a public storefront). Google Business Profile is set up
    as a service-area listing rather than a public map pin. Keep it out of the

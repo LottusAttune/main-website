@@ -4,7 +4,7 @@ import Link from 'next/link';
 
 import { Accordion } from '@/components/common/Accordion';
 import { Reveal } from '@/components/common/Reveal';
-import { InstagramIcon, LinkedInIcon, WhatsAppIcon } from '@/components/chrome/FooterIcons';
+import { InstagramIcon, LinkedInIcon, MailIcon, WhatsAppIcon } from '@/components/chrome/FooterIcons';
 import { StickyBookBar } from '@/components/chrome/StickyBookBar';
 import { GUIDE } from '@/data/content';
 import {
@@ -28,6 +28,7 @@ const SOCIAL_ICONS = {
   LinkedIn: LinkedInIcon,
   Instagram: InstagramIcon,
   WhatsApp: WhatsAppIcon,
+  Email: MailIcon,
 };
 
 /** Ad traffic only — never index this page or let it compete with `/`. */
@@ -358,6 +359,7 @@ export default async function LandingPage({
 
         {/* ---------- Closer ---------- */}
         <section
+          id="lp-closer-section"
           className={`${styles.section} section--dark ${styles.closer}`}
           aria-labelledby="lp-closer"
         >
@@ -390,30 +392,53 @@ export default async function LandingPage({
         </section>
       </main>
 
-      <StickyBookBar twoButtons />
+      <StickyBookBar twoButtons hideFromId="lp-closer-section" />
 
       <footer className={styles.footer}>
-        <div className={styles.social}>
+        <div className={styles.contactGroups}>
           {[
-            ...SOCIAL.filter((s) => s.confirmed && s.label in SOCIAL_ICONS),
-            { label: 'WhatsApp', href: SITE.whatsappHref },
-          ].map((s) => {
-            const Icon = SOCIAL_ICONS[s.label as keyof typeof SOCIAL_ICONS];
-            return (
-              <a
-                key={s.label}
-                href={s.href}
-                className={styles.socialLink}
-                rel="noopener noreferrer"
-                target="_blank"
-              >
-                <span className={styles.socialIcon}>
-                  <Icon />
-                </span>
-                <span className={styles.socialLabel}>{s.label}</span>
-              </a>
-            );
-          })}
+            {
+              title: 'Get in touch',
+              rows: [
+                { label: 'WhatsApp', href: SITE.whatsappHref, detail: SITE.phone },
+                { label: 'Email', href: `mailto:${SITE.email}`, detail: SITE.email.toLowerCase() },
+              ],
+            },
+            {
+              title: 'Get social',
+              rows: ['Instagram', 'LinkedIn'].flatMap((name) =>
+                SOCIAL.filter((s) => s.confirmed && s.label === name).map((s) => ({
+                  label: s.label,
+                  href: s.href,
+                  detail: '@lotusattune',
+                })),
+              ),
+            },
+          ].map((group) => (
+            <div key={group.title} className={styles.contactGroup}>
+              <div className={styles.footerTitle}>{group.title}</div>
+              <div className={styles.contactList}>
+                {group.rows.map((c) => {
+                  const Icon = SOCIAL_ICONS[c.label as keyof typeof SOCIAL_ICONS];
+                  return (
+                    <a
+                      key={c.label}
+                      href={c.href}
+                      className={styles.contactRow}
+                      {...(c.label === 'Email'
+                        ? {}
+                        : { rel: 'noopener noreferrer', target: '_blank' })}
+                    >
+                      <Icon className={styles.contactIcon} />
+                      <span>
+                        <span className={styles.contactName}>{c.label}</span> {c.detail}
+                      </span>
+                    </a>
+                  );
+                })}
+              </div>
+            </div>
+          ))}
         </div>
         <div className={styles.copyright}>
           © {new Date().getFullYear()} {SITE.name} · {SITE.tagline} · Toronto{'\u00a0'}– Yonge and Bloor

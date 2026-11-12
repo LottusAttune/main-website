@@ -537,56 +537,77 @@
   background: var(--gradient-beige);
   color: var(--color-ink-body);
   text-align: center;
-  padding: 44px var(--space-gutter) 48px;
+  padding: 48px var(--space-gutter) 44px;
 }
 
-.social {
+/* Two groups side by side on wider screens, stacked on phones. */
+.contactGroups {
   display: flex;
-  gap: 36px;
   flex-wrap: wrap;
   justify-content: center;
-  margin-bottom: 28px;
+  gap: 32px 96px;
+  margin-bottom: 34px;
 }
 
-.socialLink {
+.contactGroup {
   display: flex;
   flex-direction: column;
+  align-items: flex-start;
+}
+
+/* Same treatment as the "Contact" and "Get Social" titles in the main
+   site's footer. */
+.footerTitle {
+  font-size: var(--text-micro);
+  letter-spacing: var(--tracking-micro);
+  text-transform: uppercase;
+  color: var(--color-gold-text);
+  margin-bottom: 16px;
+}
+
+/* Plain icon-and-text rows, like the email and phone lines in the main
+   site's footer - information to read, not buttons. */
+.contactList {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.contactRow {
+  display: flex;
   align-items: center;
   gap: 10px;
-  min-width: 72px;
-  color: var(--color-gold-text);
+  font-size: 15.5px;
+  color: var(--color-ink-body);
   text-decoration: none;
 }
 
-/* Same dark tile as the main site's footer icons, just larger so they are
-   easy to spot and tap on a phone. */
-.socialIcon {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 48px;
-  height: 48px;
-  border-radius: var(--radius-soft);
-  background: var(--color-ink);
-  color: var(--color-cream-text);
-  transition: background 0.3s var(--ease-out), transform 0.3s var(--ease-out);
+.contactRow:hover {
+  color: var(--color-ink);
 }
 
-.socialIcon svg {
-  width: 24px;
-  height: 24px;
+.contactIcon {
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+  color: var(--color-gold-text);
 }
 
-.socialLink:hover .socialIcon,
-.socialLink:focus-visible .socialIcon {
-  background: var(--color-ink-deep);
-  transform: translateY(-2px);
+.contactName {
+  color: var(--color-ink);
+  font-weight: 500;
 }
 
-.socialLabel {
-  font-size: 11px;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
+@media (max-width: 600px) {
+  .contactGroups {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .contactGroup {
+    width: 280px;
+  }
 }
 
 .copyright {

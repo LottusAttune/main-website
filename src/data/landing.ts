@@ -41,7 +41,7 @@ export const AUDIENCES: Record<
       'Your team is productive but quietly depleted.',
       'You have tried meditation apps and stillness never sticks.',
     ],
-    order: ['one', 'group', 'corp'],
+    order: ['one', 'group'],
   },
   individuals: {
     eyebrow: 'Downtown Toronto · One-on-one & small groups',
@@ -67,7 +67,7 @@ export const AUDIENCES: Record<
       'Wellness perks go unused and change nothing.',
       'Team-building days feel forced and are forgotten by Monday.',
     ],
-    order: ['corp', 'group', 'one'],
+    order: ['group', 'one'],
   },
 };
 
@@ -134,21 +134,12 @@ export const LANDING_OFFERS = [
   },
   {
     tone: 'group' as OfferTone,
-    tag: 'Private Group',
+    tag: 'Groups & Teams',
     title: 'Friends, Families & Groups',
     body: 'Ideal for gatherings, birthdays, celebrations, and other special occasions',
-    price: '$280',
-    unit: 'per participant',
-    note: '2–25 participants · everything provided',
-  },
-  {
-    tone: 'corp' as OfferTone,
-    tag: 'Corporate',
-    title: 'Corporate Wellness',
-    body: 'Elevate your company culture through a new generation of team building where wellness and connection come together',
-    price: '$280',
-    unit: 'per participant',
-    note: 'Optional team-building add-on: $400 per event',
+    price: '$450 – $2,900',
+    unit: 'per group',
+    note: 'Up to 25 participants · optional team-building add-on for corporate teams: $400 per event',
   },
 ] as const;
 

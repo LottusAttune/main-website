@@ -41,16 +41,14 @@ export function LocalBusinessSchema() {
       {
         '@type': 'Offer',
         name: 'Friends, Families & Groups',
-        description: 'Two-hour immersive experience for 2 to 25 participants',
-        price: '280',
-        priceCurrency: 'CAD',
-      },
-      {
-        '@type': 'Offer',
-        name: 'Corporate Wellness',
-        description: 'Two-hour immersive team experience for organizations',
-        price: '280',
-        priceCurrency: 'CAD',
+        description:
+          'Two-hour immersive experience for 2 to 25 participants, including corporate teams. Priced per group, scaling with group size.',
+        priceSpecification: {
+          '@type': 'PriceSpecification',
+          minPrice: '450',
+          maxPrice: '2900',
+          priceCurrency: 'CAD',
+        },
       },
     ],
   };

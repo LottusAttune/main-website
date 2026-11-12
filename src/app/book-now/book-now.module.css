@@ -1286,3 +1286,46 @@
     animation-iteration-count: infinite !important;
   }
 }
+
+/* ---------- Inside the two hours: a soft light drifting across ----------
+   A large, faint warm light slowly moves across the section's background,
+   like daylight shifting in a room. The content itself never moves. */
+.lightSection {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.lightSection::before {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  top: -20%;
+  left: -30%;
+  width: 90%;
+  height: 140%;
+  background: radial-gradient(
+    closest-side,
+    rgba(255, 236, 200, 0.75),
+    rgba(255, 236, 200, 0.28) 50%,
+    rgba(255, 236, 200, 0) 100%
+  );
+  pointer-events: none;
+  animation: lightDrift 26s ease-in-out infinite alternate;
+}
+
+@keyframes lightDrift {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(75%, 6%, 0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lightSection::before {
+    animation-duration: 26s !important;
+    animation-iteration-count: infinite !important;
+  }
+}

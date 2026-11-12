@@ -244,7 +244,7 @@ export default async function LandingPage({
 
         {/* ---------- Five components ---------- */}
         <section
-          className={`${styles.section} section--beige`}
+          className={`${styles.section} section--beige ${styles.lightSection}`}
           aria-labelledby="lp-components"
         >
           <div className={styles.head}>

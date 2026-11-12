@@ -347,7 +347,7 @@ export const VENUE_COPY = [
 export const VENUE_COPY_BOOKING = VENUE_COPY.slice(0, 1);
 
 export const CORPORATE_ADDON_COPY =
-  'Includes a 45-minute extension featuring a facilitated activity focused on recognition, values alignment, mindful communication, and team connection —customized to your team’s objectives. Additional $500 per event.';
+  'Includes a 45-minute extension featuring a facilitated activity focused on recognition, values alignment, mindful communication, and team connection —customized to your team’s objectives. Additional $400 per event.';
 
 /**
  * Vimeo IDs.

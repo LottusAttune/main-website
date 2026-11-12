@@ -148,7 +148,7 @@ export const LANDING_OFFERS = [
     body: 'Elevate your company culture through a new generation of team building where wellness and connection come together',
     price: '$280',
     unit: 'per participant',
-    note: 'Optional team-building add-on: $500 per event',
+    note: 'Optional team-building add-on: $400 per event',
   },
 ] as const;
 

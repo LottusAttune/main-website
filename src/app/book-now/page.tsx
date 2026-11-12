@@ -4,6 +4,8 @@ import Link from 'next/link';
 
 import { Accordion } from '@/components/common/Accordion';
 import { Reveal } from '@/components/common/Reveal';
+import { HeroMotion } from '@/components/landing/HeroMotion';
+import { LandingReviews } from '@/components/landing/LandingReviews';
 import { ExpandableNote } from '@/components/chrome/ExpandableNote';
 import { InstagramIcon, LinkedInIcon, MailIcon, WhatsAppIcon } from '@/components/chrome/FooterIcons';
 import { StickyBookBar } from '@/components/chrome/StickyBookBar';
@@ -80,6 +82,7 @@ export default async function LandingPage({
   return (
     <div className={styles.page}>
       <Reveal />
+      <HeroMotion />
 
       <header className={styles.bar}>
         <span className={styles.barBrand}>
@@ -100,8 +103,8 @@ export default async function LandingPage({
 
       <main>
         {/* ---------- Hero ---------- */}
-        <section className={styles.hero} aria-labelledby="lp-heading">
-          <div className={styles.heroBleed}>
+        <section className={styles.hero} aria-labelledby="lp-heading" data-hero="">
+          <div className={styles.heroBleed} data-hero-bleed="">
             <Image
               src={hero.src}
               alt=""
@@ -112,7 +115,7 @@ export default async function LandingPage({
             />
           </div>
           <div className={styles.heroScrim} />
-          <div className={styles.heroCopy}>
+          <div className={styles.heroCopy} data-hero-copy="">
             {/* "Downtown Toronto · 1 to 25 people": one line on wider screens;
                 on phones the two halves sit on their own lines instead of
                 wrapping mid-phrase. */}
@@ -305,31 +308,9 @@ export default async function LandingPage({
               In their words
             </h2>
           </div>
-          <div className={styles.reviewGrid}>
-            {LANDING_REVIEWS.map((review) => {
-              return (
-                <figure
-                  key={review.name}
-                  className={`card ${styles.reviewCard}`}
-                  data-reveal=""
-                >
-                  <div className={styles.reviewQuote} aria-hidden="true">
-                    ”
-                  </div>
-                  <blockquote className={styles.reviewText}>
-                    {review.text}
-                  </blockquote>
-                  <figcaption className={styles.reviewCaption}>
-                    <span className={styles.avatar}>{review.name.charAt(0)}</span>
-                    <span>
-                      <span className={styles.reviewName}>{review.name}</span>
-                      <span className={styles.reviewMeta}>{review.meta}</span>
-                    </span>
-                  </figcaption>
-                </figure>
-              );
-            })}
-          </div>
+          <LandingReviews
+            reviews={LANDING_REVIEWS.map(({ name, meta, text }) => ({ name, meta, text }))}
+          />
         </section>
 
         {/* ---------- Offers ---------- */}
@@ -405,7 +386,7 @@ export default async function LandingPage({
             id="lp-closer"
             className="display"
             style={{
-              fontSize: 'clamp(30px, 4vw, 58px)',
+              fontSize: 'clamp(26px, 3.4vw, 46px)',
               lineHeight: 1.1,
               margin: '0 0 28px',
               color: 'var(--color-cream-text)',
@@ -482,11 +463,10 @@ export default async function LandingPage({
                 into two tap-to-open lines, like the main site's footer. */}
             <div className={styles.locationFull}>
               <div className={styles.locationLead}>Bloor–Yonge, Toronto</div>
-              {VENUE_COPY.map((line) => (
-                <p key={line} className={styles.locationBody}>
-                  {line}
-                </p>
-              ))}
+              <p className={styles.locationBody}>{VENUE_COPY[0]}</p>
+              <ExpandableNote label="Parking" labelClassName={styles.locationLead}>
+                <p className={styles.locationBody}>{VENUE_COPY[1]}</p>
+              </ExpandableNote>
             </div>
             <div className={styles.locationCompact}>
               <ExpandableNote label="Bloor–Yonge, Toronto" labelClassName={styles.locationLead}>

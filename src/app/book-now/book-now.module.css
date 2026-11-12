@@ -66,6 +66,10 @@
 .heroBleed {
   position: absolute;
   inset: 0;
+  /* Same as the home hero: slightly enlarged so the scroll drift
+     (HeroMotion) never shows an edge. */
+  transform: scale(1.14);
+  will-change: transform;
 }
 
 .heroBleed img {
@@ -458,6 +462,25 @@
   color: var(--color-ink-body);
 }
 
+.reviewCard .reviewCaption {
+  margin-top: auto;
+}
+
+/* Four lines, then "Read full review" (opens the whole review). */
+.reviewClamp {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 4;
+  line-clamp: 4;
+  overflow: hidden;
+  margin-bottom: 14px;
+}
+
+.reviewCard :global(button) {
+  align-self: flex-start;
+  margin-bottom: 20px;
+}
+
 .reviewCaption {
   display: flex;
   align-items: center;
@@ -642,7 +665,7 @@
 
 /* Same venue text as the main site's footer - no street address. */
 .locationGroup {
-  max-width: 340px;
+  max-width: 430px;
   text-align: left;
 }
 
@@ -930,5 +953,133 @@
 
   .offerBody {
     margin-bottom: 18px;
+  }
+}
+
+/* ---------- Tablets and computers: the main website's sizes ----------
+   Matched to the home page (HomeHero.module.css, home.module.css) so the
+   ad pages read at the same scale: 66px hero headline, 44px section
+   headings, 13.5px eyebrows, 15.5-17.5px text, 48px buttons, and the same
+   space between sections. Phones keep their own compact rules above. */
+@media (min-width: 601px) {
+  .hero {
+    min-height: min(80vh, 720px);
+    padding: clamp(32px, 3.5vw, 52px) var(--space-gutter);
+  }
+
+  .heroEyebrow {
+    letter-spacing: 0.56em;
+    margin-bottom: 30px;
+  }
+
+  .heroTitle {
+    font-size: clamp(36px, 4.7vw, 66px);
+    line-height: 1.08;
+    letter-spacing: -0.02em;
+    max-width: 20ch;
+    margin-bottom: 18px;
+  }
+
+  .heroSub {
+    font-size: clamp(15.5px, 1.7vw, 17.5px);
+    line-height: 1.7;
+    margin-bottom: 40px;
+  }
+
+  .heroBtn {
+    min-height: 48px;
+    padding: 14px 38px;
+  }
+
+  .heroAssurance {
+    margin-top: 20px;
+    font-size: 12px;
+  }
+
+  .proofFigure {
+    font-size: clamp(17px, 1.8vw, 21px);
+  }
+
+  .section {
+    padding-top: clamp(44px, 5vw, 68px);
+    padding-bottom: clamp(44px, 5vw, 68px);
+  }
+
+  .head {
+    margin-bottom: 32px;
+  }
+
+  .head :global(.eyebrow) {
+    font-size: 13.5px;
+    margin-bottom: 18px !important;
+  }
+
+  .heading {
+    font-size: clamp(24px, 3.2vw, 44px);
+  }
+
+  .headNote {
+    font-size: 15.5px;
+  }
+
+  .painText {
+    font-size: 15.5px;
+  }
+
+  .guideQuote {
+    font-size: clamp(18px, 2.1vw, 29px);
+    margin-bottom: 20px;
+  }
+
+  .planTitle {
+    font-size: 20px;
+  }
+
+  .planBody {
+    font-size: 15px;
+    line-height: 1.7;
+  }
+
+  .componentIcon {
+    width: 48px;
+    height: 48px;
+  }
+
+  .componentTitle {
+    font-size: clamp(19px, 1.9vw, 22px);
+  }
+
+  .componentBody {
+    font-size: 15.5px;
+  }
+
+  .includedList :global(.numbered-row__text) {
+    font-size: 15.5px;
+    line-height: 1.65;
+  }
+
+  .reviewText {
+    font-size: 15.5px;
+    line-height: 1.75;
+  }
+
+  .offerTitle {
+    font-size: 24px;
+  }
+
+  .offerBody {
+    font-size: 15px;
+  }
+
+  .offerPrice {
+    font-size: 28px;
+  }
+
+  .offerBtn {
+    min-height: 48px;
+  }
+
+  .closerBtn {
+    min-height: 48px;
   }
 }

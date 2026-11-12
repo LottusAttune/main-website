@@ -297,15 +297,38 @@
   );
   pointer-events: none;
   animation: painDrift 10s ease-in-out infinite alternate;
-  animation-delay: calc(var(--pain-i, 0) * -3.5s);
 }
 
 /* Each card floats up and settles by a few pixels, slowly and on its own
    timing (different length and starting point per card), so the row feels
    gently alive without ever moving in step. */
 .painCard {
-  animation: painFloat calc(6s + var(--pain-i, 0) * 1.4s) ease-in-out infinite alternate;
-  animation-delay: calc(var(--pain-i, 0) * -2.2s);
+  animation: painFloat 6s ease-in-out -0.4s infinite alternate;
+}
+
+/* Plain fixed timings per card (no calc), which every browser - Safari
+   included - honours inside an animation. */
+.painCard:nth-child(2) .painGlow {
+  animation-delay: -3.5s;
+}
+
+.painCard:nth-child(3) .painGlow {
+  animation-delay: -7s;
+}
+
+.painCard:nth-child(2) {
+  animation-duration: 7.4s;
+  animation-delay: -2.6s;
+}
+
+.painCard:nth-child(3) {
+  animation-duration: 8.8s;
+  animation-delay: -4.8s;
+}
+
+.painCard:nth-child(4) {
+  animation-duration: 7s;
+  animation-delay: -6s;
 }
 
 @keyframes painFloat {

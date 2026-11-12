@@ -32,9 +32,11 @@ type Props = {
   /** id of a section that carries its own booking buttons. Once it scrolls
    *  into view the bar slides away, so the two sets never show together. */
   hideFromId?: string;
+  /** Appended to the Book/Gift links (the ad pages pass `?from=...`). */
+  linkQuery?: string;
 };
 
-export function StickyBookBar({ twoButtons = false, hideAction, hideFromId }: Props) {
+export function StickyBookBar({ twoButtons = false, hideAction, hideFromId, linkQuery = '' }: Props) {
   const [shown, setShown] = useState(false);
 
   useEffect(() => {
@@ -141,14 +143,14 @@ export function StickyBookBar({ twoButtons = false, hideAction, hideFromId }: Pr
       </span>
       <div className={styles.actions}>
         <Link
-          href="/book"
+          href={`/book${linkQuery}`}
           className={`btn btn--cream ${styles.twoCta}`}
           tabIndex={shown ? undefined : -1}
         >
           Book
         </Link>
         <Link
-          href="/gift"
+          href={`/gift${linkQuery}`}
           className={`btn btn--outline-dark ${styles.twoCta}`}
           tabIndex={shown ? undefined : -1}
         >

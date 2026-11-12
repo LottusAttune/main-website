@@ -3,6 +3,8 @@ import type { Metadata } from 'next';
 import { Reveal } from '@/components/common/Reveal';
 import { SiteFooter } from '@/components/chrome/SiteFooter';
 import { SiteNav } from '@/components/chrome/SiteNav';
+import { BackToLanding } from '@/components/landing/BackToLanding';
+import { landingReturnHref } from '@/data/landing';
 import { DiscoveryCallForm } from '@/components/discovery/DiscoveryCallForm';
 import { callClosedDates, callClosedTimes, DISCOVERY_CALL_LEAD_DAYS } from '@/lib/site';
 import { getSettings } from '@/lib/settings';
@@ -29,7 +31,13 @@ function introLine(): string {
   return `A video call to answer all your questions and find the right fit, whether it\u2019s for yourself, ${ending}.`;
 }
 
-export default async function DiscoveryCallPage() {
+export default async function DiscoveryCallPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ from?: string }>;
+}) {
+  // Set only when the visitor came from an ad page (?from=...).
+  const back = landingReturnHref((await searchParams).from);
   const { blockedDates, blockedCallTimes, callOpenTimes, bookedEventDates, bookedCallSlots } =
     await getSettings();
   // A day blocked for events, or with a session booked, is closed for calls
@@ -47,6 +55,7 @@ export default async function DiscoveryCallPage() {
       <Reveal />
 
       <main>
+        {back && <BackToLanding href={back} />}
         <section
           style={{
             padding: '0 var(--space-gutter) clamp(28px, 4vw, 48px)',

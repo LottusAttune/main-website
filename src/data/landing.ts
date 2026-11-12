@@ -75,7 +75,6 @@ export const AUDIENCES: Record<
     pains: [
       'Your team is productive but quietly depleted',
       'Burnout shows up as sick days, turnover and disengagement',
-      'Wellness perks go unused, and team-building days are forgotten by Monday',
       'You want a meaningful team experience, not another forgettable team outing',
     ],
     order: ['corp'],
@@ -178,7 +177,8 @@ const LANDING_REVIEW_NAMES = ['Serge', 'Zainab', 'Aldo'] as const;
 export const LANDING_REVIEWS = LANDING_REVIEW_NAMES.map((name) => {
   const review = REVIEWS.find((r) => r.name === name);
   if (!review) throw new Error(`Landing page review "${name}" not found in REVIEWS`);
-  return review;
+  // The ad pages just say "Group session" (the main site keeps "Private group session").
+  return { ...review, meta: review.meta === 'Private group session' ? 'Group session' : review.meta };
 });
 
 /** Same approach as the reviews above - a curated subset of the live FAQs,
@@ -195,3 +195,16 @@ export const LANDING_FAQS = LANDING_FAQ_QUESTIONS.map((q) => {
   if (!faq) throw new Error(`Landing page FAQ "${q}" not found in FAQS`);
   return faq;
 });
+
+/** Where each ad page lives, so the Book, Gift and Discovery call pages can
+ *  offer a way back to the exact version the visitor came from. The ad
+ *  pages add `?from=<audience>` to every link that leaves them. */
+export const LANDING_PATHS: Record<AudienceKey, string> = {
+  everyone: '/book-now',
+  individuals: '/book-now?aud=individuals',
+  corporate: '/book-corporate',
+};
+
+export function landingReturnHref(from: string | undefined): string | null {
+  return from && from in LANDING_PATHS ? LANDING_PATHS[from as AudienceKey] : null;
+}

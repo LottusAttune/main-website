@@ -4,6 +4,8 @@ import Image from 'next/image';
 import { Reveal } from '@/components/common/Reveal';
 import { SiteFooter } from '@/components/chrome/SiteFooter';
 import { SiteNav } from '@/components/chrome/SiteNav';
+import { BackToLanding } from '@/components/landing/BackToLanding';
+import { landingReturnHref } from '@/data/landing';
 import { GiftCalculator } from '@/components/gift/GiftCalculator';
 import { asset } from '@/lib/images';
 import { getSettings } from '@/lib/settings';
@@ -17,7 +19,13 @@ export const metadata: Metadata = {
 /** Pricing reads from the database; never let that block the build. */
 export const dynamic = 'force-dynamic';
 
-export default async function GiftPage() {
+export default async function GiftPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ from?: string }>;
+}) {
+  // Set only when the visitor came from an ad page (?from=...).
+  const back = landingReturnHref((await searchParams).from);
   const { pricing, codes, business } = await getSettings();
 
   return (
@@ -26,6 +34,7 @@ export default async function GiftPage() {
       <Reveal />
 
       <main>
+        {back && <BackToLanding href={back} />}
         <section
           style={{
             padding: '0 var(--space-gutter) clamp(20px, 3vw, 32px)',

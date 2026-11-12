@@ -3,6 +3,8 @@ import type { Metadata } from 'next';
 import { Reveal } from '@/components/common/Reveal';
 import { SiteFooter } from '@/components/chrome/SiteFooter';
 import { SiteNav } from '@/components/chrome/SiteNav';
+import { BackToLanding } from '@/components/landing/BackToLanding';
+import { landingReturnHref } from '@/data/landing';
 import { BookingForm } from '@/components/booking/BookingForm';
 import { assetUrl } from '@/lib/images';
 import { getSettings } from '@/lib/settings';
@@ -18,7 +20,13 @@ export const metadata: Metadata = {
 /** Availability changes from the dashboard, so this must never be cached. */
 export const dynamic = 'force-dynamic';
 
-export default async function BookPage() {
+export default async function BookPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ from?: string }>;
+}) {
+  // Set only when the visitor came from an ad page (?from=...).
+  const back = landingReturnHref((await searchParams).from);
   const settings = await getSettings();
 
   return (
@@ -45,6 +53,7 @@ export default async function BookPage() {
             }}
           />
 
+          {back && <BackToLanding href={back} />}
           <section
             style={{
               position: 'relative',

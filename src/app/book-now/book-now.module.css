@@ -267,10 +267,60 @@
 }
 
 .painCard {
-  padding: 28px 26px;
-  font-size: 16.5px;
-  line-height: 1.7;
-  color: var(--color-ink-strong);
+  position: relative;
+  overflow: hidden;
+  padding: 58px 28px 34px;
+}
+
+/* A short gold rule that draws itself across the top once the card has
+   arrived - visible by default, so it is never missing without JS. */
+.painCard::before {
+  content: '';
+  position: absolute;
+  top: 34px;
+  left: 28px;
+  width: 44px;
+  height: 2px;
+  background: var(--color-gold);
+  transform-origin: left;
+  transition: transform 0.9s var(--ease-out) calc(var(--pain-i, 0) * 140ms + 350ms);
+}
+
+.painCard[data-reveal='hidden']::before {
+  transform: scaleX(0);
+}
+
+/* A soft warm light that drifts slowly inside each card, each one on its
+   own timing so the row never moves in lockstep. Decorative only. */
+.painGlow {
+  position: absolute;
+  inset: -40%;
+  background: radial-gradient(
+    closest-side,
+    rgba(198, 169, 122, 0.22),
+    rgba(198, 169, 122, 0) 70%
+  );
+  pointer-events: none;
+  animation: painDrift 14s ease-in-out infinite alternate;
+  animation-delay: calc(var(--pain-i, 0) * -3.5s);
+}
+
+@keyframes painDrift {
+  0% {
+    transform: translate(-22%, -18%) scale(0.9);
+  }
+  100% {
+    transform: translate(24%, 20%) scale(1.1);
+  }
+}
+
+.painText {
+  position: relative;
+  display: block;
+  font-family: var(--font-display);
+  font-size: 22px;
+  line-height: 1.35;
+  color: var(--color-ink);
 }
 
 /* ---------- Guide ---------- */

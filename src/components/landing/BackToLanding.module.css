@@ -1,0 +1,22 @@
+.wrap {
+  position: relative;
+  max-width: var(--width-content);
+  margin: 0 auto;
+  padding: 18px var(--space-gutter) 0;
+}
+
+.link {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 44px;
+  font-size: 12px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--color-gold-text);
+  text-decoration: none;
+}
+
+.link:hover {
+  color: var(--color-ink);
+}

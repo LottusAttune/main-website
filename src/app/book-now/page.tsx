@@ -6,6 +6,7 @@ import { Accordion } from '@/components/common/Accordion';
 import { Reveal } from '@/components/common/Reveal';
 import { InstagramIcon, LinkedInIcon, MailIcon, WhatsAppIcon } from '@/components/chrome/FooterIcons';
 import { StickyBookBar } from '@/components/chrome/StickyBookBar';
+import { LandingReturnTracker } from '@/components/landing/LandingReturnTracker';
 import { GUIDE } from '@/data/content';
 import {
   ASSURANCE_LINE,
@@ -15,6 +16,7 @@ import {
   LANDING_INCLUDED,
   LANDING_OFFERS,
   LANDING_REVIEWS,
+  LANDING_PATHS,
   LANDING_STEPS,
   LANDING_TRUST,
   type AudienceKey,
@@ -57,6 +59,9 @@ export default async function LandingPage({
   const params = await searchParams;
   const audienceKey = resolveAudience(params.aud);
   const audience = AUDIENCES[audienceKey];
+  // Every link to the booking pages carries the version it came from, so
+  // those pages can show a "Back" link to this exact page.
+  const from = `?from=${audienceKey}`;
   // LinkedIn ads lead with LinkedIn under "Get social"; Instagram ads with Instagram.
   const socialOrder =
     audienceKey === 'corporate' ? ['LinkedIn', 'Instagram'] : ['Instagram', 'LinkedIn'];
@@ -87,7 +92,7 @@ export default async function LandingPage({
           />
           <span className={styles.barWord}>LOTUS ATTUNE</span>
         </span>
-        <Link href="/book" className={`btn btn--dark ${styles.barCta}`}>
+        <Link href={`/book${from}`} className={`btn btn--dark ${styles.barCta}`}>
           Book
         </Link>
       </header>
@@ -123,7 +128,7 @@ export default async function LandingPage({
             </h1>
             <p className={styles.heroSub}>{audience.sub}</p>
             <div className={styles.heroActions}>
-              <Link href="/book" className={`btn btn--cream ${styles.heroBtn}`}>
+              <Link href={`/book${from}`} className={`btn btn--cream ${styles.heroBtn}`}>
                 Book a session
               </Link>
               <a href="#offers" className={`btn btn--outline-dark ${styles.heroBtn}`}>
@@ -169,13 +174,16 @@ export default async function LandingPage({
             </h2>
           </div>
           <div className={`${styles.painGrid} ${audience.pains.length === 4 ? styles.painGridFour : ''}`}>
-            {audience.pains.map((pain) => (
+            {audience.pains.map((pain, i) => (
               <div
                 key={pain}
                 className={`card ${styles.painCard}`}
                 data-reveal=""
+                // Cards arrive one after another rather than all at once.
+                style={{ transitionDelay: `${i * 140}ms`, ['--pain-i' as string]: i }}
               >
-                {pain}
+                <span className={styles.painGlow} aria-hidden="true" />
+                <span className={styles.painText}>{pain}</span>
               </div>
             ))}
           </div>
@@ -355,7 +363,7 @@ export default async function LandingPage({
                   <span className={styles.offerUnit}>{offer.unit}</span>
                 </div>
                 <div className={styles.offerNote}>{offer.note}</div>
-                <Link href="/book" className={`btn btn--dark ${styles.offerBtn}`}>
+                <Link href={`/book${from}`} className={`btn btn--dark ${styles.offerBtn}`}>
                   Book
                 </Link>
               </div>
@@ -405,11 +413,11 @@ export default async function LandingPage({
             {SITE.motto}
           </h2>
           <div className={styles.closerActions}>
-            <Link href="/book" className={`btn btn--cream ${styles.closerBtn}`}>
+            <Link href={`/book${from}`} className={`btn btn--cream ${styles.closerBtn}`}>
               Book your session
             </Link>
             <Link
-              href="/discovery-call"
+              href={`/discovery-call${from}`}
               className={`btn btn--outline-dark ${styles.closerBtn}`}
             >
               Book a discovery call
@@ -418,7 +426,8 @@ export default async function LandingPage({
         </section>
       </main>
 
-      <StickyBookBar twoButtons hideFromId="lp-closer-section" />
+      <StickyBookBar twoButtons hideFromId="lp-closer-section" linkQuery={from} />
+      <LandingReturnTracker href={LANDING_PATHS[audienceKey]} />
 
       <footer className={styles.footer}>
         <div className={styles.contactGroups}>

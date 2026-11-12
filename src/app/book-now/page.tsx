@@ -4,10 +4,11 @@ import Link from 'next/link';
 
 import { Accordion } from '@/components/common/Accordion';
 import { Reveal } from '@/components/common/Reveal';
+import { ExpandableNote } from '@/components/chrome/ExpandableNote';
 import { InstagramIcon, LinkedInIcon, MailIcon, WhatsAppIcon } from '@/components/chrome/FooterIcons';
 import { StickyBookBar } from '@/components/chrome/StickyBookBar';
 import { LandingReturnTracker } from '@/components/landing/LandingReturnTracker';
-import { GUIDE } from '@/data/content';
+import { GUIDE, VENUE_COPY } from '@/data/content';
 import {
   ASSURANCE_LINE,
   AUDIENCES,
@@ -475,7 +476,33 @@ export default async function LandingPage({
               </div>
             </div>
           ))}
+          <div className={`${styles.contactGroup} ${styles.locationGroup}`}>
+            <div className={styles.footerTitle}>Location</div>
+            {/* Wider screens show the venue text in full; phones fold it
+                into two tap-to-open lines, like the main site's footer. */}
+            <div className={styles.locationFull}>
+              <div className={styles.locationLead}>Bloor–Yonge, Toronto</div>
+              {VENUE_COPY.map((line) => (
+                <p key={line} className={styles.locationBody}>
+                  {line}
+                </p>
+              ))}
+            </div>
+            <div className={styles.locationCompact}>
+              <ExpandableNote label="Bloor–Yonge, Toronto" labelClassName={styles.locationLead}>
+                <p className={styles.locationBody}>{VENUE_COPY[0]}</p>
+              </ExpandableNote>
+              <ExpandableNote label="Parking" labelClassName={styles.locationLead}>
+                <p className={styles.locationBody}>{VENUE_COPY[1]}</p>
+              </ExpandableNote>
+            </div>
+          </div>
         </div>
+        {/* Opens in a new tab, so the ad page stays open where they left it. */}
+        <a href="/" className={styles.siteLink} target="_blank" rel="noopener">
+          <span className={styles.siteLinkText}>Discover more at lotusattune.com</span>
+          <span aria-hidden="true">→</span>
+        </a>
         <div className={styles.copyright}>
           © {new Date().getFullYear()} {SITE.name} · {SITE.tagline} · Toronto{'\u00a0'}– Yonge and Bloor
         </div>

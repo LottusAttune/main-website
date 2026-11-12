@@ -139,7 +139,7 @@ export const LANDING_OFFERS = [
     body: 'Ideal for gatherings, birthdays, celebrations, and other special occasions',
     price: '$450 – $2,900',
     unit: 'per group',
-    note: 'Up to 25 participants · optional team-building add-on for corporate teams: $400 per event',
+    note: 'Price scales with group size, up to 25 participants · optional team-building add-on for corporate teams: $400 per event',
   },
 ] as const;
 

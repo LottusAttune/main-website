@@ -3,12 +3,12 @@ import Image from 'next/image';
 import Link from 'next/link';
 
 import { Accordion } from '@/components/common/Accordion';
-import { LandingReviews } from '@/components/landing/LandingReviews';
+import { ReviewsCarousel } from '@/components/home/ReviewsCarousel';
 import { ExpandableNote } from '@/components/chrome/ExpandableNote';
 import { InstagramIcon, LinkedInIcon, MailIcon, WhatsAppIcon } from '@/components/chrome/FooterIcons';
 import { StickyBookBar } from '@/components/chrome/StickyBookBar';
 import { LandingReturnTracker } from '@/components/landing/LandingReturnTracker';
-import { GUIDE, VENUE_COPY } from '@/data/content';
+import { GUIDE, REVIEWS, VENUE_COPY } from '@/data/content';
 import {
   ASSURANCE_LINE,
   AUDIENCES,
@@ -16,7 +16,6 @@ import {
   LANDING_FAQS,
   LANDING_INCLUDED,
   LANDING_OFFERS,
-  LANDING_REVIEWS,
   LANDING_PATHS,
   LANDING_STEPS,
   LANDING_TRUST,
@@ -311,9 +310,11 @@ export default async function LandingPage({
               In their words
             </h2>
           </div>
-          <LandingReviews
-            reviews={LANDING_REVIEWS.map(({ name, meta, text }) => ({ name, meta, text }))}
-          />
+          {/* The website's own review carousel - same reviews, sliding,
+              autoplay, arrows and "Read full review" as the home page. */}
+          <div className="shell">
+            <ReviewsCarousel reviews={REVIEWS} />
+          </div>
         </section>
 
         {/* ---------- Offers ---------- */}

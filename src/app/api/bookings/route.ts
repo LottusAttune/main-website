@@ -73,6 +73,19 @@ export async function POST(request: Request) {
   // Group Introductory only exists from 7 people up; below that the tick is ignored.
   const groupIntro = input.isGroupIntro && input.participants >= GROUP_INTRO_MIN_PARTICIPANTS;
 
+  // One discount per booking: Group Introductory or a discount code, never
+  // both. (A gift certificate is prepaid value, not a discount, so it can
+  // still be used alongside either.)
+  if (groupIntro && eligibleDiscount) {
+    return NextResponse.json(
+      {
+        error:
+          'Only one discount can be used per booking: Group Introductory or a discount code. Please remove one and try again.',
+      },
+      { status: 400 }
+    );
+  }
+
   const { total, gratuity } = quoteFor(
     {
       participants: input.participants,

@@ -291,12 +291,18 @@ export function BookingForm({
         });
         return;
       }
+      // One discount per booking: a code replaces Group Introductory.
+      const replacedIntro = isGroupIntro;
+      if (replacedIntro) {
+        setIsGroupIntro(false);
+        setIntroMessage('');
+      }
       setCode({
         applied: match,
         gift: null,
         message: `${match.code} applied — ${
           match.amountOff ? `${money(match.amountOff)} off` : `${match.percentOff}% off`
-        }.`,
+        }.${replacedIntro ? ' Group Introductory was removed, as only one discount can be used per booking.' : ''}`,
         ok: true,
       });
       return;
@@ -654,7 +660,18 @@ export function BookingForm({
                   checked={isGroupIntro}
                   onChange={(e) => {
                     setIsGroupIntro(e.target.checked);
-                    setIntroMessage('');
+                    // One discount per booking: Group Introductory replaces a
+                    // discount code (a gift certificate is payment, so it stays).
+                    if (e.target.checked && code.applied) {
+                      const removed = code.applied.code;
+                      setCodeInput('');
+                      setCode({ applied: null, gift: null, message: '', ok: false });
+                      setIntroMessage(
+                        `${removed} was removed, as only one discount can be used per booking.`
+                      );
+                    } else {
+                      setIntroMessage('');
+                    }
                   }}
                 />
                 <span>

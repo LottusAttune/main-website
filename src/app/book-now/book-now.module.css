@@ -1132,3 +1132,67 @@
     min-height: 48px;
   }
 }
+
+/* ---------- Everything is provided: ghost photo, slow drift ---------- */
+.washSection {
+  position: relative;
+  overflow: hidden;
+}
+
+.washSection > * {
+  position: relative;
+}
+
+.washSection > .includedWash {
+  position: absolute;
+  opacity: 0.09;
+  animation: washDrift 28s ease-in-out infinite alternate;
+  will-change: transform;
+}
+
+@keyframes washDrift {
+  from {
+    transform: scale(1.04) translate3d(-1.5%, 0, 0);
+  }
+  to {
+    transform: scale(1.12) translate3d(1.5%, -2%, 0);
+  }
+}
+
+/* The site switches every animation off when the visitor's device asks for
+   reduced motion (global.css). On these pages the only animations left are
+   very slow ambient drifts - no parallax, nothing that jumps or flashes -
+   so they are kept running there too, at their normal pace. */
+@media (prefers-reduced-motion: reduce) {
+  .heroBleed {
+    animation-duration: 24s !important;
+    animation-iteration-count: infinite !important;
+  }
+
+  .painCard {
+    animation-duration: 6s !important;
+    animation-iteration-count: infinite !important;
+  }
+
+  .painCard:nth-child(2) {
+    animation-duration: 7.4s !important;
+  }
+
+  .painCard:nth-child(3) {
+    animation-duration: 8.8s !important;
+  }
+
+  .painCard:nth-child(4) {
+    animation-duration: 7s !important;
+  }
+
+  .painGlow {
+    animation-duration: 10s !important;
+    animation-iteration-count: infinite !important;
+  }
+
+  .washSection > .includedWash {
+    animation-duration: 28s !important;
+    animation-iteration-count: infinite !important;
+  }
+}

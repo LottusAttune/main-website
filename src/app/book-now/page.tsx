@@ -269,7 +269,15 @@ export default async function LandingPage({
         </section>
 
         {/* ---------- Included ---------- */}
-        <section className={styles.section} aria-labelledby="lp-included">
+        <section className={`${styles.section} ${styles.washSection}`} aria-labelledby="lp-included">
+          {/* A barely-there photo of the comfort items behind the list,
+              drifting very slowly - the same ghost-photo treatment the
+              main website uses. */}
+          <div
+            className={`photo-wash photo-wash--light ${styles.includedWash}`}
+            style={{ backgroundImage: assetUrl('comfort-items') }}
+            aria-hidden="true"
+          />
           <div className={styles.head}>
             <div className="eyebrow" style={{ marginBottom: 22 }}>
               What is Included

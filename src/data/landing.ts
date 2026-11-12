@@ -5,7 +5,7 @@
  * headline and subline, so separate ad sets can point at the same page:
  *   /book-now             → Everyone
  *   /book-now?aud=individuals
- *   /book-now?aud=corporate
+ *   /book-now?aud=corporate (also at /book-corporate, the link used in LinkedIn ads)
  *
  * Reviews, FAQs and the included list are drawn from the same approved text
  * in content.ts (just a curated subset) rather than kept as separate copies

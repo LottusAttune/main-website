@@ -118,7 +118,7 @@ export default function HomePage() {
         </section>
 
         {/* ---------- Video ---------- */}
-        <section className={styles.watchSection} aria-labelledby="watch-heading">
+        <section id="watch" className={styles.watchSection} aria-labelledby="watch-heading">
           <div className="shell--prose">
             <div
               className={styles.centered}

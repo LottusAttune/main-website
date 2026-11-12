@@ -471,7 +471,7 @@ export default async function LandingPage({
           </div>
         </div>
         {/* Opens in a new tab, so the ad page stays open where they left it. */}
-        <a href="/" className={styles.siteLink} target="_blank" rel="noopener">
+        <a href="/#watch" className={styles.siteLink} target="_blank" rel="noopener">
           <span className={styles.siteLinkText}>Discover more at lotusattune.com</span>
           <span aria-hidden="true">→</span>
         </a>

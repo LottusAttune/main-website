@@ -1381,3 +1381,33 @@
     height: min(255px, calc(100svh - 470px));
   }
 }
+
+/* ---------- Inside the two hours: the website's fade-up, once ----------
+   Heading first, then the five rows one after another (ArriveOnce). */
+.arrivePending > .head,
+.arrivePending > .componentRow {
+  opacity: 0;
+  transform: translateY(22px);
+}
+
+.arrivePending.arriveDone > .head,
+.arrivePending.arriveDone > .componentRow {
+  opacity: 1;
+  transform: none;
+  transition:
+    opacity 0.9s var(--ease-out),
+    transform 0.9s var(--ease-out);
+}
+
+.arrivePending.arriveDone > .componentRow:nth-of-type(2) { transition-delay: 150ms; }
+.arrivePending.arriveDone > .componentRow:nth-of-type(3) { transition-delay: 270ms; }
+.arrivePending.arriveDone > .componentRow:nth-of-type(4) { transition-delay: 390ms; }
+.arrivePending.arriveDone > .componentRow:nth-of-type(5) { transition-delay: 510ms; }
+.arrivePending.arriveDone > .componentRow:nth-of-type(6) { transition-delay: 630ms; }
+
+@media (prefers-reduced-motion: reduce) {
+  .arrivePending.arriveDone > .head,
+  .arrivePending.arriveDone > .componentRow {
+    transition-duration: 0.9s !important;
+  }
+}

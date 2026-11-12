@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { Accordion } from '@/components/common/Accordion';
 import { ReviewsCarousel } from '@/components/home/ReviewsCarousel';
 import { ExpandableNote } from '@/components/chrome/ExpandableNote';
-import { CardsArrive } from '@/components/landing/CardsArrive';
+import { ArriveOnce } from '@/components/landing/ArriveOnce';
 import { InstagramIcon, LinkedInIcon, MailIcon, WhatsAppIcon } from '@/components/chrome/FooterIcons';
 import { StickyBookBar } from '@/components/chrome/StickyBookBar';
 import { LandingReturnTracker } from '@/components/landing/LandingReturnTracker';
@@ -178,7 +178,7 @@ export default async function LandingPage({
           </div>
           <div
             className={`${styles.painGrid} ${audience.pains.length === 4 ? styles.painGridFour : ''}`}
-            data-pain-grid=""
+            data-arrive="pains"
           >
             {audience.pains.map((pain) => (
               <div key={pain} className={`card ${styles.painCard}`}>
@@ -186,7 +186,7 @@ export default async function LandingPage({
               </div>
             ))}
           </div>
-          <CardsArrive pending={styles.painPending} arrived={styles.painArrived} />
+          <ArriveOnce target="pains" pending={styles.painPending} arrived={styles.painArrived} />
         </section>
 
         {/* ---------- Guide ---------- */}
@@ -246,6 +246,7 @@ export default async function LandingPage({
         <section
           className={`${styles.section} section--beige ${styles.lightSection}`}
           aria-labelledby="lp-components"
+          data-arrive="components"
         >
           <div className={styles.head}>
             <div className="eyebrow" style={{ marginBottom: 22 }}>
@@ -266,6 +267,7 @@ export default async function LandingPage({
               <p className={styles.componentBody}>{step.body}</p>
             </div>
           ))}
+          <ArriveOnce target="components" pending={styles.arrivePending} arrived={styles.arriveDone} />
         </section>
 
         {/* ---------- Included ---------- */}

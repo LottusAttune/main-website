@@ -107,7 +107,17 @@ export default async function LandingPage({
           </div>
           <div className={styles.heroScrim} />
           <div className={styles.heroCopy}>
-            <div className={styles.heroEyebrow}>{audience.eyebrow}</div>
+            {/* "Downtown Toronto · 1 to 25 people": one line on wider screens;
+                on phones the two halves sit on their own lines instead of
+                wrapping mid-phrase. */}
+            <div className={styles.heroEyebrow}>
+              {audience.eyebrow.split(' · ').map((part, i) => (
+                <span key={part} className={styles.heroEyebrowPart}>
+                  {i > 0 && <span className={styles.heroEyebrowDot}> · </span>}
+                  {part}
+                </span>
+              ))}
+            </div>
             <h1 id="lp-heading" className={styles.heroTitle}>
               {audience.title}
             </h1>

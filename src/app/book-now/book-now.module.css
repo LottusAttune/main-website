@@ -102,6 +102,20 @@
   text-shadow: 0 2px 14px rgba(0, 0, 0, 0.6);
 }
 
+@media (max-width: 600px) {
+  .heroEyebrowPart {
+    display: block;
+  }
+
+  .heroEyebrowPart + .heroEyebrowPart {
+    margin-top: 10px;
+  }
+
+  .heroEyebrowDot {
+    display: none;
+  }
+}
+
 .heroTitle {
   font-family: var(--font-display);
   font-weight: 300;

@@ -131,7 +131,7 @@ export default async function LandingPage({
               {audience.problemTitle}
             </h2>
           </div>
-          <div className={styles.painGrid}>
+          <div className={`${styles.painGrid} ${audience.pains.length === 4 ? styles.painGridFour : ''}`}>
             {audience.pains.map((pain) => (
               <div
                 key={pain}

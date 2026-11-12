@@ -230,6 +230,24 @@
   margin: 0 auto;
 }
 
+/* Four cards: one row on a wide screen, two by two in between, one column
+   on a phone - never three plus one left on its own. */
+.painGridFour {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+@media (min-width: 1100px) {
+  .painGridFour {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 600px) {
+  .painGridFour {
+    grid-template-columns: 1fr;
+  }
+}
+
 .painCard {
   padding: 28px 26px;
   font-size: 16.5px;

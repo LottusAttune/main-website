@@ -7,7 +7,7 @@ import { buildDiscoveryCallIcs, buildGoogleCalendarLink } from '@/lib/ics';
 import type { DocumentKind, DocumentRow } from '@/lib/pipeline';
 import type { BusinessSettings } from '@/lib/settings';
 import { formatPlainDate, formatStudioDate } from '@/lib/pipeline';
-import { ARRIVAL_PHOTOS, money, SITE, splitVenueDetails } from '@/lib/site';
+import { ARRIVAL_PHOTOS, headcountText, money, SITE, splitVenueDetails } from '@/lib/site';
 
 /**
  * Permanent Google Meet room, reused for every discovery call rather than
@@ -445,6 +445,8 @@ export async function sendNewBookingOwnerNotification(input: {
   company: string | null;
   message: string | null;
   participants: number;
+  /** Set for a block booking (11-15 etc.). */
+  participantsMin?: number | null;
   sessionDate: string;
   sessionTime: string;
   sessionDate2: string | null;
@@ -469,7 +471,7 @@ export async function sendNewBookingOwnerNotification(input: {
     ]);
   }
   rows.push(
-    ['Participants', input.participants === 1 ? 'One-on-one' : String(input.participants)],
+    ['Participants', input.participants === 1 ? 'One-on-one' : headcountText(input.participants, input.participantsMin)],
     ['Venue', input.venue]
   );
   if (input.teamAddon) rows.push(['Add-on', 'Team-building activity']);
@@ -551,6 +553,8 @@ export type SessionEmailInput = {
   name: string;
   email: string;
   participants: number;
+  /** Set for a block booking (11-15 etc.). */
+  participantsMin?: number | null;
   sessionDate: string;
   sessionTime: string;
   sessionDate2: string | null;
@@ -640,7 +644,7 @@ function sessionBoxHtml(input: SessionEmailInput, eyebrow: string): string {
     ]);
   }
   rows.push(
-    ['Participants', input.participants === 1 ? 'One-on-one' : String(input.participants)],
+    ['Participants', input.participants === 1 ? 'One-on-one' : headcountText(input.participants, input.participantsMin)],
     ['Venue', input.venue]
   );
   if (input.teamAddon) rows.push(['Add-on', 'Team-building activity']);

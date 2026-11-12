@@ -5,7 +5,7 @@ import { SiteNav } from '@/components/chrome/SiteNav';
 import { formatPlainDate, formatStudioDate } from '@/lib/pipeline';
 import { asset } from '@/lib/images';
 import type { PortalData } from '@/lib/portal';
-import { ARRIVAL_PHOTOS, directionsReleased, money, SITE, splitVenueDetails, toTorontoDateIso } from '@/lib/site';
+import { ARRIVAL_PHOTOS, directionsReleased, headcountPhrase, money, SITE, splitVenueDetails, toTorontoDateIso } from '@/lib/site';
 import { Countdown } from './Countdown';
 import { PortalAddons } from './PortalAddons';
 import { PortalReschedule } from './PortalReschedule';
@@ -23,8 +23,8 @@ export function PortalView({ data }: { data: PortalData }) {
         ? 'Private, package of four sessions'
         : 'Private session'
       : booking.isGroupIntro
-        ? `${booking.participants} participants, Group Introductory`
-        : `${booking.participants} participants`;
+        ? `${headcountPhrase(booking.participants, booking.participantsMin)}, Group Introductory`
+        : headcountPhrase(booking.participants, booking.participantsMin);
   const extras = [booking.teamAddon ? 'Team-building add-on' : null].filter(Boolean);
   const { location, arrival } = splitVenueDetails(settings.business.venueDetails);
   const lobbyReleased = booking.sessionDate

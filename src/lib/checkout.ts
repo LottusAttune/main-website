@@ -13,7 +13,7 @@ import {
 } from '@/lib/documents';
 import { formatPlainDate, formatStudioDate, type DocumentRow } from '@/lib/pipeline';
 import type { BusinessSettings } from '@/lib/settings';
-import { money, SITE, venueNameFor } from '@/lib/site';
+import { headcountPhrase, money, SITE, venueNameFor } from '@/lib/site';
 import { createCheckoutSession, getCheckoutSession, getPaymentIntent, isStripeConfigured } from '@/lib/stripe';
 
 /**
@@ -48,7 +48,7 @@ export async function createBookingCheckout(
   const who = booking
     ? booking.participants === 1
       ? 'private session'
-      : `${booking.participants} participants`
+      : headcountPhrase(booking.participants, booking.participantsMin)
     : null;
   const venue = booking ? venueNameFor(booking.participants, booking.venueOverride) : null;
   const balanceDay = balanceDueOn(booking?.sessionDate ?? null, business);

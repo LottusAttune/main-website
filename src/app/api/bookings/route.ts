@@ -23,7 +23,7 @@ import { hasEarlierGroupBooking } from '@/lib/groupIntro';
 import { balanceDue } from '@/lib/pipeline';
 import { quoteFor } from '@/lib/quote';
 import { getSettings } from '@/lib/settings';
-import { GROUP_INTRO_MIN_PARTICIPANTS, isSlotAvailable, LOUNGE_MAX, SITE } from '@/lib/site';
+import { GROUP_INTRO_MIN_PARTICIPANTS, headcountText, isSlotAvailable, LOUNGE_MAX, SITE } from '@/lib/site';
 import { bookingSchema } from '@/lib/validation';
 
 function venueFor(participants: number): string {
@@ -173,13 +173,13 @@ export async function POST(request: Request) {
       : Promise.resolve(null);
     const result = await sql`
       INSERT INTO bookings (
-        name, email, phone, company, message, participants,
+        name, email, phone, company, message, participants, participants_min,
         session_date, session_time, session_date_2, session_time_2,
         team_addon, is_package, is_corporate_intro,
         discount_code, gratuity, estimated_total, terms_accepted_at, payment_method
       ) VALUES (
         ${input.name}, ${input.email}, ${input.phone ?? null}, ${input.company ?? null}, ${input.message ?? null},
-        ${input.participants},
+        ${input.participants}, ${input.participantsMin ?? null},
         ${input.sessionDate}, ${input.sessionTime},
         ${input.sessionDate2 ?? null}, ${input.sessionTime2 ?? null},
         ${input.teamAddon}, ${input.isPackage}, ${groupIntro},
@@ -221,6 +221,7 @@ export async function POST(request: Request) {
           company: input.company ?? null,
           message: input.message ?? null,
           participants: input.participants,
+          participantsMin: input.participantsMin ?? null,
           sessionDate: input.sessionDate,
           sessionTime: input.sessionTime,
           sessionDate2: input.sessionDate2 ?? null,
@@ -320,7 +321,7 @@ export async function POST(request: Request) {
         `Email: ${input.email}`,
         input.phone ? `Phone: ${input.phone}` : null,
         input.company ? `Company: ${input.company}` : null,
-        `Participants: ${input.participants}`,
+        `Participants: ${headcountText(input.participants, input.participantsMin)}`,
         input.isPackage ? 'Package of four sessions' : null,
         groupIntro ? 'Group Introductory ($150 off)' : null,
         input.teamAddon ? 'Team-building add-on: yes' : null,
@@ -399,6 +400,7 @@ export async function POST(request: Request) {
           company: input.company ?? null,
           message: input.message ?? null,
           participants: input.participants,
+          participantsMin: input.participantsMin ?? null,
           sessionDate: input.sessionDate,
           sessionTime: input.sessionTime,
           sessionDate2: input.sessionDate2 ?? null,

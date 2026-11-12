@@ -144,6 +144,42 @@ export function groupPriceFor(participants: number): number {
   return (tier ?? GROUP_TIERS[GROUP_TIERS.length - 1]).total;
 }
 
+/**
+ * Groups of 7 or more book by block (7-10, 11-15, ...) rather than an exact
+ * headcount - the price is the same across a block. A block booking is
+ * stored with `participants` = the top of the block (the most people to
+ * prepare for, and what room/split/add-on rules use) and `participants_min`
+ * = its first number. Once Silvana sets the real number in Studio,
+ * `participants_min` is cleared and the booking reads as that exact number.
+ */
+export const PARTICIPANT_BLOCKS = GROUP_TIERS.map(({ min, max }) => ({ min, max }));
+
+/** The block a stored (max, min) pair describes, if it is one. */
+export function blockFor(participants: number, participantsMin?: number | null) {
+  if (participantsMin == null) return null;
+  return PARTICIPANT_BLOCKS.find((b) => b.min === participantsMin && b.max === participants) ?? null;
+}
+
+/** "11–15" for a block booking, "12" for an exact one. */
+export function headcountText(participants: number, participantsMin?: number | null): string {
+  const block = blockFor(participants, participantsMin);
+  return block ? `${block.min}–${block.max}` : String(participants);
+}
+
+/** "11–15 participants" / "12 participants" / "One-on-one". */
+export function headcountPhrase(participants: number, participantsMin?: number | null): string {
+  if (participants === 1) return 'One-on-one';
+  return `${headcountText(participants, participantsMin)} participants`;
+}
+
+/** The quote engine labels a group line "15 participants"; for a block
+ *  booking that line reads "11–15 participants" instead. */
+export function blockLineLabel(label: string, participants: number, participantsMin?: number | null): string {
+  return label === `${participants} participants`
+    ? `${headcountText(participants, participantsMin)} participants`
+    : label;
+}
+
 /** Calendar days between today and the earliest bookable discovery call. */
 export const DISCOVERY_CALL_LEAD_DAYS = 2;
 

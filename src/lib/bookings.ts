@@ -31,7 +31,7 @@ import { balanceDue, type DocumentRow } from '@/lib/pipeline';
 import { getSettings, type SiteSettings } from '@/lib/settings';
 import { renderTermsPdf } from '@/lib/terms-pdf';
 import { chargeSavedCard, isStripeConfigured, StripeError } from '@/lib/stripe';
-import { money, SITE, venueKeyFor, venueNameFor, splitAddressForCalendar, splitVenueDetails } from '@/lib/site';
+import { headcountText, money, SITE, venueKeyFor, venueNameFor, splitAddressForCalendar, splitVenueDetails } from '@/lib/site';
 
 /**
  * Everything that happens to a booking after the client says yes:
@@ -124,6 +124,7 @@ async function sessionEmailInput(
     name: String(row.name),
     email: String(row.email),
     participants,
+    participantsMin: row.participants_min == null ? null : Number(row.participants_min),
     sessionDate,
     sessionTime,
     sessionDate2: toIso(row.session_date_2),
@@ -237,7 +238,7 @@ async function ensureCalendarHold(bookingId: string): Promise<void> {
     `Email: ${row.email}`,
     row.phone ? `Phone: ${row.phone}` : null,
     row.company ? `Company: ${row.company}` : null,
-    `Participants: ${participants}`,
+    `Participants: ${headcountText(participants, row.participants_min == null ? null : Number(row.participants_min))}`,
     row.is_package ? 'Package of four sessions' : null,
     row.is_corporate_intro ? 'Group Introductory ($150 off)' : null,
     row.team_addon ? 'Team-building add-on: yes' : null,

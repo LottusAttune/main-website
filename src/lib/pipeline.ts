@@ -28,6 +28,8 @@ export type Lead = {
   /** What the client wrote in the booking form's message box. */
   message: string | null;
   participants: number;
+  /** First number of a block booking (7-10, 11-15, ...); null = exact count. */
+  participantsMin: number | null;
   sessionDate: string | null;
   sessionTime: string | null;
   /** Split sessions (groups over 15) run a second time slot the same day. */

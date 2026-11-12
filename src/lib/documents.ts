@@ -19,7 +19,7 @@ import {
 } from '@/lib/pipeline';
 import { giftQuoteFor, quoteFor } from '@/lib/quote';
 import { getSettings, type BusinessSettings, type SiteSettings } from '@/lib/settings';
-import { money, SITE, toTorontoDateIso, venueNameFor, venueNoteFor, type VenueKey } from '@/lib/site';
+import { blockLineLabel, headcountPhrase, money, SITE, toTorontoDateIso, venueNameFor, venueNoteFor, type VenueKey } from '@/lib/site';
 
 /**
  * Proposals, invoices and gift certificates.
@@ -216,6 +216,8 @@ export type BookingCtx = {
   company: string | null;
   message: string | null;
   participants: number;
+  /** First number of a block booking (7-10, 11-15, ...); null = exact count. */
+  participantsMin: number | null;
   sessionDate: string | null;
   sessionTime: string | null;
   sessionDate2: string | null;
@@ -242,6 +244,7 @@ function bookingCtx(row: Row): BookingCtx {
     company: row.company ? String(row.company) : null,
     message: row.message ? String(row.message) : null,
     participants: Number(row.participants),
+    participantsMin: row.participants_min == null ? null : Number(row.participants_min),
     sessionDate: toIso(row.session_date),
     sessionTime: row.session_time ? String(row.session_time) : null,
     sessionDate2: toIso(row.session_date_2),
@@ -269,7 +272,7 @@ export async function loadBooking(id: string): Promise<BookingCtx | null> {
  */
 function invoiceLabel(label: string): string {
   const plain = label.replace(/\s+[\u2014\u2013-]\s+/g, ': ');
-  const group = /^(\d+) participants$/.exec(plain);
+  const group = /^(\d+(?:\u2013\d+)?) participants$/.exec(plain);
   if (group) return `Immersive Soma Sound Experience, ${group[1]} participants`;
   if (/^(one|1) private session$/i.test(plain)) return 'Immersive Soma Sound Experience, one private session';
   if (/^package of four sessions$/i.test(plain)) return 'Immersive Soma Sound Experience, package of four private sessions';
@@ -295,7 +298,7 @@ export function bookingLines(booking: BookingCtx, settings: SiteSettings): Docum
     settings.pricing
   );
   const lines: DocumentLine[] = quote.lines.map((line) => ({
-    label: invoiceLabel(line.label),
+    label: invoiceLabel(blockLineLabel(line.label, booking.participants, booking.participantsMin)),
     amount: parseMoney(line.value),
   }));
   // The booking's stored total is what the client saw and agreed to. If the
@@ -1010,8 +1013,8 @@ function sessionBox(booking: BookingCtx): string {
     booking.participants === 1
       ? booking.isPackage ? 'Private — package of four sessions' : 'Private session'
       : booking.isGroupIntro
-        ? `${booking.participants} participants · Group Introductory`
-        : `${booking.participants} participants`;
+        ? `${headcountPhrase(booking.participants, booking.participantsMin)} · Group Introductory`
+        : headcountPhrase(booking.participants, booking.participantsMin);
   const rows: Array<[string, string]> = [
     ['Experience', 'Immersive Soma Sound Experience, two hours'],
     ['Format', format],

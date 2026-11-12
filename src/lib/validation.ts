@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-import { EXTRA_SESSION_SLOT, MAX_PARTICIPANTS, TIME_SLOTS, TWO_SESSION_THRESHOLD } from '@/lib/site';
+import { EXTRA_SESSION_SLOT, MAX_PARTICIPANTS, PARTICIPANT_BLOCKS, TIME_SLOTS, TWO_SESSION_THRESHOLD } from '@/lib/site';
 
 const TIME_LABELS: [string, ...string[]] = [
   EXTRA_SESSION_SLOT.label,
@@ -21,6 +21,9 @@ export const bookingSchema = z
     company: z.string().trim().max(160).optional().nullable(),
     message: z.string().trim().max(2000).optional().nullable(),
     participants: z.coerce.number().int().min(1).max(MAX_PARTICIPANTS),
+    /** Set for a block booking (7-10, 11-15, ...): the block's first number,
+     *  with `participants` its last. Absent for an exact headcount. */
+    participantsMin: z.coerce.number().int().min(1).max(MAX_PARTICIPANTS).optional().nullable(),
     sessionDate: isoDay,
     sessionTime: z.enum(TIME_LABELS),
     sessionDate2: isoDay.optional().nullable(),
@@ -39,6 +42,12 @@ export const bookingSchema = z
         message: 'Please confirm you have read and agree to the Terms & Conditions.',
       }),
   })
+  .refine(
+    (value) =>
+      value.participantsMin == null ||
+      PARTICIPANT_BLOCKS.some((b) => b.min === value.participantsMin && b.max === value.participants),
+    { message: 'Please choose the number of participants again.', path: ['participants'] }
+  )
   .refine(
     (value) =>
       value.participants <= TWO_SESSION_THRESHOLD ||

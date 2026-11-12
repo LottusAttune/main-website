@@ -41,8 +41,8 @@ export const AUDIENCES: Record<
     offersTitle: 'For you, your people, or your team',
     pains: [
       'Tension you carry from one day into the next',
-      'You know you need to slow down, but you don’t know how to switch off',
-      'You’ve tried meditation apps and breathing exercises, and stillness never sticks',
+      'You know you need to slow down, but you do not know how to switch off',
+      'You have tried meditation apps and breathing exercises, and stillness never sticks',
     ],
     order: ['one', 'group'],
   },
@@ -55,8 +55,8 @@ export const AUDIENCES: Record<
     offersTitle: 'For you, or for the people you love',
     pains: [
       'Tension you carry from one day into the next',
-      'You know you need to slow down, but you don’t know how to switch off',
-      'You’ve tried meditation apps and breathing exercises, and stillness never sticks',
+      'You know you need to slow down, but you do not know how to switch off',
+      'You have tried meditation apps and breathing exercises, and stillness never sticks',
     ],
     order: ['one', 'group'],
   },
@@ -73,7 +73,7 @@ export const AUDIENCES: Record<
       'Wellness perks go unused, and team-building days are forgotten by Monday',
       'You want a meaningful team experience, not another forgettable team outing',
     ],
-    order: ['group', 'one'],
+    order: ['corp'],
   },
 };
 
@@ -89,7 +89,8 @@ export const LANDING_STEPS = [
   {
     n: '02',
     title: 'Pick a date',
-    body: 'Send your preferred date and time. We confirm every booking personally, at least six days ahead',
+    // {lead} is the booking lead time set in the studio.
+    body: 'Send your preferred date and time. We confirm every booking personally, at least {lead} days ahead',
   },
   {
     n: '03',
@@ -146,6 +147,15 @@ export const LANDING_OFFERS = [
     price: '$450 – $2,900',
     unit: 'per group',
     note: 'Price scales with group size, up to 25 participants · optional team-building add-on for corporate teams: $400 per event',
+  },
+  {
+    tone: 'corp' as OfferTone,
+    tag: 'Corporate',
+    title: 'Corporate Wellness',
+    body: 'Elevate your company culture through a new generation of team building where wellness and connection come together',
+    price: '$950 – $2,900',
+    unit: 'per group',
+    note: 'Price scales with team size, teams of 4 to 25 · optional team-building add-on: $400 per event',
   },
 ] as const;
 

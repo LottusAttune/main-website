@@ -18,6 +18,7 @@ import {
   type AudienceKey,
 } from '@/data/landing';
 import { asset, assetUrl } from '@/lib/images';
+import { getSettings } from '@/lib/settings';
 import { SITE, SOCIAL } from '@/lib/site';
 import styles from './book-now.module.css';
 
@@ -46,6 +47,7 @@ export default async function LandingPage({
 }) {
   const params = await searchParams;
   const audience = AUDIENCES[resolveAudience(params.aud)];
+  const { leadTimeDays } = await getSettings();
 
   const hero = asset('somatic-main');
   const portrait = asset('silvana-hero');
@@ -190,7 +192,7 @@ export default async function LandingPage({
               >
                 <div className={styles.planN}>{step.n}</div>
                 <h3 className={styles.planTitle}>{step.title}</h3>
-                <p className={styles.planBody}>{step.body}</p>
+                <p className={styles.planBody}>{step.body.replace('{lead}', String(leadTimeDays))}</p>
               </div>
             ))}
           </div>
@@ -297,7 +299,7 @@ export default async function LandingPage({
               Two-hour sessions · Premium venue rental included in the price
             </p>
           </div>
-          <div className={styles.offerGrid}>
+          <div className={`${styles.offerGrid} ${offers.length === 1 ? styles.offerGridOne : ''}`}>
             {offers.map((offer) => (
               <div
                 key={offer.tone}
@@ -368,14 +370,12 @@ export default async function LandingPage({
             <Link href="/book" className={`btn btn--cream ${styles.closerBtn}`}>
               Book your session
             </Link>
-            <a
-              href={SITE.whatsappHref}
+            <Link
+              href="/discovery-call"
               className={`btn btn--outline-dark ${styles.closerBtn}`}
-              target="_blank"
-              rel="noopener noreferrer"
             >
-              WhatsApp {SITE.phone}
-            </a>
+              Book a discovery call
+            </Link>
           </div>
         </section>
       </main>
@@ -395,6 +395,14 @@ export default async function LandingPage({
               {s.label}
             </a>
           ))}
+          <a
+            href={SITE.whatsappHref}
+            className={`btn btn--outline-dark ${styles.socialPill}`}
+            rel="noopener noreferrer"
+            target="_blank"
+          >
+            WhatsApp
+          </a>
         </div>
         <div className={styles.copyright}>
           © {new Date().getFullYear()} {SITE.name} · {SITE.tagline} · Toronto{'\u00a0'}– Yonge and Bloor

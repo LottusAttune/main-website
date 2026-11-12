@@ -10,6 +10,9 @@ export const metadata: Metadata = {
   title: AUDIENCES.corporate.title,
 };
 
+/** The booking lead time comes from the studio settings, so read it per visit. */
+export const dynamic = 'force-dynamic';
+
 export default function CorporateLandingPage() {
   return <LandingPage searchParams={Promise.resolve({ aud: 'corporate' })} />;
 }

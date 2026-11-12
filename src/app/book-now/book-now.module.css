@@ -285,34 +285,6 @@
   padding: 34px 28px 32px;
 }
 
-/* The cards rise gently into place one after another the first time the
-   section is scrolled into view (CardsArrive adds the classes), then stay
-   still. Nothing loops and no colour changes. */
-.painPending .painCard {
-  opacity: 0;
-  transform: translateY(18px);
-}
-
-.painPending.painArrived .painCard {
-  opacity: 1;
-  transform: none;
-  transition:
-    opacity 1s var(--ease-out),
-    transform 1s var(--ease-out);
-}
-
-.painPending.painArrived .painCard:nth-child(2) {
-  transition-delay: 220ms;
-}
-
-.painPending.painArrived .painCard:nth-child(3) {
-  transition-delay: 440ms;
-}
-
-.painPending.painArrived .painCard:nth-child(4) {
-  transition-delay: 660ms;
-}
-
 .painText {
   position: relative;
   display: block;
@@ -1145,9 +1117,6 @@
     animation-iteration-count: infinite !important;
   }
 
-  .painPending.painArrived .painCard {
-    transition-duration: 1s !important;
-  }
 
   .washSection > .includedWash {
     animation-duration: 28s !important;
@@ -1382,32 +1351,28 @@
   }
 }
 
-/* ---------- Inside the two hours: the website's fade-up, once ----------
-   Heading first, then the five rows one after another (ArriveOnce). */
+/* ---------- Fade-up as each piece comes into view (ArriveOnce) ----------
+   The website's own reveal: up 22px and in, just under a second, once. */
+.arrivePending .painCard,
 .arrivePending > .head,
 .arrivePending > .componentRow {
   opacity: 0;
   transform: translateY(22px);
-}
-
-.arrivePending.arriveDone > .head,
-.arrivePending.arriveDone > .componentRow {
-  opacity: 1;
-  transform: none;
   transition:
     opacity 0.9s var(--ease-out),
     transform 0.9s var(--ease-out);
 }
 
-.arrivePending.arriveDone > .componentRow:nth-of-type(2) { transition-delay: 150ms; }
-.arrivePending.arriveDone > .componentRow:nth-of-type(3) { transition-delay: 270ms; }
-.arrivePending.arriveDone > .componentRow:nth-of-type(4) { transition-delay: 390ms; }
-.arrivePending.arriveDone > .componentRow:nth-of-type(5) { transition-delay: 510ms; }
-.arrivePending.arriveDone > .componentRow:nth-of-type(6) { transition-delay: 630ms; }
+.arrivePending .arriveShown.painCard,
+.arrivePending > .arriveShown {
+  opacity: 1;
+  transform: none;
+}
 
 @media (prefers-reduced-motion: reduce) {
-  .arrivePending.arriveDone > .head,
-  .arrivePending.arriveDone > .componentRow {
+  .arrivePending .painCard,
+  .arrivePending > .head,
+  .arrivePending > .componentRow {
     transition-duration: 0.9s !important;
   }
 }

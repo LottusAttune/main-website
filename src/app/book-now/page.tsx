@@ -186,7 +186,7 @@ export default async function LandingPage({
               </div>
             ))}
           </div>
-          <ArriveOnce target="pains" pending={styles.painPending} arrived={styles.painArrived} />
+          <ArriveOnce target="pains" items={`.${styles.painCard}`} pending={styles.arrivePending} shown={styles.arriveShown} />
         </section>
 
         {/* ---------- Guide ---------- */}
@@ -267,7 +267,12 @@ export default async function LandingPage({
               <p className={styles.componentBody}>{step.body}</p>
             </div>
           ))}
-          <ArriveOnce target="components" pending={styles.arrivePending} arrived={styles.arriveDone} />
+          <ArriveOnce
+            target="components"
+            items={`.${styles.head}, .${styles.componentRow}`}
+            pending={styles.arrivePending}
+            shown={styles.arriveShown}
+          />
         </section>
 
         {/* ---------- Included ---------- */}

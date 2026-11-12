@@ -3,51 +3,67 @@
 import { useEffect } from 'react';
 
 /**
- * A group rises gently into place the first time it scrolls into view, then
- * stays still (the same fade-up the website uses on "Why This Exists").
- * `target` names the element by its data-arrive attribute; the CSS module
- * supplies `pending` (hidden, just below) and `arrived` (in place, with each
- * item's own delay). If the group is already on screen when the page opens,
- * or the browser has no IntersectionObserver, it simply shows as it is.
+ * Items rise gently into place as each one comes into view while scrolling,
+ * then stay still - the same fade-up the website uses ("Why This Exists").
+ * Items that come into view together arrive one after another.
+ *
+ * `target` names the container by its data-arrive attribute; `items` picks
+ * the pieces inside it. The CSS module supplies `pending` (on the
+ * container: items hidden, just below) and `shown` (on each item).
+ * Anything already on screen when the page opens, or already scrolled
+ * past (a jump to a link further down), simply shows.
  */
 export function ArriveOnce({
   target,
+  items,
   pending,
-  arrived,
+  shown,
 }: {
   target: string;
+  items: string;
   pending: string;
-  arrived: string;
+  shown: string;
 }) {
   useEffect(() => {
-    const el = document.querySelector<HTMLElement>(`[data-arrive="${target}"]`);
-    if (!el || !('IntersectionObserver' in window)) return;
-    if (el.getBoundingClientRect().top < window.innerHeight * 0.9) return;
+    const box = document.querySelector<HTMLElement>(`[data-arrive="${target}"]`);
+    if (!box) return;
+    let waiting = Array.from(box.querySelectorAll<HTMLElement>(items));
+    // Items already visible at load just show, without animating.
+    waiting = waiting.filter((el) => {
+      if (el.getBoundingClientRect().top < window.innerHeight) {
+        el.classList.add(shown);
+        el.style.transition = 'none';
+        return false;
+      }
+      return true;
+    });
+    if (waiting.length === 0) return;
+    box.classList.add(pending);
 
-    el.classList.add(pending);
-    const show = () => {
-      el.classList.add(arrived);
-      observer.disconnect();
-      window.removeEventListener('scroll', onScroll);
+    let frame: number | null = null;
+    const check = () => {
+      frame = null;
+      let step = 0;
+      waiting = waiting.filter((el) => {
+        if (el.getBoundingClientRect().top < window.innerHeight * 0.85) {
+          el.style.transitionDelay = `${step * 130}ms`;
+          el.classList.add(shown);
+          step += 1;
+          return false;
+        }
+        return true;
+      });
+      if (waiting.length === 0) window.removeEventListener('scroll', onScroll);
     };
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) show();
-      },
-      { threshold: 0.15 }
-    );
-    // A jump straight past it (a link further down the page) never counts
-    // as "in view" - show it as soon as it is above the screen.
     const onScroll = () => {
-      if (el.getBoundingClientRect().top < window.innerHeight * 0.85) show();
+      if (frame === null) frame = requestAnimationFrame(check);
     };
-    observer.observe(el);
     window.addEventListener('scroll', onScroll, { passive: true });
     return () => {
-      observer.disconnect();
       window.removeEventListener('scroll', onScroll);
+      if (frame !== null) cancelAnimationFrame(frame);
     };
-  }, [target, pending, arrived]);
+  }, [target, items, pending, shown]);
 
   return null;
 }

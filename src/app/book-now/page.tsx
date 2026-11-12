@@ -36,7 +36,9 @@ const SOCIAL_ICONS = {
 
 /** Ad traffic only — never index this page or let it compete with `/`. */
 export const metadata: Metadata = {
-  title: 'Two hours that give you your calm back',
+  // Browser tab text (the site adds "— Lotus Attune"). These pages are kept
+  // out of Google, so this is for the tab and bookmarks, not search.
+  title: 'Wellness & Sound Bath, Toronto',
   robots: { index: false, follow: false },
 };
 

@@ -78,8 +78,8 @@ export const AUDIENCES: Record<
     offersTitle: 'For your team, department or leadership group',
     pains: [
       'Your team is productive but quietly depleted',
-      'Burnout shows up as sick days, turnover and disengagement',
       'You want a meaningful team experience, not another forgettable team outing',
+      'Burnout shows up as sick days, turnover and disengagement',
     ],
     order: ['corp'],
   },

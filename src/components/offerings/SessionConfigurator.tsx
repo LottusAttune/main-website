@@ -15,6 +15,7 @@ import {
   MAX_PARTICIPANTS,
   MIN_PARTICIPANTS,
   money,
+  PARTICIPANT_BLOCKS,
   TEAM_ADDON_MIN_PARTICIPANTS,
   VENUE_NOTE,
   venueNoteFor,
@@ -222,17 +223,22 @@ export function SessionConfigurator({ pricing, footnote }: Props) {
     ? GROUP_INTRO_MIN_PARTICIPANTS
     : MIN_PARTICIPANTS;
 
-  const participantOptions = Array.from(
-    { length: MAX_PARTICIPANTS - participantsMin + 1 },
-    (_, i) => {
-      const n = i + participantsMin;
-      const price = groupPriceFor(n) - (isGroupIntro ? GROUP_INTRO_DISCOUNT : 0);
-      return {
-        value: n,
-        label: `${n} participants — ${money(price)}`,
-      };
-    }
-  );
+  // 2-6 are exact; from 7 up the choice is a block (7-10, 11-15, ...), the
+  // price being the same across each. A block is held as its top number.
+  const blockOf = (n: number) => PARTICIPANT_BLOCKS.find((b) => n >= b.min && n <= b.max) ?? null;
+  const participantOptions = [
+    ...Array.from({ length: Math.max(0, 7 - participantsMin) }, (_, i) => i + participantsMin),
+    ...PARTICIPANT_BLOCKS.map((b) => b.max),
+  ].map((n) => {
+    const block = blockOf(n);
+    const price = groupPriceFor(n) - (isGroupIntro ? GROUP_INTRO_DISCOUNT : 0);
+    return {
+      value: n,
+      label: `${block ? `${block.min}\u2013${block.max}` : n} participants — ${money(price)}`,
+    };
+  });
+  const currentBlock = blockOf(participants);
+  const headcount = currentBlock ? `${currentBlock.min}\u2013${currentBlock.max}` : String(participants);
 
   return (
     <div className={styles.layout}>
@@ -258,9 +264,11 @@ export function SessionConfigurator({ pricing, footnote }: Props) {
             aria-pressed={isGroupIntro}
             onClick={() => {
               setFormat('groupIntro');
-              setParticipants((p) =>
-                Math.max(p, GROUP_INTRO_MIN_PARTICIPANTS)
-              );
+              // From 7 up the choice is a block, held as its top number (7-10 -> 10).
+              setParticipants((p) => {
+                const n = Math.max(p, GROUP_INTRO_MIN_PARTICIPANTS);
+                return PARTICIPANT_BLOCKS.find((b) => n >= b.min && n <= b.max)?.max ?? n;
+              });
               triggerParticipantsPulse();
             }}
           >
@@ -318,7 +326,7 @@ export function SessionConfigurator({ pricing, footnote }: Props) {
                 <label htmlFor={selectId} className={styles.legend}>
                   Select Participants
                 </label>
-                <div className={styles.participantsCount}>{participants}</div>
+                <div className={styles.participantsCount}>{headcount}</div>
               </div>
               <select
                 id={selectId}
@@ -394,7 +402,9 @@ export function SessionConfigurator({ pricing, footnote }: Props) {
               key={line.label}
               className="summary-line summary-line--dark"
             >
-              <span className="summary-line__label">{line.label}</span>
+              <span className="summary-line__label">
+                {line.label === `${participants} participants` ? `${headcount} participants` : line.label}
+              </span>
               <span className="summary-line__value">{line.value}</span>
             </div>
           ))}

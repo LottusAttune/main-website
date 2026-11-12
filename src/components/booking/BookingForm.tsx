@@ -18,6 +18,7 @@ import {
   GROUP_INTRO_MIN_PARTICIPANTS,
   MAX_PARTICIPANTS,
   SITE,
+  PARTICIPANT_BLOCKS,
   TEAM_ADDON_MIN_PARTICIPANTS,
   TIME_SLOTS,
   TWO_SESSION_THRESHOLD,
@@ -101,6 +102,9 @@ export function BookingForm({
 }: Props) {
   const [plan, setPlan] = useState<'deposit' | 'full' | 'etransfer'>('deposit');
   const [party, setParty] = useState<number | null>(null);
+  /** Groups of 7+ pick a block (11-15 etc.): `party` holds its top number,
+   *  `partyMin` its first. Null for 1-6, which are exact. */
+  const [partyMin, setPartyMin] = useState<number | null>(null);
   const [date, setDate] = useState<Date | null>(null);
   const [time, setTime] = useState<string | null>(null);
   const [time2, setTime2] = useState<string | null>(null);
@@ -155,7 +159,10 @@ export function BookingForm({
     const params = new URLSearchParams(window.location.search);
     const requested = Number(params.get('participants'));
     if (Number.isInteger(requested) && requested >= 1 && requested <= MAX_PARTICIPANTS) {
-      setParty(requested);
+      // 7 and up always book as the block that number falls in.
+      const block = PARTICIPANT_BLOCKS.find((b) => requested >= b.min && requested <= b.max);
+      setParty(block ? block.max : requested);
+      setPartyMin(block ? block.min : null);
     }
     if (params.get('isPackage') === '1') setIsPackage(true);
     if (params.get('groupIntro') === '1') setIsGroupIntro(true);
@@ -362,6 +369,7 @@ export function BookingForm({
           company: form.get('company'),
           message: form.get('message'),
           participants: party,
+          participantsMin: partyMin,
           sessionDate: isoDay(date),
           sessionTime: time,
           // Split sessions run the same day, just at a second time slot.
@@ -551,6 +559,7 @@ export function BookingForm({
             is available for a first group booking of {GROUP_INTRO_MIN_PARTICIPANTS} or more.
           </p>
           <div className={`${styles.partyRow} ${styles.indent}`}>
+            <div className={styles.partyGroup}>
             {QUICK_PARTY.map((n) => (
               <button
                 key={n}
@@ -559,31 +568,35 @@ export function BookingForm({
                 aria-pressed={party === n}
                 onClick={() => {
                   setParty(n);
+                  setPartyMin(null);
                   setTime2(null);
                 }}
               >
                 {n}
               </button>
             ))}
-            <select
-              className={`select ${styles.partySelect}`}
-              aria-label={`7 to ${MAX_PARTICIPANTS} participants`}
-              value={party && party >= 7 ? String(party) : ''}
-              onChange={(e) => {
-                setParty(e.target.value ? Number(e.target.value) : null);
-                setTime2(null);
-              }}
-            >
-              <option value="">7 to {MAX_PARTICIPANTS} participants…</option>
-              {Array.from({ length: MAX_PARTICIPANTS - 6 }, (_, i) => {
-                const n = i + 7;
-                return (
-                  <option key={n} value={n}>
-                    {n} participants
-                  </option>
-                );
-              })}
-            </select>
+            </div>
+            <div className={`${styles.partyGroup} ${styles.partyBlocks}`}>
+            {PARTICIPANT_BLOCKS.map((block) => {
+              const on = party === block.max && partyMin === block.min;
+              return (
+                <button
+                  key={block.min}
+                  type="button"
+                  className={`${styles.partyBtn} ${on ? styles.partyBtnOn : ''}`}
+                  aria-pressed={on}
+                  aria-label={`${block.min} to ${block.max} participants`}
+                  onClick={() => {
+                    setParty(block.max);
+                    setPartyMin(block.min);
+                    setTime2(null);
+                  }}
+                >
+                  {block.min}–{block.max}
+                </button>
+              );
+            })}
+            </div>
           </div>
 
           {people > 0 && (
@@ -916,7 +929,11 @@ export function BookingForm({
           <div className="summary-line">
             <span className="summary-line__label">Participants</span>
             <span className="summary-line__value">
-              {people === 1 ? '1 person' : people >= 2 ? `${people} people` : '—'}
+              {people === 1
+                ? '1 person'
+                : people >= 2
+                  ? `${partyMin ? `${partyMin}\u2013${people}` : people} people`
+                  : '—'}
             </span>
           </div>
           {quote.lines[0] ? (

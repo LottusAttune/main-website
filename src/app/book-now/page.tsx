@@ -70,6 +70,7 @@ export default async function LandingPage({
   const { leadTimeDays } = await getSettings();
 
   const hero = asset('somatic-main');
+  const candle = asset('offerings-box-photo');
   const portrait = asset('silvana-hero');
   const mark = asset('logo-circle');
 
@@ -369,10 +370,25 @@ export default async function LandingPage({
               Before you arrive
             </h2>
           </div>
-          <div style={{ maxWidth: 900, margin: '0 auto' }}>
-            <Accordion
-              items={LANDING_FAQS.map((faq) => ({ title: faq.q, answer: faq.a }))}
-            />
+          <div className={styles.faqLayout}>
+            {/* Her candle photo (the one on the Offerings page), with a soft
+                candlelight glow over the flame that slowly brightens and
+                dims - the photo itself never moves. */}
+            <div className={styles.faqPhoto}>
+              <Image
+                src={candle.src}
+                alt="A lit Lotus Attune candle among wooden lotus coasters"
+                width={candle.width}
+                height={candle.height}
+                sizes="(max-width: 899px) 100vw, 40vw"
+              />
+              <span className={styles.candleGlow} aria-hidden="true" />
+            </div>
+            <div className={styles.faqList}>
+              <Accordion
+                items={LANDING_FAQS.map((faq) => ({ title: faq.q, answer: faq.a }))}
+              />
+            </div>
           </div>
         </section>
 

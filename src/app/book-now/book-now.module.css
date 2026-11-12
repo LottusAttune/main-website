@@ -1185,3 +1185,78 @@
     animation-iteration-count: infinite !important;
   }
 }
+
+/* ---------- Before you arrive: candle photo beside the questions ---------- */
+.faqLayout {
+  display: grid;
+  /* The photo is portrait, so its column stays narrow enough that the
+     photo is about as tall as the list of questions beside it. */
+  grid-template-columns: minmax(0, 330px) minmax(0, 1fr);
+  gap: clamp(32px, 4vw, 64px);
+  align-items: center;
+  max-width: var(--width-content);
+  margin: 0 auto;
+}
+
+.faqPhoto {
+  position: relative;
+  overflow: hidden;
+  border-radius: 0;
+  box-shadow: var(--shadow-card);
+}
+
+.faqPhoto img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+/* Warm light over the flame (41% across, 16% down the photo). Only its
+   brightness changes - nothing moves. */
+.candleGlow {
+  position: absolute;
+  left: 41%;
+  top: 16%;
+  width: 46%;
+  aspect-ratio: 1;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  background: radial-gradient(
+    closest-side,
+    rgba(255, 214, 150, 0.55),
+    rgba(255, 196, 120, 0.18) 45%,
+    rgba(255, 196, 120, 0) 100%
+  );
+  mix-blend-mode: screen;
+  pointer-events: none;
+  animation: candleGlow 4.8s ease-in-out infinite alternate;
+}
+
+@keyframes candleGlow {
+  from {
+    opacity: 0.35;
+  }
+  to {
+    opacity: 0.95;
+  }
+}
+
+/* Phones and narrow tablets: no photo - just the questions, as before
+   (a cropped strip cost space without adding much on a small screen). */
+@media (max-width: 899px) {
+  .faqLayout {
+    grid-template-columns: 1fr;
+    max-width: 900px;
+  }
+
+  .faqPhoto {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .candleGlow {
+    animation-duration: 4.8s !important;
+    animation-iteration-count: infinite !important;
+  }
+}

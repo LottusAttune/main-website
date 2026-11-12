@@ -373,10 +373,12 @@ export default async function LandingPage({
               Book your session
             </Link>
             <a
-              href={SITE.phoneHref}
+              href={SITE.whatsappHref}
               className={`btn btn--outline-dark ${styles.closerBtn}`}
+              target="_blank"
+              rel="noopener noreferrer"
             >
-              Call {SITE.phone}
+              WhatsApp {SITE.phone}
             </a>
           </div>
         </section>
@@ -386,7 +388,7 @@ export default async function LandingPage({
 
       <footer className={styles.footer}>
         <div className={styles.social}>
-          {SOCIAL.map((s) => (
+          {SOCIAL.filter((s) => s.confirmed).map((s) => (
             <a
               key={s.label}
               href={s.href}

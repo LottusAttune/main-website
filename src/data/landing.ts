@@ -72,7 +72,7 @@ export const AUDIENCES: Record<
 };
 
 export const ASSURANCE_LINE =
-  'No experience needed · Everything provided · Free rescheduling 48h ahead';
+  'No experience needed · Everything provided · Fully guided';
 
 export const LANDING_STEPS = [
   {

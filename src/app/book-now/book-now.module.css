@@ -534,27 +534,59 @@
 }
 
 .footer {
-  background: var(--gradient-footer);
-  color: var(--color-cream-text-soft);
+  background: var(--gradient-beige);
+  color: var(--color-ink-body);
   text-align: center;
-  padding: 40px var(--space-gutter) 48px;
+  padding: 44px var(--space-gutter) 48px;
 }
 
 .social {
   display: flex;
-  gap: 10px;
+  gap: 36px;
   flex-wrap: wrap;
   justify-content: center;
-  margin-bottom: 24px;
+  margin-bottom: 28px;
 }
 
-.socialPill {
-  padding: 11px 22px;
-  min-height: 44px;
-  border-color: rgba(239, 230, 218, 0.6);
+.socialLink {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  min-width: 72px;
+  color: var(--color-gold-text);
+  text-decoration: none;
+}
+
+/* Same dark tile as the main site's footer icons, just larger so they are
+   easy to spot and tap on a phone. */
+.socialIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  border-radius: var(--radius-soft);
+  background: var(--color-ink);
   color: var(--color-cream-text);
+  transition: background 0.3s var(--ease-out), transform 0.3s var(--ease-out);
+}
+
+.socialIcon svg {
+  width: 24px;
+  height: 24px;
+}
+
+.socialLink:hover .socialIcon,
+.socialLink:focus-visible .socialIcon {
+  background: var(--color-ink-deep);
+  transform: translateY(-2px);
+}
+
+.socialLabel {
   font-size: 11px;
   letter-spacing: 0.2em;
+  text-transform: uppercase;
 }
 
 .copyright {

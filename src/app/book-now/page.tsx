@@ -4,6 +4,7 @@ import Link from 'next/link';
 
 import { Accordion } from '@/components/common/Accordion';
 import { Reveal } from '@/components/common/Reveal';
+import { InstagramIcon, LinkedInIcon, WhatsAppIcon } from '@/components/chrome/FooterIcons';
 import { StickyBookBar } from '@/components/chrome/StickyBookBar';
 import { GUIDE } from '@/data/content';
 import {
@@ -22,6 +23,12 @@ import { asset, assetUrl } from '@/lib/images';
 import { getSettings } from '@/lib/settings';
 import { SITE, SOCIAL } from '@/lib/site';
 import styles from './book-now.module.css';
+
+const SOCIAL_ICONS = {
+  LinkedIn: LinkedInIcon,
+  Instagram: InstagramIcon,
+  WhatsApp: WhatsAppIcon,
+};
 
 /** Ad traffic only — never index this page or let it compete with `/`. */
 export const metadata: Metadata = {
@@ -387,25 +394,26 @@ export default async function LandingPage({
 
       <footer className={styles.footer}>
         <div className={styles.social}>
-          {SOCIAL.filter((s) => s.confirmed).map((s) => (
-            <a
-              key={s.label}
-              href={s.href}
-              className={`btn btn--outline-dark ${styles.socialPill}`}
-              rel="noopener noreferrer"
-              target="_blank"
-            >
-              {s.label}
-            </a>
-          ))}
-          <a
-            href={SITE.whatsappHref}
-            className={`btn btn--outline-dark ${styles.socialPill}`}
-            rel="noopener noreferrer"
-            target="_blank"
-          >
-            WhatsApp
-          </a>
+          {[
+            ...SOCIAL.filter((s) => s.confirmed && s.label in SOCIAL_ICONS),
+            { label: 'WhatsApp', href: SITE.whatsappHref },
+          ].map((s) => {
+            const Icon = SOCIAL_ICONS[s.label as keyof typeof SOCIAL_ICONS];
+            return (
+              <a
+                key={s.label}
+                href={s.href}
+                className={styles.socialLink}
+                rel="noopener noreferrer"
+                target="_blank"
+              >
+                <span className={styles.socialIcon}>
+                  <Icon />
+                </span>
+                <span className={styles.socialLabel}>{s.label}</span>
+              </a>
+            );
+          })}
         </div>
         <div className={styles.copyright}>
           © {new Date().getFullYear()} {SITE.name} · {SITE.tagline} · Toronto{'\u00a0'}– Yonge and Bloor

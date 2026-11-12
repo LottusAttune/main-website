@@ -94,3 +94,29 @@ export function FacebookIcon({ className }: IconProps) {
     </svg>
   );
 }
+
+/* Speech bubble with a handset inside - the same weight as the Instagram
+   mark so the three icons on the ad page footer read as one set. */
+export function WhatsAppIcon({ className }: IconProps) {
+  return (
+    <svg
+      className={className}
+      width="21"
+      height="21"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2.1"
+      strokeLinejoin="round"
+      aria-hidden="true"
+    >
+      <path d="M3.6 20.4 4.9 16.3A8.6 8.6 0 1 1 7.9 19.3Z" />
+      <path
+        transform="translate(7.3 7.3) scale(0.4)"
+        fill="currentColor"
+        stroke="none"
+        d="M6.6 10.8a15.1 15.1 0 0 0 6.6 6.6l2.2-2.2a1 1 0 0 1 1-.25 9.4 9.4 0 0 0 3 .48 1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1 9.4 9.4 0 0 0 .48 3 1 1 0 0 1-.25 1z"
+      />
+    </svg>
+  );
+}

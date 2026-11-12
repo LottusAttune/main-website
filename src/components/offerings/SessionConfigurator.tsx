@@ -9,9 +9,8 @@ import { asset } from '@/lib/images';
 import { quoteFor } from '@/lib/quote';
 import type { Pricing } from '@/lib/settings';
 import {
-  CORPORATE_INTRO_BASE_PRICE,
-  CORPORATE_INTRO_MIN_PARTICIPANTS,
-  CORPORATE_INTRO_PER_PARTICIPANT,
+  GROUP_INTRO_DISCOUNT,
+  GROUP_INTRO_MIN_PARTICIPANTS,
   groupPriceFor,
   MAX_PARTICIPANTS,
   MIN_PARTICIPANTS,
@@ -22,7 +21,7 @@ import {
 } from '@/lib/site';
 import styles from './SessionConfigurator.module.css';
 
-type Format = 'private' | 'group' | 'corporateIntro';
+type Format = 'private' | 'group' | 'groupIntro';
 
 type Props = {
   pricing: Pricing;
@@ -59,7 +58,7 @@ export function SessionConfigurator({ pricing, footnote }: Props) {
   const glassGlowRef = useRef<HTMLDivElement>(null);
 
   const isPrivate = format === 'private';
-  const isCorporateIntro = format === 'corporateIntro';
+  const isGroupIntro = format === 'groupIntro';
 
   // Drop the selection once the group is too small for it to apply, rather
   // than leaving a checked-but-disabled toggle sitting there.
@@ -194,7 +193,7 @@ export function SessionConfigurator({ pricing, footnote }: Props) {
     {
       participants: isPrivate ? 1 : participants,
       isPackage: isPrivate && isPackage,
-      isCorporateIntro,
+      isGroupIntro,
       teamAddon: !isPrivate && teamAddon,
     },
     pricing
@@ -205,7 +204,7 @@ export function SessionConfigurator({ pricing, footnote }: Props) {
   const bookParams = new URLSearchParams();
   bookParams.set('participants', String(isPrivate ? 1 : participants));
   if (isPrivate && isPackage) bookParams.set('isPackage', '1');
-  if (isCorporateIntro) bookParams.set('isCorporateIntro', '1');
+  if (isGroupIntro) bookParams.set('groupIntro', '1');
   if (!isPrivate && teamAddon) bookParams.set('teamAddon', '1');
   const bookHref = `/book?${bookParams.toString()}`;
 
@@ -219,18 +218,15 @@ export function SessionConfigurator({ pricing, footnote }: Props) {
   }
   const giftHref = `/gift?${giftParams.toString()}`;
 
-  const participantsMin = isCorporateIntro
-    ? CORPORATE_INTRO_MIN_PARTICIPANTS
+  const participantsMin = isGroupIntro
+    ? GROUP_INTRO_MIN_PARTICIPANTS
     : MIN_PARTICIPANTS;
 
   const participantOptions = Array.from(
     { length: MAX_PARTICIPANTS - participantsMin + 1 },
     (_, i) => {
       const n = i + participantsMin;
-      const price = isCorporateIntro
-        ? CORPORATE_INTRO_BASE_PRICE +
-          (n - CORPORATE_INTRO_MIN_PARTICIPANTS) * CORPORATE_INTRO_PER_PARTICIPANT
-        : groupPriceFor(n);
+      const price = groupPriceFor(n) - (isGroupIntro ? GROUP_INTRO_DISCOUNT : 0);
       return {
         value: n,
         label: `${n} participants — ${money(price)}`,
@@ -251,27 +247,27 @@ export function SessionConfigurator({ pricing, footnote }: Props) {
               triggerParticipantsPulse();
             }}
           >
-            <span className="choice__title">Groups &amp; Corporate</span>
+            <span className="choice__title">Groups</span>
             <span className="choice__note">
-              2–24 participants — gatherings, celebrations, teams
+              2–{MAX_PARTICIPANTS} participants — gatherings, celebrations, teams
             </span>
           </button>
           <button
             type="button"
             className={`choice ${styles.choiceKeepWhite}`}
-            aria-pressed={isCorporateIntro}
+            aria-pressed={isGroupIntro}
             onClick={() => {
-              setFormat('corporateIntro');
+              setFormat('groupIntro');
               setParticipants((p) =>
-                Math.max(p, CORPORATE_INTRO_MIN_PARTICIPANTS)
+                Math.max(p, GROUP_INTRO_MIN_PARTICIPANTS)
               );
               triggerParticipantsPulse();
             }}
           >
-            <span className="choice__title">Corporate Introductory</span>
+            <span className="choice__title">Group Introductory</span>
             <span className="choice__note">
-              Available for first-time organizational clients (minimum 7
-              participants)
+              {money(GROUP_INTRO_DISCOUNT)} off your first group booking (minimum{' '}
+              {GROUP_INTRO_MIN_PARTICIPANTS} participants)
             </span>
           </button>
         </div>
@@ -303,7 +299,8 @@ export function SessionConfigurator({ pricing, footnote }: Props) {
             >
               <span className="choice__title">Package of four</span>
               <span className="choice__note">
-                Save {money(pricing.privateSession * 4 - pricing.privatePackage)}
+                {money(pricing.privatePackage)} — save{' '}
+                {money(pricing.privateSession * 4 - pricing.privatePackage)}, private sessions only
               </span>
             </button>
           </div>

@@ -13,15 +13,14 @@ import {
   blockedDatesFor,
   blockedTimesFor,
   type BookedCall,
-  CORPORATE_INTRO_MIN_PARTICIPANTS,
-  corporateIntroPriceFor,
   EXTRA_SESSION_SLOT,
+  GROUP_INTRO_DISCOUNT,
+  GROUP_INTRO_MIN_PARTICIPANTS,
   MAX_PARTICIPANTS,
   SITE,
   TEAM_ADDON_MIN_PARTICIPANTS,
   TIME_SLOTS,
   TWO_SESSION_THRESHOLD,
-  groupPriceFor,
   money,
   type SessionSlot,
   sessionSlotsFor,
@@ -107,7 +106,10 @@ export function BookingForm({
   const [time2, setTime2] = useState<string | null>(null);
   const [teamAddon, setTeamAddon] = useState(false);
   const [isPackage, setIsPackage] = useState(false);
-  const [isCorporateIntro, setIsCorporateIntro] = useState(false);
+  const [isGroupIntro, setIsGroupIntro] = useState(false);
+  // Shown under the Group Introductory box when the server finds an earlier
+  // group booking under the same email or phone.
+  const [introMessage, setIntroMessage] = useState('');
   // null = nothing chosen yet - the 15% pill shows only a subtle suggested
   // tint, and no gratuity is added to the total until the person actually
   // clicks a choice.
@@ -156,7 +158,7 @@ export function BookingForm({
       setParty(requested);
     }
     if (params.get('isPackage') === '1') setIsPackage(true);
-    if (params.get('isCorporateIntro') === '1') setIsCorporateIntro(true);
+    if (params.get('groupIntro') === '1') setIsGroupIntro(true);
     if (params.get('teamAddon') === '1') setTeamAddon(true);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -220,10 +222,10 @@ export function BookingForm({
   }, [people, isPackage]);
 
   useEffect(() => {
-    if (isCorporateIntro && people < CORPORATE_INTRO_MIN_PARTICIPANTS) {
-      setIsCorporateIntro(false);
+    if (isGroupIntro && people < GROUP_INTRO_MIN_PARTICIPANTS) {
+      setIsGroupIntro(false);
     }
-  }, [people, isCorporateIntro]);
+  }, [people, isGroupIntro]);
 
   const gratuityAmount =
     gratuityChoice === 'custom' ? Number(customGratuity) || 0 : undefined;
@@ -236,7 +238,7 @@ export function BookingForm({
     {
       participants: people,
       isPackage,
-      isCorporateIntro,
+      isGroupIntro,
       teamAddon,
       percentOff: code.applied?.percentOff,
       amountOff: code.applied?.amountOff,
@@ -341,7 +343,7 @@ export function BookingForm({
     }
     if (needsSecond && !time2) {
       setSubmitError(
-        'Groups larger than 12 run across two sessions on the same day — please choose a second time slot.'
+        `Groups larger than ${TWO_SESSION_THRESHOLD} run across two sessions on the same day — please choose a second time slot.`
       );
       return;
     }
@@ -367,7 +369,7 @@ export function BookingForm({
           sessionTime2: needsSecond ? time2 : null,
           teamAddon,
           isPackage,
-          isCorporateIntro,
+          isGroupIntro,
           discountCode: code.applied?.code ?? null,
           giftCode: code.gift?.code ?? null,
           gratuityPercent: gratuityPercent ?? null,
@@ -380,8 +382,19 @@ export function BookingForm({
       if (!response.ok) {
         const body = (await response.json().catch(() => null)) as {
           error?: string;
+          code?: string;
           issues?: Record<string, string[] | undefined>;
         } | null;
+        // An earlier group booking under this email or phone: nothing was
+        // saved. Untick the box so the total shows the regular price, and
+        // let them continue from there.
+        if (body?.code === 'group_intro_ineligible') {
+          const message = body.error ?? 'Group Introductory is for first-time group bookings only.';
+          setIsGroupIntro(false);
+          setIntroMessage(message);
+          setSubmitError(`${message} Your total now shows the regular group price.`);
+          return;
+        }
         setFieldErrors(body?.issues ?? {});
         const message = body?.error ?? 'We could not send your request.';
         // A validation error is self-explanatory once the field is
@@ -533,9 +546,9 @@ export function BookingForm({
             </h2>
           </div>
           <p className={styles.stepNote}>
-            Sessions are offered for 1 to 24 participants. Groups larger than
-            12 are split across two sessions. Corporate Introductory pricing
-            is available from 7 participants.
+            Sessions are offered for 1 to {MAX_PARTICIPANTS} participants. Groups larger than{' '}
+            {TWO_SESSION_THRESHOLD} are split across two sessions. Group Introductory pricing
+            is available for a first group booking of {GROUP_INTRO_MIN_PARTICIPANTS} or more.
           </p>
           <div className={`${styles.partyRow} ${styles.indent}`}>
             {QUICK_PARTY.map((n) => (
@@ -554,14 +567,14 @@ export function BookingForm({
             ))}
             <select
               className={`select ${styles.partySelect}`}
-              aria-label="7 to 24 participants"
+              aria-label={`7 to ${MAX_PARTICIPANTS} participants`}
               value={party && party >= 7 ? String(party) : ''}
               onChange={(e) => {
                 setParty(e.target.value ? Number(e.target.value) : null);
                 setTime2(null);
               }}
             >
-              <option value="">7 to 24 participants…</option>
+              <option value="">7 to {MAX_PARTICIPANTS} participants…</option>
               {Array.from({ length: MAX_PARTICIPANTS - 6 }, (_, i) => {
                 const n = i + 7;
                 return (
@@ -619,30 +632,28 @@ export function BookingForm({
             </div>
           )}
 
-          {people >= CORPORATE_INTRO_MIN_PARTICIPANTS && (
-            <div className={`${styles.tierChoice} ${styles.indent}`}>
-              <button
-                type="button"
-                className={`${styles.timeBtn} ${!isCorporateIntro ? styles.timeBtnOn : ''}`}
-                aria-pressed={!isCorporateIntro}
-                onClick={() => setIsCorporateIntro(false)}
-              >
-                <span className={styles.tierLabel}>Standard group</span>
-                <span className={styles.timeNote}>
-                  {money(groupPriceFor(people))} — per-participant group rate
+          {people >= GROUP_INTRO_MIN_PARTICIPANTS && (
+            <div className={`${styles.introCheck} ${styles.indent}`}>
+              <label className={styles.agree}>
+                <input
+                  type="checkbox"
+                  className={styles.agreeBox}
+                  checked={isGroupIntro}
+                  onChange={(e) => {
+                    setIsGroupIntro(e.target.checked);
+                    setIntroMessage('');
+                  }}
+                />
+                <span>
+                  Group Introductory: {money(GROUP_INTRO_DISCOUNT)} off. This is my first group
+                  booking with Lotus Attune.
                 </span>
-              </button>
-              <button
-                type="button"
-                className={`${styles.timeBtn} ${isCorporateIntro ? styles.timeBtnOn : ''}`}
-                aria-pressed={isCorporateIntro}
-                onClick={() => setIsCorporateIntro(true)}
-              >
-                <span className={styles.tierLabel}>Corporate Introductory</span>
-                <span className={styles.timeNote}>
-                  {money(corporateIntroPriceFor(people))} — first-time organizational clients
-                </span>
-              </button>
+              </label>
+              {introMessage ? (
+                <div className={styles.introMessage} role="alert">
+                  {introMessage}
+                </div>
+              ) : null}
             </div>
           )}
         </div>
@@ -685,7 +696,7 @@ export function BookingForm({
           </div>
           <p className={styles.stepNote}>
             {needsSecond
-              ? 'Each session runs two hours. Groups larger than 12 run across two sessions on the same day, so choose two time slots below'
+              ? `Each session runs two hours. Groups larger than ${TWO_SESSION_THRESHOLD} run across two sessions on the same day, so choose two time slots below`
               : 'Each session runs two hours'}
           </p>
           <div className={`${styles.times} ${styles.indent}`}>
@@ -911,11 +922,7 @@ export function BookingForm({
           {quote.lines[0] ? (
             <div className="summary-line">
               <span className="summary-line__label">
-                {people === 1
-                  ? quote.lines[0].label
-                  : isCorporateIntro
-                    ? 'Corporate Introductory'
-                    : 'Standard group'}
+                {people === 1 ? quote.lines[0].label : 'Group session'}
               </span>
               <span className="summary-line__value">{quote.lines[0].value}</span>
             </div>

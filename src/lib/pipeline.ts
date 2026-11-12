@@ -30,12 +30,12 @@ export type Lead = {
   participants: number;
   sessionDate: string | null;
   sessionTime: string | null;
-  /** Split sessions (groups over 12) run a second time slot the same day. */
+  /** Split sessions (groups over 15) run a second time slot the same day. */
   sessionDate2: string | null;
   sessionTime2: string | null;
   teamAddon: boolean;
   isPackage: boolean;
-  isCorporateIntro: boolean;
+  isGroupIntro: boolean;
   discountCode: string | null;
   gratuity: number;
   total: number;

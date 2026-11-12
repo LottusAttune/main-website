@@ -328,7 +328,7 @@ export function GiftCalculator({ pricing, codes, payTerms, header }: Props) {
               Groups &amp; Corporate
             </span>
             <span className="choice__note">
-              2–24 participants — gatherings, celebrations, teams
+              2–{MAX_PARTICIPANTS} participants — gatherings, celebrations, teams
             </span>
           </button>
         </div>

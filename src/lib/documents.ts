@@ -222,7 +222,9 @@ export type BookingCtx = {
   sessionTime2: string | null;
   teamAddon: boolean;
   isPackage: boolean;
-  isCorporateIntro: boolean;
+  /** Group Introductory ($150 off a first group booking). Stored in the
+   *  `is_corporate_intro` column, which predates the rename. */
+  isGroupIntro: boolean;
   discountCode: string | null;
   gratuity: number;
   total: number;
@@ -246,7 +248,7 @@ function bookingCtx(row: Row): BookingCtx {
     sessionTime2: row.session_time_2 ? String(row.session_time_2) : null,
     teamAddon: Boolean(row.team_addon),
     isPackage: Boolean(row.is_package),
-    isCorporateIntro: Boolean(row.is_corporate_intro),
+    isGroupIntro: Boolean(row.is_corporate_intro),
     discountCode: row.discount_code ? String(row.discount_code) : null,
     gratuity: Number(row.gratuity ?? 0),
     total: Number(row.estimated_total ?? 0),
@@ -282,7 +284,7 @@ export function bookingLines(booking: BookingCtx, settings: SiteSettings): Docum
     {
       participants: booking.participants,
       isPackage: booking.isPackage,
-      isCorporateIntro: booking.isCorporateIntro,
+      isGroupIntro: booking.isGroupIntro,
       teamAddon: booking.teamAddon,
       percentOff: code?.percentOff,
       amountOff: code?.amountOff,
@@ -1007,8 +1009,8 @@ function sessionBox(booking: BookingCtx): string {
   const format =
     booking.participants === 1
       ? booking.isPackage ? 'Private — package of four sessions' : 'Private session'
-      : booking.isCorporateIntro
-        ? `Corporate introductory experience — ${booking.participants} participants`
+      : booking.isGroupIntro
+        ? `${booking.participants} participants · Group Introductory`
         : `${booking.participants} participants`;
   const rows: Array<[string, string]> = [
     ['Experience', 'Immersive Soma Sound Experience, two hours'],

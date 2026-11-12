@@ -239,7 +239,7 @@ async function ensureCalendarHold(bookingId: string): Promise<void> {
     row.company ? `Company: ${row.company}` : null,
     `Participants: ${participants}`,
     row.is_package ? 'Package of four sessions' : null,
-    row.is_corporate_intro ? 'Corporate introductory session' : null,
+    row.is_corporate_intro ? 'Group Introductory ($150 off)' : null,
     row.team_addon ? 'Team-building add-on: yes' : null,
     Number(row.gratuity ?? 0) > 0 ? `Gratuity: $${row.gratuity}` : null,
     row.message ? `Message: ${row.message}` : null,

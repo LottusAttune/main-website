@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-import { EXTRA_SESSION_SLOT, MAX_PARTICIPANTS, TIME_SLOTS } from '@/lib/site';
+import { EXTRA_SESSION_SLOT, MAX_PARTICIPANTS, TIME_SLOTS, TWO_SESSION_THRESHOLD } from '@/lib/site';
 
 const TIME_LABELS: [string, ...string[]] = [
   EXTRA_SESSION_SLOT.label,
@@ -27,7 +27,7 @@ export const bookingSchema = z
     sessionTime2: z.enum(TIME_LABELS).optional().nullable(),
     teamAddon: z.boolean().default(false),
     isPackage: z.boolean().default(false),
-    isCorporateIntro: z.boolean().default(false),
+    isGroupIntro: z.boolean().default(false),
     discountCode: z.string().trim().max(40).optional().nullable(),
     giftCode: z.string().trim().max(40).optional().nullable(),
     gratuityPercent: z.coerce.number().int().min(0).max(100).optional().nullable(),
@@ -41,11 +41,11 @@ export const bookingSchema = z
   })
   .refine(
     (value) =>
-      value.participants <= 12 ||
+      value.participants <= TWO_SESSION_THRESHOLD ||
       (Boolean(value.sessionDate2) && Boolean(value.sessionTime2)),
     {
       message:
-        'Groups larger than 12 run across two sessions — a second date and time is required.',
+        `Groups larger than ${TWO_SESSION_THRESHOLD} run across two sessions — a second date and time is required.`,
       path: ['sessionDate2'],
     }
   );

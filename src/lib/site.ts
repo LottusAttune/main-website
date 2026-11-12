@@ -12,7 +12,7 @@ export const SITE = {
   whatsappHref: 'https://wa.me/14168715610',
   area: 'Toronto & the GTA',
   description:
-    'An immersive wellness experience designed to support relaxation, nervous system regulation and deep inner connection. Two-hour sessions in downtown Toronto for 1 to 24 people.',
+    'An immersive wellness experience designed to support relaxation, nervous system regulation and deep inner connection. Two-hour sessions in downtown Toronto for 1 to 25 people.',
   url: process.env.NEXT_PUBLIC_SITE_URL ?? 'https://lotusattune.com',
 } as const;
 
@@ -81,8 +81,8 @@ export const NAV_SECTIONS = [
  * published from the studio dashboard — see `lib/pricing.ts`.
  */
 export const DEFAULT_PRICING = {
-  privateSession: 350,
-  privatePackage: 1200,
+  privateSession: 250,
+  privatePackage: 900,
   perParticipant: 250,
   teamAddon: 500,
   deposit: 500,
@@ -97,45 +97,51 @@ export const DEFAULT_SLOTS = {
 export const DEFAULT_LEAD_TIME = 6;
 
 /** Groups above this size are split across two sessions. */
-export const TWO_SESSION_THRESHOLD = 12;
+export const TWO_SESSION_THRESHOLD = 15;
 
 /** At or below this headcount the session runs in the Private Wellness Lounge. */
 export const LOUNGE_MAX = 6;
 
 export const MIN_PARTICIPANTS = 2;
-export const MAX_PARTICIPANTS = 24;
+export const MAX_PARTICIPANTS = 25;
 
-/** Corporate Introductory Experience: first-time organizational clients only. */
-export const CORPORATE_INTRO_MIN_PARTICIPANTS = 7;
-export const CORPORATE_INTRO_BASE_PRICE = 1300;
-export const CORPORATE_INTRO_PER_PARTICIPANT = 100;
-
-/**
- * The one place this formula is computed - both the quote engine
- * (src/lib/quote.ts) and the Book page's tier-choice cards call this, so a
- * displayed price can never drift from what's actually charged.
- */
-export function corporateIntroPriceFor(participants: number): number {
-  return (
-    CORPORATE_INTRO_BASE_PRICE +
-    Math.max(0, participants - CORPORATE_INTRO_MIN_PARTICIPANTS) *
-      CORPORATE_INTRO_PER_PARTICIPANT
-  );
-}
+/** Group Introductory: a flat amount off the booker's first group booking,
+ *  for any group of this size or more (not only organizations). */
+export const GROUP_INTRO_MIN_PARTICIPANTS = 7;
+export const GROUP_INTRO_DISCOUNT = 150;
 
 /** The team-building add-on doesn't make sense for a small group. */
 export const TEAM_ADDON_MIN_PARTICIPANTS = 7;
 
-/** Group & Corporate: $250/participant up to 10, then $100 per participant beyond. */
-export const GROUP_BASE_RATE = 250;
-export const GROUP_BASE_TIER_MAX = 10;
-export const GROUP_INCREMENT_RATE = 100;
+/** Group totals for 2 to 6 people, each priced on its own. */
+const SMALL_GROUP_TOTALS: Record<number, number> = {
+  2: 450,
+  3: 700,
+  4: 950,
+  5: 1200,
+  6: 1450,
+};
 
+/** From 7 people up the total is flat across each range. */
+export const GROUP_TIERS = [
+  { min: 7, max: 10, total: 1700 },
+  { min: 11, max: 15, total: 2100 },
+  { min: 16, max: 20, total: 2500 },
+  { min: 21, max: MAX_PARTICIPANTS, total: 2900 },
+] as const;
+
+/**
+ * The one place a group's total is looked up - the quote engine
+ * (src/lib/quote.ts) and every price shown in a selector call this, so a
+ * displayed price can never drift from what's actually charged.
+ */
 export function groupPriceFor(participants: number): number {
-  const base = Math.min(participants, GROUP_BASE_TIER_MAX) * GROUP_BASE_RATE;
-  const extra =
-    Math.max(0, participants - GROUP_BASE_TIER_MAX) * GROUP_INCREMENT_RATE;
-  return base + extra;
+  if (participants < MIN_PARTICIPANTS) return 0;
+  const small = SMALL_GROUP_TOTALS[participants];
+  if (small) return small;
+  const tier = GROUP_TIERS.find((t) => participants >= t.min && participants <= t.max);
+  // Above the maximum never prices at zero - it takes the top tier.
+  return (tier ?? GROUP_TIERS[GROUP_TIERS.length - 1]).total;
 }
 
 /** Calendar days between today and the earliest bookable discovery call. */

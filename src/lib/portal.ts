@@ -94,7 +94,7 @@ function ctxFromRow(row: Record<string, unknown>): BookingCtx {
     sessionTime2: row.session_time_2 ? String(row.session_time_2) : null,
     teamAddon: Boolean(row.team_addon),
     isPackage: Boolean(row.is_package),
-    isCorporateIntro: Boolean(row.is_corporate_intro),
+    isGroupIntro: Boolean(row.is_corporate_intro),
     discountCode: row.discount_code ? String(row.discount_code) : null,
     gratuity: Number(row.gratuity ?? 0),
     total: Number(row.estimated_total ?? 0),
@@ -257,7 +257,7 @@ export async function addUpsell(
     {
       participants: next.participants,
       isPackage: next.isPackage,
-      isCorporateIntro: next.isCorporateIntro,
+      isGroupIntro: next.isGroupIntro,
       teamAddon: next.teamAddon,
       percentOff: code?.percentOff,
       amountOff: code?.amountOff,

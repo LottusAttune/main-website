@@ -332,9 +332,9 @@ export function Settings({ settings, integrations }: { settings: SiteSettings; i
               </label>
             ))}
             <div className={styles.priceField}>
-              <span className={styles.priceLabel}>Group &amp; Corporate rate</span>
+              <span className={styles.priceLabel}>Group prices</span>
               <span className={styles.priceNote}>
-                Fixed tiered rate, not editable here: $250 per participant up to 10, then $100 per participant for 11–24.
+                Fixed totals, not editable here: 2 people $450, 3 $700, 4 $950, 5 $1,200, 6 $1,450, then 7–10 $1,700, 11–15 $2,100, 16–20 $2,500 and 21–25 $2,900. Group Introductory takes $150 off a first group booking of 7 or more.
               </span>
             </div>
           </div>

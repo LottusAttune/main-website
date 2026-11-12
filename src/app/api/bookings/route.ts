@@ -19,10 +19,11 @@ import {
   type BookingCtx,
 } from '@/lib/documents';
 import { sendEtransferRequestEmail, sendNewBookingOwnerNotification } from '@/lib/email';
+import { hasEarlierGroupBooking } from '@/lib/groupIntro';
 import { balanceDue } from '@/lib/pipeline';
 import { quoteFor } from '@/lib/quote';
 import { getSettings } from '@/lib/settings';
-import { isSlotAvailable, LOUNGE_MAX, SITE } from '@/lib/site';
+import { GROUP_INTRO_MIN_PARTICIPANTS, isSlotAvailable, LOUNGE_MAX, SITE } from '@/lib/site';
 import { bookingSchema } from '@/lib/validation';
 
 function venueFor(participants: number): string {
@@ -69,11 +70,14 @@ export async function POST(request: Request) {
 
   const giftCode = input.giftCode ? input.giftCode.trim().toUpperCase() : null;
 
+  // Group Introductory only exists from 7 people up; below that the tick is ignored.
+  const groupIntro = input.isGroupIntro && input.participants >= GROUP_INTRO_MIN_PARTICIPANTS;
+
   const { total, gratuity } = quoteFor(
     {
       participants: input.participants,
       isPackage: input.isPackage,
-      isCorporateIntro: input.isCorporateIntro,
+      isGroupIntro: groupIntro,
       teamAddon: input.teamAddon,
       percentOff: eligibleDiscount?.percentOff,
       amountOff: eligibleDiscount?.amountOff,
@@ -128,6 +132,29 @@ export async function POST(request: Request) {
     );
   }
 
+  // Group Introductory is for a first group booking: turn it down, before
+  // anything is saved, when this email or phone already has one. The form
+  // unticks the box and shows the regular price. If the check itself cannot
+  // run, the booking still goes through - it is tagged Group Intro in the
+  // studio either way, so it can be reviewed.
+  if (groupIntro) {
+    let returning = false;
+    try {
+      returning = await hasEarlierGroupBooking({ email: input.email, phone: input.phone });
+    } catch (error) {
+      console.error('[bookings] group intro check failed:', error);
+    }
+    if (returning) {
+      return NextResponse.json(
+        {
+          error: 'Group Introductory is for first-time group bookings only.',
+          code: 'group_intro_ineligible',
+        },
+        { status: 409 }
+      );
+    }
+  }
+
   // A card attempt isn't real until it's paid - no email, no calendar hold,
   // nothing shown in the studio, until the payment actually lands (see
   // afterPayment). E-transfer is shown right away: choosing it is itself
@@ -155,7 +182,7 @@ export async function POST(request: Request) {
         ${input.participants},
         ${input.sessionDate}, ${input.sessionTime},
         ${input.sessionDate2 ?? null}, ${input.sessionTime2 ?? null},
-        ${input.teamAddon}, ${input.isPackage}, ${input.isCorporateIntro},
+        ${input.teamAddon}, ${input.isPackage}, ${groupIntro},
         ${eligibleDiscount?.code ?? null}, ${gratuity}, ${total}, NOW(), ${paymentMethod}
       )
       RETURNING id, portal_token
@@ -200,7 +227,7 @@ export async function POST(request: Request) {
           sessionTime2: input.sessionTime2 ?? null,
           teamAddon: input.teamAddon,
           isPackage: input.isPackage,
-          isCorporateIntro: input.isCorporateIntro,
+          isGroupIntro: groupIntro,
           discountCode: eligibleDiscount?.code ?? null,
           gratuity,
           total,
@@ -295,7 +322,7 @@ export async function POST(request: Request) {
         input.company ? `Company: ${input.company}` : null,
         `Participants: ${input.participants}`,
         input.isPackage ? 'Package of four sessions' : null,
-        input.isCorporateIntro ? 'Corporate introductory session' : null,
+        groupIntro ? 'Group Introductory ($150 off)' : null,
         input.teamAddon ? 'Team-building add-on: yes' : null,
         gratuity > 0 ? `Gratuity: $${gratuity}` : null,
         input.message ? `Message: ${input.message}` : null,

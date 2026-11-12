@@ -57,7 +57,7 @@ const COLUMNS = [
     value: (b: BookingRow) => (b.teamAddon ? 'Yes' : 'No'),
   },
   { header: 'Package of four', value: (b: BookingRow) => (b.isPackage ? 'Yes' : 'No') },
-  { header: 'Corporate intro', value: (b: BookingRow) => (b.isCorporateIntro ? 'Yes' : 'No') },
+  { header: 'Group Intro', value: (b: BookingRow) => (b.isGroupIntro ? 'Yes' : 'No') },
   { header: 'Venue', value: (b: BookingRow) => b.venue },
   { header: 'Gratuity', value: (b: BookingRow) => b.gratuity },
   { header: 'Value', value: (b: BookingRow) => b.total },
@@ -157,7 +157,7 @@ function formatLabel(b: BookingRow): string {
   ];
   if (b.teamAddon) parts.push('Team-building');
   if (b.isPackage) parts.push('Package of four');
-  if (b.isCorporateIntro) parts.push('Corporate intro');
+  if (b.isGroupIntro) parts.push('Group Intro');
   return parts.join(' · ');
 }
 

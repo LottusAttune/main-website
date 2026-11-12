@@ -1,7 +1,7 @@
 import type { Pricing } from '@/lib/settings';
 import {
-  CORPORATE_INTRO_MIN_PARTICIPANTS,
-  corporateIntroPriceFor,
+  GROUP_INTRO_DISCOUNT,
+  GROUP_INTRO_MIN_PARTICIPANTS,
   groupPriceFor,
   TEAM_ADDON_MIN_PARTICIPANTS,
 } from '@/lib/site';
@@ -29,8 +29,9 @@ export type BookingInput = {
   participants: number;
   /** Private bookings only: a package of four rather than a single session. */
   isPackage?: boolean;
-  /** First-time organizational clients only, minimum 7 participants. */
-  isCorporateIntro?: boolean;
+  /** The booker's first group booking, minimum 7 participants: a flat
+   *  amount off the group total. Eligibility is checked server-side. */
+  isGroupIntro?: boolean;
   teamAddon?: boolean;
   /** A code is either percent-off or a flat amount-off, never both -
    *  already validated as active and meeting its own participant minimum. */
@@ -74,21 +75,19 @@ export function quoteFor(
         value: money(pricing.privateSession),
       });
     }
-  } else if (
-    input.isCorporateIntro &&
-    people >= CORPORATE_INTRO_MIN_PARTICIPANTS
-  ) {
-    subtotal = corporateIntroPriceFor(people);
-    lines.push({
-      label: `Corporate introductory experience — ${people} participants`,
-      value: money(subtotal),
-    });
   } else if (people >= MIN_GROUP_SIZE) {
     subtotal = groupPriceFor(people);
     lines.push({
       label: `${people} participants`,
       value: money(subtotal),
     });
+    if (input.isGroupIntro && people >= GROUP_INTRO_MIN_PARTICIPANTS) {
+      subtotal -= GROUP_INTRO_DISCOUNT;
+      lines.push({
+        label: `Group Introductory — ${money(GROUP_INTRO_DISCOUNT)} off`,
+        value: `−${money(GROUP_INTRO_DISCOUNT)}`,
+      });
+    }
   }
 
   // The team-building add-on doesn't make sense for a small group.

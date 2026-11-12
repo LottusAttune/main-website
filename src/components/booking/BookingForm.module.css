@@ -162,6 +162,23 @@
   margin-top: 12px;
 }
 
+/* Group Introductory tick box under step 01 - the same checkbox as the
+   terms line in the summary. */
+.introCheck {
+  margin-top: 12px;
+}
+
+.introCheck .agree {
+  margin: 0;
+}
+
+.introMessage {
+  margin-top: 8px;
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--status-alert);
+}
+
 .timesNote {
   margin: 12px 0 0;
   font-size: 13.5px;

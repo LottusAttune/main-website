@@ -41,7 +41,7 @@ function latest(docs: DocumentRow[], bookingId: string, kind: 'proposal' | 'invo
 function formatLabel(lead: Lead): string {
   if (lead.participants === 1) return lead.isPackage ? 'Private · package of four' : 'Private session';
   const parts = [`${lead.participants} participants`];
-  if (lead.isCorporateIntro) parts.push('corporate intro');
+  if (lead.isGroupIntro) parts.push('Group Intro');
   if (lead.teamAddon) parts.push('team-building');
   return parts.join(' · ');
 }

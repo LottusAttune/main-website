@@ -22,8 +22,8 @@ export function PortalView({ data }: { data: PortalData }) {
       ? booking.isPackage
         ? 'Private, package of four sessions'
         : 'Private session'
-      : booking.isCorporateIntro
-        ? `Corporate introductory experience, ${booking.participants} participants`
+      : booking.isGroupIntro
+        ? `${booking.participants} participants, Group Introductory`
         : `${booking.participants} participants`;
   const extras = [booking.teamAddon ? 'Team-building add-on' : null].filter(Boolean);
   const { location, arrival } = splitVenueDetails(settings.business.venueDetails);

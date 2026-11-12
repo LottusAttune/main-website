@@ -110,7 +110,7 @@ export async function getStudioData(): Promise<StudioData> {
       sessionTime2: row.session_time_2 ? String(row.session_time_2) : null,
       teamAddon: Boolean(row.team_addon),
       isPackage: Boolean(row.is_package),
-      isCorporateIntro: Boolean(row.is_corporate_intro),
+      isGroupIntro: Boolean(row.is_corporate_intro),
       discountCode: row.discount_code ? String(row.discount_code) : null,
       gratuity: Number(row.gratuity ?? 0),
       total: Number(row.estimated_total),

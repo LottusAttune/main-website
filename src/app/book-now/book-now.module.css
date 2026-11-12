@@ -292,8 +292,9 @@
   inset: -40%;
   background: radial-gradient(
     closest-side,
-    rgba(198, 169, 122, 0.4),
-    rgba(198, 169, 122, 0) 70%
+    rgba(214, 172, 108, 0.62),
+    rgba(214, 172, 108, 0.22) 45%,
+    rgba(214, 172, 108, 0) 72%
   );
   pointer-events: none;
   animation: painDrift 10s ease-in-out infinite alternate;
@@ -304,22 +305,22 @@
 .painGlow {
   animation:
     painDrift 18s ease-in-out infinite alternate,
-    painGlowFade 7s ease-in-out infinite alternate;
+    painGlowFade 5s ease-in-out infinite alternate;
 }
 
 .painCard:nth-child(2) .painGlow {
-  animation-duration: 18s, 8.5s;
-  animation-delay: -6s, -3s;
+  animation-duration: 18s, 6s;
+  animation-delay: -6s, -2.5s;
 }
 
 .painCard:nth-child(3) .painGlow {
-  animation-duration: 18s, 10s;
-  animation-delay: -12s, -6s;
+  animation-duration: 18s, 7s;
+  animation-delay: -12s, -5s;
 }
 
 @keyframes painGlowFade {
   from {
-    opacity: 0.35;
+    opacity: 0.15;
   }
   to {
     opacity: 1;
@@ -1168,16 +1169,16 @@
   }
 
   .painGlow {
-    animation-duration: 18s, 7s !important;
+    animation-duration: 18s, 5s !important;
     animation-iteration-count: infinite, infinite !important;
   }
 
   .painCard:nth-child(2) .painGlow {
-    animation-duration: 18s, 8.5s !important;
+    animation-duration: 18s, 6s !important;
   }
 
   .painCard:nth-child(3) .painGlow {
-    animation-duration: 18s, 10s !important;
+    animation-duration: 18s, 7s !important;
   }
 
   .washSection > .includedWash {
@@ -1241,16 +1242,41 @@
   }
 }
 
-/* Phones and narrow tablets: no photo - just the questions, as before
-   (a cropped strip cost space without adding much on a small screen). */
+/* Phones and narrow tablets: the photo above the questions, with only
+   the bottom ~20% trimmed (the flame's reflection and a little below it
+   stay in), sized so the photo and all five questions fit on one screen. */
 @media (max-width: 899px) {
   .faqLayout {
     grid-template-columns: 1fr;
+    gap: 18px;
     max-width: 900px;
   }
 
   .faqPhoto {
-    display: none;
+    justify-self: center;
+    height: min(300px, calc(100vh - 470px));
+    height: min(300px, calc(100svh - 470px));
+    min-height: 180px;
+    aspect-ratio: 720 / 734;
+  }
+
+  .faqPhoto img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: 50% 0%;
+  }
+
+  /* The flame sits 16% down the full photo, which is 20% down this
+     bottom-trimmed version. */
+  .candleGlow {
+    top: 20%;
+  }
+
+  /* Slightly tighter questions, so all five fit with the photo. */
+  .faqLayout [class*='Accordion_head__'] {
+    padding: 15px 0;
+    font-size: 19px;
   }
 }
 

@@ -71,7 +71,7 @@ export const AUDIENCES: Record<
     eyebrow: 'Downtown Toronto · Teams of up to 25',
     title: 'A team reset your people will actually remember',
     sub: 'An immersive wellness experience for organizations — designed to reduce stress, restore focus and bring teams back together',
-    problemEyebrow: 'The cost of a depleted team',
+    problemEyebrow: 'The hidden cost of stress',
     problemTitle: 'The most productive thing your team can do is pause',
     problemTitleLines: ['The most productive thing your team', 'can do is pause'],
     stepOne: 'Your team, department or leadership group, from 4 to 25 people',

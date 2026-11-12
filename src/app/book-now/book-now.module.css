@@ -212,6 +212,16 @@
   line-height: 1.14;
 }
 
+/* One plain line under a section heading (the offers' "two-hour sessions,
+   venue included"). */
+.headNote {
+  margin: 16px auto 0;
+  max-width: 60ch;
+  font-size: 15.5px;
+  line-height: 1.6;
+  color: var(--color-ink-body);
+}
+
 .painGrid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));

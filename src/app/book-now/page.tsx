@@ -259,7 +259,6 @@ export default async function LandingPage({
           </div>
           <div className={styles.reviewGrid}>
             {LANDING_REVIEWS.map((review) => {
-              const face = review.face ? asset(review.face) : null;
               return (
                 <figure
                   key={review.name}
@@ -273,13 +272,7 @@ export default async function LandingPage({
                     {review.text}
                   </blockquote>
                   <figcaption className={styles.reviewCaption}>
-                    <span className={styles.avatar}>
-                      {face ? (
-                        <Image src={face.src} alt="" width={46} height={46} />
-                      ) : (
-                        review.name.charAt(0)
-                      )}
-                    </span>
+                    <span className={styles.avatar}>{review.name.charAt(0)}</span>
                     <span>
                       <span className={styles.reviewName}>{review.name}</span>
                       <span className={styles.reviewMeta}>{review.meta}</span>
@@ -300,6 +293,9 @@ export default async function LandingPage({
             <h2 id="lp-offers" className={`display ${styles.heading}`}>
               {audience.offersTitle}
             </h2>
+            <p className={styles.headNote}>
+              Two-hour sessions · Premium venue rental included in the price
+            </p>
           </div>
           <div className={styles.offerGrid}>
             {offers.map((offer) => (
@@ -401,7 +397,7 @@ export default async function LandingPage({
           ))}
         </div>
         <div className={styles.copyright}>
-          © {new Date().getFullYear()} {SITE.name} · {SITE.tagline} · {SITE.area}
+          © {new Date().getFullYear()} {SITE.name} · {SITE.tagline} · Toronto{'\u00a0'}– Yonge and Bloor
         </div>
       </footer>
     </div>

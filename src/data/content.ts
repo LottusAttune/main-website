@@ -122,7 +122,7 @@ export const INCLUDED_SHORT = [
   'Comfort items and materials: custom-branded cushioned wellness mats, memory-foam cervical pillows, cozy blankets, and eye masks',
   'Intention-setting cards and reflection cards',
   'Refreshments, including water, other beverages and healthy snacks',
-  'End-of-session reintegration',
+  'End-of-session stretching and reintegration',
 ] as const;
 
 /** Experience-page "What's included" — the full nine-line version. */

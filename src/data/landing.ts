@@ -116,7 +116,7 @@ export const LANDING_COMPONENTS = [
   {
     icon: 'icon-reintegration',
     title: 'Reintegration',
-    body: 'A gentle transition back, carrying a renewed sense of calm into the days ahead',
+    body: 'A gentle transition back with mindful stretching, carrying a renewed sense of calm into the days ahead',
   },
 ] as const;
 

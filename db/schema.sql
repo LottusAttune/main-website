@@ -147,6 +147,12 @@ ALTER TABLE bookings ADD COLUMN IF NOT EXISTS calendar_event_id_2 TEXT;
 ALTER TABLE bookings ADD COLUMN IF NOT EXISTS venue_override TEXT
   CHECK (venue_override IN ('lounge', 'signature'));
 
+-- Block bookings (7-10, 11-15, ...): participants holds the top of the block,
+-- participants_min its first number; NULL = exact headcount
+-- (see db/migrations/2026-11-12_participants_block.sql).
+ALTER TABLE bookings ADD COLUMN IF NOT EXISTS participants_min INTEGER
+  CHECK (participants_min IS NULL OR (participants_min >= 1 AND participants_min <= participants));
+
 CREATE INDEX IF NOT EXISTS bookings_status_idx ON bookings (status);
 CREATE INDEX IF NOT EXISTS bookings_created_idx ON bookings (created_at DESC);
 

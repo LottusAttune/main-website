@@ -94,7 +94,7 @@ export const DEFAULT_SLOTS = {
 } as const;
 
 /** Calendar days between today and the earliest bookable date. */
-export const DEFAULT_LEAD_TIME = 6;
+export const DEFAULT_LEAD_TIME = 14;
 
 /** Groups above this size are split across two sessions. */
 export const TWO_SESSION_THRESHOLD = 15;

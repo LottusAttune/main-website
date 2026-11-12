@@ -11,7 +11,7 @@ import styles from './SiteFooter.module.css';
 const SPECS = [
   { label: 'Session length', value: '2 hours' },
   { label: 'Participants', value: '1 – 25' },
-  { label: 'Booking notice', value: '6 days' },
+  { label: 'Booking notice', value: '14 days' },
 ];
 
 const SOCIAL_ICONS = {

@@ -136,9 +136,9 @@ export const LANDING_COMPONENTS = [
 export const LANDING_INCLUDED = INCLUDED_SHORT;
 
 /** The at-a-glance strip under the hero. Same as the home page, except the
- *  venue cell reads "Downtown Toronto" here. */
+ *  venue cell reads "Downtown Toronto · Premium venue" here. */
 export const LANDING_TRUST = TRUST.map((item) =>
-  item.figure === 'Toronto' ? { figure: 'Downtown', label: 'Toronto' } : item,
+  item.figure === 'Toronto' ? { ...item, figure: 'Downtown Toronto' } : item,
 );
 
 export const LANDING_OFFERS = [

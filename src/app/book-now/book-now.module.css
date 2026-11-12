@@ -299,53 +299,39 @@
   animation: painDrift 10s ease-in-out infinite alternate;
 }
 
-/* Each card floats up and settles by a few pixels, slowly and on its own
-   timing (different length and starting point per card), so the row feels
-   gently alive without ever moving in step. */
-.painCard {
-  animation: painFloat 6s ease-in-out -0.4s infinite alternate;
+/* The cards themselves stay still. Inside each one, a soft warm light
+   slowly brightens and fades, each card on its own timing. */
+.painGlow {
+  animation:
+    painDrift 18s ease-in-out infinite alternate,
+    painGlowFade 7s ease-in-out infinite alternate;
 }
 
-/* Plain fixed timings per card (no calc), which every browser - Safari
-   included - honours inside an animation. */
 .painCard:nth-child(2) .painGlow {
-  animation-delay: -3.5s;
+  animation-duration: 18s, 8.5s;
+  animation-delay: -6s, -3s;
 }
 
 .painCard:nth-child(3) .painGlow {
-  animation-delay: -7s;
+  animation-duration: 18s, 10s;
+  animation-delay: -12s, -6s;
 }
 
-.painCard:nth-child(2) {
-  animation-duration: 7.4s;
-  animation-delay: -2.6s;
-}
-
-.painCard:nth-child(3) {
-  animation-duration: 8.8s;
-  animation-delay: -4.8s;
-}
-
-.painCard:nth-child(4) {
-  animation-duration: 7s;
-  animation-delay: -6s;
-}
-
-@keyframes painFloat {
+@keyframes painGlowFade {
   from {
-    transform: translateY(0);
+    opacity: 0.35;
   }
   to {
-    transform: translateY(-9px);
+    opacity: 1;
   }
 }
 
 @keyframes painDrift {
   0% {
-    transform: translate(-22%, -18%) scale(0.9);
+    transform: translate(-8%, -6%);
   }
   100% {
-    transform: translate(24%, 20%) scale(1.1);
+    transform: translate(8%, 6%);
   }
 }
 
@@ -371,14 +357,26 @@
 
 .guidePortrait {
   position: relative;
-  border-radius: 28px;
+  /* Shrinks to the photo when it is limited by height rather than width.
+     Square corners. */
+  width: fit-content;
+  max-width: 100%;
+  justify-self: center;
+  margin: 0 auto;
+  border-radius: 0;
   overflow: hidden;
 }
 
+/* As large as possible, but always whole on one screen: never taller than
+   the window minus the top logo bar and the bottom Book/Gift bar. Natural
+   proportions - nothing is cropped. */
 .guidePortrait img {
-  width: 100%;
-  height: auto;
   display: block;
+  width: auto;
+  max-width: 100%;
+  height: auto;
+  max-height: calc(100vh - 168px);
+  max-height: calc(100svh - 168px);
 }
 
 .guideQuote {
@@ -1169,26 +1167,17 @@
     animation-iteration-count: infinite !important;
   }
 
-  .painCard {
-    animation-duration: 6s !important;
-    animation-iteration-count: infinite !important;
-  }
-
-  .painCard:nth-child(2) {
-    animation-duration: 7.4s !important;
-  }
-
-  .painCard:nth-child(3) {
-    animation-duration: 8.8s !important;
-  }
-
-  .painCard:nth-child(4) {
-    animation-duration: 7s !important;
-  }
-
   .painGlow {
-    animation-duration: 10s !important;
-    animation-iteration-count: infinite !important;
+    animation-duration: 18s, 7s !important;
+    animation-iteration-count: infinite, infinite !important;
+  }
+
+  .painCard:nth-child(2) .painGlow {
+    animation-duration: 18s, 8.5s !important;
+  }
+
+  .painCard:nth-child(3) .painGlow {
+    animation-duration: 18s, 10s !important;
   }
 
   .washSection > .includedWash {

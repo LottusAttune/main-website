@@ -128,7 +128,7 @@ export default async function LandingPage({
               {audience.problemEyebrow}
             </div>
             <h2 id="lp-problem" className={`display ${styles.heading}`}>
-              Rest that never quite arrives
+              {audience.problemTitle}
             </h2>
           </div>
           <div className={styles.painGrid}>

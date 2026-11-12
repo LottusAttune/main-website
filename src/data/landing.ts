@@ -25,6 +25,8 @@ export const AUDIENCES: Record<
     title: string;
     sub: string;
     problemEyebrow: string;
+    /** Heading over the three cards in the "Sound familiar" section. */
+    problemTitle: string;
     offersTitle: string;
     pains: readonly string[];
     order: readonly OfferTone[];
@@ -35,11 +37,12 @@ export const AUDIENCES: Record<
     title: 'Two hours that give you your calm back',
     sub: 'An immersive wellness experience designed to support relaxation, nervous system regulation and deep inner connection',
     problemEyebrow: 'Sound familiar',
+    problemTitle: 'Your nervous system is asking for a break',
     offersTitle: 'For you, your people, or your team',
     pains: [
-      'You are running on empty and rest never quite lands.',
-      'Your team is productive but quietly depleted.',
-      'You have tried meditation apps and stillness never sticks.',
+      'Tension you carry from one day into the next.',
+      'You know you need to slow down, but you don’t know how to switch off.',
+      'You’ve tried meditation apps and breathing exercises, and stillness never sticks.',
     ],
     order: ['one', 'group'],
   },
@@ -48,11 +51,12 @@ export const AUDIENCES: Record<
     title: 'Two hours that give you your calm back',
     sub: 'A fully guided journey of sound, mindfulness and somatic practice — designed to help you rest deeply and return to yourself',
     problemEyebrow: 'If this is you',
+    problemTitle: 'Your nervous system is asking for a break',
     offersTitle: 'For you, or for the people you love',
     pains: [
-      'You are running on empty and rest never quite lands.',
-      'Your mind stays busy long after the day ends.',
-      'You have tried meditation apps and stillness never sticks.',
+      'Tension you carry from one day into the next.',
+      'You know you need to slow down, but you don’t know how to switch off.',
+      'You’ve tried meditation apps and breathing exercises, and stillness never sticks.',
     ],
     order: ['one', 'group'],
   },
@@ -61,6 +65,7 @@ export const AUDIENCES: Record<
     title: 'A team reset your people will actually remember',
     sub: 'An immersive wellness experience for organizations — designed to reduce stress, restore focus and bring teams back together',
     problemEyebrow: 'The cost of a depleted team',
+    problemTitle: 'Rest that never quite arrives',
     offersTitle: 'For your team, department or leadership group',
     pains: [
       'Your team is productive but quietly depleted.',

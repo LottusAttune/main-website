@@ -12,7 +12,7 @@
  * here - a separate copy is exactly what let this page's wording drift out
  * of date with the real, current text used everywhere else.
  */
-import { FAQS, INCLUDED_SHORT, REVIEWS } from './content';
+import { FAQS, INCLUDED_SHORT, REVIEWS, TRUST } from './content';
 
 export type AudienceKey = 'everyone' | 'individuals' | 'corporate';
 
@@ -27,6 +27,8 @@ export const AUDIENCES: Record<
     problemEyebrow: string;
     /** Heading over the three cards in the "Sound familiar" section. */
     problemTitle: string;
+    /** Body of step 01, "Choose your session". */
+    stepOne: string;
     offersTitle: string;
     pains: readonly string[];
     order: readonly OfferTone[];
@@ -38,6 +40,7 @@ export const AUDIENCES: Record<
     sub: 'An immersive wellness experience designed to support relaxation, nervous system regulation and deep inner connection',
     problemEyebrow: 'Sound familiar',
     problemTitle: 'Your nervous system is asking for a break',
+    stepOne: 'One-on-one, a private group of friends and family, or a corporate team of up to 25',
     offersTitle: 'For you, your people, or your team',
     pains: [
       'Tension you carry from one day into the next',
@@ -52,6 +55,7 @@ export const AUDIENCES: Record<
     sub: 'A fully guided journey of sound, mindfulness and somatic practice — designed to help you rest deeply and return to yourself',
     problemEyebrow: 'If this is you',
     problemTitle: 'Your nervous system is asking for a break',
+    stepOne: 'One-on-one, a private group of friends and family, or a corporate team of up to 25',
     offersTitle: 'For you, or for the people you love',
     pains: [
       'Tension you carry from one day into the next',
@@ -66,6 +70,7 @@ export const AUDIENCES: Record<
     sub: 'An immersive wellness experience for organizations — designed to reduce stress, restore focus and bring teams back together',
     problemEyebrow: 'The cost of a depleted team',
     problemTitle: 'The most productive thing your team can do is pause',
+    stepOne: 'Your team, department or leadership group, from 4 to 25 people',
     offersTitle: 'For your team, department or leadership group',
     pains: [
       'Your team is productive but quietly depleted',
@@ -84,13 +89,14 @@ export const LANDING_STEPS = [
   {
     n: '01',
     title: 'Choose your session',
-    body: 'One-on-one, a private group of friends and family, or a corporate team of up to 25',
+    // Each audience has its own wording - see `stepOne` above.
+    body: '{stepOne}',
   },
   {
     n: '02',
     title: 'Pick a date',
     // {lead} is the booking lead time set in the studio.
-    body: 'Send your preferred date and time. We confirm every booking personally, at least {lead} days ahead',
+    body: 'Send your preferred date and time. We confirm every booking personally, at least {lead}\u00a0days ahead',
   },
   {
     n: '03',
@@ -128,6 +134,12 @@ export const LANDING_COMPONENTS = [
 ] as const;
 
 export const LANDING_INCLUDED = INCLUDED_SHORT;
+
+/** The at-a-glance strip under the hero. Same as the home page, except the
+ *  venue cell reads "Downtown Toronto" here. */
+export const LANDING_TRUST = TRUST.map((item) =>
+  item.figure === 'Toronto' ? { figure: 'Downtown', label: 'Toronto' } : item,
+);
 
 export const LANDING_OFFERS = [
   {

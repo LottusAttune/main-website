@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { Accordion } from '@/components/common/Accordion';
 import { Reveal } from '@/components/common/Reveal';
 import { StickyBookBar } from '@/components/chrome/StickyBookBar';
-import { GUIDE, TRUST } from '@/data/content';
+import { GUIDE } from '@/data/content';
 import {
   ASSURANCE_LINE,
   AUDIENCES,
@@ -15,6 +15,7 @@ import {
   LANDING_OFFERS,
   LANDING_REVIEWS,
   LANDING_STEPS,
+  LANDING_TRUST,
   type AudienceKey,
 } from '@/data/landing';
 import { asset, assetUrl } from '@/lib/images';
@@ -114,7 +115,7 @@ export default async function LandingPage({
         {/* ---------- Proof strip ---------- */}
         <section className={styles.proof} aria-label="At a glance">
           <div className={styles.proofGrid}>
-            {TRUST.map((item) => (
+            {LANDING_TRUST.map((item) => (
               <div key={item.label} className={styles.proofCell}>
                 <div className={styles.proofFigure}>{item.figure}</div>
                 <div className={styles.proofLabel}>{item.label}</div>
@@ -192,7 +193,9 @@ export default async function LandingPage({
               >
                 <div className={styles.planN}>{step.n}</div>
                 <h3 className={styles.planTitle}>{step.title}</h3>
-                <p className={styles.planBody}>{step.body.replace('{lead}', String(leadTimeDays))}</p>
+                <p className={styles.planBody}>{step.body
+                    .replace('{stepOne}', audience.stepOne)
+                    .replace('{lead}', String(leadTimeDays))}</p>
               </div>
             ))}
           </div>

@@ -29,15 +29,23 @@ type Props = {
    *  redundant link to the current page. Suppresses just that one button,
    *  keeping the other. */
   hideAction?: 'book' | 'gift';
+  /** id of a section that carries its own booking buttons. Once it scrolls
+   *  into view the bar slides away, so the two sets never show together. */
+  hideFromId?: string;
 };
 
-export function StickyBookBar({ twoButtons = false, hideAction }: Props) {
+export function StickyBookBar({ twoButtons = false, hideAction, hideFromId }: Props) {
   const [shown, setShown] = useState(false);
 
   useEffect(() => {
     const threshold = () => window.innerHeight * 0.75;
 
     const update = () => {
+      const stop = hideFromId ? document.getElementById(hideFromId) : null;
+      if (stop && stop.getBoundingClientRect().top < window.innerHeight) {
+        setShown(false);
+        return;
+      }
       const nearBottom =
         window.scrollY + window.innerHeight >=
         document.documentElement.scrollHeight - 40;
@@ -51,7 +59,7 @@ export function StickyBookBar({ twoButtons = false, hideAction }: Props) {
       window.removeEventListener('scroll', update);
       window.removeEventListener('resize', update);
     };
-  }, []);
+  }, [hideFromId]);
 
   if (!twoButtons) {
     // The top nav already carries the site's real Book/Gift buttons at every
@@ -110,28 +118,41 @@ export function StickyBookBar({ twoButtons = false, hideAction }: Props) {
     );
   }
 
+  // The ad pages: the same dark bar as the rest of the site, with just Book
+  // and Gift at every width. Fixed rather than sticky, so the bar never
+  // keeps an empty slot at the end of the page once it has slid away.
   return (
     <div
-      className={`${styles.bar} ${shown ? styles.barShown : ''}`}
+      className={`${styles.bar} ${styles.barDark} ${styles.barFixed} ${shown ? styles.barShown : ''}`}
       aria-hidden={!shown}
     >
       <span className={styles.label}>
         Two-hour sessions &nbsp;·&nbsp; 1 to 25 people &nbsp;·&nbsp; downtown Toronto
       </span>
+      <span className={styles.tabletLabel}>
+        Two-hour sessions &nbsp;·&nbsp; 1 to 25 people &nbsp;·&nbsp; downtown Toronto
+      </span>
+      <span className={styles.mobileLabel}>
+        Two hour session
+        <br />
+        Downtown Toronto
+        <br />
+        1-25 people
+      </span>
       <div className={styles.actions}>
         <Link
           href="/book"
-          className={`btn btn--cream ${styles.cta}`}
+          className={`btn btn--cream ${styles.twoCta}`}
           tabIndex={shown ? undefined : -1}
         >
-          Book a session
+          Book
         </Link>
         <Link
           href="/gift"
-          className={`btn btn--outline-dark ${styles.cta}`}
+          className={`btn btn--outline-dark ${styles.twoCta}`}
           tabIndex={shown ? undefined : -1}
         >
-          Gift a session
+          Gift
         </Link>
       </div>
     </div>

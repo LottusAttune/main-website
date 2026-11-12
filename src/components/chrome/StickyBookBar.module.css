@@ -43,6 +43,34 @@
   border-top: none;
 }
 
+.barFixed {
+  position: fixed;
+  left: 0;
+  right: 0;
+}
+
+.barFixed .actions {
+  flex: none;
+  flex-wrap: nowrap;
+  gap: 8px;
+}
+
+.twoCta {
+  padding: 10px 30px;
+  min-height: 40px;
+  font-size: 11px;
+  letter-spacing: 0.22em;
+}
+
+@media (max-width: 1079px) {
+  .twoCta {
+    padding: 6px 18px;
+    min-height: 34px;
+    font-size: 10px;
+    letter-spacing: 0.14em;
+  }
+}
+
 .barShown {
   visibility: visible;
   opacity: 1;

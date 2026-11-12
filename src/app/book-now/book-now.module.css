@@ -116,6 +116,10 @@
   }
 }
 
+.nowrap {
+  white-space: nowrap;
+}
+
 .heroTitle {
   font-family: var(--font-display);
   font-weight: 300;

@@ -130,7 +130,19 @@ export default async function LandingPage({
                 See the options
               </a>
             </div>
-            <div className={styles.heroAssurance}>{ASSURANCE_LINE}</div>
+            {/* Each phrase stays whole, so a narrow screen breaks the line
+                between phrases ("Fully guided" never splits in two). */}
+            <div className={styles.heroAssurance}>
+              {ASSURANCE_LINE.split(' · ').map((part, i, all) => (
+                <span key={part}>
+                  <span className={styles.nowrap}>
+                    {part}
+                    {i < all.length - 1 && ' ·'}
+                  </span>
+                  {i < all.length - 1 && ' '}
+                </span>
+              ))}
+            </div>
           </div>
         </section>
 

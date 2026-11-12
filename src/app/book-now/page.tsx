@@ -410,7 +410,8 @@ export default async function LandingPage({
                 SOCIAL.filter((s) => s.confirmed && s.label === name).map((s) => ({
                   label: s.label,
                   href: s.href,
-                  detail: '@lotusattune',
+                  // Full address, e.g. instagram.com/lotusattune
+                  detail: s.href.replace(/^https?:\/\/(www\.)?/, '').replace(/\/$/, ''),
                 })),
               ),
             },

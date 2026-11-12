@@ -177,8 +177,7 @@ const LANDING_REVIEW_NAMES = ['Serge', 'Zainab', 'Aldo'] as const;
 export const LANDING_REVIEWS = LANDING_REVIEW_NAMES.map((name) => {
   const review = REVIEWS.find((r) => r.name === name);
   if (!review) throw new Error(`Landing page review "${name}" not found in REVIEWS`);
-  // The ad pages just say "Group session" (the main site keeps "Private group session").
-  return { ...review, meta: review.meta === 'Private group session' ? 'Group session' : review.meta };
+  return review;
 });
 
 /** Same approach as the reviews above - a curated subset of the live FAQs,

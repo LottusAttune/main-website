@@ -182,13 +182,13 @@ export const REVIEWS = [
   {
     name: 'Serge',
     face: 'review-serge',
-    meta: 'Private group session',
+    meta: 'Group session',
     text: 'Great experience. Silvana is very knowledgeable, and the way she explains everything is clear and easy to follow. The design, comfort, branded materials, instruments, and visuals were all thoughtfully prepared and arranged. The aroma and ambience also created a truly beautiful setting. I would rate it 10 out of 10.',
   },
   {
     name: 'Matt',
     face: null,
-    meta: 'Private group session',
+    meta: 'Group session',
     text: 'Very welcoming and warm atmosphere from start to finish. I was excited about the idea of a full sensory experience, and I loved how every detail was intentionally designed, creating a deeply immersive journey that touched all five senses. Afterward, I felt more connected to my body and more grounded. I left the session feeling calm, relaxed, and happy.',
   },
   {
@@ -200,7 +200,7 @@ export const REVIEWS = [
   {
     name: 'Maya',
     face: null,
-    meta: 'Private group session',
+    meta: 'Group session',
     text: 'I loved that there were two thoughtfully designed spaces: one where people could gather, settle in, connect, and enjoy water and snacks before entering the experience, and another dedicated space for meditation, focus, and relaxation, where the session unfolded.',
   },
   {
@@ -212,7 +212,7 @@ export const REVIEWS = [
   {
     name: 'Zainab',
     face: null,
-    meta: 'Private group session',
+    meta: 'Group session',
     text: 'Silvana’s grounded, calm, and confident energy is what stood out the most to me. Also, she walked us through every detail with clarity and care. My body felt tired when I arrived after a busy weekend and after the session, I felt light and renewed. I would 100% highly recommend this experience!',
   },
 ] as const;

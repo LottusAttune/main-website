@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from 'react';
 
-import { money, sessionSlotsFor, toTorontoDateIso } from '@/lib/site';
+import { headcountPhrase, headcountText, money, toTorontoDateIso, sessionSlotsFor } from '@/lib/site';
 import {
   balanceDue,
   documentStatusLabel,
@@ -51,7 +51,7 @@ const COLUMNS = [
   { header: 'Phone', value: (b: BookingRow) => b.phone ?? '' },
   { header: 'Company', value: (b: BookingRow) => b.company ?? '' },
   { header: 'Type', value: (b: BookingRow) => b.type },
-  { header: 'Participants', value: (b: BookingRow) => b.participants },
+  { header: 'Participants', value: (b: BookingRow) => headcountText(b.participants, b.participantsMin) },
   {
     header: 'Team-building add-on',
     value: (b: BookingRow) => (b.teamAddon ? 'Yes' : 'No'),
@@ -153,7 +153,7 @@ function statusLabel(status: string): string {
 
 function formatLabel(b: BookingRow): string {
   const parts = [
-    b.participants === 1 ? 'One-on-one' : `${b.participants} participants`,
+    headcountPhrase(b.participants, b.participantsMin),
   ];
   if (b.teamAddon) parts.push('Team-building');
   if (b.isPackage) parts.push('Package of four');
@@ -272,6 +272,39 @@ export function Bookings({ bookings: allBookings, documents, integrations, busin
       </div>
     );
   }
+
+  /* ---------- block bookings: set the real headcount ---------- */
+
+  // A booking made for a block (e.g. 11-15) reads "11–15 participants" until
+  // the real number is known; picking it here records that exact number.
+  // Only numbers inside the booked block are offered, so the price (the
+  // same across a block) can't change from here.
+  const renderHeadcount = (booking: BookingRow) => {
+    if (booking.participantsMin == null) return null;
+    const options = Array.from(
+      { length: booking.participants - booking.participantsMin + 1 },
+      (_, i) => booking.participantsMin! + i
+    );
+    return (
+      <select
+        aria-label="Set the exact number of participants"
+        className={`field ${local.headcountSelect}`}
+        value=""
+        disabled={pending}
+        onChange={(e) => {
+          const n = Number(e.target.value);
+          if (n) void run({ action: 'setHeadcount', id: booking.id, participants: n });
+        }}
+      >
+        <option value="">Set exact number…</option>
+        {options.map((n) => (
+          <option key={n} value={n}>
+            {n} participants
+          </option>
+        ))}
+      </select>
+    );
+  };
 
   /* ---------- editing ---------- */
 
@@ -633,7 +666,10 @@ export function Bookings({ bookings: allBookings, documents, integrations, busin
                           <div className={styles.priceNote}>{booking.company}</div>
                         ) : null}
                       </td>
-                      <td>{formatLabel(booking)}</td>
+                      <td>
+                        {formatLabel(booking)}
+                        {renderHeadcount(booking)}
+                      </td>
                       <td>{booking.venue}</td>
                       <td className={styles.numeric}>
                         {money(booking.total)}
@@ -729,7 +765,10 @@ export function Bookings({ bookings: allBookings, documents, integrations, busin
                       ) : null}
                     </div>
                     <div className={styles.kvLabel}>Format</div>
-                    <div className={styles.kvValue}>{formatLabel(booking)}</div>
+                    <div className={styles.kvValue}>
+                      {formatLabel(booking)}
+                      {renderHeadcount(booking)}
+                    </div>
                     <div className={styles.kvLabel}>Venue</div>
                     <div className={styles.kvValue}>{booking.venue}</div>
                     {booking.gratuity > 0 ? (

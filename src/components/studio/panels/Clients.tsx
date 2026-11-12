@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
 
-import { money } from '@/lib/site';
+import { headcountPhrase, money } from '@/lib/site';
 import {
   ACTIVITY_LABELS,
   STAGES,
@@ -230,7 +230,7 @@ function ClientCard({
                           {lead.sessionTime ? ` · ${lead.sessionTime}` : ''}
                         </div>
                         <div className={styles.recordSub}>
-                          {lead.participants === 1 ? 'Private session' : `${lead.participants} participants`} · {lead.venue}
+                          {lead.participants === 1 ? 'Private session' : headcountPhrase(lead.participants, lead.participantsMin)} · {lead.venue}
                           {lead.teamAddon ? ' · Team-building' : ''}
                         </div>
                       </div>

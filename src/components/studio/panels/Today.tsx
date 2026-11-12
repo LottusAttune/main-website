@@ -11,7 +11,7 @@ import {
   relativeDays,
   type StudioData,
 } from '@/lib/pipeline';
-import { money } from '@/lib/site';
+import { headcountPhrase, money } from '@/lib/site';
 import type { ViewKey } from '../StudioShell';
 import styles from '../studio.module.css';
 import local from './Today.module.css';
@@ -285,7 +285,7 @@ export function Today({ data, onNavigate }: Props) {
       title: `${formatStudioDate(b.sessionDate)}${b.sessionTime ? ` · ${b.sessionTime}` : ''}`,
       sub: [
         b.name + (b.company ? ` · ${b.company}` : ''),
-        b.participants === 1 ? 'One-on-one' : `${b.participants} participants`,
+        headcountPhrase(b.participants, b.participantsMin),
         b.venue,
       ].join(' · '),
       value: money(b.total),

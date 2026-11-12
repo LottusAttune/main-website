@@ -37,7 +37,7 @@ import { sendReceiptEmail } from '@/lib/email';
 import { createAdhocPaymentLink, deactivateAdhocPaymentLink } from '@/lib/paymentLinks';
 import { balanceDue, STAGE_KEYS, STAGES } from '@/lib/pipeline';
 import { getSettings } from '@/lib/settings';
-import { money } from '@/lib/site';
+import { MAX_PARTICIPANTS, money } from '@/lib/site';
 import { StripeError } from '@/lib/stripe';
 
 export const runtime = 'nodejs';
@@ -247,6 +247,11 @@ const action = z.discriminatedUnion('action', [
     reminderDaysBefore: z.coerce.number().int().min(0).max(30),
   }),
   z.object({ action: z.literal('deleteBooking'), id: z.string().uuid() }),
+  z.object({
+    action: z.literal('setHeadcount'),
+    id: z.string().uuid(),
+    participants: z.number().int().min(1).max(MAX_PARTICIPANTS),
+  }),
   z.object({
     action: z.literal('editBooking'),
     id: z.string().uuid(),
@@ -761,6 +766,30 @@ export async function POST(request: Request) {
           await deleteCalendarEvent(String(row.calendar_event_id_2));
         }
         await sql`DELETE FROM bookings WHERE id = ${input.id}`;
+        break;
+      }
+
+      case 'setHeadcount': {
+        // Only for a block booking, and only to a number inside its block:
+        // the price is the same across a block, so nothing else changes.
+        const updated = await sql`
+          UPDATE bookings SET participants = ${input.participants}, participants_min = NULL
+          WHERE id = ${input.id}
+            AND participants_min IS NOT NULL
+            AND ${input.participants} BETWEEN participants_min AND participants
+          RETURNING id
+        `;
+        if (!updated.rows.length) {
+          return NextResponse.json(
+            { error: 'That number is outside the booked range.' },
+            { status: 400 }
+          );
+        }
+        await logActivity({
+          bookingId: input.id,
+          kind: 'note',
+          body: `Headcount set to ${input.participants}`,
+        });
         break;
       }
 

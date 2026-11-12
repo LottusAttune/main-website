@@ -82,3 +82,14 @@
 .sortIconOn {
   opacity: 1;
 }
+
+/* "Set exact number…" under a block booking's format (11–15 participants). */
+.headcountSelect.headcountSelect {
+  display: block;
+  width: auto;
+  max-width: 220px;
+  min-height: 36px;
+  margin-top: 6px;
+  padding: 6px 10px;
+  font-size: 13px;
+}

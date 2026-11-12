@@ -66,10 +66,19 @@
 .heroBleed {
   position: absolute;
   inset: 0;
-  /* Same as the home hero: slightly enlarged so the scroll drift
-     (HeroMotion) never shows an edge. */
-  transform: scale(1.14);
+  /* The page's one bit of ambient motion: the photo very slowly breathes in
+     and out, like a slow camera move. Everything else stays still. */
+  animation: heroBreathe 24s ease-in-out infinite alternate;
   will-change: transform;
+}
+
+@keyframes heroBreathe {
+  from {
+    transform: scale(1);
+  }
+  to {
+    transform: scale(1.05);
+  }
 }
 
 .heroBleed img {

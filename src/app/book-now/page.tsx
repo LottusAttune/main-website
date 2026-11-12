@@ -3,8 +3,6 @@ import Image from 'next/image';
 import Link from 'next/link';
 
 import { Accordion } from '@/components/common/Accordion';
-import { Reveal } from '@/components/common/Reveal';
-import { HeroMotion } from '@/components/landing/HeroMotion';
 import { LandingReviews } from '@/components/landing/LandingReviews';
 import { ExpandableNote } from '@/components/chrome/ExpandableNote';
 import { InstagramIcon, LinkedInIcon, MailIcon, WhatsAppIcon } from '@/components/chrome/FooterIcons';
@@ -81,8 +79,6 @@ export default async function LandingPage({
 
   return (
     <div className={styles.page}>
-      <Reveal />
-      <HeroMotion />
 
       <header className={styles.bar}>
         <span className={styles.barBrand}>
@@ -103,8 +99,8 @@ export default async function LandingPage({
 
       <main>
         {/* ---------- Hero ---------- */}
-        <section className={styles.hero} aria-labelledby="lp-heading" data-hero="">
-          <div className={styles.heroBleed} data-hero-bleed="">
+        <section className={styles.hero} aria-labelledby="lp-heading">
+          <div className={styles.heroBleed}>
             <Image
               src={hero.src}
               alt=""
@@ -115,7 +111,7 @@ export default async function LandingPage({
             />
           </div>
           <div className={styles.heroScrim} />
-          <div className={styles.heroCopy} data-hero-copy="">
+          <div className={styles.heroCopy}>
             {/* "Downtown Toronto · 1 to 25 people": one line on wider screens;
                 on phones the two halves sit on their own lines instead of
                 wrapping mid-phrase. */}
@@ -169,7 +165,7 @@ export default async function LandingPage({
 
         {/* ---------- Problem ---------- */}
         <section className={styles.section} aria-labelledby="lp-problem">
-          <div className={styles.head} data-reveal="">
+          <div className={styles.head}>
             <div className="eyebrow" style={{ marginBottom: 22 }}>
               {audience.problemEyebrow}
             </div>
@@ -182,9 +178,7 @@ export default async function LandingPage({
               <div
                 key={pain}
                 className={`card ${styles.painCard}`}
-                data-reveal=""
-                // Cards arrive one after another rather than all at once.
-                style={{ transitionDelay: `${i * 140}ms`, ['--pain-i' as string]: i }}
+                style={{ ['--pain-i' as string]: i }}
               >
                 <span className={styles.painGlow} aria-hidden="true" />
                 <span className={styles.painText}>{pain}</span>
@@ -199,7 +193,7 @@ export default async function LandingPage({
           aria-labelledby="lp-guide"
         >
           <div className={styles.guide}>
-            <div className={styles.guidePortrait} data-reveal="">
+            <div className={styles.guidePortrait}>
               <Image
                 src={portrait.src}
                 alt="Silvana, founder of Lotus Attune"
@@ -208,7 +202,7 @@ export default async function LandingPage({
                 sizes="(max-width: 900px) 100vw, 45vw"
               />
             </div>
-            <div data-reveal="">
+            <div>
               <div className="eyebrow eyebrow--dark" style={{ marginBottom: 24 }}>
                 Your Guide
               </div>
@@ -222,7 +216,7 @@ export default async function LandingPage({
 
         {/* ---------- Three-step plan ---------- */}
         <section className={styles.section} aria-labelledby="lp-plan">
-          <div className={styles.head} data-reveal="">
+          <div className={styles.head}>
             <div className="eyebrow" style={{ marginBottom: 22 }}>
               How it works
             </div>
@@ -235,7 +229,6 @@ export default async function LandingPage({
               <div
                 key={step.n}
                 className={`card card--lift ${styles.planCard}`}
-                data-reveal=""
               >
                 <div className={styles.planN}>{step.n}</div>
                 <h3 className={styles.planTitle}>{step.title}</h3>
@@ -252,7 +245,7 @@ export default async function LandingPage({
           className={`${styles.section} section--beige`}
           aria-labelledby="lp-components"
         >
-          <div className={styles.head} data-reveal="">
+          <div className={styles.head}>
             <div className="eyebrow" style={{ marginBottom: 22 }}>
               Inside the two hours
             </div>
@@ -261,7 +254,7 @@ export default async function LandingPage({
             </h2>
           </div>
           {LANDING_COMPONENTS.map((step) => (
-            <div key={step.title} className={styles.componentRow} data-reveal="">
+            <div key={step.title} className={styles.componentRow}>
               <span
                 className={styles.componentIcon}
                 style={{ backgroundImage: assetUrl(step.icon) }}
@@ -275,7 +268,7 @@ export default async function LandingPage({
 
         {/* ---------- Included ---------- */}
         <section className={styles.section} aria-labelledby="lp-included">
-          <div className={styles.head} data-reveal="">
+          <div className={styles.head}>
             <div className="eyebrow" style={{ marginBottom: 22 }}>
               What is Included
             </div>
@@ -300,7 +293,7 @@ export default async function LandingPage({
           className={`${styles.section} section--beige`}
           aria-labelledby="lp-reviews"
         >
-          <div className={styles.head} data-reveal="">
+          <div className={styles.head}>
             <div className="eyebrow" style={{ marginBottom: 22 }}>
               Client Reviews
             </div>
@@ -315,7 +308,7 @@ export default async function LandingPage({
 
         {/* ---------- Offers ---------- */}
         <section id="offers" className={styles.section} aria-labelledby="lp-offers">
-          <div className={styles.head} data-reveal="">
+          <div className={styles.head}>
             <div className="eyebrow" style={{ marginBottom: 22 }}>
               Choose your session
             </div>
@@ -331,7 +324,6 @@ export default async function LandingPage({
               <div
                 key={offer.tone}
                 className={`card card--lift ${styles.offerCard}`}
-                data-reveal=""
               >
                 <div>
                   <span className={`tag ${TAG_CLASS[offer.tone]}`}>
@@ -358,7 +350,7 @@ export default async function LandingPage({
           className={`${styles.section} section--beige`}
           aria-labelledby="lp-faq"
         >
-          <div className={styles.head} data-reveal="">
+          <div className={styles.head}>
             <div className="eyebrow" style={{ marginBottom: 22 }}>
               Frequently Asked
             </div>

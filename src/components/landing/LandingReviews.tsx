@@ -32,7 +32,7 @@ export function LandingReviews({ reviews }: { reviews: readonly Review[] }) {
     <>
       <div className={styles.reviewGrid}>
         {reviews.map((review, i) => (
-          <figure key={review.name} className={`card ${styles.reviewCard}`} data-reveal="">
+          <figure key={review.name} className={`card ${styles.reviewCard}`}>
             <div className={styles.reviewQuote} aria-hidden="true">
               ”
             </div>

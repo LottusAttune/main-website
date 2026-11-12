@@ -6,6 +6,7 @@ import { Accordion } from '@/components/common/Accordion';
 import { CopyButton } from '@/components/common/CopyButton';
 import { LocalBusinessSchema } from '@/components/common/LocalBusinessSchema';
 import { Reveal } from '@/components/common/Reveal';
+import { WatchLanding } from '@/components/home/WatchLanding';
 import { SiteFooter } from '@/components/chrome/SiteFooter';
 import { SiteNav } from '@/components/chrome/SiteNav';
 import { StickyBookBar } from '@/components/chrome/StickyBookBar';
@@ -45,6 +46,7 @@ export default function HomePage() {
       <LocalBusinessSchema />
       <SiteNav />
       <Reveal />
+      <WatchLanding />
 
       <main>
         <HomeHero />
@@ -132,7 +134,7 @@ export default function HomePage() {
                 A glimpse inside the experience
               </h2>
             </div>
-            <div className={styles.watchFrameWrap} data-reveal="">
+            <div className={styles.watchFrameWrap} data-reveal="" data-watch-frame="">
               <FilmFrame />
             </div>
           </div>

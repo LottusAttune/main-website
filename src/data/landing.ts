@@ -69,9 +69,9 @@ export const AUDIENCES: Record<
     offersTitle: 'For your team, department or leadership group',
     pains: [
       'Your team is productive but quietly depleted.',
-      'Burnout shows up as sick days, turnover and disengagement, long before anyone names it.',
+      'Burnout shows up as sick days, turnover and disengagement.',
       'Wellness perks go unused, and team-building days are forgotten by Monday.',
-      'You want a team experience that means something, not another happy hour.',
+      'You want a team experience that means something, not another forgettable team outing.',
     ],
     order: ['group', 'one'],
   },

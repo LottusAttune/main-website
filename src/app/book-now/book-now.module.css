@@ -1348,6 +1348,7 @@
 .arrivePending .painCard,
 .arrivePending > .head,
 .arrivePending > .componentRow,
+.arrivePending .faqPhoto,
 .arrivePending [class*='Accordion_item__'] {
   opacity: 0;
   transform: translateY(22px);
@@ -1358,6 +1359,7 @@
 
 .arrivePending .arriveShown.painCard,
 .arrivePending > .arriveShown,
+.arrivePending .arriveShown.faqPhoto,
 .arrivePending .arriveShown[class*='Accordion_item__'] {
   opacity: 1;
   transform: none;
@@ -1367,6 +1369,7 @@
   .arrivePending .painCard,
   .arrivePending > .head,
   .arrivePending > .componentRow,
+  .arrivePending .faqPhoto,
   .arrivePending [class*='Accordion_item__'] {
     transition-duration: 0.9s !important;
   }

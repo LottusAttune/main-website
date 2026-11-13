@@ -387,7 +387,7 @@ export default async function LandingPage({
               Before you arrive
             </h2>
           </div>
-          <div className={styles.faqLayout}>
+          <div className={styles.faqLayout} data-arrive="faq">
             {/* Her candle photo (the one on the Offerings page), with a soft
                 candlelight glow over the flame that slowly brightens and
                 dims - the photo itself never moves. */}
@@ -401,7 +401,7 @@ export default async function LandingPage({
               />
               <span className={styles.candleGlow} aria-hidden="true" />
             </div>
-            <div className={styles.faqList} data-arrive="faq">
+            <div className={styles.faqList}>
               <Accordion
                 items={LANDING_FAQS.map((faq) => ({ title: faq.q, answer: faq.a }))}
                 compact
@@ -409,7 +409,7 @@ export default async function LandingPage({
             </div>
             <ArriveOnce
               target="faq"
-              items="[class*='Accordion_item__']"
+              items={`.${styles.faqPhoto}, [class*='Accordion_item__']`}
               pending={styles.arrivePending}
               shown={styles.arriveShown}
             />

@@ -464,3 +464,10 @@
   font-size: 13px;
   color: var(--color-ink-body);
 }
+
+/* One line under "Gift an amount" saying what it covers. */
+.amountNote {
+  margin: -2px 0 12px;
+  font-size: 14px;
+  color: var(--color-ink-body);
+}

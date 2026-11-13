@@ -48,7 +48,8 @@ type Props = {
 };
 
 export function GiftCalculator({ pricing, codes, payTerms, header }: Props) {
-  const [format, setFormat] = useState<Format>('private');
+  // Gifts are a dollar amount (private sessions and the package included).
+  const [format, setFormat] = useState<Format>('amount');
   const [sessions, setSessions] = useState(1);
   const [participants, setParticipants] = useState(6);
   /** "Gift an amount": a quick pick, or 'custom' with the typed value. */
@@ -102,17 +103,21 @@ export function GiftCalculator({ pricing, codes, payTerms, header }: Props) {
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const requestedFormat = params.get('format');
-    if (requestedFormat === 'private') setFormat('private');
-    // Groups are now gifted as an amount: start from that group's price.
-    if (requestedFormat === 'group' || requestedFormat === 'amount') {
+    // Every "Gift it" link opens as an amount, starting from the price of
+    // what was chosen: a private session, the package, or a group.
+    if (requestedFormat) {
       setFormat('amount');
       const people = Number(params.get('participants'));
       const value =
         requestedFormat === 'amount'
           ? Number(params.get('amount'))
-          : Number.isInteger(people) && people >= MIN_PARTICIPANTS && people <= MAX_PARTICIPANTS
-            ? groupPriceFor(people)
-            : 0;
+          : requestedFormat === 'private'
+            ? Number(params.get('sessions')) === 4
+              ? pricing.privatePackage
+              : pricing.privateSession
+            : Number.isInteger(people) && people >= MIN_PARTICIPANTS && people <= MAX_PARTICIPANTS
+              ? groupPriceFor(people)
+              : 0;
       if (value >= GIFT_AMOUNT_MIN && value <= GIFT_AMOUNT_MAX) {
         if ((GIFT_AMOUNT_PICKS as readonly number[]).includes(value)) {
           setAmountChoice(value);
@@ -345,43 +350,12 @@ export function GiftCalculator({ pricing, codes, payTerms, header }: Props) {
       {!sent ? header : null}
       <div className={styles.layout}>
       <div className={`card ${styles.panel}`}>
-        <div className={styles.legend}>Experience</div>
-        <div className={styles.formats}>
-          <button
-            type="button"
-            className="choice"
-            aria-pressed={isPrivate}
-            onClick={() => setFormat('private')}
-          >
-            <span className={`choice__title ${styles.formatTitle}`}>
-              Private Sessions
-            </span>
-            <span className="choice__note">
-              One-on-one, customizable based on individual preferences
-            </span>
-          </button>
-          <button
-            type="button"
-            className="choice"
-            aria-pressed={isAmount}
-            onClick={() => {
-              setFormat('amount');
-              // Codes never apply to an amount - clear one already applied.
-              setCode({ applied: null, message: '', ok: false });
-            }}
-          >
-            <span className={`choice__title ${styles.formatTitle}`}>
-              Gift an amount
-            </span>
-            <span className="choice__note">
-              From {money(GIFT_AMOUNT_MIN)}, toward any session, private or group
-            </span>
-          </button>
-        </div>
-
         {isAmount ? (
           <div className={styles.field}>
-            <div className={styles.legend}>Amount</div>
+            <div className={styles.legend}>Gift an amount</div>
+            <p className={styles.amountNote}>
+              From {money(GIFT_AMOUNT_MIN)}, toward any session, private or group
+            </p>
             <div className={styles.gratuityRow}>
               {GIFT_AMOUNT_PICKS.map((value) => (
                 <button
@@ -617,39 +591,6 @@ export function GiftCalculator({ pricing, codes, payTerms, header }: Props) {
                   <span className={styles.totalValue}>{money(quote.total)}</span>
                 </div>
               </div>
-            </div>
-
-            <div className={styles.codeBlock}>
-              <label className="visually-hidden" htmlFor="gift-discount-code">
-                Discount code
-              </label>
-              <div className={styles.codeRow}>
-                <input
-                  id="gift-discount-code"
-                  className={`field ${styles.codeInput}`}
-                  type="text"
-                  placeholder="Enter discount code"
-                  style={{ textTransform: 'uppercase' }}
-                  value={codeInput}
-                  disabled={Boolean(code.applied)}
-                  onChange={(e) => setCodeInput(e.target.value)}
-                />
-                <button
-                  type="button"
-                  className={styles.codeApply}
-                  onClick={code.applied ? removeCode : applyCode}
-                >
-                  {code.applied ? 'REMOVE' : 'APPLY'}
-                </button>
-              </div>
-              {code.message ? (
-                <div
-                  className={`${styles.codeMessage} ${code.ok ? styles.codeOk : styles.codeBad}`}
-                  role="status"
-                >
-                  {code.message}
-                </div>
-              ) : null}
             </div>
 
             <div className={styles.summaryActionsRow}>

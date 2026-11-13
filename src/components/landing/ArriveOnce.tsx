@@ -48,6 +48,16 @@ export function ArriveOnce({
         if (el.getBoundingClientRect().top < window.innerHeight * 0.85) {
           el.style.transitionDelay = `${step * 130}ms`;
           el.classList.add(shown);
+          // Once in place, hand the element back to its own styles (a
+          // card's hover lift keeps its normal speed, with no delay).
+          const settle = (event: TransitionEvent) => {
+            if (event.target !== el) return;
+            el.removeEventListener('transitionend', settle);
+            el.style.transitionDelay = '';
+            el.classList.remove(shown);
+            el.dataset.arrived = '';
+          };
+          el.addEventListener('transitionend', settle);
           step += 1;
           return false;
         }

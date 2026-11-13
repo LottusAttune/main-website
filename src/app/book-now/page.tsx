@@ -204,7 +204,7 @@ export default async function LandingPage({
           className={`${styles.section} section--dark`}
           aria-labelledby="lp-guide"
         >
-          <div className={styles.guide}>
+          <div className={styles.guide} data-arrive="guide">
             <div className={styles.guidePortrait}>
               <Image
                 src={portrait.src}
@@ -224,10 +224,16 @@ export default async function LandingPage({
               <p className="body body--dark">{GUIDE.paragraphs[0]}</p>
             </div>
           </div>
+          <ArriveOnce
+            target="guide"
+            items={`.${styles.guide} > div`}
+            pending={styles.arrivePending}
+            shown={styles.arriveShown}
+          />
         </section>
 
         {/* ---------- Three-step plan ---------- */}
-        <section className={styles.section} aria-labelledby="lp-plan">
+        <section className={styles.section} aria-labelledby="lp-plan" data-arrive="plan">
           <div className={styles.head}>
             <div className="eyebrow" style={{ marginBottom: 22 }}>
               How it works
@@ -250,6 +256,12 @@ export default async function LandingPage({
               </div>
             ))}
           </div>
+          <ArriveOnce
+            target="plan"
+            items={`.${styles.head}, .${styles.planCard}`}
+            pending={styles.arrivePending}
+            shown={styles.arriveShown}
+          />
         </section>
 
         {/* ---------- Five components ---------- */}
@@ -286,7 +298,11 @@ export default async function LandingPage({
         </section>
 
         {/* ---------- Included ---------- */}
-        <section className={`${styles.section} ${styles.washSection}`} aria-labelledby="lp-included">
+        <section
+          className={`${styles.section} ${styles.washSection}`}
+          aria-labelledby="lp-included"
+          data-arrive="included"
+        >
           {/* A barely-there photo of the comfort items behind the list,
               drifting very slowly - the same ghost-photo treatment the
               main website uses. */}
@@ -313,6 +329,12 @@ export default async function LandingPage({
               </div>
             ))}
           </div>
+          <ArriveOnce
+            target="included"
+            items={`.${styles.head}, .numbered-row`}
+            pending={styles.arrivePending}
+            shown={styles.arriveShown}
+          />
         </section>
 
         {/* ---------- Reviews ---------- */}
@@ -336,7 +358,7 @@ export default async function LandingPage({
         </section>
 
         {/* ---------- Offers ---------- */}
-        <section id="offers" className={styles.section} aria-labelledby="lp-offers">
+        <section id="offers" className={styles.section} aria-labelledby="lp-offers" data-arrive="offers">
           <div className={styles.head}>
             <div className="eyebrow" style={{ marginBottom: 22 }}>
               Choose your session
@@ -372,6 +394,12 @@ export default async function LandingPage({
               </div>
             ))}
           </div>
+          <ArriveOnce
+            target="offers"
+            items={`.${styles.head}, .${styles.offerCard}`}
+            pending={styles.arrivePending}
+            shown={styles.arriveShown}
+          />
         </section>
 
         {/* ---------- FAQ ---------- */}
@@ -455,7 +483,7 @@ export default async function LandingPage({
       <LandingReturnTracker href={LANDING_PATHS[audienceKey]} />
 
       <footer className={styles.footer}>
-        <div className={styles.contactGroups}>
+        <div className={styles.contactGroups} data-arrive="footer">
           {[
             {
               title: 'Get in touch',
@@ -529,6 +557,12 @@ export default async function LandingPage({
         <div className={styles.copyright}>
           © {new Date().getFullYear()} {SITE.name} · {SITE.tagline} · Toronto{'\u00a0'}– Yonge and Bloor
         </div>
+        <ArriveOnce
+          target="footer"
+          items={`.${styles.contactGroup}`}
+          pending={styles.arrivePending}
+          shown={styles.arriveShown}
+        />
       </footer>
     </div>
   );

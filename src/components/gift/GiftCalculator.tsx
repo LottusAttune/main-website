@@ -527,6 +527,75 @@ export function GiftCalculator({ pricing, codes, payTerms, header }: Props) {
             />
           </div>
         ) : null}
+
+        {!sent ? (
+          <>
+            <div className={styles.legend} style={{ marginTop: 22 }}>
+              Certificate details
+            </div>
+            <div className={styles.fields}>
+              <input
+                className={`field ${invalid('recipientName') ? 'field--invalid' : ''}`}
+                type="text"
+                placeholder="Recipient name"
+                aria-label="Recipient name"
+                aria-invalid={invalid('recipientName') || undefined}
+                value={recipientName}
+                onChange={(e) => setRecipientName(e.target.value)}
+              />
+              <input
+                className={`field ${invalid('recipientEmail') ? 'field--invalid' : ''}`}
+                type="email"
+                placeholder="Recipient's email (optional)"
+                aria-label="Recipient's email (optional)"
+                autoComplete="email"
+                aria-invalid={invalid('recipientEmail') || undefined}
+                value={recipientEmail}
+                onChange={(e) => setRecipientEmail(e.target.value)}
+              />
+              <p className={styles.note} style={{ margin: '-4px 0 0', padding: '0 18px' }}>
+                Add their email to send them a copy directly once it&apos;s paid. Leave it blank
+                if you&apos;d rather choose the moment yourself.
+              </p>
+              <input
+                className={`field ${invalid('buyerName') ? 'field--invalid' : ''}`}
+                type="text"
+                placeholder="Your name"
+                aria-label="Your name"
+                autoComplete="name"
+                aria-invalid={invalid('buyerName') || undefined}
+                value={buyerName}
+                onChange={(e) => setBuyerName(e.target.value)}
+              />
+              <label className={styles.anonToggle}>
+                <input
+                  type="checkbox"
+                  checked={hideBuyerName}
+                  onChange={(e) => setHideBuyerName(e.target.checked)}
+                />
+                Keep my name off the certificate
+              </label>
+              <input
+                className={`field ${invalid('buyerEmail') ? 'field--invalid' : ''}`}
+                type="email"
+                placeholder="Your email"
+                aria-label="Your email"
+                autoComplete="email"
+                aria-invalid={invalid('buyerEmail') || undefined}
+                value={buyerEmail}
+                onChange={(e) => setBuyerEmail(e.target.value)}
+              />
+            </div>
+
+            <button
+              type="button"
+              className={`btn btn--outline btn--wide ${styles.previewBtn}`}
+              onClick={() => setPreviewOpen(true)}
+            >
+              Preview certificate
+            </button>
+          </>
+        ) : null}
       </div>
 
       <aside className={styles.aside} ref={asideRef}>
@@ -596,67 +665,6 @@ export function GiftCalculator({ pricing, codes, payTerms, header }: Props) {
             <div className={styles.summaryActionsRow}>
               <IncludedModal
                 triggerClassName={`btn btn--outline btn--wide ${styles.includedBtn}`}
-              />
-              <button
-                type="button"
-                className={`btn btn--outline btn--wide ${styles.previewBtn}`}
-                onClick={() => setPreviewOpen(true)}
-              >
-                Preview certificate
-              </button>
-            </div>
-
-            <div className={styles.fields}>
-              <input
-                className={`field ${invalid('recipientName') ? 'field--invalid' : ''}`}
-                type="text"
-                placeholder="Recipient name"
-                aria-label="Recipient name"
-                aria-invalid={invalid('recipientName') || undefined}
-                value={recipientName}
-                onChange={(e) => setRecipientName(e.target.value)}
-              />
-              <input
-                className={`field ${invalid('recipientEmail') ? 'field--invalid' : ''}`}
-                type="email"
-                placeholder="Recipient's email (optional)"
-                aria-label="Recipient's email (optional)"
-                autoComplete="email"
-                aria-invalid={invalid('recipientEmail') || undefined}
-                value={recipientEmail}
-                onChange={(e) => setRecipientEmail(e.target.value)}
-              />
-              <p className={styles.note} style={{ margin: '-4px 0 0', padding: '0 18px' }}>
-                Add their email to send them a copy directly once it&apos;s paid. Leave it blank
-                if you&apos;d rather choose the moment yourself.
-              </p>
-              <input
-                className={`field ${invalid('buyerName') ? 'field--invalid' : ''}`}
-                type="text"
-                placeholder="Your name"
-                aria-label="Your name"
-                autoComplete="name"
-                aria-invalid={invalid('buyerName') || undefined}
-                value={buyerName}
-                onChange={(e) => setBuyerName(e.target.value)}
-              />
-              <label className={styles.anonToggle}>
-                <input
-                  type="checkbox"
-                  checked={hideBuyerName}
-                  onChange={(e) => setHideBuyerName(e.target.checked)}
-                />
-                Keep my name off the certificate
-              </label>
-              <input
-                className={`field ${invalid('buyerEmail') ? 'field--invalid' : ''}`}
-                type="email"
-                placeholder="Your email"
-                aria-label="Your email"
-                autoComplete="email"
-                aria-invalid={invalid('buyerEmail') || undefined}
-                value={buyerEmail}
-                onChange={(e) => setBuyerEmail(e.target.value)}
               />
             </div>
 

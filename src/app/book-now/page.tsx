@@ -331,7 +331,7 @@ export default async function LandingPage({
           </div>
           <ArriveOnce
             target="included"
-            items=".numbered-row"
+            items={`.${styles.includedList}`}
             pending={styles.arrivePending}
             shown={styles.arriveShown}
           />

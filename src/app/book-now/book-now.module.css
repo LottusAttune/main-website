@@ -1351,6 +1351,18 @@
   }
 }
 
+/* Everything is provided: the whole list of eight rises in together, more
+   slowly - a different feel from the row-by-row section above it. */
+.arrivePending .includedList[data-arrive-item]:not([data-arrived]) {
+  transition-duration: 1.6s;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .arrivePending .includedList[data-arrive-item]:not([data-arrived]) {
+    transition-duration: 1.6s !important;
+  }
+}
+
 /* A heading split at a chosen point (LinkedIn page's "The most productive
    thing your team / can do is pause"): two centred lines on wider screens,
    natural wrapping on phones. */

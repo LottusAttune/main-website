@@ -437,7 +437,7 @@ export default async function LandingPage({
             </div>
             <ArriveOnce
               target="faq"
-              items={`.${styles.faqPhoto}, [class*='Accordion_item__']`}
+              items="[class*='Accordion_item__']"
               pending={styles.arrivePending}
               shown={styles.arriveShown}
             />

@@ -1149,8 +1149,8 @@
   height: auto;
 }
 
-/* Warm light over the flame (41% across, 16% down the photo). Only its
-   brightness changes - nothing moves. */
+/* A steady soft light over the flame (41% across, 16% down the photo).
+   It does not change - the candle photo is completely still. */
 .candleGlow {
   position: absolute;
   left: 41%;
@@ -1167,16 +1167,7 @@
   );
   mix-blend-mode: screen;
   pointer-events: none;
-  animation: candleGlow 4.8s ease-in-out infinite alternate;
-}
-
-@keyframes candleGlow {
-  from {
-    opacity: 0.35;
-  }
-  to {
-    opacity: 0.95;
-  }
+  opacity: 0.6;
 }
 
 /* Phones and narrow tablets: the photo above the questions, with only
@@ -1212,12 +1203,6 @@
 
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .candleGlow {
-    animation-duration: 4.8s !important;
-    animation-iteration-count: infinite !important;
-  }
-}
 
 /* ---------- Inside the two hours: a soft light drifting across ----------
    A large, faint warm light slowly moves across the section's background,

@@ -44,7 +44,9 @@ function statusOf(card: GiftCard): { label: string; pill: string } {
 /** "Private — package of four" / "Group — 8 participants · team-building". */
 function formatLabel(card: GiftCard): string {
   let base: string;
-  if (card.format === 'group') {
+  if (card.format === 'amount') {
+    base = `Gift amount — ${money(card.total - card.gratuity)}`;
+  } else if (card.format === 'group') {
     const n = card.participants ?? 0;
     base = `Group — ${n} participant${n === 1 ? '' : 's'}`;
   } else {

@@ -42,7 +42,9 @@ export async function POST(request: Request) {
   const discount = input.discountCode
     ? codes.find((c) => c.code === input.discountCode?.toUpperCase() && c.isActive)
     : undefined;
-  const discountPeople = input.format === 'group' ? input.participants : 1;
+  // Codes never apply to a gift amount (it is money, not a session).
+  const discountPeople =
+    input.format === 'group' ? input.participants : input.format === 'amount' ? 0 : 1;
   const eligibleDiscount =
     discount && discountPeople >= discount.minParticipants ? discount : undefined;
 
@@ -50,6 +52,7 @@ export async function POST(request: Request) {
   const { total, gratuity } = giftQuoteFor(
     {
       ...input,
+      amount: input.amount ?? undefined,
       percentOff: eligibleDiscount?.percentOff,
       amountOff: eligibleDiscount?.amountOff,
       discountLabel: eligibleDiscount?.code,

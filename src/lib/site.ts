@@ -180,6 +180,13 @@ export function blockLineLabel(label: string, participants: number, participants
     : label;
 }
 
+/** "Gift an amount": the buyer picks a dollar value instead of a session.
+ *  The minimum always covers one private session; the maximum is the
+ *  largest group session, so nobody adds a stray zero by mistake. */
+export const GIFT_AMOUNT_MIN = 250;
+export const GIFT_AMOUNT_MAX = 2900;
+export const GIFT_AMOUNT_PICKS = [250, 450, 700, 950] as const;
+
 /** Calendar days between today and the earliest bookable discovery call. */
 export const DISCOVERY_CALL_LEAD_DAYS = 2;
 

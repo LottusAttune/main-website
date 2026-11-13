@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-import { EXTRA_SESSION_SLOT, MAX_PARTICIPANTS, PARTICIPANT_BLOCKS, TIME_SLOTS, TWO_SESSION_THRESHOLD } from '@/lib/site';
+import { EXTRA_SESSION_SLOT, GIFT_AMOUNT_MAX, GIFT_AMOUNT_MIN, MAX_PARTICIPANTS, PARTICIPANT_BLOCKS, TIME_SLOTS, TWO_SESSION_THRESHOLD } from '@/lib/site';
 
 const TIME_LABELS: [string, ...string[]] = [
   EXTRA_SESSION_SLOT.label,
@@ -61,12 +61,15 @@ export const bookingSchema = z
 
 export type BookingRequest = z.infer<typeof bookingSchema>;
 
-export const giftSchema = z.object({
+export const giftSchema = z
+  .object({
   recipientName: trimmed(120),
   recipientEmail: z.string().trim().email().max(200).optional().nullable(),
   buyerName: trimmed(120),
   buyerEmail: z.string().trim().email().max(200),
-  format: z.enum(['private', 'group']),
+  format: z.enum(['private', 'group', 'amount']),
+  /** "Gift an amount": whole dollars, $250-$2,900. */
+  amount: z.coerce.number().int().min(GIFT_AMOUNT_MIN).max(GIFT_AMOUNT_MAX).optional().nullable(),
   sessions: z.coerce.number().int().min(1).max(4).default(1),
   participants: z.coerce
     .number()
@@ -79,7 +82,11 @@ export const giftSchema = z.object({
   gratuityPercent: z.coerce.number().int().min(0).max(100).optional().nullable(),
   gratuityAmount: z.coerce.number().min(0).max(100_000).optional().nullable(),
   paymentPlan: z.enum(['full', 'etransfer']).default('full'),
-});
+  })
+  .refine((value) => value.format !== 'amount' || value.amount != null, {
+    message: `Please choose an amount from $${GIFT_AMOUNT_MIN} to $${GIFT_AMOUNT_MAX.toLocaleString('en-CA')}.`,
+    path: ['amount'],
+  });
 
 export type GiftRequest = z.infer<typeof giftSchema>;
 

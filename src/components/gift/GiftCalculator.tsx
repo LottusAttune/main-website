@@ -6,6 +6,9 @@ import { IncludedModal } from '@/components/common/IncludedModal';
 import { giftQuoteFor } from '@/lib/quote';
 import type { DiscountCode, Pricing } from '@/lib/settings';
 import {
+  GIFT_AMOUNT_MAX,
+  GIFT_AMOUNT_MIN,
+  GIFT_AMOUNT_PICKS,
   MAX_PARTICIPANTS,
   MIN_PARTICIPANTS,
   SITE,
@@ -20,7 +23,7 @@ import styles from './GiftCalculator.module.css';
 const GRATUITY_PERCENTS = [10, 15, 18, 20] as const;
 type GratuityChoice = (typeof GRATUITY_PERCENTS)[number] | 'custom';
 
-type Format = 'private' | 'group';
+type Format = 'private' | 'group' | 'amount';
 
 type AddonDef = {
   key: string;
@@ -48,6 +51,9 @@ export function GiftCalculator({ pricing, codes, payTerms, header }: Props) {
   const [format, setFormat] = useState<Format>('private');
   const [sessions, setSessions] = useState(1);
   const [participants, setParticipants] = useState(6);
+  /** "Gift an amount": a quick pick, or 'custom' with the typed value. */
+  const [amountChoice, setAmountChoice] = useState<number | 'custom'>(450);
+  const [customAmount, setCustomAmount] = useState('');
   const [addons, setAddons] = useState<Record<string, boolean>>({});
   // null = nothing chosen yet - no gratuity button starts highlighted, and
   // none is added to the total until the person actually clicks a choice.
@@ -96,8 +102,25 @@ export function GiftCalculator({ pricing, codes, payTerms, header }: Props) {
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const requestedFormat = params.get('format');
-    if (requestedFormat === 'private' || requestedFormat === 'group') {
-      setFormat(requestedFormat);
+    if (requestedFormat === 'private') setFormat('private');
+    // Groups are now gifted as an amount: start from that group's price.
+    if (requestedFormat === 'group' || requestedFormat === 'amount') {
+      setFormat('amount');
+      const people = Number(params.get('participants'));
+      const value =
+        requestedFormat === 'amount'
+          ? Number(params.get('amount'))
+          : Number.isInteger(people) && people >= MIN_PARTICIPANTS && people <= MAX_PARTICIPANTS
+            ? groupPriceFor(people)
+            : 0;
+      if (value >= GIFT_AMOUNT_MIN && value <= GIFT_AMOUNT_MAX) {
+        if ((GIFT_AMOUNT_PICKS as readonly number[]).includes(value)) {
+          setAmountChoice(value);
+        } else {
+          setAmountChoice('custom');
+          setCustomAmount(String(value));
+        }
+      }
     }
     const requestedSessions = Number(params.get('sessions'));
     if (requestedSessions === 1 || requestedSessions === 4) {
@@ -129,6 +152,10 @@ export function GiftCalculator({ pricing, codes, payTerms, header }: Props) {
   const participantsId = useId();
 
   const isPrivate = format === 'private';
+  const isAmount = format === 'amount';
+  const giftAmount =
+    amountChoice === 'custom' ? Math.round(Number(customAmount) || 0) : amountChoice;
+  const amountValid = giftAmount >= GIFT_AMOUNT_MIN && giftAmount <= GIFT_AMOUNT_MAX;
 
   const addonDefs: AddonDef[] =
     !isPrivate && participants >= TEAM_ADDON_MIN_PARTICIPANTS
@@ -151,13 +178,15 @@ export function GiftCalculator({ pricing, codes, payTerms, header }: Props) {
 
   // Discount codes are group-rate perks - a private session/package (no
   // real participant count) never qualifies, same as booking.
-  const discountPeople = format === 'group' ? participants : 1;
+  // A gift amount is money, not a session - codes never apply to it.
+  const discountPeople = format === 'group' ? participants : isAmount ? 0 : 1;
 
   const quote = giftQuoteFor(
     {
       format,
       sessions,
       participants,
+      amount: isAmount ? giftAmount : undefined,
       addons,
       percentOff: code.applied?.percentOff,
       amountOff: code.applied?.amountOff,
@@ -186,6 +215,14 @@ export function GiftCalculator({ pricing, codes, payTerms, header }: Props) {
       setCode({
         applied: null,
         message: 'That code is not recognised.',
+        ok: false,
+      });
+      return;
+    }
+    if (isAmount) {
+      setCode({
+        applied: null,
+        message: 'Discount codes apply to private sessions and packages, not to a gift amount.',
         ok: false,
       });
       return;
@@ -219,6 +256,10 @@ export function GiftCalculator({ pricing, codes, payTerms, header }: Props) {
       setError('Please add the recipient name, your name and your email.');
       return;
     }
+    if (isAmount && !amountValid) {
+      setError(`Please choose an amount from ${money(GIFT_AMOUNT_MIN)} to ${money(GIFT_AMOUNT_MAX)}.`);
+      return;
+    }
 
     setSubmitting(true);
     try {
@@ -233,8 +274,9 @@ export function GiftCalculator({ pricing, codes, payTerms, header }: Props) {
           format,
           sessions,
           participants,
+          amount: isAmount ? giftAmount : null,
           addons,
-          discountCode: code.applied?.code ?? null,
+          discountCode: isAmount ? null : code.applied?.code ?? null,
           gratuityPercent: gratuityPercent ?? null,
           gratuityAmount: gratuityAmount ?? null,
           paymentPlan: payBy === 'etransfer' ? 'etransfer' : 'full',
@@ -321,19 +363,70 @@ export function GiftCalculator({ pricing, codes, payTerms, header }: Props) {
           <button
             type="button"
             className="choice"
-            aria-pressed={!isPrivate}
-            onClick={() => setFormat('group')}
+            aria-pressed={isAmount}
+            onClick={() => {
+              setFormat('amount');
+              // Codes never apply to an amount - clear one already applied.
+              setCode({ applied: null, message: '', ok: false });
+            }}
           >
             <span className={`choice__title ${styles.formatTitle}`}>
-              Groups &amp; Corporate
+              Gift an amount
             </span>
             <span className="choice__note">
-              2–{MAX_PARTICIPANTS} participants — gatherings, celebrations, teams
+              From {money(GIFT_AMOUNT_MIN)}, toward any session, private or group
             </span>
           </button>
         </div>
 
-        {isPrivate ? (
+        {isAmount ? (
+          <div className={styles.field}>
+            <div className={styles.legend}>Amount</div>
+            <div className={styles.gratuityRow}>
+              {GIFT_AMOUNT_PICKS.map((value) => (
+                <button
+                  key={value}
+                  type="button"
+                  className={`${styles.gratuityBtn} ${amountChoice === value ? styles.gratuityBtnOn : ''}`}
+                  aria-pressed={amountChoice === value}
+                  onClick={() => setAmountChoice(value)}
+                >
+                  {money(value)}
+                </button>
+              ))}
+              <button
+                type="button"
+                className={`${styles.gratuityBtn} ${amountChoice === 'custom' ? styles.gratuityBtnOn : ''}`}
+                aria-pressed={amountChoice === 'custom'}
+                onClick={() => setAmountChoice('custom')}
+              >
+                Other
+              </button>
+            </div>
+            {amountChoice === 'custom' ? (
+              <div style={{ marginTop: 10 }}>
+                <input
+                  className="field"
+                  type="number"
+                  inputMode="numeric"
+                  min={GIFT_AMOUNT_MIN}
+                  max={GIFT_AMOUNT_MAX}
+                  step={1}
+                  placeholder={`Amount, ${money(GIFT_AMOUNT_MIN)} to ${money(GIFT_AMOUNT_MAX)}`}
+                  aria-label="Gift amount in dollars"
+                  style={{ width: '100%', maxWidth: 300 }}
+                  value={customAmount}
+                  onChange={(e) => setCustomAmount(e.target.value)}
+                />
+                {customAmount && !amountValid ? (
+                  <div className={styles.venueNote} role="alert">
+                    Please choose an amount from {money(GIFT_AMOUNT_MIN)} to {money(GIFT_AMOUNT_MAX)}.
+                  </div>
+                ) : null}
+              </div>
+            ) : null}
+          </div>
+        ) : isPrivate ? (
           <div className={styles.field}>
             <label className={styles.legend} htmlFor={sessionsId}>
               Number of sessions
@@ -493,7 +586,9 @@ export function GiftCalculator({ pricing, codes, payTerms, header }: Props) {
                 description={
                   isPrivate
                     ? 'Redeemable for a two-hour immersive Lotus Attune experience — private session, downtown Toronto.'
-                    : 'Redeemable for a two-hour immersive Lotus Attune experience, downtown Toronto.'
+                    : isAmount
+                      ? 'Redeemable toward any two-hour immersive Lotus Attune experience, private or group, downtown Toronto.'
+                      : 'Redeemable for a two-hour immersive Lotus Attune experience, downtown Toronto.'
                 }
                 valueLabel={`${money(quote.total)} value`}
                 code={issuedCode}
@@ -698,7 +793,9 @@ export function GiftCalculator({ pricing, codes, payTerms, header }: Props) {
               description={
                 isPrivate
                   ? 'Redeemable for a two-hour immersive Lotus Attune experience — private session, downtown Toronto.'
-                  : 'Redeemable for a two-hour immersive Lotus Attune experience, downtown Toronto.'
+                  : isAmount
+                    ? 'Redeemable toward any two-hour immersive Lotus Attune experience, private or group, downtown Toronto.'
+                    : 'Redeemable for a two-hour immersive Lotus Attune experience, downtown Toronto.'
               }
               valueLabel={`${money(quote.total)} value`}
             />

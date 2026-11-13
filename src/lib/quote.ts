@@ -146,9 +146,12 @@ export function quoteFor(
 }
 
 export type GiftInput = {
-  format: 'private' | 'group';
+  /** 'amount' = "Gift an amount": a dollar value toward any session. */
+  format: 'private' | 'group' | 'amount';
   sessions: number;
   participants: number;
+  /** The chosen value, for format 'amount'. */
+  amount?: number;
   addons: Record<string, boolean>;
   /** A code is either percent-off or a flat amount-off, never both -
    *  already validated as active and meeting its own participant minimum. */
@@ -171,7 +174,10 @@ export function giftQuoteFor(
   const lines: QuoteLine[] = [];
   let subtotal = 0;
 
-  if (input.format === 'private') {
+  if (input.format === 'amount') {
+    subtotal = Math.round(Number(input.amount) || 0);
+    lines.push({ label: 'Gift amount', value: money(subtotal) });
+  } else if (input.format === 'private') {
     if (Number(input.sessions) === 4) {
       subtotal = pricing.privatePackage;
       lines.push({
@@ -206,7 +212,9 @@ export function giftQuoteFor(
 
   // Discount codes are group-rate perks - a private session/package (no
   // real participant count) never qualifies, same as booking.
-  const discountPeople = input.format === 'group' ? Number(input.participants) || 0 : 1;
+  // A gift amount is money, not a session - discount codes never apply to it.
+  const discountPeople =
+    input.format === 'group' ? Number(input.participants) || 0 : input.format === 'amount' ? 0 : 1;
   const discountMin = input.discountMinParticipants ?? MIN_GROUP_SIZE;
   if ((input.percentOff || input.amountOff) && discountPeople >= discountMin) {
     if (input.amountOff) {

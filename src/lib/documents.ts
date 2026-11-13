@@ -359,7 +359,10 @@ export function giftLines(gift: GiftCtx, settings: SiteSettings): DocumentLine[]
     : undefined;
   const quote = giftQuoteFor(
     {
-      format: gift.format === 'private' ? 'private' : 'group',
+      format: gift.format === 'private' ? 'private' : gift.format === 'amount' ? 'amount' : 'group',
+      // A gift amount's value is its total less any gratuity (codes never
+      // apply to it), so it needs no column of its own.
+      amount: gift.format === 'amount' ? gift.total - gift.gratuity : undefined,
       sessions: gift.sessions ?? 1,
       participants: gift.participants ?? 6,
       addons: gift.addons,
@@ -1360,7 +1363,9 @@ function certificateHtml(doc: DocumentRow, ctx: DocumentContext): string {
   const description =
     gift?.format === 'private'
       ? 'Redeemable for a two-hour immersive Lotus Attune experience — private session, downtown Toronto.'
-      : 'Redeemable for a two-hour immersive Lotus Attune experience, downtown Toronto.';
+      : gift?.format === 'amount'
+        ? 'Redeemable toward any two-hour immersive Lotus Attune experience, private or group, downtown Toronto.'
+        : 'Redeemable for a two-hour immersive Lotus Attune experience, downtown Toronto.';
   const from = gift?.buyerName?.trim();
   const code = gift?.code ?? '';
   const logo = `${SITE.url}/assets/logo-circle.webp`;

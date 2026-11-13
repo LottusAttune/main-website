@@ -38,6 +38,10 @@ export function ArriveOnce({
       return true;
     });
     if (waiting.length === 0) return;
+    // Only the chosen pieces are hidden until they arrive.
+    waiting.forEach((el) => {
+      el.dataset.arriveItem = '';
+    });
     box.classList.add(pending);
 
     let frame: number | null = null;

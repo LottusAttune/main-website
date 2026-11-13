@@ -1345,18 +1345,9 @@
 
 /* ---------- Fade-up as each piece comes into view (ArriveOnce) ----------
    The website's own reveal: up 22px and in, just under a second, once.
-   Once in place the piece is marked data-arrived and goes back to its own
-   styles. */
-.arrivePending .painCard:not([data-arrived]),
-.arrivePending .head:not([data-arrived]),
-.arrivePending .componentRow:not([data-arrived]),
-.arrivePending .faqPhoto:not([data-arrived]),
-.arrivePending [class*='Accordion_item__']:not([data-arrived]),
-.arrivePending :global(.numbered-row):not([data-arrived]),
-.guide.arrivePending > div:not([data-arrived]),
-.arrivePending .planCard:not([data-arrived]),
-.arrivePending .offerCard:not([data-arrived]),
-.arrivePending .contactGroup:not([data-arrived]) {
+   Only the pieces ArriveOnce picked (data-arrive-item) are hidden; once in
+   place they are marked data-arrived and go back to their own styles. */
+.arrivePending [data-arrive-item]:not([data-arrived]) {
   opacity: 0;
   transform: translateY(22px);
   transition:
@@ -1364,31 +1355,13 @@
     transform 0.9s var(--ease-out);
 }
 
-.arrivePending .painCard.arriveShown,
-.arrivePending .head.arriveShown,
-.arrivePending .componentRow.arriveShown,
-.arrivePending .faqPhoto.arriveShown,
-.arrivePending .arriveShown[class*='Accordion_item__'],
-.arrivePending .arriveShown:global(.numbered-row),
-.guide.arrivePending > div.arriveShown,
-.arrivePending .planCard.arriveShown,
-.arrivePending .offerCard.arriveShown,
-.arrivePending .contactGroup.arriveShown {
+.arrivePending [data-arrive-item].arriveShown {
   opacity: 1;
   transform: none;
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .arrivePending .painCard:not([data-arrived]),
-  .arrivePending .head:not([data-arrived]),
-  .arrivePending .componentRow:not([data-arrived]),
-  .arrivePending .faqPhoto:not([data-arrived]),
-  .arrivePending [class*='Accordion_item__']:not([data-arrived]),
-  .arrivePending :global(.numbered-row):not([data-arrived]),
-  .guide.arrivePending > div:not([data-arrived]),
-  .arrivePending .planCard:not([data-arrived]),
-  .arrivePending .offerCard:not([data-arrived]),
-  .arrivePending .contactGroup:not([data-arrived]) {
+  .arrivePending [data-arrive-item]:not([data-arrived]) {
     transition-duration: 0.9s !important;
   }
 }

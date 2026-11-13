@@ -483,7 +483,7 @@ export default async function LandingPage({
       <LandingReturnTracker href={LANDING_PATHS[audienceKey]} />
 
       <footer className={styles.footer}>
-        <div className={styles.contactGroups} data-arrive="footer">
+        <div className={styles.contactGroups}>
           {[
             {
               title: 'Get in touch',
@@ -557,12 +557,6 @@ export default async function LandingPage({
         <div className={styles.copyright}>
           © {new Date().getFullYear()} {SITE.name} · {SITE.tagline} · Toronto{'\u00a0'}– Yonge and Bloor
         </div>
-        <ArriveOnce
-          target="footer"
-          items={`.${styles.contactGroup}`}
-          pending={styles.arrivePending}
-          shown={styles.arriveShown}
-        />
       </footer>
     </div>
   );

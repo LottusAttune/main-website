@@ -328,7 +328,7 @@ export const TRAINING = [
     // date or dash on a line. The \u2060 (invisible word joiner) stops the
     // browser breaking straight after the dash.
     items: [
-      'Toronto Zen School Ensemble - Handpan musician and performer\u00a0-\u2060\u00a0Since\u00a0Oct\u00a02025',
+      'Toronto Zen School Ensemble - Handpan\u00a0musician\u00a0-\u2060\u00a0Since\u00a0Oct\u00a02025',
       'BUMI Festival - Handpan\u00a0Performance\u00a0-\u2060\u00a0Aug\u00a02026',
       'Toronto Wellness Festival, Mel Lastman Square - Handpan\u00a0Performance\u00a0-\u2060\u00a0Sep\u00a02026',
       'Handpan & Healing Festival, York Wood Theatre - Handpan\u00a0Performance\u00a0-\u2060\u00a0Nov\u00a02026',

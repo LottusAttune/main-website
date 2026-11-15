@@ -6,6 +6,8 @@ import { useEffect, useState } from 'react';
 import styles from './ArtisticRecognition.module.css';
 
 type Props = {
+  /** Small label above it, when it sits inside another section. */
+  heading?: string;
   event: string;
   quote: string;
   attribution: string;
@@ -18,7 +20,7 @@ type Props = {
  * quote and who said it, and a small thumbnail of the certificate that opens
  * full size when clicked (Esc or a click outside closes it).
  */
-export function ArtisticRecognition({ event, quote, attribution, image }: Props) {
+export function ArtisticRecognition({ heading, event, quote, attribution, image }: Props) {
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
@@ -31,7 +33,8 @@ export function ArtisticRecognition({ event, quote, attribution, image }: Props)
   }, [open]);
 
   return (
-    <div className={styles.wrap}>
+    <div className={`${styles.wrap} ${heading ? styles.nested : ''}`}>
+      {heading ? <div className={styles.heading}>{heading}</div> : null}
       <div className={styles.text}>
         <p className={styles.event}>{event}</p>
         <blockquote className={styles.quote}>“{quote}”</blockquote>

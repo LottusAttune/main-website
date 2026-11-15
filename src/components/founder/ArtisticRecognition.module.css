@@ -9,6 +9,22 @@
   padding: 6px 0 22px;
 }
 
+/* Inside Live Sound Performances: starts just after the last performance,
+   under a small gold label (same size and tracking as the site's other
+   small labels; solid gold-light, about 7:1 on this dark background). */
+.nested {
+  padding-top: 0;
+  margin-top: -8px;
+}
+
+.heading {
+  flex: 1 0 100%;
+  font-size: 11px;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--color-gold-light);
+}
+
 .text {
   flex: 1 1 260px;
   min-width: 0;

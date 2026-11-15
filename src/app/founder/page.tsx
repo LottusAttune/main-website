@@ -111,21 +111,22 @@ export default async function FounderPage() {
                 Experience &amp; Development in Restorative Wellness Practices
               </div>
               <Accordion
-                items={[
-                  ...TRAINING.map((c) => ({ title: c.title, items: c.items })),
-                  // Its own section, directly below Live Sound Performances.
-                  {
-                    title: ARTISTIC_RECOGNITION.title,
-                    content: (
+                items={TRAINING.map((c) => ({
+                  title: c.title,
+                  items: c.items,
+                  // Artistic Recognition sits inside Live Sound Performances,
+                  // after the performances, under its own small label.
+                  content:
+                    c.title === 'Live Sound Performances' ? (
                       <ArtisticRecognition
+                        heading={ARTISTIC_RECOGNITION.title}
                         event={ARTISTIC_RECOGNITION.event}
                         quote={ARTISTIC_RECOGNITION.quote}
                         attribution={ARTISTIC_RECOGNITION.attribution}
                         image={certificateImage}
                       />
-                    ),
-                  },
-                ]}
+                    ) : undefined,
+                }))}
                 tone="dark"
                 compact
               />

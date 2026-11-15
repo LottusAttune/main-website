@@ -108,7 +108,7 @@ export default async function FounderPage() {
           <div className={`shell ${styles.credSplit}`}>
             <div className={`${styles.credCol} ${styles.credColDark}`}>
               <div className={`eyebrow eyebrow--dark ${styles.groupTitle}`}>
-                Training &amp; Development in Restorative Wellness Practices
+                Experience &amp; Development in Restorative Wellness Practices
               </div>
               <Accordion
                 items={[

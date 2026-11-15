@@ -322,15 +322,32 @@ export const TRAINING = [
     ],
   },
   {
-    title: 'Live Music Performances',
+    title: 'Live Sound Performances',
+    // Non-breaking spaces keep "Handpan Performance - Aug 2026" (or just the
+    // date, after a longer role) together, so a phone never leaves a lone
+    // date or dash on a line. The \u2060 (invisible word joiner) stops the
+    // browser breaking straight after the dash.
     items: [
-      'Toronto Zen School Ensemble - Handpan musician and performer - 2025',
-      'BUMI Festival - Handpan Performance - 2026',
-      'Toronto Wellness Festival, Mel Lastman Square - Handpan Performance - 2026',
-      'Drum & Soul in Motion - Monthly handpan-guided meditations - 2026',
+      'Toronto Zen School Ensemble - Handpan musician and performer\u00a0-\u2060\u00a0Since\u00a0Oct\u00a02025',
+      'BUMI Festival - Handpan\u00a0Performance\u00a0-\u2060\u00a0Aug\u00a02026',
+      'Toronto Wellness Festival, Mel Lastman Square - Handpan\u00a0Performance\u00a0-\u2060\u00a0Sep\u00a02026',
+      'Handpan & Healing Festival, York Wood Theatre - Handpan\u00a0Performance\u00a0-\u2060\u00a0Nov\u00a02026',
+      'Drum & Soul in Motion - Sound-guided meditations\u00a0-\u2060\u00a0Throughout\u00a02026',
     ],
   },
 ] as const;
+
+/** Founder page: its own collapsible section directly below Live Sound
+ *  Performances. Wording approved by Silvana; Ali Orangi approved the quote.
+ *  "Toronto Zen Music" is plain text, never a link. */
+export const ARTISTIC_RECOGNITION = {
+  title: 'Artistic Recognition',
+  event: 'Toronto Zen Music, Handpan & Healing Festival 2026',
+  quote:
+    'In recognition of your dedication, artistic growth, and inspiring performance… With sincere appreciation for sharing your talent, passion, and music with our community. May your musical journey continue to inspire and unfold.',
+  attribution: 'Ali Orangi, Toronto Zen Music',
+  imageAlt: 'Artistic recognition from Toronto Zen Music, Handpan & Healing Festival 2026',
+} as const;
 
 export const FOUNDER_CLIENTS =
   'I bring over 15 years of Human Resources experience across leading organizations, including Metrolinx, Toronto Hydro, Infrastructure Ontario, Mount Sinai Hospital, George Brown College, Magna International, and Bell Canada. I have also provided services to Scotiabank, the University of Toronto, and other organizations.';

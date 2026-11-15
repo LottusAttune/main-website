@@ -9,7 +9,10 @@ import { SiteFooter } from '@/components/chrome/SiteFooter';
 import { SiteNav } from '@/components/chrome/SiteNav';
 import { StickyBookBar } from '@/components/chrome/StickyBookBar';
 import { HandpanVideo } from '@/components/founder/HandpanVideo';
+import { ArtisticRecognition } from '@/components/founder/ArtisticRecognition';
+import manifest from '@/data/image-manifest.json';
 import {
+  ARTISTIC_RECOGNITION,
   CREDENTIALS,
   FOUNDER_BIO,
   FOUNDER_BIO_SHORT,
@@ -26,6 +29,17 @@ export const metadata: Metadata = {
 };
 
 const HANDPAN_VIDEO_IDS = ['1221670118', '1221664378', '1223535077'];
+
+const CERTIFICATE = 'certificate-artistic-recognition-cropped';
+const certificateSize = (manifest as Record<string, { width: number; height: number }>)[CERTIFICATE];
+const certificateImage = certificateSize
+  ? {
+      src: `/assets/${CERTIFICATE}.webp`,
+      width: certificateSize.width,
+      height: certificateSize.height,
+      alt: ARTISTIC_RECOGNITION.imageAlt,
+    }
+  : undefined;
 
 export default async function FounderPage() {
   const portrait = asset('silvana-handpan');
@@ -97,7 +111,21 @@ export default async function FounderPage() {
                 Training &amp; Development in Restorative Wellness Practices
               </div>
               <Accordion
-                items={TRAINING.map((c) => ({ title: c.title, items: c.items }))}
+                items={[
+                  ...TRAINING.map((c) => ({ title: c.title, items: c.items })),
+                  // Its own section, directly below Live Sound Performances.
+                  {
+                    title: ARTISTIC_RECOGNITION.title,
+                    content: (
+                      <ArtisticRecognition
+                        event={ARTISTIC_RECOGNITION.event}
+                        quote={ARTISTIC_RECOGNITION.quote}
+                        attribution={ARTISTIC_RECOGNITION.attribution}
+                        image={certificateImage}
+                      />
+                    ),
+                  },
+                ]}
                 tone="dark"
                 compact
               />

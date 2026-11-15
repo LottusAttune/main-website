@@ -1,6 +1,6 @@
 'use client';
 
-import { useId, useLayoutEffect, useRef, useState } from 'react';
+import { useId, useLayoutEffect, useRef, useState, type ReactNode } from 'react';
 
 import styles from './Accordion.module.css';
 
@@ -9,6 +9,8 @@ export type AccordionItem = {
   /** A prose answer (FAQ) or a list of credentials (Founder). */
   answer?: string;
   items?: readonly string[];
+  /** Anything else (e.g. a quote with a photo), shown after items. */
+  content?: ReactNode;
 };
 
 type Props = {
@@ -121,6 +123,7 @@ export function Accordion({
                   ))}
                 </div>
               ) : null}
+              {item.content ?? null}
             </div>
           </div>
         );

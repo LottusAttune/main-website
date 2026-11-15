@@ -289,20 +289,15 @@ export const TRAINING = [
     ],
   },
   {
-    title: 'Somatic Sound',
+    // Somatic Sound and Neuroscience combined (Nov 2026), newest first.
+    title: 'Somatic Sound & Neuroscience',
     items: [
       'Crystal Singing Bowl Sound Therapy & Sound Healing Certificate - 2025',
       'Shamanic Journey Technique | Rhythm of the Earth - 2025',
-      'Somatic Sound Solution Program | Jim Donovan - 2023',
-      'Drumming Circle | Drum & Soul - ongoing',
-    ],
-  },
-  {
-    title: 'Neuroscience',
-    items: [
       'Neurotoned Program - Transform your Nervous System - 2025',
+      'Somatic Sound Solution Program | Jim Donovan - 2023',
       'Neuroscience MAP Method for Transformation | MAP Coaching Institute - 2023',
-      'Unlimited Change from the Inside Out | Joe Dispenza - 2019',
+      'Drumming Circle | Drum & Soul - ongoing',
     ],
   },
   {
@@ -311,6 +306,7 @@ export const TRAINING = [
       'Inner Growth Identity one-year program - Soul Engineering, Bali - 2025',
       'Heal Your Masculine and Feminine | Danny Morel - 2025',
       '21-Day Awakening Journey | Niraj Nair - 2024',
+      'Unlimited Change from the Inside Out | Joe Dispenza - 2019',
       'Etnikas Integrative Medicine Retreat - Cusco, Peru - 2019',
     ],
   },
